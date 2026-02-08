@@ -1,0 +1,39 @@
+{
+  "name": "@vitals/core",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "dev": "tsup src/index.ts --format esm --dts --watch",
+    "test": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "execa": "^9.5.0",
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "knip": "^5.83.1",
+    "depcheck": "^1.4.7",
+    "madge": "^8.0.0",
+    "jscpd": "^4.0.8",
+    "license-checker": "^25.0.1",
+    "source-map-explorer": "^2.5.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  }
+}

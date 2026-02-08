@@ -1,0 +1,27 @@
+import React from 'react';
+import { Box, Text } from 'ink';
+import type { VitalsReport } from '@vitals/core';
+import { getScoreEmoji } from '@vitals/core';
+import { ScoreBar } from './ScoreBar.js';
+
+interface SummaryProps {
+  report: VitalsReport;
+}
+
+export function Summary({ report }: SummaryProps) {
+  return (
+    <Box flexDirection="column">
+      <Text dimColor>{'━'.repeat(52)}</Text>
+      <Box marginTop={1}>
+        <Text bold>Overall Health Score: </Text>
+        <ScoreBar score={report.overallScore} width={12} />
+        <Text> {getScoreEmoji(report.overallScore)}</Text>
+      </Box>
+      <Box marginTop={0}>
+        <Text color="red">  ✗ {report.summary.critical} critical</Text>
+        <Text color="yellow">  ⚠ {report.summary.warnings} warnings</Text>
+        <Text dimColor>  ℹ {report.summary.info} info</Text>
+      </Box>
+    </Box>
+  );
+}
