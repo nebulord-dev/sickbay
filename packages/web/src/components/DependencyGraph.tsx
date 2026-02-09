@@ -2,8 +2,6 @@ import { useMemo, useCallback } from "react";
 import {
   ReactFlow,
   Background,
-  Controls,
-  MiniMap,
   type Node,
   type Edge,
   Position,
@@ -195,22 +193,6 @@ export function DependencyGraph({ graph }: DependencyGraphProps) {
         style={{ background: "#0a0a0a" }}
       >
         <Background color="#1e1e2e" gap={20} />
-        {/* <Controls
-          style={{
-            background: "#1a1a2e",
-            borderColor: "#374151",
-          }}
-        />
-        <MiniMap
-          nodeColor={(node) => {
-            const border = (node.style as Record<string, string>)?.border;
-            // Extract color from "1.5px solid #3b82f6" format
-            const colorMatch = border?.match(/#[0-9a-fA-F]{6}/);
-            return colorMatch?.[0] ?? "#6b7280";
-          }}
-          style={{ background: "#0a0a0a", borderColor: "#374151" }}
-          maskColor="rgba(0, 0, 0, 0.7)"
-        /> */}
       </ReactFlow>
     </div>
   );
