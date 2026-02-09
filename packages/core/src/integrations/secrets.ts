@@ -31,6 +31,7 @@ interface Finding {
   file: string;
   line: number;
   pattern: string;
+  codeSnippet?: string;
 }
 
 export class SecretsRunner extends BaseRunner {
@@ -70,7 +71,14 @@ export class SecretsRunner extends BaseRunner {
         message: f.line > 0
           ? `${f.file}:${f.line} — ${f.pattern} detected`
           : `${f.file} — ${f.pattern}`,
-        fix: { description: 'Move secrets to environment variables' },
+        file: f.file,
+        fix: {
+          description: 'Move secrets to environment variables',
+          codeChange: f.codeSnippet ? {
+            before: f.codeSnippet,
+            after: 'Use process.env.YOUR_SECRET_NAME instead'
+          } : undefined
+        },
         reportedBy: ['secrets'],
       }));
 
@@ -138,7 +146,12 @@ function scanFile(filePath: string, projectRoot: string): Finding[] {
 
       for (const pattern of PATTERNS) {
         if (pattern.regex.test(line)) {
-          findings.push({ file: relPath, line: i + 1, pattern: pattern.name });
+          findings.push({
+            file: relPath,
+            line: i + 1,
+            pattern: pattern.name,
+            codeSnippet: line.trim()
+          });
           break; // one finding per line
         }
       }

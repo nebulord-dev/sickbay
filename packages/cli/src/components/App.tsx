@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useApp } from 'ink';
-import type { VitalsReport, CheckResult } from '@vitals/core';
+import Spinner from 'ink-spinner';
+import Gradient from 'ink-gradient';
+import type { VitalsReport } from '@vitals/core';
 import { runVitals } from '@vitals/core';
 import { Header } from './Header.js';
 import { ProgressList } from './ProgressList.js';
@@ -12,6 +14,7 @@ interface AppProps {
   projectPath: string;
   checks?: string[];
   openWeb?: boolean;
+  enableAI?: boolean;
   verbose?: boolean;
 }
 
@@ -22,7 +25,7 @@ interface ProgressItem {
   status: 'pending' | 'running' | 'done';
 }
 
-export function App({ projectPath, checks, openWeb, verbose }: AppProps) {
+export function App({ projectPath, checks, openWeb, enableAI, verbose }: AppProps) {
   const { exit } = useApp();
   const [phase, setPhase] = useState<Phase>('loading');
   const [report, setReport] = useState<VitalsReport | null>(null);
@@ -35,6 +38,7 @@ export function App({ projectPath, checks, openWeb, verbose }: AppProps) {
     const initial: ProgressItem[] = (checks ?? [
       'knip', 'depcheck', 'npm-check-updates', 'npm-audit',
       'madge', 'source-map-explorer', 'coverage', 'license-checker', 'jscpd', 'git',
+      'eslint', 'typescript', 'todo-scanner', 'complexity', 'secrets',
     ]).map((name) => ({ name, status: 'pending' as const }));
     setProgress(initial);
 
@@ -58,7 +62,15 @@ export function App({ projectPath, checks, openWeb, verbose }: AppProps) {
           try {
             const { serveWeb } = await import('../commands/web.js');
             const { default: openBrowser } = await import('open');
-            const url = await serveWeb(r);
+
+            // Create AI service if enabled and API key exists
+            let aiService;
+            if (enableAI && process.env.ANTHROPIC_API_KEY) {
+              const { createAIService } = await import('../services/ai.js');
+              aiService = createAIService(process.env.ANTHROPIC_API_KEY);
+            }
+
+            const url = await serveWeb(r, 3030, aiService);
             setWebUrl(url);
             await openBrowser(url);
           } catch (e) {
@@ -86,7 +98,7 @@ export function App({ projectPath, checks, openWeb, verbose }: AppProps) {
 
       {phase === 'loading' && (
         <Box flexDirection="column">
-          <Text dimColor>🔍 Running health checks...</Text>
+          <Text dimColor>Running health checks...</Text>
           <Box marginTop={1} marginLeft={2}>
             <ProgressList items={progress} />
           </Box>
@@ -107,7 +119,7 @@ export function App({ projectPath, checks, openWeb, verbose }: AppProps) {
           <Summary report={report} />
           <QuickWins report={report} />
           <Box marginTop={1}>
-            <Text dimColor>📊 View detailed report: </Text>
+            <Text dimColor>View detailed report: </Text>
             <Text color="cyan">vitals --web</Text>
           </Box>
         </Box>
@@ -127,7 +139,10 @@ export function App({ projectPath, checks, openWeb, verbose }: AppProps) {
                 <Text dimColor>  (Ctrl+C to stop)</Text>
               </>
             ) : (
-              <Text dimColor>⠋ Starting dashboard...</Text>
+              <Text>
+                <Spinner type="dots" />{' '}
+                <Gradient name="rainbow">Starting dashboard...</Gradient>
+              </Text>
             )}
           </Box>
         </Box>

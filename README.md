@@ -15,9 +15,10 @@ A zero-config health check CLI for React projects. Run `vitals` in any project t
 
 ## Features
 
-- **10 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
+- **15 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
 - **Animated terminal UI** built with Ink (React for terminals)
 - **Web dashboard** served locally — opens automatically with `--web`
+- **AI-powered insights** with Claude — automated analysis and interactive chat (requires `ANTHROPIC_API_KEY`)
 - **Zero config** — all tools are bundled; no global installs required
 - **Structured JSON output** for CI/CD integration
 
@@ -87,6 +88,7 @@ Options:
   -c, --checks <names>  Comma-separated list of checks to run (default: all)
   --json                Output raw JSON report to stdout
   --web                 Open web dashboard after scan completes
+  --no-ai               Disable AI features (even if ANTHROPIC_API_KEY is set)
   --verbose             Show verbose output during checks
   -V, --version         Show version
   -h, --help            Show help
@@ -109,24 +111,71 @@ vitals --path ~/projects/my-app --json > vitals-report.json
 
 # Open interactive web dashboard
 vitals --path ~/projects/my-app --web
+
+# Enable AI features (requires ANTHROPIC_API_KEY)
+export ANTHROPIC_API_KEY=sk-ant-...
+vitals --path ~/projects/my-app --web
 ```
+
+---
+
+## AI Features
+
+The web dashboard includes **AI-powered insights** using Claude (Anthropic API):
+
+- **Automatic Analysis** — Generates a structured health assessment when the dashboard opens
+- **Interactive Chat** — Ask questions about your report ("What should I fix first?", "Explain the security issues")
+- **Collapsible Critical Issues Panel** — Surfaces the most important problems upfront
+
+### Enable AI Features
+
+Set the `ANTHROPIC_API_KEY` environment variable:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+vitals --path ~/projects/my-app --web
+```
+
+Without the API key, the dashboard still works — you just won't see the AI insights drawer or chat bot.
 
 ---
 
 ## Available Checks
 
-| Check | Category | What it does |
-|-------|----------|--------------|
-| `knip` | dependencies | Unused files, dependencies, and exports |
-| `depcheck` | dependencies | Missing/unused package.json dependencies |
-| `npm-check-updates` | dependencies | Outdated package versions |
-| `npm-audit` | security | Known vulnerability scan |
-| `license-checker` | security | Flags problematic licenses (GPL, AGPL, etc.) |
-| `madge` | code-quality | Circular module dependencies |
-| `jscpd` | code-quality | Copy-paste duplication detection |
-| `coverage` | code-quality | Auto-runs vitest/jest, reports test counts + coverage % |
-| `source-map-explorer` | performance | Bundle size breakdown |
-| `git` | git | Commit history, staleness, contributor count |
+### Dependencies (3 checks)
+| Check | What it does |
+|-------|--------------|
+| `knip` | Unused files, dependencies, and exports |
+| `depcheck` | Missing dependencies (cross-refs with knip for unused) |
+| `npm-check-updates` | Outdated package versions |
+
+### Security (3 checks)
+| Check | What it does |
+|-------|--------------|
+| `npm-audit` | Known vulnerability scan |
+| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.) |
+| `secrets` | Detects exposed API keys, tokens, and credentials |
+
+### Code Quality (7 checks)
+| Check | What it does |
+|-------|--------------|
+| `eslint` | Linting errors and warnings |
+| `typescript` | Type errors and issues |
+| `madge` | Circular module dependencies |
+| `jscpd` | Copy-paste duplication detection |
+| `coverage` | Test coverage % and test counts (vitest/jest) |
+| `todo-scanner` | TODO/FIXME comments (technical debt tracker) |
+| `complexity` | High cyclomatic complexity files |
+
+### Performance (1 check)
+| Check | What it does |
+|-------|--------------|
+| `source-map-explorer` | Bundle size breakdown by source file |
+
+### Git (1 check)
+| Check | What it does |
+|-------|--------------|
+| `git` | Commit history, staleness, contributor count |
 
 ---
 
@@ -208,7 +257,7 @@ node packages/cli/dist/index.js --path ~/Desktop/vitals-test-app --json > packag
                   └──────┬──────┘
           ┌──────────────┼──────────────┐
           ▼              ▼              ▼
-     KnipRunner    AuditRunner    GitRunner ...  (10 total)
+     KnipRunner    AuditRunner    GitRunner ...  (15 total)
           │              │              │
           └──────────────┼──────────────┘
                          │ VitalsReport JSON

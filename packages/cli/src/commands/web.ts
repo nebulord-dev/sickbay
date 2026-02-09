@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 import { fileURLToPath } from 'url';
 import type { VitalsReport } from '@vitals/core';
+import type { AIService } from '../services/ai.js';
 
 const MIME_TYPES: Record<string, string> = {
   '.html': 'text/html',
@@ -39,7 +40,11 @@ async function getFreePort(preferred: number): Promise<number> {
   });
 }
 
-export async function serveWeb(report: VitalsReport, preferredPort = 3030): Promise<string> {
+export async function serveWeb(
+  report: VitalsReport,
+  preferredPort = 3030,
+  aiService?: AIService
+): Promise<string> {
   const distDir = findWebDist();
   if (!distDir) {
     throw new Error(
@@ -50,13 +55,48 @@ export async function serveWeb(report: VitalsReport, preferredPort = 3030): Prom
   const reportJson = JSON.stringify(report);
   const port = await getFreePort(preferredPort);
 
-  const server = http.createServer((req, res) => {
+  // Generate AI summary on startup if service is available
+  let aiSummary: string | null = null;
+  if (aiService) {
+    try {
+      aiSummary = await aiService.generateSummary(report);
+    } catch (err) {
+      console.warn('AI summary generation failed:', err);
+    }
+  }
+
+  const server = http.createServer(async (req, res) => {
     const url = req.url ?? '/';
 
     // Serve the report JSON directly from memory
     if (url === '/vitals-report.json') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(reportJson);
+      return;
+    }
+
+    // AI summary endpoint
+    if (url === '/ai/summary' && aiSummary) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ summary: aiSummary }));
+      return;
+    }
+
+    // AI chat endpoint
+    if (url === '/ai/chat' && req.method === 'POST' && aiService) {
+      let body = '';
+      req.on('data', (chunk) => (body += chunk));
+      req.on('end', async () => {
+        try {
+          const { message, history } = JSON.parse(body);
+          const response = await aiService.chat(message, report, history ?? []);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ response }));
+        } catch (err) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: String(err) }));
+        }
+      });
       return;
     }
 

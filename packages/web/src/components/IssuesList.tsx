@@ -66,16 +66,37 @@ function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
       : 'border-l-gray-500 bg-gray-500/5';
 
   return (
-    <div className={`flex items-start gap-3 px-3 py-2 border-l-2 rounded-r ${color}`}>
-      <span className="text-xs text-gray-500 shrink-0 pt-0.5">{checkName}</span>
-      <span className="flex-1 text-sm">{issue.message}</span>
-      {issue.fix?.command && (
-        <button
-          onClick={copy}
-          className="shrink-0 text-xs text-gray-500 hover:text-accent font-mono transition-colors"
-        >
-          {copied ? '✓ copied' : issue.fix.command}
-        </button>
+    <div className={`flex flex-col gap-2 px-3 py-2 border-l-2 rounded-r ${color}`}>
+      <div className="flex items-start gap-3">
+        <span className="text-xs text-gray-500 shrink-0 pt-0.5">{checkName}</span>
+        <span className="flex-1 text-sm">{issue.message}</span>
+        {issue.fix?.command && (
+          <button
+            onClick={copy}
+            className="shrink-0 text-xs text-gray-500 hover:text-accent font-mono transition-colors"
+          >
+            {copied ? '✓ copied' : issue.fix.command}
+          </button>
+        )}
+      </div>
+
+      {issue.file && (
+        <div className="text-xs text-gray-500 font-mono flex items-center gap-1">
+          <span>📄</span>
+          <span>{issue.file}</span>
+        </div>
+      )}
+
+      {issue.fix?.codeChange && (
+        <div className="bg-black/30 rounded p-3 font-mono text-xs border border-red-800/30">
+          <div className="text-red-400 mb-2 flex items-center gap-1.5">
+            <span>⚠️</span>
+            <span className="font-semibold">Offensive code:</span>
+          </div>
+          <code className="text-gray-300 block whitespace-pre-wrap break-all">
+            {issue.fix.codeChange.before}
+          </code>
+        </div>
       )}
     </div>
   );

@@ -23,6 +23,8 @@ export function ScoreCard({ check, onClick, active }: ScoreCardProps) {
   const circumference = 2 * Math.PI * 28;
   const offset = circumference - (check.score / 100) * circumference;
 
+  const criticalIssues = check.issues.filter((issue) => issue.severity === 'critical');
+
   return (
     <button
       onClick={onClick}
@@ -53,6 +55,26 @@ export function ScoreCard({ check, onClick, active }: ScoreCardProps) {
       {check.issues.length > 0 && (
         <div className="text-xs text-gray-400">
           {check.issues.length} issue{check.issues.length !== 1 ? 's' : ''}
+        </div>
+      )}
+
+      {criticalIssues.length > 0 && (
+        <div className="w-full mt-2 pt-3 border-t border-red-900/30">
+          <div className="text-xs text-red-400 font-semibold mb-1.5 text-center">
+            🚨 {criticalIssues.length} Critical
+          </div>
+          <ul className="space-y-1 text-left">
+            {criticalIssues.slice(0, 2).map((issue, i) => (
+              <li key={i} className="text-xs text-gray-400 truncate">
+                • {issue.message}
+              </li>
+            ))}
+            {criticalIssues.length > 2 && (
+              <li className="text-xs text-gray-500">
+                +{criticalIssues.length - 2} more
+              </li>
+            )}
+          </ul>
         </div>
       )}
     </button>

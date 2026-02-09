@@ -32,14 +32,8 @@ export class DepcheckRunner extends BaseRunner {
       const data: DepcheckOutput = JSON.parse(stdout || '{}');
       const issues: Issue[] = [];
 
-      (data.dependencies ?? []).forEach((dep) =>
-        issues.push({
-          severity: 'warning',
-          message: `Unused dependency: ${dep}`,
-          fix: { description: `Remove ${dep}`, command: `npm uninstall ${dep}` },
-          reportedBy: ['depcheck'],
-        })
-      );
+      // Skip reporting unused dependencies - Knip handles this more comprehensively
+      // We focus on missing dependencies, which Knip doesn't detect
 
       for (const [dep, files] of Object.entries(data.missing ?? {})) {
         issues.push({

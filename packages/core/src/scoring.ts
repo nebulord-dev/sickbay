@@ -43,8 +43,8 @@ export function getScoreColor(score: number): 'green' | 'yellow' | 'red' {
 }
 
 export function getScoreEmoji(score: number): string {
-  if (score >= 90) return '🟢';
-  if (score >= 80) return '🟡';
-  if (score >= 60) return '🟠';
-  return '🔴';
+  if (score >= 90) return 'Good';
+  if (score >= 80) return 'Fair';
+  if (score >= 60) return 'Poor';
+  return 'Bad';
 }

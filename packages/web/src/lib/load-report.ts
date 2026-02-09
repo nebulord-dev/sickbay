@@ -34,7 +34,3 @@ export async function loadReport(): Promise<VitalsReport | null> {
 
   return null;
 }
-
-export function saveReport(report: VitalsReport): void {
-  localStorage.setItem('vitals-report', JSON.stringify(report));
-}

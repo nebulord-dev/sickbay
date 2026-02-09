@@ -17,10 +17,10 @@ export function Summary({ report }: SummaryProps) {
         <ScoreBar score={report.overallScore} width={12} />
         <Text> {getScoreEmoji(report.overallScore)}</Text>
       </Box>
-      <Box marginTop={0}>
+      <Box marginTop={1}>
         <Text color="red">  ✗ {report.summary.critical} critical</Text>
         <Text color="yellow">  ⚠ {report.summary.warnings} warnings</Text>
-        <Text dimColor>  ℹ {report.summary.info} info</Text>
+        <Text color="gray">  i {report.summary.info} info</Text>
       </Box>
     </Box>
   );

@@ -88,7 +88,18 @@ export function DependencyList({ report }: Props) {
           </span>
         </h2>
         {issueCount > 0 && (
-          <span className="text-xs text-yellow-400">{issueCount} with issues</span>
+          <div className="relative group inline-flex">
+            <span className="text-xs text-yellow-400 flex items-center gap-1 cursor-help">
+              {issueCount} with issues
+              <span className="text-gray-500">ℹ</span>
+            </span>
+            <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-56 z-10">
+              <div className="bg-gray-900 text-gray-200 text-xs rounded px-3 py-2 shadow-lg border border-gray-700">
+                Dependencies that are <strong className="text-yellow-400">unused</strong>, <strong className="text-red-400">missing</strong>, or <strong className="text-blue-400">outdated</strong>
+                <div className="absolute top-full right-4 -mt-1 w-2 h-2 bg-gray-900 border-r border-b border-gray-700 transform rotate-45"></div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 

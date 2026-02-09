@@ -1,6 +1,6 @@
-import React from 'react';
-import { Box, Text } from 'ink';
-import type { VitalsReport } from '@vitals/core';
+import React from "react";
+import { Box, Text } from "ink";
+import type { VitalsReport } from "@vitals/core";
 
 interface QuickWinsProps {
   report: VitalsReport;
@@ -20,14 +20,12 @@ export function QuickWins({ report }: QuickWinsProps) {
 
   return (
     <Box flexDirection="column" marginTop={1}>
-      <Text bold>💡 Quick Wins:</Text>
+      <Text bold>🔥 Quick Wins:</Text>
       {fixes.map((fix, i) => (
         <Box key={i} marginLeft={2}>
           <Text dimColor>→ </Text>
           <Text>{fix.fix!.description}</Text>
-          {fix.fix!.command && (
-            <Text dimColor>: {fix.fix!.command}</Text>
-          )}
+          {fix.fix!.command && <Text dimColor>: {fix.fix!.command}</Text>}
         </Box>
       ))}
     </Box>
