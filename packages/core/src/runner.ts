@@ -16,6 +16,9 @@ import { TypeScriptRunner } from './integrations/typescript.js';
 import { TodoScannerRunner } from './integrations/todo-scanner.js';
 import { ComplexityRunner } from './integrations/complexity.js';
 import { SecretsRunner } from './integrations/secrets.js';
+import { HeavyDepsRunner } from './integrations/heavy-deps.js';
+import { ReactPerfRunner } from './integrations/react-perf.js';
+import { AssetSizeRunner } from './integrations/asset-size.js';
 
 export interface RunnerOptions {
   projectPath?: string;
@@ -41,6 +44,9 @@ const ALL_RUNNERS: ToolRunner[] = [
   new TodoScannerRunner(),
   new ComplexityRunner(),
   new SecretsRunner(),
+  new HeavyDepsRunner(),
+  new ReactPerfRunner(),
+  new AssetSizeRunner(),
 ];
 
 export async function runVitals(options: RunnerOptions = {}): Promise<VitalsReport> {

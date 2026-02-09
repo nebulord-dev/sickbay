@@ -3,6 +3,48 @@ import { BaseRunner } from './base.js';
 import { timer, isCommandAvailable, fileExists, coreLocalDir } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+type DependencyGraph = Record<string, string[]>;
+
+function findCircularDeps(graph: DependencyGraph): string[][] {
+  const circles: string[][] = [];
+  const visited = new Set<string>();
+  const stack = new Set<string>();
+
+  function dfs(node: string, path: string[]): void {
+    if (stack.has(node)) {
+      const cycleStart = path.indexOf(node);
+      if (cycleStart !== -1) {
+        circles.push(path.slice(cycleStart));
+      }
+      return;
+    }
+    if (visited.has(node)) return;
+
+    visited.add(node);
+    stack.add(node);
+    path.push(node);
+
+    for (const dep of graph[node] ?? []) {
+      dfs(dep, [...path]);
+    }
+
+    stack.delete(node);
+  }
+
+  for (const node of Object.keys(graph)) {
+    dfs(node, []);
+  }
+
+  // Deduplicate cycles (same cycle can be found from different starting nodes)
+  const seen = new Set<string>();
+  return circles.filter((cycle) => {
+    const sorted = [...cycle].sort().join('|');
+    if (seen.has(sorted)) return false;
+    seen.add(sorted);
+    return true;
+  });
+}
+
 export class MadgeRunner extends BaseRunner {
   name = 'madge';
   category = 'code-quality' as const;
@@ -16,10 +58,17 @@ export class MadgeRunner extends BaseRunner {
     }
 
     try {
-      const hasTs = fileExists(projectPath, 'tsconfig.json');
-      const args = hasTs
-        ? ['--json', '--circular', '--ts-config', 'tsconfig.json', 'src']
-        : ['--json', '--circular', 'src'];
+      // Vite projects use tsconfig.app.json for source files;
+      // tsconfig.json often has "files": [] with project references only
+      const tsConfig = fileExists(projectPath, 'tsconfig.app.json')
+        ? 'tsconfig.app.json'
+        : fileExists(projectPath, 'tsconfig.json')
+          ? 'tsconfig.json'
+          : null;
+
+      const args = ['--json', '--extensions', 'ts,tsx,js,jsx'];
+      if (tsConfig) args.push('--ts-config', tsConfig);
+      args.push('src');
 
       const { stdout } = await execa('madge', args, {
         cwd: projectPath,
@@ -28,13 +77,16 @@ export class MadgeRunner extends BaseRunner {
         localDir: coreLocalDir,
       });
 
-      let circles: string[][];
+      let graph: DependencyGraph;
       try {
-        circles = JSON.parse(stdout || '[]');
+        graph = JSON.parse(stdout || '{}');
       } catch {
-        // madge printed an error instead of JSON — treat as no findings
-        circles = [];
+        graph = {};
       }
+
+      // Detect circular dependencies from the full graph
+      const circles = findCircularDeps(graph);
+
       const issues: Issue[] = circles.map((cycle) => ({
         severity: 'warning' as const,
         message: `Circular dependency: ${cycle.join(' → ')}`,
@@ -51,7 +103,7 @@ export class MadgeRunner extends BaseRunner {
         issues,
         toolsUsed: ['madge'],
         duration: elapsed(),
-        metadata: { circularCount: circles.length },
+        metadata: { circularCount: circles.length, graph },
       };
     } catch (err) {
       return {

@@ -39,6 +39,7 @@ export function App({ projectPath, checks, openWeb, enableAI, verbose }: AppProp
       'knip', 'depcheck', 'npm-check-updates', 'npm-audit',
       'madge', 'source-map-explorer', 'coverage', 'license-checker', 'jscpd', 'git',
       'eslint', 'typescript', 'todo-scanner', 'complexity', 'secrets',
+      'heavy-deps', 'react-perf', 'asset-size',
     ]).map((name) => ({ name, status: 'pending' as const }));
     setProgress(initial);
 

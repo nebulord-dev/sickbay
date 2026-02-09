@@ -1,5 +1,6 @@
 import React from 'react';
 import type { VitalsReport } from '@vitals/core';
+import { DependencyGraph } from './DependencyGraph.js';
 
 interface CodebaseStatsProps {
   report: VitalsReport;
@@ -41,6 +42,10 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
 
   const topFiles = (complexity.topFiles as Array<{ path: string; lines: number }> | undefined) ?? [];
   const maxLines = topFiles[0]?.lines ?? 1;
+
+  const madge = getMeta(report, 'madge');
+  const depGraph = madge.graph as Record<string, string[]> | undefined;
+  const hasGraph = depGraph && Object.keys(depGraph).length > 0;
 
   const hasComplexity = complexity.totalFiles != null;
   const hasGit = git.commitCount != null;
@@ -123,7 +128,28 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
         </section>
       )}
 
-      {!hasComplexity && !hasGit && !hasCoverage && (
+      {/* Module Dependency Graph */}
+      {hasGraph && (
+        <section>
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            Module Graph
+            <span className="text-xs font-normal text-gray-500 ml-2">
+              {Object.keys(depGraph).length} modules
+              {(madge.circularCount as number) > 0 && (
+                <span className="text-red-400 ml-1">
+                  · {madge.circularCount as number} circular
+                </span>
+              )}
+            </span>
+          </h2>
+          <DependencyGraph
+            graph={depGraph}
+            circularCount={madge.circularCount as number}
+          />
+        </section>
+      )}
+
+      {!hasComplexity && !hasGit && !hasCoverage && !hasGraph && (
         <div className="text-gray-500 text-sm">No codebase stats available yet.</div>
       )}
     </div>
