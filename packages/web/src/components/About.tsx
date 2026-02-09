@@ -44,6 +44,12 @@ const CHECK_DESCRIPTIONS: Record<string, string> = {
     "Identifies oversized files by line count and flags candidates for splitting.",
   secrets:
     "Detects hardcoded credentials, API keys, and tokens in source files.",
+  "heavy-deps":
+    "Identifies heavy or outdated dependencies that have lighter modern alternatives.",
+  "react-perf":
+    "Analyzes React components for performance anti-patterns like inline objects and index as key.",
+  "asset-size":
+    "Checks static asset sizes (images, fonts, SVGs) and flags oversized files.",
 };
 
 function ScoreRing({ score }: { score: number }) {
