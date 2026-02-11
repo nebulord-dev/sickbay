@@ -86,6 +86,14 @@ export function App({
         setProjectName(r.projectInfo.name);
         setReport(r);
 
+        // Auto-save to trend history
+        try {
+          const { saveEntry } = await import("../lib/history.js");
+          saveEntry(r);
+        } catch {
+          // Non-critical — silently ignore history save failures
+        }
+
         if (openWeb) {
           setPhase("opening-web");
           try {

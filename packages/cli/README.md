@@ -35,6 +35,15 @@ vitals --checks knip,npm-audit,depcheck
 # JSON output for CI
 vitals --json | jq '.overallScore'
 
+# Get just the summary
+vitals --json | jq '.summary'
+
+# List all check names and their scores
+vitals --json | jq '.checks[] | {name, score}'
+
+# Get only failing checks
+vitals --json | jq '.checks[] | select(.status == "fail")'
+
 # Open web dashboard
 vitals --web
 ```
