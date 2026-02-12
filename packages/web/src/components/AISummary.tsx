@@ -49,7 +49,7 @@ function FormattedText({ text }: { text: string }) {
           );
         }
         parts.push(
-          <strong key={key++} className="font-semibold text-white">
+          <strong key={key++} className="font-medium text-gray-100">
             {boldMatch[1]}
           </strong>,
         );
@@ -87,12 +87,22 @@ function FormattedText({ text }: { text: string }) {
 
 function SectionIcon({ title }: { title: string }) {
   const icons: Record<string, string> = {
-    "Health Assessment": "💚",
-    "Critical Issues": "🔴",
-    "What's Going Well": "✅",
-    "Next Steps": "🎯",
+    "Health Assessment": "●",
+    "Critical Issues": "●",
+    "What's Going Well": "●",
+    "Next Steps": "●",
   };
-  return <span className="text-base">{icons[title] || "📋"}</span>;
+  const colors: Record<string, string> = {
+    "Health Assessment": "text-green-500",
+    "Critical Issues": "text-red-500",
+    "What's Going Well": "text-green-400",
+    "Next Steps": "text-blue-400",
+  };
+  return (
+    <span className={`text-xs ${colors[title] || "text-gray-400"}`}>
+      {icons[title] || "●"}
+    </span>
+  );
 }
 
 export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
@@ -172,7 +182,7 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
                 <button
                   onClick={handleRegenerate}
                   disabled={regenerating}
-                  className="text-xs text-gray-500 hover:text-accent transition-colors disabled:opacity-50 px-2 py-1 rounded hover:bg-purple-500/10"
+                  className="text-xl text-gray-500 hover:text-accent transition-colors disabled:opacity-50 px-2 py-1 rounded hover:bg-purple-500/10"
                   title="Regenerate insights"
                 >
                   {regenerating ? "⠋" : "↻"}
@@ -180,7 +190,7 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
               )}
               <button
                 onClick={() => onToggle(false)}
-                className="text-gray-500 hover:text-white transition-colors text-lg w-6 h-6 flex items-center justify-center rounded hover:bg-purple-500/10"
+                className="text-gray-500 hover:text-white transition-colors text-xl w-6 h-6 flex items-center justify-center rounded hover:bg-purple-500/10"
               >
                 ✕
               </button>
@@ -188,33 +198,36 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {loading ? (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <span className="animate-pulse">⠋</span>
                 <span>Generating insights...</span>
               </div>
             ) : !summary ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="text-sm text-gray-400">
-                  AI insights are not available. This feature requires an Anthropic API key.
+                  AI insights are not available. This feature requires an
+                  Anthropic API key.
                 </div>
-                <div className="text-xs text-gray-500 bg-card p-3 rounded border border-border font-mono">
-                  <div className="mb-2 text-gray-400">To enable AI features:</div>
+                <div className="text-sm text-gray-500 bg-card p-2.5 rounded border border-border font-mono">
+                  <div className="mb-1.5 text-gray-400">
+                    To enable AI features:
+                  </div>
                   <div>export ANTHROPIC_API_KEY=sk-ant-...</div>
                   <div>vitals --path ~/project --web</div>
                 </div>
               </div>
             ) : (
               sections.map((section, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="flex items-center gap-2">
+                <div key={i} className="space-y-1.5">
+                  <div className="flex items-center gap-1.5">
                     <SectionIcon title={section.title} />
-                    <h3 className="text-sm font-semibold text-white">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wide">
                       {section.title}
                     </h3>
                   </div>
-                  <div className="text-sm text-gray-300 leading-relaxed pl-6 space-y-1">
+                  <div className="text-sm text-gray-300 leading-snug pl-4 space-y-0.5">
                     {section.content.split("\n").map((line, j) => (
                       <p key={j} className={line.trim() ? "" : "hidden"}>
                         <FormattedText text={line} />
@@ -222,7 +235,7 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
                     ))}
                   </div>
                   {i < sections.length - 1 && (
-                    <div className="border-t border-border/50 mt-3" />
+                    <div className="border-t border-border/50 mt-2" />
                   )}
                 </div>
               ))

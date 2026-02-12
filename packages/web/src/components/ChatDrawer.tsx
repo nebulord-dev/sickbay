@@ -157,7 +157,7 @@ export function ChatDrawer({ report }: ChatDrawerProps) {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-accent text-black rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center justify-center text-2xl z-50"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-accent text-black rounded shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center justify-center text-2xl z-50"
           title="AI Assistant"
         >
           VAI
@@ -171,21 +171,6 @@ export function ChatDrawer({ report }: ChatDrawerProps) {
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
               <span className="text-lg">
-                {/* <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="none"
-                    stroke="#a800ff"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2-2a2 2 0 0 1-2-2a2 2 0 0 1-2 2m0-12a2 2 0 0 1 2 2a2 2 0 0 1 2-2a2 2 0 0 1-2-2a2 2 0 0 1-2 2M9 18a6 6 0 0 1 6-6a6 6 0 0 1-6-6a6 6 0 0 1-6 6a6 6 0 0 1 6 6"
-                  />
-                </svg> */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="32"

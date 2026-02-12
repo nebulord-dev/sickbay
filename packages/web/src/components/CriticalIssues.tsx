@@ -45,7 +45,7 @@ export function CriticalIssues({ report, onCheckClick }: CriticalIssuesProps) {
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="w-full flex items-center gap-2 hover:opacity-80 transition-opacity"
       >
-        <span className="text-lg">🚨</span>
+        <span className="text-lg">❗</span>
         <h2 className="text-lg font-semibold text-red-400">Critical Issues</h2>
         <span className="text-sm text-gray-400">({totalCriticals} total)</span>
         <span
