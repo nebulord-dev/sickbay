@@ -152,11 +152,11 @@ Without the API key, the dashboard still works — you just won't see the AI ins
 
 ### Dependencies (3 checks)
 
-| Check               | What it does                                           |
-| ------------------- | ------------------------------------------------------ |
-| `knip`              | Unused files, dependencies, and exports                |
-| `depcheck`          | Missing dependencies (cross-refs with knip for unused) |
-| `npm-check-updates` | Outdated package versions                              |
+| Check      | What it does                                           |
+| ---------- | ------------------------------------------------------ |
+| `knip`     | Unused files, dependencies, and exports                |
+| `depcheck` | Missing dependencies (cross-refs with knip for unused) |
+| `outdated` | Outdated package versions (uses pnpm/npm/yarn)         |
 
 ### Security (3 checks)
 
@@ -178,11 +178,13 @@ Without the API key, the dashboard still works — you just won't see the AI ins
 | `todo-scanner` | TODO/FIXME comments (technical debt tracker)  |
 | `complexity`   | High cyclomatic complexity files              |
 
-### Performance (1 check)
+### Performance (3 checks)
 
-| Check                 | What it does                         |
-| --------------------- | ------------------------------------ |
-| `source-map-explorer` | Bundle size breakdown by source file |
+| Check        | What it does                                      |
+| ------------ | ------------------------------------------------- |
+| `heavy-deps` | Detects heavy dependencies (moment, lodash, etc.) |
+| `react-perf` | React performance anti-patterns                   |
+| `asset-size` | Oversized images, fonts, and static assets        |
 
 ### Git (1 check)
 
@@ -270,7 +272,7 @@ node packages/cli/dist/index.js --path ~/Desktop/vitals-test-app --json > packag
                   └──────┬──────┘
           ┌──────────────┼──────────────┐
           ▼              ▼              ▼
-     KnipRunner    AuditRunner    GitRunner ...  (15 total)
+     KnipRunner    AuditRunner    GitRunner ...  (17 total)
           │              │              │
           └──────────────┼──────────────┘
                          │ VitalsReport JSON
