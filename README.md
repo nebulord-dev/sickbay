@@ -83,6 +83,12 @@ All check tools (knip, depcheck, madge, etc.) are bundled as dependencies — no
 ```
 vitals [options]
 
+Commands:
+  fix [options]          Interactively fix issues found by vitals scan
+  trend [options]        Show score history and trends over time
+  stats [options]        Show a quick codebase overview and project summary
+  doctor [options]       Diagnose project setup and configuration issues
+
 Options:
   -p, --path <path>     Path to the project to analyze (default: current directory)
   -c, --checks <names>  Comma-separated list of checks to run (default: all)
@@ -117,6 +123,8 @@ export ANTHROPIC_API_KEY=sk-ant-...
 vitals --path ~/projects/my-app --web
 ```
 
+> **Note:** See [packages/cli/README.md](packages/cli/README.md) for detailed documentation on the `fix`, `trend`, `stats`, and `doctor` commands.
+
 ---
 
 ## AI Features
@@ -143,38 +151,43 @@ Without the API key, the dashboard still works — you just won't see the AI ins
 ## Available Checks
 
 ### Dependencies (3 checks)
-| Check | What it does |
-|-------|--------------|
-| `knip` | Unused files, dependencies, and exports |
-| `depcheck` | Missing dependencies (cross-refs with knip for unused) |
-| `npm-check-updates` | Outdated package versions |
+
+| Check               | What it does                                           |
+| ------------------- | ------------------------------------------------------ |
+| `knip`              | Unused files, dependencies, and exports                |
+| `depcheck`          | Missing dependencies (cross-refs with knip for unused) |
+| `npm-check-updates` | Outdated package versions                              |
 
 ### Security (3 checks)
-| Check | What it does |
-|-------|--------------|
-| `npm-audit` | Known vulnerability scan |
-| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.) |
-| `secrets` | Detects exposed API keys, tokens, and credentials |
+
+| Check             | What it does                                      |
+| ----------------- | ------------------------------------------------- |
+| `npm-audit`       | Known vulnerability scan                          |
+| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.)      |
+| `secrets`         | Detects exposed API keys, tokens, and credentials |
 
 ### Code Quality (7 checks)
-| Check | What it does |
-|-------|--------------|
-| `eslint` | Linting errors and warnings |
-| `typescript` | Type errors and issues |
-| `madge` | Circular module dependencies |
-| `jscpd` | Copy-paste duplication detection |
-| `coverage` | Test coverage % and test counts (vitest/jest) |
-| `todo-scanner` | TODO/FIXME comments (technical debt tracker) |
-| `complexity` | High cyclomatic complexity files |
+
+| Check          | What it does                                  |
+| -------------- | --------------------------------------------- |
+| `eslint`       | Linting errors and warnings                   |
+| `typescript`   | Type errors and issues                        |
+| `madge`        | Circular module dependencies                  |
+| `jscpd`        | Copy-paste duplication detection              |
+| `coverage`     | Test coverage % and test counts (vitest/jest) |
+| `todo-scanner` | TODO/FIXME comments (technical debt tracker)  |
+| `complexity`   | High cyclomatic complexity files              |
 
 ### Performance (1 check)
-| Check | What it does |
-|-------|--------------|
+
+| Check                 | What it does                         |
+| --------------------- | ------------------------------------ |
 | `source-map-explorer` | Bundle size breakdown by source file |
 
 ### Git (1 check)
-| Check | What it does |
-|-------|--------------|
+
+| Check | What it does                                 |
+| ----- | -------------------------------------------- |
 | `git` | Commit history, staleness, contributor count |
 
 ---
@@ -183,13 +196,13 @@ Without the API key, the dashboard still works — you just won't see the AI ins
 
 Each check produces a score from 0–100. The overall score is a weighted average:
 
-| Category | Weight |
-|----------|--------|
-| Security | 30% |
-| Dependencies | 25% |
-| Code Quality | 25% |
-| Performance | 15% |
-| Git | 5% |
+| Category     | Weight |
+| ------------ | ------ |
+| Security     | 30%    |
+| Dependencies | 25%    |
+| Code Quality | 25%    |
+| Performance  | 15%    |
+| Git          | 5%     |
 
 Score thresholds: **80+** = green, **60–79** = yellow, **< 60** = red.
 

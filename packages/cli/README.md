@@ -8,17 +8,26 @@ The terminal interface for Vitals. Built with [Ink](https://github.com/vadimdeme
 vitals [options]
 ```
 
+### Commands
+
+| Command            | Description                                        |
+| ------------------ | -------------------------------------------------- |
+| `fix [options]`    | Interactively fix issues found by vitals scan      |
+| `trend [options]`  | Show score history and trends over time            |
+| `stats [options]`  | Show a quick codebase overview and project summary |
+| `doctor [options]` | Diagnose project setup and configuration issues    |
+
 ### Flags
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `-p, --path <path>` | `process.cwd()` | Path to the project to analyze |
-| `-c, --checks <names>` | all | Comma-separated check IDs to run |
-| `--json` | false | Output raw JSON to stdout (no UI) |
-| `--web` | false | Open web dashboard after scan |
-| `--verbose` | false | Show tool output during checks |
-| `-V, --version` | | Print version |
-| `-h, --help` | | Show help |
+| Flag                   | Default         | Description                       |
+| ---------------------- | --------------- | --------------------------------- |
+| `-p, --path <path>`    | `process.cwd()` | Path to the project to analyze    |
+| `-c, --checks <names>` | all             | Comma-separated check IDs to run  |
+| `--json`               | false           | Output raw JSON to stdout (no UI) |
+| `--web`                | false           | Open web dashboard after scan     |
+| `--verbose`            | false           | Show tool output during checks    |
+| `-V, --version`        |                 | Print version                     |
+| `-h, --help`           |                 | Show help                         |
 
 ### Examples
 
@@ -46,6 +55,18 @@ vitals --json | jq '.checks[] | select(.status == "fail")'
 
 # Open web dashboard
 vitals --web
+
+# Interactively fix issues
+vitals fix
+
+# View score history and trends
+vitals trend
+
+# Get quick project stats
+vitals stats
+
+# Diagnose project setup
+vitals doctor
 ```
 
 ## Architecture
@@ -77,6 +98,7 @@ The `<App>` component cycles through phases:
 ### `--web` flag flow
 
 When `--web` is passed:
+
 1. Scan completes normally
 2. `serveWeb(report)` starts an HTTP server on port 3030 (or next free port)
 3. Server serves `packages/web/dist/` as static files
