@@ -3,14 +3,14 @@
 A zero-config health check CLI for React projects. Run `vitals` in any project to get an instant report on dependencies, security, code quality, performance, and git health — with a web dashboard for deep dives.
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  ██╗   ██╗██╗████████╗ █████╗ ██╗     ███████╗     │
-│  ██║   ██║██║╚══██╔══╝██╔══██╗██║     ██╔════╝     │
-│  ██║   ██║██║   ██║   ███████║██║     ███████╗     │
-│  ╚██╗ ██╔╝██║   ██║   ██╔══██║██║     ╚════██║     │
-│   ╚████╔╝ ██║   ██║   ██║  ██║███████╗███████║     │
-│    ╚═══╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝     │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│  ██╗   ██╗██╗████████╗ █████╗ ██╗     ███████╗  │
+│  ██║   ██║██║╚══██╔══╝██╔══██╗██║     ██╔════╝  │
+│  ██║   ██║██║   ██║   ███████║██║     ███████╗  │
+│  ╚██╗ ██╔╝██║   ██║   ██╔══██║██║     ╚════██║  │
+│   ╚████╔╝ ██║   ██║   ██║  ██║███████╗███████║  │
+│    ╚═══╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝  │
+└─────────────────────────────────────────────────┘
 ```
 
 ## Features
@@ -83,12 +83,6 @@ All check tools (knip, depcheck, madge, etc.) are bundled as dependencies — no
 ```
 vitals [options]
 
-Commands:
-  fix [options]          Interactively fix issues found by vitals scan
-  trend [options]        Show score history and trends over time
-  stats [options]        Show a quick codebase overview and project summary
-  doctor [options]       Diagnose project setup and configuration issues
-
 Options:
   -p, --path <path>     Path to the project to analyze (default: current directory)
   -c, --checks <names>  Comma-separated list of checks to run (default: all)
@@ -98,6 +92,12 @@ Options:
   --verbose             Show verbose output during checks
   -V, --version         Show version
   -h, --help            Show help
+
+Commands:
+  fix [options]          Interactively fix issues found by vitals scan
+  trend [options]        Show score history and trends over time
+  stats [options]        Show a quick codebase overview and project summary
+  doctor [options]       Diagnose project setup and configuration issues
 ```
 
 ### Examples
