@@ -15,7 +15,7 @@ A zero-config health check CLI for React projects. Run `vitals` in any project t
 
 ## Features
 
-- **15 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
+- **17 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
 - **Animated terminal UI** built with Ink (React for terminals)
 - **Web dashboard** served locally — opens automatically with `--web`
 - **AI-powered insights** with Claude — automated analysis and interactive chat (requires `ANTHROPIC_API_KEY`)
