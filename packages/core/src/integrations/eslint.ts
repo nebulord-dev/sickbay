@@ -2,7 +2,7 @@ import { execa } from 'execa';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { BaseRunner } from './base.js';
-import { timer } from '../utils/file-helpers.js';
+import { timer, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 interface ESLintMessage {
@@ -46,7 +46,7 @@ export class ESLintRunner extends BaseRunner {
         { cwd: projectPath, reject: false, preferLocal: true, timeout: 60_000 }
       );
 
-      const results: ESLintFileResult[] = JSON.parse(stdout || '[]');
+      const results = parseJsonOutput(stdout, '[]') as ESLintFileResult[];
 
       let totalErrors = 0;
       let totalWarnings = 0;

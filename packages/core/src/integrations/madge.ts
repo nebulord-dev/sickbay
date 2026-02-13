@@ -1,6 +1,6 @@
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer, isCommandAvailable, fileExists, coreLocalDir } from '../utils/file-helpers.js';
+import { timer, isCommandAvailable, fileExists, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 type DependencyGraph = Record<string, string[]>;
@@ -79,7 +79,7 @@ export class MadgeRunner extends BaseRunner {
 
       let graph: DependencyGraph;
       try {
-        graph = JSON.parse(stdout || '{}');
+        graph = parseJsonOutput(stdout, '{}') as DependencyGraph;
       } catch {
         graph = {};
       }

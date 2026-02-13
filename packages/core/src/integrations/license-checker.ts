@@ -1,6 +1,6 @@
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer, isCommandAvailable, coreLocalDir } from '../utils/file-helpers.js';
+import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 const PROBLEMATIC_LICENSES = ['GPL-2.0', 'GPL-3.0', 'AGPL-3.0', 'LGPL-2.1', 'LGPL-3.0', 'CC-BY-NC'];
@@ -30,7 +30,7 @@ export class LicenseCheckerRunner extends BaseRunner {
         localDir: coreLocalDir,
       });
 
-      const licenses: Record<string, LicenseInfo> = JSON.parse(stdout || '{}');
+      const licenses = parseJsonOutput(stdout, '{}') as Record<string, LicenseInfo>;
       const issues: Issue[] = [];
 
       for (const [pkg, info] of Object.entries(licenses)) {

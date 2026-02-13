@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer, readPackageJson } from '../utils/file-helpers.js';
+import { timer, readPackageJson, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 interface CoverageSummary {
@@ -86,7 +86,7 @@ export class CoverageRunner extends BaseRunner {
       // Parse test results from JSON stdout
       let testCounts = { total: 0, passed: 0, failed: 0, skipped: 0 };
       try {
-        const parsed: VitestJsonResult = JSON.parse(stdout);
+        const parsed = parseJsonOutput(stdout, '{}') as VitestJsonResult;
         testCounts = {
           total: parsed.numTotalTests ?? 0,
           passed: parsed.numPassedTests ?? 0,

@@ -41,7 +41,7 @@ export class OutdatedRunner extends BaseRunner {
         timeout: 60_000,
       });
 
-      const entries = parseOutdated(pm, stdout);
+      const entries = parseOutdated(stdout);
       const issues: Issue[] = entries.map((e) => {
         const isMajor = getMajor(e.current) < getMajor(e.latest);
         return {
@@ -82,7 +82,7 @@ export class OutdatedRunner extends BaseRunner {
   }
 }
 
-function parseOutdated(pm: Pm, stdout: string): OutdatedEntry[] {
+function parseOutdated(stdout: string): OutdatedEntry[] {
   if (!stdout.trim()) return [];
 
   try {
@@ -91,18 +91,21 @@ function parseOutdated(pm: Pm, stdout: string): OutdatedEntry[] {
     const raw: Record<string, { current: string; latest: string; type?: string; dependencyType?: string }> =
       JSON.parse(stdout);
 
-    return Object.entries(raw).map(([name, info]) => ({
-      name,
-      current: info.current,
-      latest: info.latest,
-      dev: (info.type ?? info.dependencyType ?? '') === 'devDependencies',
-    }));
+    return Object.entries(raw)
+      .filter(([_, info]) => info.current && info.latest) // Skip entries with missing version data
+      .map(([name, info]) => ({
+        name,
+        current: info.current,
+        latest: info.latest,
+        dev: (info.type ?? info.dependencyType ?? '') === 'devDependencies',
+      }));
   } catch {
     return [];
   }
 }
 
 function getMajor(version: string): number {
+  if (!version) return 0;
   // Strip leading non-numeric chars (^, ~, v, etc.) only from the start
   return parseInt(version.replace(/^[^0-9]*/, '').split('.')[0] ?? '0', 10);
 }

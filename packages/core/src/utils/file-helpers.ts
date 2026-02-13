@@ -32,3 +32,61 @@ export function timer(): () => number {
   const start = Date.now();
   return () => Date.now() - start;
 }
+
+/**
+ * Safely extract and parse JSON from mixed CLI output that may contain logs, ANSI codes, etc.
+ * Handles cases where tools output "[Vite] Proxy..." or other text before/after JSON.
+ */
+export function parseJsonOutput(stdout: string, fallback: string = '{}'): unknown {
+  if (!stdout || !stdout.trim()) {
+    return JSON.parse(fallback);
+  }
+
+  // Strip ANSI color codes
+  const cleaned = stdout.replace(/\u001b\[[0-9;]*m/g, '');
+
+  // Try parsing the whole output first (fast path)
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    // Fall through to line-by-line extraction
+  }
+
+  // Find lines that look like JSON (start with { or [)
+  const lines = cleaned.split('\n');
+  const jsonLines: string[] = [];
+  let foundStart = false;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Start collecting when we find JSON start
+    if (!foundStart && (trimmed.startsWith('{') || trimmed.startsWith('['))) {
+      foundStart = true;
+    }
+
+    if (foundStart) {
+      jsonLines.push(line);
+
+      // Try parsing accumulated lines
+      const candidate = jsonLines.join('\n');
+      try {
+        return JSON.parse(candidate);
+      } catch {
+        // Not complete yet, continue accumulating
+      }
+    }
+  }
+
+  // If we accumulated lines but couldn't parse, try the original fallback
+  if (jsonLines.length > 0) {
+    try {
+      return JSON.parse(jsonLines.join('\n'));
+    } catch {
+      // Fall through to final fallback
+    }
+  }
+
+  // Last resort: return fallback
+  return JSON.parse(fallback);
+}

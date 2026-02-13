@@ -1,6 +1,6 @@
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer, isCommandAvailable, coreLocalDir } from '../utils/file-helpers.js';
+import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 interface KnipItem { name: string; }
@@ -38,7 +38,7 @@ export class KnipRunner extends BaseRunner {
         localDir: coreLocalDir,
       });
 
-      const data: KnipOutput = JSON.parse(stdout || '{}');
+      const data = parseJsonOutput(stdout, '{}') as KnipOutput;
       const issues: Issue[] = [];
 
       // Unused files

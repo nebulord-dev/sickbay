@@ -1,6 +1,6 @@
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer } from '../utils/file-helpers.js';
+import { timer, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 interface AuditVulnerability {
@@ -36,7 +36,7 @@ export class NpmAuditRunner extends BaseRunner {
         reject: false,
       });
 
-      const data: AuditOutput = JSON.parse(stdout || '{}');
+      const data = parseJsonOutput(stdout, '{}') as AuditOutput;
       const issues: Issue[] = [];
       const meta = data.metadata?.vulnerabilities;
 

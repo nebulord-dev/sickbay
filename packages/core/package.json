@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "execa": "^9.5.0",
+    "globby": "^14.0.2",
     "knip": "^5.83.1",
     "depcheck": "^1.4.7",
     "madge": "^8.0.0",

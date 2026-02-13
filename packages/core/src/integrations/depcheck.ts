@@ -1,6 +1,6 @@
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer, isCommandAvailable, coreLocalDir } from '../utils/file-helpers.js';
+import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 interface DepcheckOutput {
@@ -29,13 +29,18 @@ export class DepcheckRunner extends BaseRunner {
         localDir: coreLocalDir,
       });
 
-      const data: DepcheckOutput = JSON.parse(stdout || '{}');
+      const data = parseJsonOutput(stdout, '{}') as DepcheckOutput;
       const issues: Issue[] = [];
 
       // Skip reporting unused dependencies - Knip handles this more comprehensively
       // We focus on missing dependencies, which Knip doesn't detect
 
       for (const [dep, files] of Object.entries(data.missing ?? {})) {
+        // Skip virtual modules (Vite, Rollup, etc.) and built-in Node modules
+        if (dep.startsWith('virtual:') || dep.startsWith('node:')) {
+          continue;
+        }
+
         issues.push({
           severity: 'critical',
           message: `Missing dependency: ${dep} (used in ${files.length} file${files.length > 1 ? 's' : ''})`,

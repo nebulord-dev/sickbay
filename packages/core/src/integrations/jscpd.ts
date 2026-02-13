@@ -1,6 +1,6 @@
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer, isCommandAvailable, coreLocalDir } from '../utils/file-helpers.js';
+import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 interface JscpdStats {
@@ -38,7 +38,7 @@ export class JscpdRunner extends BaseRunner {
       // jscpd writes to file, try parsing stdout fallback
       let data: JscpdOutput = {};
       try {
-        data = JSON.parse(stdout || '{}');
+        data = parseJsonOutput(stdout, '{}') as JscpdOutput;
       } catch {
         // output may be written to file only
       }

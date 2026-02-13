@@ -1,6 +1,6 @@
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer, isCommandAvailable, coreLocalDir } from '../utils/file-helpers.js';
+import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 export class NpmCheckUpdatesRunner extends BaseRunner {
@@ -24,7 +24,7 @@ export class NpmCheckUpdatesRunner extends BaseRunner {
       });
 
       // --jsonUpgraded returns { pkg: newVersion }
-      const upgrades: Record<string, string> = JSON.parse(stdout || '{}');
+      const upgrades = parseJsonOutput(stdout, '{}') as Record<string, string>;
 
       // Read current versions from package.json to detect major bumps
       let currentVersions: Record<string, string> = {};
