@@ -48,6 +48,7 @@ export function TrendApp({ projectPath, last, jsonOutput }: TrendAppProps) {
     }
 
     setTimeout(() => exit(), 100);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!loaded) return null;

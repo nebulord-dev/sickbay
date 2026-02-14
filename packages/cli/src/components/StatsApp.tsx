@@ -23,7 +23,15 @@ const PM_LABELS: Record<string, string> = {
   yarn: "Yarn",
 };
 
-function StatRow({ label, value, dimValue }: { label: string; value: string; dimValue?: string }) {
+function StatRow({
+  label,
+  value,
+  dimValue,
+}: {
+  label: string;
+  value: string;
+  dimValue?: string;
+}) {
   return (
     <Box>
       <Text dimColor>{label.padEnd(18)}</Text>
@@ -52,7 +60,7 @@ function ToolBadges({ project }: { project: ProjectStats["project"] }) {
       <Text dimColor>{"Tooling".padEnd(18)}</Text>
       {badges.map((b, i) => (
         <React.Fragment key={b.label}>
-          {i > 0 && <Text dimColor>  </Text>}
+          {i > 0 && <Text dimColor> </Text>}
           <Text color={b.active ? "green" : "red"}>
             {b.active ? "✓" : "✗"} {b.label}
           </Text>
@@ -85,6 +93,7 @@ export function StatsApp({ projectPath, jsonOutput }: StatsAppProps) {
         setLoading(false);
         setTimeout(() => exit(), 100);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -94,8 +103,8 @@ export function StatsApp({ projectPath, jsonOutput }: StatsAppProps) {
         <Text>
           <Text color="green">
             <Spinner type="dots" />
-          </Text>
-          {" "}Scanning project...
+          </Text>{" "}
+          Scanning project...
         </Text>
       </Box>
     );
@@ -112,16 +121,31 @@ export function StatsApp({ projectPath, jsonOutput }: StatsAppProps) {
 
   if (jsonOutput || !stats) return null;
 
-  const { project, files, lines, components, dependencies, git, testFiles, sourceSize } = stats;
+  const {
+    project,
+    files,
+    lines,
+    components,
+    dependencies,
+    git,
+    testFiles,
+    sourceSize,
+  } = stats;
 
-  const frameworkLabel = FRAMEWORK_LABELS[project.framework] ?? project.framework;
+  const frameworkLabel =
+    FRAMEWORK_LABELS[project.framework] ?? project.framework;
   const techStack = [frameworkLabel];
   if (project.hasTypeScript) {
-    const tsVersion = { ...project.dependencies, ...project.devDependencies }["typescript"];
-    techStack.push(`TypeScript${tsVersion ? ` ${tsVersion.replace("^", "")}` : ""}`);
+    const tsVersion = { ...project.dependencies, ...project.devDependencies }[
+      "typescript"
+    ];
+    techStack.push(
+      `TypeScript${tsVersion ? ` ${tsVersion.replace("^", "")}` : ""}`,
+    );
   }
 
-  const reactVersion = project.dependencies["react"] ?? project.devDependencies["react"];
+  const reactVersion =
+    project.dependencies["react"] ?? project.devDependencies["react"];
 
   return (
     <Box flexDirection="column" padding={1}>
@@ -133,7 +157,11 @@ export function StatsApp({ projectPath, jsonOutput }: StatsAppProps) {
         <StatRow
           label="Framework"
           value={frameworkLabel}
-          dimValue={reactVersion ? `(React ${reactVersion.replace("^", "")})` : undefined}
+          dimValue={
+            reactVersion
+              ? `(React ${reactVersion.replace("^", "")})`
+              : undefined
+          }
         />
         <StatRow
           label="Package Manager"
@@ -157,10 +185,7 @@ export function StatsApp({ projectPath, jsonOutput }: StatsAppProps) {
           value={lines.total.toLocaleString()}
           dimValue={`(avg ${lines.avgPerFile}/file)`}
         />
-        <StatRow
-          label="Source Size"
-          value={sourceSize}
-        />
+        <StatRow label="Source Size" value={sourceSize} />
       </Box>
 
       {components.total > 0 && (

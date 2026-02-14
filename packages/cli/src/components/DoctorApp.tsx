@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Text, useApp } from "ink";
 import Spinner from "ink-spinner";
 import { Header } from "./Header.js";
-import {
-  runDiagnostics,
-  type DiagnosticResult,
-} from "../commands/doctor.js";
+import { runDiagnostics, type DiagnosticResult } from "../commands/doctor.js";
 
 interface DoctorAppProps {
   projectPath: string;
@@ -48,6 +45,7 @@ export function DoctorApp({ projectPath, jsonOutput }: DoctorAppProps) {
         setRunning(false);
         setTimeout(() => exit(), 100);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (running) {
@@ -57,8 +55,8 @@ export function DoctorApp({ projectPath, jsonOutput }: DoctorAppProps) {
         <Text>
           <Text color="green">
             <Spinner type="dots" />
-          </Text>
-          {" "}Running project diagnostics...
+          </Text>{" "}
+          Running project diagnostics...
         </Text>
       </Box>
     );
@@ -105,9 +103,9 @@ export function DoctorApp({ projectPath, jsonOutput }: DoctorAppProps) {
       </Box>
       <Box marginTop={1}>
         <Text color="green"> ✓ {passed} passed</Text>
-        <Text color="yellow">  ⚠ {warned} warnings</Text>
-        <Text color="red">  ✗ {failed} failed</Text>
-        <Text dimColor>  ({results.length} checks)</Text>
+        <Text color="yellow"> ⚠ {warned} warnings</Text>
+        <Text color="red"> ✗ {failed} failed</Text>
+        <Text dimColor> ({results.length} checks)</Text>
       </Box>
     </Box>
   );

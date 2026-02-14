@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Box, Text, useApp, useInput } from "ink";
 import Spinner from "ink-spinner";
 import { runVitals } from "@vitals/core";
-import type { VitalsReport } from "@vitals/core";
 import { Header } from "./Header.js";
 import { ProgressList } from "./ProgressList.js";
 import {
@@ -42,7 +41,6 @@ export function FixApp({
 }: FixAppProps) {
   const { exit } = useApp();
   const [phase, setPhase] = useState<Phase>("scanning");
-  const [report, setReport] = useState<VitalsReport | null>(null);
   const [fixableIssues, setFixableIssues] = useState<FixableIssue[]>([]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [cursor, setCursor] = useState(0);
@@ -56,10 +54,24 @@ export function FixApp({
   useEffect(() => {
     const initial: ProgressItem[] = (
       checks ?? [
-        "knip", "depcheck", "npm-check-updates", "npm-audit", "madge",
-        "source-map-explorer", "coverage", "license-checker", "jscpd",
-        "git", "eslint", "typescript", "todo-scanner", "complexity",
-        "secrets", "heavy-deps", "react-perf", "asset-size",
+        "knip",
+        "depcheck",
+        "npm-check-updates",
+        "npm-audit",
+        "madge",
+        "source-map-explorer",
+        "coverage",
+        "license-checker",
+        "jscpd",
+        "git",
+        "eslint",
+        "typescript",
+        "todo-scanner",
+        "complexity",
+        "secrets",
+        "heavy-deps",
+        "react-perf",
+        "asset-size",
       ]
     ).map((name) => ({ name, status: "pending" as const }));
     setProgress(initial);
@@ -83,7 +95,6 @@ export function FixApp({
     })
       .then((r) => {
         setProjectName(r.projectInfo.name);
-        setReport(r);
         const fixable = collectFixableIssues(r);
         setFixableIssues(fixable);
 
@@ -101,6 +112,7 @@ export function FixApp({
         setPhase("error");
         setTimeout(() => exit(), 100);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Phase 3: Execute fixes
@@ -135,11 +147,15 @@ export function FixApp({
       setPhase("done");
       setTimeout(() => exit(), 100);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   // Handle keyboard input during selection phase
   const handleInput = useCallback(
-    (input: string, key: { upArrow: boolean; downArrow: boolean; return: boolean }) => {
+    (
+      input: string,
+      key: { upArrow: boolean; downArrow: boolean; return: boolean },
+    ) => {
       if (phase !== "selecting") return;
 
       if (key.upArrow) {
@@ -166,7 +182,8 @@ export function FixApp({
         }
       }
     },
-    [phase, cursor, fixableIssues.length, selected],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [phase, cursor, selected],
   );
 
   useInput(handleInput);
@@ -222,7 +239,9 @@ export function FixApp({
           </Box>
           {dryRun && (
             <Box marginLeft={2}>
-              <Text color="yellow">⚠ Dry run mode — no changes will be made</Text>
+              <Text color="yellow">
+                ⚠ Dry run mode — no changes will be made
+              </Text>
             </Box>
           )}
         </Box>
@@ -274,9 +293,7 @@ export function FixApp({
             </Box>
           ) : (
             <>
-              <Text bold>
-                {dryRun ? "Dry Run Results" : "Fix Results"}
-              </Text>
+              <Text bold>{dryRun ? "Dry Run Results" : "Fix Results"}</Text>
               <Box flexDirection="column" marginTop={1} marginLeft={2}>
                 {results.map((r, i) => (
                   <Box key={i}>
@@ -284,9 +301,7 @@ export function FixApp({
                       {r.success ? "✓" : "✗"}{" "}
                     </Text>
                     <Text>{r.fixable.issue.fix!.description}</Text>
-                    {r.duration > 0 && (
-                      <Text dimColor> ({r.duration}ms)</Text>
-                    )}
+                    {r.duration > 0 && <Text dimColor> ({r.duration}ms)</Text>}
                   </Box>
                 ))}
               </Box>

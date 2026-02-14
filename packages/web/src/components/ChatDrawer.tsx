@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { VitalsReport } from "@vitals/core";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -18,7 +18,16 @@ function MarkdownMessage({ content }: { content: string }) {
     <ReactMarkdown
       className="prose prose-invert prose-sm max-w-none"
       components={{
-        code({ node, inline, className, children, ...props }: any) {
+        code({
+          inline,
+          className,
+          children,
+          ...props
+        }: {
+          inline?: boolean;
+          className?: string;
+          children?: React.ReactNode;
+        }) {
           const match = /language-(\w+)/.exec(className || "");
           return !inline && match ? (
             <SyntaxHighlighter
@@ -85,7 +94,7 @@ function MarkdownMessage({ content }: { content: string }) {
   );
 }
 
-export function ChatDrawer({ report }: ChatDrawerProps) {
+export function ChatDrawer({ report: _report }: ChatDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);

@@ -7,7 +7,6 @@ import { CRTOverlay } from "./components/CRTOverlay.js";
 export function App() {
   const [report, setReport] = useState<VitalsReport | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showCRT, setShowCRT] = useState(false);
 
   useEffect(() => {
@@ -47,17 +46,6 @@ export function App() {
           <div className="text-sm text-gray-500 animate-pulse">
             Loading report...
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen text-red-400">
-        <div className="text-center">
-          <div className="text-xl mb-2">Error loading report</div>
-          <div className="text-sm text-gray-500">{error}</div>
         </div>
       </div>
     );

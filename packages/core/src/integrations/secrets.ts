@@ -23,8 +23,8 @@ const PATTERNS: SecretPattern[] = [
   { name: 'Stripe Key', regex: /[rs]k_live_[0-9a-zA-Z]{24}/ },
   { name: 'Private Key', regex: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/ },
   { name: 'Hardcoded password', regex: /(?:^|[^a-z])(?:password|passwd|pwd)\s*[=:]\s*["'][^"']{8,}["']/i },
-  { name: 'Hardcoded API key', regex: /(?:^|[^a-z])(?:api_?key|apikey)\s*[=:]\s*["'][A-Za-z0-9+/=_\-]{16,}["']/i },
-  { name: 'Hardcoded secret', regex: /(?:^|[^a-z])(?:secret)\s*[=:]\s*["'][A-Za-z0-9+/=_\-]{16,}["']/i },
+  { name: 'Hardcoded API key', regex: /(?:^|[^a-z])(?:api_?key|apikey)\s*[=:]\s*["'][A-Za-z0-9+/=_-]{16,}["']/i },
+  { name: 'Hardcoded secret', regex: /(?:^|[^a-z])(?:secret)\s*[=:]\s*["'][A-Za-z0-9+/=_-]{16,}["']/i },
 ];
 
 interface Finding {

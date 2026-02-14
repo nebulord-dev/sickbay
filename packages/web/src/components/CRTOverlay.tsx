@@ -1,24 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 interface CRTOverlayProps {
   onClose: () => void;
 }
+const bootSequence = ["COMPLETING VITALS PRESENTATION..."];
 
 export function CRTOverlay({ onClose }: CRTOverlayProps) {
   const [phase, setPhase] = useState<"boot" | "title" | "complete">("boot");
   const [bootText, setBootText] = useState("");
   const [titleText, setTitleText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
-
-  const bootSequence = [
-    // "SYSTEM INITIALIZING...",
-    // "LOADING HEALTH DIAGNOSTICS...",
-    // "ANALYZING CODEBASE VITALS...",
-    // "DIAGNOSTICS COMPLETE.",
-    // "",
-    // "PRESENTING:",
-    "COMPLETING VITALS PRESENTATION...",
-  ];
 
   // Boot sequence typing
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import type { VitalsReport } from "@vitals/core";
 
 interface AISummaryProps {
@@ -110,7 +110,7 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
 
-  const fetchSummary = async () => {
+  const fetchSummary = useCallback(async () => {
     const cacheKey = `vitals-ai-summary-${report.timestamp}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached && !regenerating) {
@@ -134,11 +134,11 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
       setLoading(false);
       setRegenerating(false);
     }
-  };
+  }, [report.timestamp, regenerating]);
 
   useEffect(() => {
     fetchSummary();
-  }, [report.timestamp]);
+  }, [fetchSummary]);
 
   const handleRegenerate = () => {
     setRegenerating(true);

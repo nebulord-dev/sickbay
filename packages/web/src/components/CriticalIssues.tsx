@@ -7,6 +7,19 @@ interface CriticalIssuesProps {
 }
 
 export function CriticalIssues({ report, onCheckClick }: CriticalIssuesProps) {
+  // Collapse state with localStorage persistence - must be at top level
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const stored = localStorage.getItem("vitals-critical-issues-collapsed");
+    return stored !== "false";
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "vitals-critical-issues-collapsed",
+      String(isCollapsed),
+    );
+  }, [isCollapsed]);
+
   // Aggregate all critical issues by check
   const checksWithCriticals = report.checks
     .map((check) => ({
@@ -25,19 +38,6 @@ export function CriticalIssues({ report, onCheckClick }: CriticalIssuesProps) {
     (sum, check) => sum + check.criticalIssues.length,
     0,
   );
-
-  // Collapse state with localStorage persistence
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    const stored = localStorage.getItem("vitals-critical-issues-collapsed");
-    return stored !== "false";
-  });
-
-  useEffect(() => {
-    localStorage.setItem(
-      "vitals-critical-issues-collapsed",
-      String(isCollapsed),
-    );
-  }, [isCollapsed]);
 
   return (
     <div className="bg-red-900/10 border border-red-800/30 rounded-lg p-4 mb-6">

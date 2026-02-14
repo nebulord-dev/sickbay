@@ -131,6 +131,7 @@ export function App({
         setPhase("error");
         setTimeout(() => exit(err), 100);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
