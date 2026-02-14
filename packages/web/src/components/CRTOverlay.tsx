@@ -12,11 +12,12 @@ export function CRTOverlay({ onClose }: CRTOverlayProps) {
 
   const bootSequence = [
     // "SYSTEM INITIALIZING...",
-    "LOADING HEALTH DIAGNOSTICS...",
-    "ANALYZING CODEBASE VITALS...",
+    // "LOADING HEALTH DIAGNOSTICS...",
+    // "ANALYZING CODEBASE VITALS...",
     // "DIAGNOSTICS COMPLETE.",
     // "",
     // "PRESENTING:",
+    "COMPLETING VITALS PRESENTATION...",
   ];
 
   // Boot sequence typing
@@ -29,7 +30,7 @@ export function CRTOverlay({ onClose }: CRTOverlayProps) {
 
     const typeNextChar = () => {
       if (currentLine >= bootSequence.length) {
-        setTimeout(() => setPhase("title"), 200);
+        setTimeout(() => setPhase("title"), 500);
         return;
       }
 
@@ -45,7 +46,7 @@ export function CRTOverlay({ onClose }: CRTOverlayProps) {
         setBootText(text);
         currentLine++;
         currentChar = 0;
-        setTimeout(typeNextChar, 200);
+        setTimeout(typeNextChar, 400);
       }
     };
 
@@ -165,10 +166,7 @@ export function CRTOverlay({ onClose }: CRTOverlayProps) {
                 `,
                 fontFamily: '"Jetbrains Mono", Courier, monospace',
                 letterSpacing: "0.15em",
-                animation:
-                  phase === "title"
-                    ? "title-flicker"
-                    : "title-glow ",
+                animation: phase === "title" ? "title-flicker" : "title-glow ",
               }}
             >
               {titleText}
@@ -199,7 +197,7 @@ export function CRTOverlay({ onClose }: CRTOverlayProps) {
                   animation: "fade-in 1s ease-in",
                 }}
               >
-                [ PRESS ANY KEY TO CONTINUE ]
+                [ End of transmission ]
               </div>
             )}
           </div>

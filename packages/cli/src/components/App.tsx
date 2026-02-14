@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, Text, useApp } from "ink";
 import Spinner from "ink-spinner";
 import Gradient from "ink-gradient";
@@ -39,8 +39,12 @@ export function App({
   const [progress, setProgress] = useState<ProgressItem[]>([]);
   const [webUrl, setWebUrl] = useState<string | null>(null);
   const [projectName, setProjectName] = useState<string | undefined>();
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    // Prevent double execution (React 18+ can run effects twice in dev/certain conditions)
+    if (hasRun.current) return;
+    hasRun.current = true;
     const initial: ProgressItem[] = (
       checks ?? [
         "knip",

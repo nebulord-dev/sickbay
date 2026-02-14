@@ -161,7 +161,7 @@ export function About({ report }: AboutProps) {
               if (checks.length === 0) return null;
               return (
                 <div key={cat}>
-                  <div className="text-xs text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <div className="text-xs text-gray-00 uppercase tracking-wider mb-2 flex items-center gap-2">
                     <span
                       className={`inline-block w-2 h-2 rounded-full ${CATEGORY_COLORS[cat] ?? "bg-gray-400"}`}
                     />
@@ -178,7 +178,7 @@ export function About({ report }: AboutProps) {
                             <span className="font-mono text-sm font-semibold">
                               {check.name}
                             </span>
-                            <span className="text-xs text-gray-600 font-mono">
+                            <span className="text-sm text-[cadetblue] font-mono">
                               {check.toolsUsed.join(", ")}
                             </span>
                           </div>
