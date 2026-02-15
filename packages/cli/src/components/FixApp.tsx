@@ -217,7 +217,7 @@ export function FixApp({
           </Text>
           <Box flexDirection="column" marginTop={1} marginLeft={2}>
             {fixableIssues.map((fix, i) => (
-              <Box key={i}>
+              <Box key={`${fix.checkId}-${fix.issue.message}`}>
                 <Text color={i === cursor ? "cyan" : undefined}>
                   {i === cursor ? "❯ " : "  "}
                 </Text>

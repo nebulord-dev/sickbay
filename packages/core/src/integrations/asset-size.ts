@@ -4,6 +4,12 @@ import type { CheckResult, Issue } from '../types.js';
 import { BaseRunner } from './base.js';
 import { timer, fileExists } from '../utils/file-helpers.js';
 
+/**
+ * AssetSizeRunner scans common asset directories for images, SVGs, and fonts, and checks their file sizes against defined thresholds.
+ * It reports individual files that exceed size limits, as well as the total asset size for the project.
+ * The runner provides actionable feedback on optimizing large assets to improve web performance.
+ */
+
 const ASSET_DIRS = ['public', 'src/assets', 'static', 'assets'];
 
 const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.ico']);

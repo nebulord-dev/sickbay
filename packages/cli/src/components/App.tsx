@@ -49,7 +49,7 @@ export function App({
       checks ?? [
         "knip",
         "depcheck",
-        "npm-check-updates",
+        "outdated-updates",
         "npm-audit",
         "madge",
         "source-map-explorer",

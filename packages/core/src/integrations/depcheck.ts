@@ -3,6 +3,12 @@ import { BaseRunner } from './base.js';
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * DepcheckRunner uses the depcheck tool to analyze the project's dependencies, identifying any missing dependencies that are used in the code but not declared in package.json.
+ * It focuses on detecting missing dependencies, which can lead to runtime errors, while skipping unused dependency reporting since Knip provides a more comprehensive analysis for that.
+ * The runner provides actionable feedback on installing missing dependencies to improve project stability and prevent runtime issues.
+ */
+
 interface DepcheckOutput {
   dependencies?: string[];
   devDependencies?: string[];

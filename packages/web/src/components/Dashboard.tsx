@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import type { VitalsReport } from "@vitals/core";
 
 function getScoreColor(score: number) {
@@ -24,15 +24,24 @@ import { IssuesList } from "./IssuesList.js";
 import { DependencyList } from "./DependencyList.js";
 import { CodebaseStats } from "./CodebaseStats.js";
 import { About } from "./About.js";
+import { FutureEnhancements } from "./FutureEnhancements.js";
 import { AISummary } from "./AISummary.js";
-import { ChatDrawer } from "./ChatDrawer.js";
 import { CriticalIssues } from "./CriticalIssues.js";
+
+// Lazy load heavy components
+const ChatDrawer = lazy(() => import("./ChatDrawer.js").then((m) => ({ default: m.ChatDrawer })));
 
 interface DashboardProps {
   report: VitalsReport;
 }
 
-type View = "overview" | "issues" | "dependencies" | "codebase" | "about";
+type View =
+  | "overview"
+  | "issues"
+  | "dependencies"
+  | "codebase"
+  | "about"
+  | "future-enhancements";
 
 export function Dashboard({ report }: DashboardProps) {
   const [view, setView] = useState<View>("overview");
@@ -268,7 +277,11 @@ export function Dashboard({ report }: DashboardProps) {
 
           {view === "codebase" && <CodebaseStats report={report} />}
 
-          {view === "about" && <About report={report} />}
+          {view === "about" && (
+            <About report={report} onNavigate={setView} />
+          )}
+
+          {view === "future-enhancements" && <FutureEnhancements />}
         </div>
       </main>
 
@@ -280,7 +293,9 @@ export function Dashboard({ report }: DashboardProps) {
       />
 
       {/* AI Chat Drawer */}
-      <ChatDrawer report={report} />
+      <Suspense fallback={null}>
+        <ChatDrawer report={report} />
+      </Suspense>
     </div>
   );
 }

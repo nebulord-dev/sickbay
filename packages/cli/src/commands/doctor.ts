@@ -2,6 +2,10 @@ import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { detectProject } from "@vitals/core";
 
+/**
+ * This module defines a set of diagnostic checks that can be run against a JavaScript/TypeScript project to identify common issues and best practice violations. Each check returns a DiagnosticResult indicating whether the check passed, failed, or has warnings, along with messages and potential fixes. The runDiagnostics function executes all checks and aggregates their results for reporting.
+ */
+
 export interface DiagnosticResult {
   id: string;
   label: string;
@@ -122,9 +126,7 @@ async function checkNodeVersion(
   };
 }
 
-async function checkNpmScripts(
-  projectPath: string,
-): Promise<DiagnosticResult> {
+async function checkNpmScripts(projectPath: string): Promise<DiagnosticResult> {
   const pkg = JSON.parse(
     readFileSync(join(projectPath, "package.json"), "utf-8"),
   );
@@ -136,9 +138,7 @@ async function checkNpmScripts(
       id: "npm-scripts",
       label: "Essential npm scripts",
       status:
-        missing.includes("build") || missing.includes("test")
-          ? "fail"
-          : "warn",
+        missing.includes("build") || missing.includes("test") ? "fail" : "warn",
       message: `Missing scripts: ${missing.join(", ")}`,
       fixDescription: `Add ${missing.join(", ")} scripts to package.json`,
     };
@@ -268,9 +268,7 @@ async function checkTsconfig(projectPath: string): Promise<DiagnosticResult> {
   };
 }
 
-async function checkEnvExample(
-  projectPath: string,
-): Promise<DiagnosticResult> {
+async function checkEnvExample(projectPath: string): Promise<DiagnosticResult> {
   const hasEnv = existsSync(join(projectPath, ".env"));
   const hasExample =
     existsSync(join(projectPath, ".env.example")) ||

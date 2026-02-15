@@ -4,6 +4,12 @@ import { homedir } from "os";
 import type { VitalsReport } from "@vitals/core";
 import { projectHash } from "./project-hash.js";
 
+/**
+ * This module manages the historical trend data of project health scores.
+ * It provides functions to save new entries to the history, load existing history, and detect regressions in scores.
+ * The history is stored as JSON files in a directory under the user's home folder.
+ */
+
 const HISTORY_DIR = join(homedir(), ".vitals", "history");
 
 export interface TrendEntry {

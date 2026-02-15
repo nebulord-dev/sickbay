@@ -3,6 +3,13 @@ import { BaseRunner } from './base.js';
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * KnipRunner uses the Knip tool to analyze the project's source code for unused files, dependencies, devDependencies, exports, and types.
+ * It runs Knip with a JSON reporter, parsing the output to identify various types of unused code and dependencies.
+ * The runner reports issues with actionable feedback, including commands to remove unused files and dependencies, helping to clean up the project and reduce bloat.
+ * It calculates an overall score based on the number of issues found, providing insights into the level of unused code in the project.
+ */
+
 interface KnipItem { name: string; }
 
 interface KnipFileIssue {

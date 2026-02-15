@@ -7,4 +7,19 @@ export default defineConfig({
     port: 3030,
     open: true,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate React and vendor code
+          react: ['react', 'react-dom'],
+          // Heavy visualization libs (only loaded when viewing dependency graph)
+          'graph-viz': ['@xyflow/react', 'dagre'],
+          // Heavy markdown/syntax libs (only loaded when using AI chat)
+          markdown: ['react-markdown', 'react-syntax-highlighter'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
 });

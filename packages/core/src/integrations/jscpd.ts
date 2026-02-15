@@ -1,7 +1,18 @@
-import { execa } from 'execa';
-import { BaseRunner } from './base.js';
-import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
-import type { CheckResult, Issue } from '../types.js';
+import { execa } from "execa";
+import { BaseRunner } from "./base.js";
+import {
+  timer,
+  isCommandAvailable,
+  coreLocalDir,
+  parseJsonOutput,
+} from "../utils/file-helpers.js";
+import type { CheckResult, Issue } from "../types.js";
+
+/**
+ * Jscpd is a code duplication detection tool that identifies duplicate code blocks in a project.
+ * The statistics object contains a total field with the percentage of duplicated code and the number of clones detected.
+ * This information is used to assess the level of code duplication in the project and provide feedback on potential refactoring opportunities.
+ */
 
 interface JscpdStats {
   total: { percentage: number; clones: number };
@@ -17,28 +28,40 @@ interface JscpdOutput {
 }
 
 export class JscpdRunner extends BaseRunner {
-  name = 'jscpd';
-  category = 'code-quality' as const;
+  name = "jscpd";
+  category = "code-quality" as const;
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
-    const available = await isCommandAvailable('jscpd');
+    const available = await isCommandAvailable("jscpd");
 
     if (!available) {
-      return this.skipped('jscpd not installed — run: npm i -g jscpd');
+      return this.skipped("jscpd not installed — run: npm i -g jscpd");
     }
 
     try {
       const { stdout } = await execa(
-        'jscpd',
-        ['src', '--reporters', 'json', '--output', '/tmp/jscpd-vitals', '--silent'],
-        { cwd: projectPath, reject: false, preferLocal: true, localDir: coreLocalDir }
+        "jscpd",
+        [
+          "src",
+          "--reporters",
+          "json",
+          "--output",
+          "/tmp/jscpd-vitals",
+          "--silent",
+        ],
+        {
+          cwd: projectPath,
+          reject: false,
+          preferLocal: true,
+          localDir: coreLocalDir,
+        },
       );
 
       // jscpd writes to file, try parsing stdout fallback
       let data: JscpdOutput = {};
       try {
-        data = parseJsonOutput(stdout, '{}') as JscpdOutput;
+        data = parseJsonOutput(stdout, "{}") as JscpdOutput;
       } catch {
         // output may be written to file only
       }
@@ -49,33 +72,49 @@ export class JscpdRunner extends BaseRunner {
 
       if (percentage > 5) {
         issues.push({
-          severity: percentage > 20 ? 'critical' : 'warning',
-          message: `${percentage.toFixed(1)}% code duplication detected (${clones} clone${clones !== 1 ? 's' : ''})`,
-          fix: { description: 'Extract duplicated code into shared utilities or components' },
-          reportedBy: ['jscpd'],
+          severity: percentage > 20 ? "critical" : "warning",
+          message: `${percentage.toFixed(1)}% code duplication detected (${clones} clone${clones !== 1 ? "s" : ""})`,
+          fix: {
+            description:
+              "Extract duplicated code into shared utilities or components",
+          },
+          reportedBy: ["jscpd"],
         });
       }
 
       return {
-        id: 'jscpd',
+        id: "jscpd",
         category: this.category,
-        name: 'Code Duplication',
+        name: "Code Duplication",
         score: Math.max(0, 100 - Math.round(percentage * 3)),
-        status: percentage === 0 ? 'pass' : percentage > 20 ? 'fail' : percentage > 5 ? 'warning' : 'pass',
+        status:
+          percentage === 0
+            ? "pass"
+            : percentage > 20
+              ? "fail"
+              : percentage > 5
+                ? "warning"
+                : "pass",
         issues,
-        toolsUsed: ['jscpd'],
+        toolsUsed: ["jscpd"],
         duration: elapsed(),
         metadata: { percentage, clones },
       };
     } catch (err) {
       return {
-        id: 'jscpd',
+        id: "jscpd",
         category: this.category,
-        name: 'Code Duplication',
+        name: "Code Duplication",
         score: 0,
-        status: 'fail',
-        issues: [{ severity: 'critical', message: `jscpd failed: ${err}`, reportedBy: ['jscpd'] }],
-        toolsUsed: ['jscpd'],
+        status: "fail",
+        issues: [
+          {
+            severity: "critical",
+            message: `jscpd failed: ${err}`,
+            reportedBy: ["jscpd"],
+          },
+        ],
+        toolsUsed: ["jscpd"],
         duration: elapsed(),
       };
     }

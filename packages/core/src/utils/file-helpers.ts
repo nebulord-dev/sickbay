@@ -3,6 +3,13 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execa } from "execa";
 
+/**
+ * This module provides utility functions for file operations, command availability checks, timing, and robust JSON parsing.
+ * It includes functions to read package.json, check if a command is available in the environment, verify file existence, and measure elapsed time.
+ * The parseJsonOutput function is designed to handle CLI outputs that may contain non-JSON text or ANSI color codes, extracting valid JSON content reliably.
+ * These utilities are essential for the various runners and integrations in the @vitals/core package to perform their checks and analyses effectively.
+ */
+
 // Root of the @vitals/core package — used as localDir so execa resolves
 // bundled tool binaries from our own node_modules/.bin, not the target project's.
 export const coreLocalDir = dirname(dirname(fileURLToPath(import.meta.url)));

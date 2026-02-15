@@ -4,6 +4,12 @@ import Spinner from "ink-spinner";
 import { Header } from "./Header.js";
 import { gatherStats, type ProjectStats } from "../commands/stats.js";
 
+/**
+ * StatsApp component is responsible for gathering and displaying various statistics about the project.
+ * It shows an overview of the codebase, including file counts, lines of code, dependencies, and git info.
+ * If jsonOutput is true, it outputs the stats as JSON instead of rendering the UI.
+ */
+
 interface StatsAppProps {
   projectPath: string;
   jsonOutput: boolean;

@@ -5,6 +5,13 @@ import { BaseRunner } from './base.js';
 import { timer, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * ESLintRunner uses ESLint to analyze the project's source code for linting issues, enforcing code quality and consistency.
+ * It runs ESLint on the 'src' directory, parsing the JSON output to identify errors and warnings across all files.
+ * The runner reports issues with actionable feedback, including commands to fix problems using ESLint's auto-fix feature.
+ * It calculates an overall score based on the number of errors and warnings, providing insights into the code quality of the project.
+ */
+
 interface ESLintMessage {
   ruleId: string | null;
   severity: 1 | 2;

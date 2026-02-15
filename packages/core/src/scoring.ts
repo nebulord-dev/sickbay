@@ -1,5 +1,13 @@
 import type { CheckResult, VitalsReport } from './types.js';
 
+/**
+ * This module provides functions to calculate the overall health score of a project based on various checks,
+ * build a summary of issues found, and determine the appropriate color and emoji representations for the score.
+ * The scoring system is designed to give more weight to critical categories like security and dependencies,
+ * while still considering code quality, performance, and git-related issues.
+ * The getScoreColor and getScoreEmoji functions help in visually representing the health status of the project based on the calculated score.
+ */
+
 const CATEGORY_WEIGHTS: Record<string, number> = {
   dependencies: 0.25,
   security: 0.30,

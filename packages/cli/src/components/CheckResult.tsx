@@ -47,8 +47,8 @@ export function CheckResultRow({ result }: CheckResultProps) {
           {STATUS_ICONS[result.status]} {result.status}
         </Text>
       </Box>
-      {result.issues.slice(0, 3).map((issue, i) => (
-        <Box key={i} marginLeft={2}>
+      {result.issues.slice(0, 3).map((issue) => (
+        <Box key={`${issue.severity}-${issue.message}`} marginLeft={2}>
           <Text
             color={
               issue.severity === "critical"

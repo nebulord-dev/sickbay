@@ -3,6 +3,13 @@ import { BaseRunner } from './base.js';
 import { timer, fileExists } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * GitRunner analyzes the Git repository of the project to provide insights into its health and activity.
+ * It checks for the presence of a .git directory to confirm applicability, then gathers data on the last commit date, total commit count, number of contributors, and remote branches.
+ * The runner identifies potential issues such as stale repositories (no recent commits) and excessive remote branches, providing actionable feedback for maintaining a healthy Git history.
+ * This helps ensure that the project is actively maintained and that the Git repository is well-managed.
+ */
+
 export class GitRunner extends BaseRunner {
   name = 'git';
   category = 'git' as const;

@@ -4,6 +4,12 @@ import type { CheckResult, Issue } from '../types.js';
 import { BaseRunner } from './base.js';
 import { timer, fileExists } from '../utils/file-helpers.js';
 
+/**
+ * HeavyDepsRunner scans the project's dependencies for known heavy or unnecessary packages, providing insights into potential performance issues.
+ * It checks the package.json for dependencies that are commonly considered heavy or have lighter alternatives, such as moment, lodash, and jquery.
+ * The runner reports issues with actionable feedback on replacing heavy dependencies with more efficient alternatives, helping to optimize the project's performance and reduce bundle size.
+ */
+
 interface HeavyDep {
   alternative: string;
   reason: string;

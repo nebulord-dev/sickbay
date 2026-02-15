@@ -16,24 +16,27 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean",
     "dev": "tsup src/index.ts --format esm --dts --watch",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui --coverage",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "depcheck": "^1.4.7",
     "execa": "^9.5.0",
     "globby": "^14.0.2",
-    "knip": "^5.83.1",
-    "depcheck": "^1.4.7",
-    "madge": "^8.0.0",
     "jscpd": "^4.0.8",
+    "knip": "^5.83.1",
     "license-checker": "^25.0.1",
+    "madge": "^8.0.0",
     "source-map-explorer": "^2.5.3"
   },
   "devDependencies": {
     "tsup": "^8.3.0",
     "typescript": "^5.7.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.0.18"
   }
 }

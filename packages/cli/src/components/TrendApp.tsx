@@ -5,6 +5,12 @@ import { loadHistory, detectRegressions } from "../lib/history.js";
 import { sparkline, trendArrow } from "../commands/trend.js";
 import type { TrendHistory } from "../lib/history.js";
 
+/**
+ * TrendApp component displays the historical trend of the project's health scores over time.
+ * It shows a sparkline graph of the overall score and category-specific scores, along with trend indicators.
+ * If jsonOutput is true, it outputs the trend history as JSON instead of rendering the UI.
+ */
+
 interface TrendAppProps {
   projectPath: string;
   last: number;
@@ -59,9 +65,7 @@ export function TrendApp({ projectPath, last, jsonOutput }: TrendAppProps) {
     return (
       <Box flexDirection="column" padding={1}>
         <Header />
-        <Text color="yellow">
-          No scan history found for this project.
-        </Text>
+        <Text color="yellow">No scan history found for this project.</Text>
         <Box marginTop={1}>
           <Text dimColor>Run </Text>
           <Text color="cyan">vitals</Text>
@@ -88,13 +92,9 @@ export function TrendApp({ projectPath, last, jsonOutput }: TrendAppProps) {
       <Box marginTop={1} marginLeft={2} flexDirection="column">
         <Box>
           <Text bold>{"Overall".padEnd(15)}</Text>
-          <Text color={trendColor(overall.direction)}>
-            {sparkline(scores)}
-          </Text>
+          <Text color={trendColor(overall.direction)}>{sparkline(scores)}</Text>
           <Text bold> {scores[scores.length - 1]}/100 </Text>
-          <Text color={trendColor(overall.direction)}>
-            {overall.label}
-          </Text>
+          <Text color={trendColor(overall.direction)}>{overall.label}</Text>
         </Box>
 
         <Box marginTop={1} flexDirection="column">
@@ -106,16 +106,11 @@ export function TrendApp({ projectPath, last, jsonOutput }: TrendAppProps) {
             const catTrend = trendArrow(catScores);
             return (
               <Box key={cat}>
-                <Text dimColor>
-                  {(CATEGORY_LABELS[cat] ?? cat).padEnd(15)}
-                </Text>
+                <Text dimColor>{(CATEGORY_LABELS[cat] ?? cat).padEnd(15)}</Text>
                 <Text color={trendColor(catTrend.direction)}>
                   {sparkline(catScores)}
                 </Text>
-                <Text>
-                  {" "}
-                  {catScores[catScores.length - 1]}/100{" "}
-                </Text>
+                <Text> {catScores[catScores.length - 1]}/100 </Text>
                 <Text color={trendColor(catTrend.direction)}>
                   {catTrend.label}
                 </Text>
@@ -146,13 +141,10 @@ export function TrendApp({ projectPath, last, jsonOutput }: TrendAppProps) {
       </Box>
       <Box marginTop={1}>
         <Text dimColor>
-          First scan:{" "}
-          {new Date(entries[0].timestamp).toLocaleDateString()}
+          First scan: {new Date(entries[0].timestamp).toLocaleDateString()}
           {"  ·  "}
           Latest:{" "}
-          {new Date(
-            entries[entries.length - 1].timestamp,
-          ).toLocaleDateString()}
+          {new Date(entries[entries.length - 1].timestamp).toLocaleDateString()}
         </Text>
       </Box>
     </Box>

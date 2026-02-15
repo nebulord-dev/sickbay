@@ -4,6 +4,12 @@ import { execSync } from "child_process";
 import { detectProject } from "@vitals/core";
 import type { ProjectInfo } from "@vitals/core";
 
+/**
+ * This module provides a function to gather various statistics about a project, including file counts, line counts, component types, dependencies, and git information.
+ * The gatherStats function walks through the project directory, collects data on source files, counts lines of code, identifies React components, and retrieves git metadata if available.
+ * The resulting ProjectStats object gives a comprehensive overview of the project's structure and health, which can be used for reporting or further analysis.
+ */
+
 export interface ProjectStats {
   project: ProjectInfo;
   files: {
@@ -35,14 +41,35 @@ export interface ProjectStats {
 }
 
 const IGNORE_DIRS = new Set([
-  "node_modules", ".git", "dist", "build", ".next", "coverage",
-  ".turbo", ".cache", ".vite", "__pycache__", ".svelte-kit",
+  "node_modules",
+  ".git",
+  "dist",
+  "build",
+  ".next",
+  "coverage",
+  ".turbo",
+  ".cache",
+  ".vite",
+  "__pycache__",
+  ".svelte-kit",
 ]);
 
 const SOURCE_EXTENSIONS = new Set([
-  ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
-  ".css", ".scss", ".less", ".sass",
-  ".json", ".html", ".svg", ".vue", ".svelte",
+  ".ts",
+  ".tsx",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".cjs",
+  ".css",
+  ".scss",
+  ".less",
+  ".sass",
+  ".json",
+  ".html",
+  ".svg",
+  ".vue",
+  ".svelte",
 ]);
 
 function walkDir(
@@ -83,16 +110,27 @@ function countLines(filePath: string): number {
   }
 }
 
-function countComponents(filePath: string): { functional: number; classBased: number } {
+function countComponents(filePath: string): {
+  functional: number;
+  classBased: number;
+} {
   try {
     const content = readFileSync(filePath, "utf-8");
-    const functional = (
-      content.match(/(?:export\s+)?(?:default\s+)?function\s+[A-Z]\w*\s*\(/g) ?? []
-    ).length + (
-      content.match(/(?:export\s+)?(?:default\s+)?const\s+[A-Z]\w*\s*[=:]\s*(?:\(|React\.)/g) ?? []
-    ).length;
+    const functional =
+      (
+        content.match(
+          /(?:export\s+)?(?:default\s+)?function\s+[A-Z]\w*\s*\(/g,
+        ) ?? []
+      ).length +
+      (
+        content.match(
+          /(?:export\s+)?(?:default\s+)?const\s+[A-Z]\w*\s*[=:]\s*(?:\(|React\.)/g,
+        ) ?? []
+      ).length;
     const classBased = (
-      content.match(/class\s+[A-Z]\w*\s+extends\s+(?:React\.)?(?:Component|PureComponent)/g) ?? []
+      content.match(
+        /class\s+[A-Z]\w*\s+extends\s+(?:React\.)?(?:Component|PureComponent)/g,
+      ) ?? []
     ).length;
     return { functional, classBased };
   } catch {
@@ -105,23 +143,31 @@ function getGitInfo(projectPath: string): ProjectStats["git"] {
     if (!existsSync(join(projectPath, ".git"))) return null;
 
     const commits = parseInt(
-      execSync("git rev-list --count HEAD", { cwd: projectPath, encoding: "utf-8" }).trim(),
+      execSync("git rev-list --count HEAD", {
+        cwd: projectPath,
+        encoding: "utf-8",
+      }).trim(),
       10,
     );
 
     const contributors = parseInt(
       execSync("git log --format='%ae' | sort -u | wc -l", {
-        cwd: projectPath, encoding: "utf-8", shell: "/bin/sh",
+        cwd: projectPath,
+        encoding: "utf-8",
+        shell: "/bin/sh",
       }).trim(),
       10,
     );
 
     const firstCommit = execSync("git log --reverse --format='%ar' | head -1", {
-      cwd: projectPath, encoding: "utf-8", shell: "/bin/sh",
+      cwd: projectPath,
+      encoding: "utf-8",
+      shell: "/bin/sh",
     }).trim();
 
     const branch = execSync("git branch --show-current", {
-      cwd: projectPath, encoding: "utf-8",
+      cwd: projectPath,
+      encoding: "utf-8",
     }).trim();
 
     return { commits, contributors, age: firstCommit, branch };

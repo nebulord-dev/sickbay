@@ -1,3 +1,9 @@
+/**
+ * This module provides utility functions for generating sparklines and trend arrows based on numerical data.
+ * The sparkline function converts an array of numbers into a string of characters that visually represent the relative values,
+ * while the trendArrow function analyzes the trend of the values and returns an arrow indicating whether the trend is upward, downward, or stable.
+ */
+
 const SPARKLINE_CHARS = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"];
 
 export function sparkline(values: number[]): string {

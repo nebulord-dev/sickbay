@@ -4,6 +4,12 @@ import { BaseRunner } from './base.js';
 import { timer } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * ComplexityRunner analyzes the source code files in the 'src' directory to identify files with high line counts, which can indicate complexity and maintenance challenges.
+ * It reports files that exceed defined line thresholds, providing feedback on potential refactoring opportunities to improve code maintainability.
+ * The runner also calculates overall statistics such as total lines of code and average lines per file to give a broader view of code complexity in the project.
+ */
+
 const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts']);
 const WARN_LINES = 300;
 const CRITICAL_LINES = 500;

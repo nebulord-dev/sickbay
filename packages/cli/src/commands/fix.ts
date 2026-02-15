@@ -2,6 +2,13 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 import type { Issue, VitalsReport } from "@vitals/core";
 
+/**
+ * This module provides functions to collect fixable issues from a Vitals report and execute the associated fix commands.
+ * The collectFixableIssues function scans through the checks and their issues to find those that have a fix command,
+ * while ensuring that duplicate commands are not included. The executeFix function runs the specified command in the context of the project directory,
+ * capturing the output and any errors that may occur during execution. This allows for an automated way to address issues found in the health checks.
+ */
+
 const execFileAsync = promisify(execFile);
 
 export interface FixableIssue {

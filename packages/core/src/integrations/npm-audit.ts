@@ -3,6 +3,13 @@ import { BaseRunner } from './base.js';
 import { timer, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * NpmAuditRunner uses the npm audit command to analyze the project's dependencies for known security vulnerabilities.
+ * It runs npm audit with a JSON reporter, parsing the output to identify vulnerabilities in the project's dependencies.
+ * The runner reports issues with actionable feedback, including commands to fix or mitigate vulnerabilities, helping to improve the project's security posture.
+ * It calculates an overall score based on the severity and number of vulnerabilities found, providing insights into the project's security health.
+ */
+
 interface AuditVulnerability {
   name: string;
   severity: string;

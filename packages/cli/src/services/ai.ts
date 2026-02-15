@@ -1,9 +1,18 @@
-import Anthropic from '@anthropic-ai/sdk';
-import type { VitalsReport } from '@vitals/core';
+import Anthropic from "@anthropic-ai/sdk";
+import type { VitalsReport } from "@vitals/core";
+
+/**
+ * AIService provides methods to generate a natural language summary of the Vitals report and to engage in a chat conversation about the report.
+ * It uses the Anthropic API to process the report data and user messages, returning insightful and actionable responses.
+ */
 
 export interface AIService {
   generateSummary(report: VitalsReport): Promise<string>;
-  chat(message: string, report: VitalsReport, history: Array<{ role: 'user' | 'assistant'; content: string }>): Promise<string>;
+  chat(
+    message: string,
+    report: VitalsReport,
+    history: Array<{ role: "user" | "assistant"; content: string }>,
+  ): Promise<string>;
 }
 
 export function createAIService(apiKey: string): AIService {
@@ -30,19 +39,21 @@ Report:
 ${JSON.stringify(report, null, 2)}`;
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: "claude-sonnet-4-20250514",
       max_tokens: 600,
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: "user", content: prompt }],
     });
 
-    const textBlock = response.content.find((block) => block.type === 'text');
-    return textBlock && 'text' in textBlock ? textBlock.text : 'Unable to generate summary.';
+    const textBlock = response.content.find((block) => block.type === "text");
+    return textBlock && "text" in textBlock
+      ? textBlock.text
+      : "Unable to generate summary.";
   }
 
   async function chat(
     message: string,
     report: VitalsReport,
-    history: Array<{ role: 'user' | 'assistant'; content: string }>
+    history: Array<{ role: "user" | "assistant"; content: string }>,
   ): Promise<string> {
     const systemPrompt = `You are an expert code health assistant analyzing a project's Vitals report.
 
@@ -57,19 +68,24 @@ ${JSON.stringify(report, null, 2)}
 Answer questions clearly and concisely. Reference specific checks, scores, and issues when relevant. Be helpful and actionable.`;
 
     const messages = [
-      ...history.map((h) => ({ role: h.role as 'user' | 'assistant', content: h.content })),
-      { role: 'user' as const, content: message },
+      ...history.map((h) => ({
+        role: h.role as "user" | "assistant",
+        content: h.content,
+      })),
+      { role: "user" as const, content: message },
     ];
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: "claude-sonnet-4-20250514",
       max_tokens: 1000,
       system: systemPrompt,
       messages,
     });
 
-    const textBlock = response.content.find((block) => block.type === 'text');
-    return textBlock && 'text' in textBlock ? textBlock.text : 'Unable to generate response.';
+    const textBlock = response.content.find((block) => block.type === "text");
+    return textBlock && "text" in textBlock
+      ? textBlock.text
+      : "Unable to generate response.";
   }
 
   return { generateSummary, chat };

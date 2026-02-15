@@ -3,6 +3,13 @@ import { BaseRunner } from './base.js';
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * LicenseCheckerRunner uses the license-checker tool to analyze the project's dependencies for problematic licenses.
+ * It checks the licenses of all production dependencies, flagging those that may be incompatible with commercial use.
+ * The runner reports issues with actionable feedback, including commands to review or replace dependencies with problematic licenses.
+ * It calculates an overall score based on the number of flagged licenses, providing insights into the project's license compliance.
+ */
+
 const PROBLEMATIC_LICENSES = ['GPL-2.0', 'GPL-3.0', 'AGPL-3.0', 'LGPL-2.1', 'LGPL-3.0', 'CC-BY-NC'];
 
 interface LicenseInfo {

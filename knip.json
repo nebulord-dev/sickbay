@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["packages/*/src/index.ts"],
+      "project": ["packages/*/src/**/*.ts", "packages/*/src/**/*.tsx"]
+    },
+    "packages/*": {
+      "entry": ["src/index.ts", "src/index.tsx"],
+      "project": ["src/**/*.ts", "src/**/*.tsx"]
+    }
+  },
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/dist/**"
+  ],
+  "ignoreDependencies": [
+    "@vitals/core",
+    "@vitals/cli",
+    "@vitals/web"
+  ]
+}

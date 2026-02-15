@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import type { VitalsReport } from '@vitals/core';
-import { DependencyGraph } from './DependencyGraph.js';
+
+// Lazy load heavy graph visualization
+const DependencyGraph = lazy(() => import('./DependencyGraph.js').then((m) => ({ default: m.DependencyGraph })));
 
 interface CodebaseStatsProps {
   report: VitalsReport;
@@ -142,10 +144,12 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
               )}
             </span>
           </h2>
-          <DependencyGraph
-            graph={depGraph}
-            circularCount={madge.circularCount as number}
-          />
+          <Suspense fallback={<div className="text-gray-500 text-sm">Loading graph...</div>}>
+            <DependencyGraph
+              graph={depGraph}
+              circularCount={madge.circularCount as number}
+            />
+          </Suspense>
         </section>
       )}
 

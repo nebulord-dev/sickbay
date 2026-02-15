@@ -1,15 +1,22 @@
 #!/usr/bin/env node
-import { config } from 'dotenv';
-import { existsSync } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
-import { Command } from 'commander';
-import { render } from 'ink';
-import React from 'react';
-import { App } from './components/App.js';
+import { config } from "dotenv";
+import { existsSync } from "fs";
+import { join } from "path";
+import { homedir } from "os";
+import { Command } from "commander";
+import { render } from "ink";
+import React from "react";
+import { App } from "./components/App.js";
+
+/**
+ * Entry point for the Vitals CLI application.
+ * This script sets up the command-line interface using Commander, loads environment variables, and renders the appropriate Ink components based on user commands.
+ * It supports multiple commands including the default scan, trend analysis, stats overview, and a doctor command for diagnosing project issues.
+ * Each command can output results in JSON format or render an interactive UI in the terminal.
+ */
 
 // Load .env from global config first (~/.vitals/.env)
-const globalConfigPath = join(homedir(), '.vitals', '.env');
+const globalConfigPath = join(homedir(), ".vitals", ".env");
 if (existsSync(globalConfigPath)) {
   config({ path: globalConfigPath, debug: false, quiet: true });
 }
@@ -20,21 +27,27 @@ config({ debug: false, quiet: true });
 const program = new Command();
 
 program
-  .name('vitals')
-  .description('React project health check CLI')
-  .version('0.0.1')
-  .option('-p, --path <path>', 'project path to analyze', process.cwd())
-  .option('-c, --checks <checks>', 'comma-separated list of checks to run')
-  .option('--json', 'output raw JSON report')
-  .option('--web', 'open web dashboard after scan')
-  .option('--no-ai', 'disable AI features')
-  .option('--verbose', 'show verbose output')
+  .name("vitals")
+  .description("React project health check CLI")
+  .version("0.0.1")
+  .option("-p, --path <path>", "project path to analyze", process.cwd())
+  .option("-c, --checks <checks>", "comma-separated list of checks to run")
+  .option("--json", "output raw JSON report")
+  .option("--web", "open web dashboard after scan")
+  .option("--no-ai", "disable AI features")
+  .option("--verbose", "show verbose output")
   .action(async (options) => {
-    const checks = options.checks ? options.checks.split(',').map((s: string) => s.trim()) : undefined;
+    const checks = options.checks
+      ? options.checks.split(",").map((s: string) => s.trim())
+      : undefined;
 
     if (options.json) {
-      const { runVitals } = await import('@vitals/core');
-      const report = await runVitals({ projectPath: options.path, checks, verbose: options.verbose });
+      const { runVitals } = await import("@vitals/core");
+      const report = await runVitals({
+        projectPath: options.path,
+        checks,
+        verbose: options.verbose,
+      });
 
       // Auto-save to trend history
       try {
@@ -44,7 +57,7 @@ program
         // Non-critical
       }
 
-      process.stdout.write(JSON.stringify(report, null, 2) + '\n');
+      process.stdout.write(JSON.stringify(report, null, 2) + "\n");
       process.exit(0);
     }
 
@@ -55,7 +68,7 @@ program
         openWeb: options.web,
         enableAI: options.ai !== false,
         verbose: options.verbose,
-      })
+      }),
     );
   });
 

@@ -3,6 +3,14 @@ import { BaseRunner } from './base.js';
 import { timer, isCommandAvailable, fileExists, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * MadgeRunner uses the madge tool to analyze the project's source code for circular dependencies.
+ * It runs madge with a JSON reporter, parsing the output to build a dependency graph of the project.
+ * The runner detects circular dependencies by performing a depth-first search on the graph, identifying cycles of imports between files.
+ * It reports issues with actionable feedback on refactoring to break circular dependency cycles, helping to improve code maintainability and reduce potential bugs.
+ * The runner calculates an overall score based on the number of circular dependencies found, providing insights into the project's code quality.
+ */
+
 type DependencyGraph = Record<string, string[]>;
 
 function findCircularDeps(graph: DependencyGraph): string[][] {

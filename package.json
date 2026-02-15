@@ -13,7 +13,8 @@
     "web": "pnpm --filter @vitals/web dev",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
-    "test": "turbo run test",
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
@@ -21,6 +22,7 @@
     "@types/node": "^22.0.0",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",

@@ -5,6 +5,13 @@ import { BaseRunner } from './base.js';
 import { timer } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * OutdatedRunner uses the package manager's outdated command to analyze the project's dependencies for outdated packages.
+ * It detects which dependencies have newer versions available, parsing the output to identify the current and latest versions of each package.
+ * The runner reports issues with actionable feedback, including commands to update outdated packages, helping to keep the project up-to-date and secure.
+ * It calculates an overall score based on the number of outdated packages found, providing insights into the project's maintenance status.
+ */
+
 type Pm = 'pnpm' | 'npm' | 'yarn';
 
 interface OutdatedEntry {

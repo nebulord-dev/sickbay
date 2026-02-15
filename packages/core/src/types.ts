@@ -26,7 +26,7 @@ export interface ProjectInfo {
 
 export interface CheckResult {
   id: string;
-  category: 'dependencies' | 'performance' | 'code-quality' | 'security' | 'git';
+  category: 'dependencies' | 'performance' | 'code-quality' | 'security' | 'git' | 'unknown-category';
   name: string;
   score: number;
   status: 'pass' | 'warning' | 'fail' | 'skipped';

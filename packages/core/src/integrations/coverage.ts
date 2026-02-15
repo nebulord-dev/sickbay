@@ -5,6 +5,13 @@ import { BaseRunner } from './base.js';
 import { timer, readPackageJson, parseJsonOutput } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * CoverageRunner checks for test coverage in the project by looking for existing coverage reports or by running tests with coverage enabled.
+ * It supports both Vitest and Jest test runners, detecting them based on dependencies in package.json.
+ * The runner evaluates test results and coverage percentages against defined thresholds, reporting issues for failing tests and low coverage.
+ * It provides actionable feedback on improving test coverage and fixing failing tests to enhance code quality.
+ */
+
 interface CoverageSummary {
   total: {
     lines: { pct: number };
