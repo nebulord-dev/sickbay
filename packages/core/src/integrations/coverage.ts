@@ -110,7 +110,11 @@ export class CoverageRunner extends BaseRunner {
       if (coveragePath) {
         try {
           const raw = JSON.parse(readFileSync(coveragePath, 'utf-8'));
-          coverageData = raw.total ?? raw;
+          const candidate = raw.total ?? raw;
+          // Validate structure before using
+          if (candidate?.lines?.pct !== undefined && candidate?.statements?.pct !== undefined) {
+            coverageData = candidate;
+          }
         } catch {
           // ignore parse error
         }
@@ -223,7 +227,11 @@ export class CoverageRunner extends BaseRunner {
     }
     try {
       const raw = JSON.parse(readFileSync(coveragePath, 'utf-8'));
-      const { lines, statements, functions, branches } = raw.total ?? raw;
+      const candidate = raw.total ?? raw;
+      if (!candidate?.lines?.pct || !candidate?.statements?.pct) {
+        return this.skipped('Coverage report format not recognized');
+      }
+      const { lines, statements, functions, branches } = candidate;
       const avg = (lines.pct + statements.pct + functions.pct + branches.pct) / 4;
       const issues: Issue[] = [];
       if (lines.pct < 80) {
