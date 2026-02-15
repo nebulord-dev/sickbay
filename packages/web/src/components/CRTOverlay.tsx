@@ -188,7 +188,7 @@ export function CRTOverlay({ onClose }: CRTOverlayProps) {
                   animation: "fade-in 1s ease-in",
                 }}
               >
-                [ End of transmission ]
+                [ Thank you ]
               </div>
             )}
           </div>
