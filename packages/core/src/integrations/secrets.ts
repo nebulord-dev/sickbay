@@ -168,7 +168,9 @@ function scanDirectory(dir: string, projectRoot: string): Finding[] {
       if (
         entry.startsWith(".") ||
         entry === "node_modules" ||
-        entry === "__tests__"
+        entry === "__tests__" ||
+        entry === "test" ||
+        entry === "tests"
       )
         continue;
       const fullPath = join(dir, entry);
@@ -177,7 +179,8 @@ function scanDirectory(dir: string, projectRoot: string): Finding[] {
         findings.push(...scanDirectory(fullPath, projectRoot));
       } else if (
         SCAN_EXTENSIONS.has(extname(entry)) &&
-        !SKIP_FILES.has(basename(entry))
+        !SKIP_FILES.has(basename(entry)) &&
+        !isTestFile(entry)
       ) {
         findings.push(...scanFile(fullPath, projectRoot));
       }
@@ -186,6 +189,10 @@ function scanDirectory(dir: string, projectRoot: string): Finding[] {
     // directory doesn't exist
   }
   return findings;
+}
+
+function isTestFile(filename: string): boolean {
+  return /\.(test|spec)\.(ts|tsx|js|jsx|mts|cts)$/.test(filename);
 }
 
 function scanFile(filePath: string, projectRoot: string): Finding[] {

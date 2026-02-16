@@ -76,12 +76,18 @@ function scanDirectory(dir: string, projectRoot: string): FileStats[] {
   const files: FileStats[] = [];
   try {
     for (const entry of readdirSync(dir)) {
-      if (entry.startsWith('.') || entry === 'node_modules') continue;
+      if (
+        entry.startsWith('.') ||
+        entry === 'node_modules' ||
+        entry === '__tests__' ||
+        entry === 'test' ||
+        entry === 'tests'
+      ) continue;
       const fullPath = join(dir, entry);
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
         files.push(...scanDirectory(fullPath, projectRoot));
-      } else if (SOURCE_EXTENSIONS.has(extname(entry))) {
+      } else if (SOURCE_EXTENSIONS.has(extname(entry)) && !isTestFile(entry)) {
         try {
           const lines = readFileSync(fullPath, 'utf-8').split('\n').filter((l) => l.trim()).length;
           files.push({ path: fullPath.replace(projectRoot + '/', ''), lines });
@@ -94,4 +100,8 @@ function scanDirectory(dir: string, projectRoot: string): FileStats[] {
     // directory doesn't exist
   }
   return files;
+}
+
+function isTestFile(filename: string): boolean {
+  return /\.(test|spec)\.(ts|tsx|js|jsx|mts|cts)$/.test(filename);
 }

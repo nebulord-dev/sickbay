@@ -1,4 +1,3 @@
-import React from "react";
 import type { VitalsReport } from "@vitals/core";
 
 type View =

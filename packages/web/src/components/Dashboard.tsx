@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useEffect, useRef } from "react";
 import type { VitalsReport } from "@vitals/core";
 
 function getScoreColor(score: number) {
@@ -29,7 +29,9 @@ import { AISummary } from "./AISummary.js";
 import { CriticalIssues } from "./CriticalIssues.js";
 
 // Lazy load heavy components
-const ChatDrawer = lazy(() => import("./ChatDrawer.js").then((m) => ({ default: m.ChatDrawer })));
+const ChatDrawer = lazy(() =>
+  import("./ChatDrawer.js").then((m) => ({ default: m.ChatDrawer })),
+);
 
 interface DashboardProps {
   report: VitalsReport;
@@ -48,6 +50,12 @@ export function Dashboard({ report }: DashboardProps) {
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
   const [isAIDrawerOpen, setIsAIDrawerOpen] = useState(false);
   const scoreColor = getScoreColor(report.overallScore);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to top when view changes
+  useEffect(() => {
+    mainContentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [view]);
 
   const complexityMeta = getMeta(report, "complexity");
   const gitMeta = getMeta(report, "git");
@@ -177,7 +185,7 @@ export function Dashboard({ report }: DashboardProps) {
                   setSelectedCheck(
                     selectedCheck === check.id ? null : check.id,
                   );
-                  setView("overview");
+                  setView("issues");
                 }}
                 className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-sm transition-colors
                   ${selectedCheck === check.id ? "bg-card text-white" : "text-gray-400 hover:text-white hover:bg-card/50"}`}
@@ -197,14 +205,19 @@ export function Dashboard({ report }: DashboardProps) {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
+      <main ref={mainContentRef} className="flex-1 overflow-y-auto">
         <div className="p-4 border-b border-border flex items-center">
           <div className="flex gap-2 flex-1">
             {(["overview", "issues", "dependencies", "codebase"] as View[]).map(
               (v) => (
                 <button
                   key={v}
-                  onClick={() => setView(v)}
+                  onClick={() => {
+                    setView(v);
+                    if (v === "overview") {
+                      setSelectedCheck(null);
+                    }
+                  }}
                   className={`px-3 py-1 rounded text-sm font-mono transition-colors
                   ${view === v ? "bg-accent text-black font-semibold" : "text-gray-400 hover:text-white"}`}
                 >
@@ -277,9 +290,7 @@ export function Dashboard({ report }: DashboardProps) {
 
           {view === "codebase" && <CodebaseStats report={report} />}
 
-          {view === "about" && (
-            <About report={report} onNavigate={setView} />
-          )}
+          {view === "about" && <About report={report} onNavigate={setView} />}
 
           {view === "future-enhancements" && <FutureEnhancements />}
         </div>
