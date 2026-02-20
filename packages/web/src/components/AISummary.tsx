@@ -149,7 +149,7 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
                   />
                 </svg>
               </span>
-              <span className="font-semibold text-sm text-gray-200">
+              <span className="font-semibold text-base text-gray-200">
                 AI Insights
               </span>
             </div>
@@ -176,17 +176,17 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {loading ? (
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="flex items-center gap-2 text-base text-gray-500">
                 <span className="animate-pulse">⠋</span>
                 <span>Generating insights...</span>
               </div>
             ) : !summary ? (
               <div className="space-y-2">
-                <div className="text-sm text-gray-400">
+                <div className="text-base text-gray-400">
                   AI insights are not available. This feature requires an
                   Anthropic API key.
                 </div>
-                <div className="text-sm text-gray-500 bg-card p-2.5 rounded border border-border font-mono">
+                <div className="text-base text-gray-500 bg-card p-2.5 rounded border border-border font-mono">
                   <div className="mb-1.5 text-gray-400">
                     To enable AI features:
                   </div>
@@ -199,11 +199,11 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
                 <div key={i} className="space-y-1.5">
                   <div className="flex items-center gap-1.5">
                     <SectionIcon title={section.title} />
-                    <h3 className="text-sm font-semibold text-white uppercase tracking-wide">
+                    <h3 className="text-base font-semibold text-white uppercase tracking-wide">
                       {section.title}
                     </h3>
                   </div>
-                  <div className="text-sm text-gray-300 leading-snug pl-4">
+                  <div className="text-base text-gray-300 leading-snug pl-4">
                     <ReactMarkdown components={markdownComponents}>
                       {section.content}
                     </ReactMarkdown>
