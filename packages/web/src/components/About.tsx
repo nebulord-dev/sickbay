@@ -47,7 +47,7 @@ const CHECK_DESCRIPTIONS: Record<string, string> = {
   typescript:
     "Runs tsc --noEmit to surface type errors without emitting output.",
   "todo-scanner":
-    "Finds TODO, FIXME, HACK, and XXX comments left in source code.",
+    "Finds TODO, FIXME, and HACK comments left in source code.",
   complexity:
     "Identifies oversized files by line count and flags candidates for splitting.",
   secrets:

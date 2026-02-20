@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import ReactMarkdown, { Components } from "react-markdown";
 import type { VitalsReport } from "@vitals/core";
 
 interface AISummaryProps {
@@ -33,57 +34,32 @@ function parseStructuredSummary(text: string): ParsedSection[] {
   return sections;
 }
 
-function FormattedText({ text }: { text: string }) {
-  const parseText = (input: string) => {
-    const parts: React.ReactNode[] = [];
-    let remaining = input;
-    let key = 0;
-
-    while (remaining.length > 0) {
-      // Match **bold**
-      const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
-      if (boldMatch && boldMatch.index !== undefined) {
-        if (boldMatch.index > 0) {
-          parts.push(
-            <span key={key++}>{remaining.slice(0, boldMatch.index)}</span>,
-          );
-        }
-        parts.push(
-          <strong key={key++} className="font-medium text-gray-100">
-            {boldMatch[1]}
-          </strong>,
-        );
-        remaining = remaining.slice(boldMatch.index + boldMatch[0].length);
-        continue;
-      }
-
-      // Match *italic*
-      const italicMatch = remaining.match(/\*(.+?)\*/);
-      if (italicMatch && italicMatch.index !== undefined) {
-        if (italicMatch.index > 0) {
-          parts.push(
-            <span key={key++}>{remaining.slice(0, italicMatch.index)}</span>,
-          );
-        }
-        parts.push(
-          <em key={key++} className="italic">
-            {italicMatch[1]}
-          </em>,
-        );
-        remaining = remaining.slice(italicMatch.index + italicMatch[0].length);
-        continue;
-      }
-
-      // No more matches, add the rest
-      parts.push(<span key={key++}>{remaining}</span>);
-      break;
-    }
-
-    return parts;
-  };
-
-  return <>{parseText(text)}</>;
-}
+// Custom markdown components for styling
+const markdownComponents: Partial<Components> = {
+  code: ({ children, ...props }) => (
+    <code
+      className="px-1.5 py-0.5 bg-gray-800/60 text-purple-300 rounded text-xs font-mono border border-gray-700/50"
+      {...props}
+    >
+      {children}
+    </code>
+  ),
+  strong: ({ children, ...props }) => (
+    <strong className="font-medium text-gray-100" {...props}>
+      {children}
+    </strong>
+  ),
+  em: ({ children, ...props }) => (
+    <em className="italic" {...props}>
+      {children}
+    </em>
+  ),
+  p: ({ children, ...props }) => (
+    <p className="mb-1 last:mb-0" {...props}>
+      {children}
+    </p>
+  ),
+};
 
 function SectionIcon({ title }: { title: string }) {
   const icons: Record<string, string> = {
@@ -227,12 +203,10 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
                       {section.title}
                     </h3>
                   </div>
-                  <div className="text-sm text-gray-300 leading-snug pl-4 space-y-0.5">
-                    {section.content.split("\n").map((line, j) => (
-                      <p key={j} className={line.trim() ? "" : "hidden"}>
-                        <FormattedText text={line} />
-                      </p>
-                    ))}
+                  <div className="text-sm text-gray-300 leading-snug pl-4">
+                    <ReactMarkdown components={markdownComponents}>
+                      {section.content}
+                    </ReactMarkdown>
                   </div>
                   {i < sections.length - 1 && (
                     <div className="border-t border-border/50 mt-2" />

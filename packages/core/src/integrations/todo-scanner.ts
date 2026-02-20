@@ -5,13 +5,13 @@ import { timer } from "../utils/file-helpers.js";
 import type { CheckResult, Issue } from "../types.js";
 
 /**
- * This module analyzes the project's source code for TODO, FIXME, HACK, and XXX comments that indicate technical debt or areas needing attention.
+ * This module analyzes the project's source code for TODO, FIXME, and HACK comments that indicate technical debt or areas needing attention.
  * It scans through source files in the project, identifying and categorizing these comments based on their type and content.
  * The runner provides actionable feedback on each finding, helping developers prioritize and address technical debt effectively.
  * It calculates an overall score based on the number and severity of findings, giving insights into the project's code quality and maintenance health.
  */
 
-const TODO_PATTERN = /\b(TODO|FIXME|HACK|XXX)\b[:\s]*(.*)/i;
+const TODO_PATTERN = /\b(TODO|FIXME|HACK)\b[:\s]*(.*)/i;
 const SOURCE_EXTENSIONS = new Set([
   ".ts",
   ".tsx",
