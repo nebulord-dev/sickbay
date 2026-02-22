@@ -37,6 +37,14 @@ program
   .option("--no-ai", "disable AI features")
   .option("--verbose", "show verbose output")
   .action(async (options) => {
+    // Load .env from project path if it differs from cwd
+    if (options.path && options.path !== process.cwd()) {
+      const projectEnvPath = join(options.path, ".env");
+      if (existsSync(projectEnvPath)) {
+        config({ path: projectEnvPath, override: true });
+      }
+    }
+
     const checks = options.checks
       ? options.checks.split(",").map((s: string) => s.trim())
       : undefined;
@@ -82,6 +90,14 @@ program
   .option("--dry-run", "show what would be fixed without executing")
   .option("--verbose", "show verbose output")
   .action(async (options) => {
+    // Load .env from project path if it differs from cwd
+    if (options.path && options.path !== process.cwd()) {
+      const projectEnvPath = join(options.path, ".env");
+      if (existsSync(projectEnvPath)) {
+        config({ path: projectEnvPath, override: true });
+      }
+    }
+
     const { FixApp } = await import("./components/FixApp.js");
     const checks = options.checks
       ? options.checks.split(",").map((s: string) => s.trim())
@@ -105,6 +121,14 @@ program
   .option("-n, --last <count>", "number of recent scans to show", "20")
   .option("--json", "output trend data as JSON")
   .action(async (options) => {
+    // Load .env from project path if it differs from cwd
+    if (options.path && options.path !== process.cwd()) {
+      const projectEnvPath = join(options.path, ".env");
+      if (existsSync(projectEnvPath)) {
+        config({ path: projectEnvPath, override: true });
+      }
+    }
+
     const { TrendApp } = await import("./components/TrendApp.js");
     render(
       React.createElement(TrendApp, {
@@ -122,6 +146,14 @@ program
   .option("-p, --path <path>", "project path to analyze", process.cwd())
   .option("--json", "output stats as JSON")
   .action(async (options) => {
+    // Load .env from project path if it differs from cwd
+    if (options.path && options.path !== process.cwd()) {
+      const projectEnvPath = join(options.path, ".env");
+      if (existsSync(projectEnvPath)) {
+        config({ path: projectEnvPath, override: true });
+      }
+    }
+
     const { StatsApp } = await import("./components/StatsApp.js");
     render(
       React.createElement(StatsApp, {
@@ -139,6 +171,14 @@ program
   .option("--fix", "auto-scaffold missing configuration files")
   .option("--json", "output diagnostic results as JSON")
   .action(async (options) => {
+    // Load .env from project path if it differs from cwd
+    if (options.path && options.path !== process.cwd()) {
+      const projectEnvPath = join(options.path, ".env");
+      if (existsSync(projectEnvPath)) {
+        config({ path: projectEnvPath, override: true });
+      }
+    }
+
     const { DoctorApp } = await import("./components/DoctorApp.js");
     render(
       React.createElement(DoctorApp, {
