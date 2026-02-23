@@ -7,7 +7,7 @@
 - Add Playwright tests to the web project
 
 ## In Progress
-- Add Vitest tests to all projects
+<!-- Tasks currently being worked on -->
 
 ## Done
-<!-- Completed tasks -->
+- Add Vitest tests to all projects
