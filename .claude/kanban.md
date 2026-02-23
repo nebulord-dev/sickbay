@@ -4,7 +4,6 @@
 
 - Scan the vitals project with the vitals CLI
 - Add monorepo support to vitals CLI
-- Add React compiler to the web project
 - Add Playwright tests to the web project
 
 ## In Progress
@@ -13,6 +12,7 @@
 
 ## Done
 
+- Add React compiler to the web project
 - Add Vitest tests to all projects
 - Add tests coverage reports to all projects
 - Configure coverage to show in the vitest UI for each project
