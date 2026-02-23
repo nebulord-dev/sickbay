@@ -1,5 +1,20 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { timer, parseJsonOutput } from './file-helpers.js';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { existsSync, readFileSync } from 'fs';
+import { execa } from 'execa';
+import { timer, parseJsonOutput, readPackageJson, isCommandAvailable, fileExists } from './file-helpers.js';
+
+vi.mock('fs', () => ({
+  existsSync: vi.fn(),
+  readFileSync: vi.fn(),
+}));
+
+vi.mock('execa', () => ({
+  execa: vi.fn(),
+}));
+
+afterEach(() => {
+  vi.resetAllMocks();
+});
 
 describe('timer', () => {
   beforeEach(() => {
@@ -77,5 +92,98 @@ describe('parseJsonOutput', () => {
   it('uses string fallback correctly', () => {
     const result = parseJsonOutput('invalid', '{"fallback": true}');
     expect(result).toEqual({ fallback: true });
+  });
+
+  it('uses default fallback {} when no fallback argument given', () => {
+    const result = parseJsonOutput('not json');
+    expect(result).toEqual({});
+  });
+
+  it('strips ANSI color codes before parsing', () => {
+    const input = '\u001b[32m{"colored": true}\u001b[0m';
+    expect(parseJsonOutput(input, '{}')).toEqual({ colored: true });
+  });
+
+  it('extracts JSON that appears after non-JSON text', () => {
+    const input = 'info: running\n{"result": "ok"}';
+    expect(parseJsonOutput(input, '{}')).toEqual({ result: 'ok' });
+  });
+
+  it('extracts a JSON array that appears after non-JSON text', () => {
+    const input = 'Some log line\n[1, 2, 3]';
+    expect(parseJsonOutput(input, '[]')).toEqual([1, 2, 3]);
+  });
+
+  it('extracts multi-line JSON that appears after non-JSON text', () => {
+    const input = 'info: running checks\n{\n  "score": 95\n}';
+    expect(parseJsonOutput(input, '{}')).toEqual({ score: 95 });
+  });
+
+  it('returns fallback when text contains only non-JSON lines', () => {
+    const input = 'line one\nline two\nline three';
+    expect(parseJsonOutput(input, '{"fallback": 1}')).toEqual({ fallback: 1 });
+  });
+
+  it('returns fallback for whitespace-only input', () => {
+    expect(parseJsonOutput('   \n  ', '{"ws": true}')).toEqual({ ws: true });
+  });
+});
+
+describe('readPackageJson', () => {
+  it('reads and parses package.json from the given path', () => {
+    vi.mocked(readFileSync).mockReturnValue('{"name": "my-app", "version": "1.0.0"}');
+    const result = readPackageJson('/some/project');
+    expect(result).toEqual({ name: 'my-app', version: '1.0.0' });
+    expect(readFileSync).toHaveBeenCalledWith('/some/project/package.json', 'utf-8');
+  });
+
+  it('throws when the file does not exist', () => {
+    vi.mocked(readFileSync).mockImplementation(() => { throw new Error('ENOENT'); });
+    expect(() => readPackageJson('/missing')).toThrow('ENOENT');
+  });
+
+  it('throws when the file contains invalid JSON', () => {
+    vi.mocked(readFileSync).mockReturnValue('not json');
+    expect(() => readPackageJson('/bad')).toThrow(SyntaxError);
+  });
+});
+
+describe('isCommandAvailable', () => {
+  it('returns true when the command binary exists in local node_modules/.bin', async () => {
+    vi.mocked(existsSync).mockReturnValue(true);
+    expect(await isCommandAvailable('knip')).toBe(true);
+    expect(execa).not.toHaveBeenCalled();
+  });
+
+  it('returns true when the command is found via which on PATH', async () => {
+    vi.mocked(existsSync).mockReturnValue(false);
+    vi.mocked(execa).mockResolvedValue({} as never);
+    expect(await isCommandAvailable('git')).toBe(true);
+    expect(execa).toHaveBeenCalledWith('which', ['git']);
+  });
+
+  it('returns false when the command is not found anywhere', async () => {
+    vi.mocked(existsSync).mockReturnValue(false);
+    vi.mocked(execa).mockRejectedValue(new Error('not found'));
+    expect(await isCommandAvailable('nonexistent-tool')).toBe(false);
+  });
+});
+
+describe('fileExists', () => {
+  it('returns true when the file exists', () => {
+    vi.mocked(existsSync).mockReturnValue(true);
+    expect(fileExists('/project', 'package.json')).toBe(true);
+    expect(existsSync).toHaveBeenCalledWith('/project/package.json');
+  });
+
+  it('returns false when the file does not exist', () => {
+    vi.mocked(existsSync).mockReturnValue(false);
+    expect(fileExists('/project', 'missing.json')).toBe(false);
+  });
+
+  it('joins multiple path parts', () => {
+    vi.mocked(existsSync).mockReturnValue(true);
+    fileExists('/root', 'src', 'index.ts');
+    expect(existsSync).toHaveBeenCalledWith('/root/src/index.ts');
   });
 });
