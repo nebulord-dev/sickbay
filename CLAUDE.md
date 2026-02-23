@@ -1,5 +1,11 @@
 # Vitals Monorepo - Claude Code Guide
 
+## Kanban Board
+
+Project tasks are tracked in `.claude/kanban.md`. When the user mentions tasks, the board, or asks to add/move/update/list tasks, always read that file first, then edit it. Columns: Backlog → In Progress → Done.
+
+
+
 This document helps Claude Code understand the Vitals codebase structure and where to look when making updates.
 
 ## Project Overview

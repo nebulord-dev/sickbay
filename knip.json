@@ -18,6 +18,8 @@
   "ignoreDependencies": [
     "@vitals/core",
     "@vitals/cli",
-    "@vitals/web"
+    "@vitals/web",
+    "tsup",
+    "eslint-config-prettier"
   ]
 }
