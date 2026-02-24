@@ -4,7 +4,6 @@
 
 ### General
 - `[Task]` Scan the vitals project with the vitals CLI — run `vitals` against this monorepo and review the results; use findings to identify gaps and inform future work
-- `[Testing]` Add Playwright tests to the web project — add end-to-end tests covering key dashboard interactions (tab switching, collapsible sections, dependency graph, AI drawer)
 
 ### Features
 - `[Feature]` Historical Trends — track score changes over time, store past reports locally, visualize trends in a line chart
@@ -12,7 +11,6 @@
 - `[Feature]` Lighthouse Integration — run Lighthouse audits for Web Vitals (LCP, FID, CLS) alongside code health checks with unified performance scoring
 - `[Feature]` Custom check API for plugins — plug-in system for adding custom runners with a simple interface; do not implement before polyglot work is complete — the runner interface (language scoping, category registration, how checks are discovered) will change significantly once multi-language support lands; building this now would mean redesigning the plugin API twice
 - `[Feature]` AI quick fixes — let Claude suggest and apply one-click fixes for unused imports, outdated deps, missing docs; maybe a `vitals --fix` command
-- `[Feature]` False positive suppression — allow users to mark specific findings as intentional/irrelevant so they stop appearing in results; classic example: a TODO comment in code that *explains* what the TODO scanner does gets flagged as technical debt; three suppression mechanisms to consider: (1) inline comments — `// vitals-ignore: todo-scanner` above the offending line (similar to `// eslint-disable`), (2) a `.vitalsignore` file with glob patterns and check IDs (similar to `.gitignore`), (3) a "mark as false positive" action in the web dashboard or TUI that writes an entry to the ignore file automatically; suppressed findings should still be visible but visually distinct (e.g. dimmed with a "suppressed" badge) so they're not silently hidden
 - `[Feature]` VS Code Extension — inline warnings in editor, run checks on Save, show issues in the gutter; do not implement before monorepo and polyglot work is complete — the extension needs to know which package the user is editing in a monorepo, which language/framework applies, and which checks are relevant; building it now against a single-project JS assumption would require a significant rewrite later
 - `[Feature]` Fill the codebase tab out on all TypeScript-based projects — currently only fully populated on web projects
 - `[Feature]` Monorepo detection — identify monorepos, determine how vitals runs across multiple apps, include language/framework detection (see vitals-monorepo-design.md); as part of this, fix coverage reporting to run per-package and aggregate results — currently running from the monorepo root instruments all source files including untested integration runners in `core`, producing misleadingly low numbers (~43%) despite per-package coverage being 95%+
@@ -33,12 +31,13 @@
 - `[UI/UX]` Add tabs per project in the UI for a Monorepo — show a tab per project plus an overall summary dashboard; blocked by monorepo detection — cannot be built until the core runner knows how to identify and scan individual packages within a workspace
 
 ### Testing
-- `[Feature]` Add missing tests to `@vitals/cli` — only `QuickWins`, `ScoreBar`, and `Summary` are covered; needs tests for components (`App`, `CheckResult`, `ProgressList`, `Header`, all tui components and hooks), commands (`web`, `doctor`, `fix`, `stats`, `trend`), and lib (`history.ts`, `project-hash.ts`)
-- `[Feature]` Add missing tests to `@vitals/core` — currently only `scoring.ts`, `base.ts`, `knip.ts`, and `file-helpers.ts` are covered; all integration runners (`git.ts`, `npm-audit.ts`, `eslint.ts`, `coverage.ts`, `madge.ts`, etc.) and `runner.ts` need tests
-- `[Feature]` Create `vitals-test-fixtures` repo — separate repo with fixture projects for testing Vitals against real project types; each fixture is self-contained in its own subfolder: `react-app/`, `angular-app/`, `ts-lib/`, `node-api/`, and `monorepo/` (Option B: a nested pnpm workspace with its own `pnpm-workspace.yaml` and sub-packages inside); some fixtures should intentionally contain known issues (outdated deps, circular imports, vulnerabilities) to verify Vitals catches them correctly
-- `[Docs]` Document how to add a new test fixture — contributing guide in `vitals-test-fixtures` explaining how to add a new language or framework fixture (e.g. Python), what intentional issues to include, and how to run Vitals against it
+- `[Testing]` Add Playwright tests to the web project — add end-to-end tests covering key dashboard interactions (tab switching, collapsible sections, dependency graph, AI drawer)
+- `[Testing]` Add missing tests to `@vitals/cli` — only `QuickWins`, `ScoreBar`, and `Summary` are covered; needs tests for components (`App`, `CheckResult`, `ProgressList`, `Header`, all tui components and hooks), commands (`web`, `doctor`, `fix`, `stats`, `trend`), and lib (`history.ts`, `project-hash.ts`)
+- `[Testing]` Add missing tests to `@vitals/core` — currently only `scoring.ts`, `base.ts`, `knip.ts`, and `file-helpers.ts` are covered; all integration runners (`git.ts`, `npm-audit.ts`, `eslint.ts`, `coverage.ts`, `madge.ts`, etc.) and `runner.ts` need tests
+- `[Testing]` Create `vitals-test-fixtures` repo — separate repo with fixture projects for testing Vitals against real project types; each fixture is self-contained in its own subfolder: `react-app/`, `angular-app/`, `ts-lib/`, `node-api/`, and `monorepo/` (Option B: a nested pnpm workspace with its own `pnpm-workspace.yaml` and sub-packages inside); some fixtures should intentionally contain known issues (outdated deps, circular imports, vulnerabilities) to verify Vitals catches them correctly
 
 ### Documentation
+- `[Docs]` Document how to add a new test fixture — contributing guide in `vitals-test-fixtures` explaining how to add a new language or framework fixture (e.g. Python), what intentional issues to include, and how to run Vitals against it
 - `[Docs]` Incremental checks — document only rerunning checks on changed files between commits (18x speedup for large codebases)
 - `[Docs]` Adding a new language — docs for how to add a new language for scanning and checks
 - `[Docs]` How to run the project locally — setup guide including global install steps
@@ -62,6 +61,7 @@
 
 ## Done
 
+- `[Feature]` False positive suppression — allow users to mark specific findings as intentional/irrelevant so they stop appearing in results
 - `[Feature]` Suggestions from Claude — Claude suggested additional feature ideas: "Explain this" in the TUI, Vitals badge, `.vitalsrc` config, multi-repo team dashboard, dependency upgrade preview, and branch diff; all added to backlog
 - `[UI/UX]` Collapse top portion of Codebase tab — allow collapsing to see a bigger view of the module graph
 - `[Refactor]` Rename the TUI cockpit to `tui` — command is now `vitals tui`, directory renamed to `src/components/tui/`, component renamed to `TuiApp`
