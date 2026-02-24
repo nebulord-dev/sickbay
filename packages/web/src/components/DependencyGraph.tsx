@@ -111,17 +111,27 @@ function layoutGraph(
   return { nodes: layoutedNodes, edges };
 }
 
+function isTestFile(filePath: string): boolean {
+  return /\.(test|spec)\.[^.]+$/.test(filePath) || /\/__tests__\//.test(filePath);
+}
+
 export function DependencyGraph({ graph }: DependencyGraphProps) {
   const { nodes, edges } = useMemo(() => {
-    const allFiles = new Set<string>();
+    const filteredGraph: Record<string, string[]> = {};
     for (const [file, deps] of Object.entries(graph)) {
+      if (isTestFile(file)) continue;
+      filteredGraph[file] = deps.filter((d) => !isTestFile(d));
+    }
+
+    const allFiles = new Set<string>();
+    for (const [file, deps] of Object.entries(filteredGraph)) {
       allFiles.add(file);
       for (const dep of deps) {
         allFiles.add(dep);
       }
     }
 
-    const circularEdges = findCircularEdges(graph);
+    const circularEdges = findCircularEdges(filteredGraph);
 
     const rawNodes: Node[] = Array.from(allFiles).map((file) => {
       const color = getNodeColor(file);
@@ -145,7 +155,7 @@ export function DependencyGraph({ graph }: DependencyGraphProps) {
     });
 
     const rawEdges: Edge[] = [];
-    for (const [file, deps] of Object.entries(graph)) {
+    for (const [file, deps] of Object.entries(filteredGraph)) {
       for (const dep of deps) {
         const isCircular = circularEdges.has(`${file}|${dep}`);
         rawEdges.push({
@@ -180,7 +190,7 @@ export function DependencyGraph({ graph }: DependencyGraphProps) {
   return (
     <div
       className="rounded-lg border border-border overflow-hidden"
-      style={{ height: 600 }}
+      style={{ height: "calc(100vh - 120px)" }}
     >
       <ReactFlow
         nodes={nodes}

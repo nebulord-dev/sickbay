@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { CodebaseStats } from './CodebaseStats.js';
 import type { VitalsReport, CheckResult } from '@vitals/core';
 
@@ -143,5 +143,39 @@ describe('CodebaseStats', () => {
     render(<CodebaseStats report={report} />);
     expect(screen.getByText('Codebase')).toBeInTheDocument();
     expect(screen.getByText('Git Activity')).toBeInTheDocument();
+  });
+
+  it('collapses a section when its header is clicked', () => {
+    const report = makeReport([
+      makeCheck('complexity', { totalFiles: 42, totalLines: 5000, avgLines: 119, oversizedCount: 3, topFiles: [] }),
+    ]);
+    render(<CodebaseStats report={report} />);
+    expect(screen.getByText('42')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Codebase'));
+    expect(screen.queryByText('42')).not.toBeInTheDocument();
+  });
+
+  it('re-expands a section when its header is clicked again', () => {
+    const report = makeReport([
+      makeCheck('complexity', { totalFiles: 42, totalLines: 5000, avgLines: 119, oversizedCount: 3, topFiles: [] }),
+    ]);
+    render(<CodebaseStats report={report} />);
+    fireEvent.click(screen.getByText('Codebase'));
+    expect(screen.queryByText('42')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Codebase'));
+    expect(screen.getByText('42')).toBeInTheDocument();
+  });
+
+  it('collapses sections independently', () => {
+    const report = makeReport([
+      makeCheck('complexity', { totalFiles: 10, totalLines: 1000, avgLines: 100, oversizedCount: 0, topFiles: [] }),
+      makeCheck('git', { commitCount: 50, contributorCount: 2, remoteBranches: 3, lastCommit: '1d ago' }),
+    ]);
+    render(<CodebaseStats report={report} />);
+    fireEvent.click(screen.getByText('Git Activity'));
+    // Codebase content still visible
+    expect(screen.getByText('10')).toBeInTheDocument();
+    // Git content hidden
+    expect(screen.queryByText('50')).not.toBeInTheDocument();
   });
 });
