@@ -2,28 +2,34 @@
 
 ## Backlog
 
-- Scan the vitals project with the vitals CLI
-- Add Playwright tests to the web project
+### General
+- `[Task]` Scan the vitals project with the vitals CLI — run `vitals` against this monorepo and review the results; use findings to identify gaps and inform future work
+- `[Testing]` Add Playwright tests to the web project — add end-to-end tests covering key dashboard interactions (tab switching, collapsible sections, dependency graph, AI drawer)
 
 ### Features
 - `[Feature]` Historical Trends — track score changes over time, store past reports locally, visualize trends in a line chart
-- `[Feature]` CI/CD Integration Guide — pre-built GitHub Actions and GitLab CI templates, auto-comment PR summaries with score deltas, fail builds on critical thresholds
+- `[Feature]` CI/CD Integration Guide — pre-built GitHub Actions and GitLab CI templates, auto-comment PR summaries with score deltas, fail builds on critical thresholds; a basic single-project template can be built now, but monorepo support will require matrix build strategies and per-package runs — plan for a v2 of the templates once monorepo detection lands
 - `[Feature]` Lighthouse Integration — run Lighthouse audits for Web Vitals (LCP, FID, CLS) alongside code health checks with unified performance scoring
-- `[Feature]` Custom check API for plugins — plug-in system for adding custom runners with a simple interface
+- `[Feature]` Custom check API for plugins — plug-in system for adding custom runners with a simple interface; do not implement before polyglot work is complete — the runner interface (language scoping, category registration, how checks are discovered) will change significantly once multi-language support lands; building this now would mean redesigning the plugin API twice
 - `[Feature]` AI quick fixes — let Claude suggest and apply one-click fixes for unused imports, outdated deps, missing docs; maybe a `vitals --fix` command
-- `[Feature]` VS Code Extension — inline warnings in editor, run checks on Save, show issues in the gutter
+- `[Feature]` VS Code Extension — inline warnings in editor, run checks on Save, show issues in the gutter; do not implement before monorepo and polyglot work is complete — the extension needs to know which package the user is editing in a monorepo, which language/framework applies, and which checks are relevant; building it now against a single-project JS assumption would require a significant rewrite later
 - `[Feature]` Fill the codebase tab out on all TypeScript-based projects — currently only fully populated on web projects
 - `[Feature]` Monorepo detection — identify monorepos, determine how vitals runs across multiple apps, include language/framework detection (see vitals-monorepo-design.md); as part of this, fix coverage reporting to run per-package and aggregate results — currently running from the monorepo root instruments all source files including untested integration runners in `core`, producing misleadingly low numbers (~43%) despite per-package coverage being 95%+
-- `[Feature]` Add a vitals-py variant to the CLI — Python equivalent scanning using same terminal and web views
-- `[Feature]` Add more commands like `trends` and `doctor` — brainstorm other commands for quick visualizations
+- `[Feature]` Add a vitals-py variant to the CLI — Python equivalent scanning using same terminal and web views; this task IS polyglot work and should not be started until the polyglot architecture is established in `core` — building it beforehand risks creating a parallel codebase that has to be painfully retrofitted later; the right approach is to implement Python checks as first-class runners within the existing architecture once language detection and multi-language runner registration are in place
+- `[Feature]` Expand the command suite — `trends` and `doctor` already exist; brainstorm and build additional commands in the same spirit (e.g. `vitals compare`, `vitals explain`, `vitals export`) that surface quick, focused visualizations or workflows without running a full scan
 - `[Feature]` Make About page fully dynamic for polyglot support — the checks list already renders from `report.checks` dynamically, but `CHECK_DESCRIPTIONS` in `About.tsx` is a hardcoded map; as Python, Angular, Node etc. checks are added, their descriptions would need to be manually added to the web package; the fix is to move `description` onto each runner's `CheckResult` in `core` so the About page can just render `check.description` with no hardcoded map needed; do not implement until the polyglot/language detection work is underway
 - `[Feature]` Replace Claude Code API key with Enterprise license — support both enterprise and personal API key options
-- `[Feature]` Suggestions from Claude — have Claude suggest additional feature ideas for the app
 - `[Feature]` Add context-aware tips to quick wins — surface tips like "use the React compiler" or "ESLint isn't fully configured", but tips must be framework/language aware (a React compiler tip is meaningless on Angular or Node); requires: (1) reliable framework detection from the polyglot/monorepo work, (2) a tip registry where each tip declares the context it applies to (framework, language, tooling), and (3) tip prioritization based on check scores; do not implement until framework detection is stable
+- `[Feature]` "Explain this" in the TUI — press `e` on a selected check in the Health panel to open a Claude-powered overlay explaining what the issue means and how to fix it without leaving the terminal; the Health panel currently shows check names and scores but doesn't support individual check selection, so this needs: (1) arrow-key navigation to select a specific check row, (2) a full-screen or side overlay component to render the AI response, (3) streaming Claude output so the explanation appears progressively; requires `ANTHROPIC_API_KEY`
+- `[Feature]` Vitals badge — `vitals badge` generates a shields.io-style markdown/HTML badge showing the project health score, color-coded green/yellow/red; badge could be static (generated once) or dynamic (served via a small endpoint); great for open source README visibility
+- `[Feature]` `.vitalsrc` config file — allow projects to customize check weights, per-check score thresholds, excluded paths, and which checks to run via a `.vitalsrc.json` (or `vitals` key in `package.json`); zero-config remains the default but power users need this; will require re-architecture of how `runVitals()` receives its config in `core`; do not implement before monorepo and polyglot work is complete — the config schema (per-package overrides, language-specific check toggles, workspace-level vs package-level settings) will be substantially more complex in a polyglot monorepo context; building a single-project schema now means redesigning it entirely later
+- `[Feature]` Multi-repo team dashboard — `vitals team --repos ./repos.json` scans multiple repos and shows an aggregated web dashboard with per-repo health scores, a team-level rollup, and the ability to drill into any individual project; ideal for agencies or platform teams managing many codebases; do not implement before monorepo detection lands — how repos are discovered and scanned will change once monorepo support exists, and the dashboard will need per-package drill-down within a monorepo, not just per-repo
+- `[Feature]` Dependency upgrade preview — after a scan, show projected score impact of upgrading all outdated deps: "upgrading 8 packages would raise your score from 72 → 86"; could use `npm outdated` data + a simulated re-score without actually running the upgrade
+- `[Feature]` Branch diff — `vitals diff main` (or `vitals diff <branch>`) compares health of the current branch against another; shows which checks regressed, which improved, and the overall delta; different from trend (historical over time) — this is branch-aware and perfect as a pre-push check or auto-comment on PRs
 
 ### UI/UX
 - `[UI/UX]` Dependency Tree Visualization — interactive graph of dependency tree highlighting vulnerabilities, outdated packages, and circular imports
-- `[UI/UX]` Add tabs per project in the UI for a Monorepo — show a tab per project plus an overall summary dashboard
+- `[UI/UX]` Add tabs per project in the UI for a Monorepo — show a tab per project plus an overall summary dashboard; blocked by monorepo detection — cannot be built until the core runner knows how to identify and scan individual packages within a workspace
 
 ### Testing
 - `[Feature]` Add missing tests to `@vitals/cli` — only `QuickWins`, `ScoreBar`, and `Summary` are covered; needs tests for components (`App`, `CheckResult`, `ProgressList`, `Header`, all tui components and hooks), commands (`web`, `doctor`, `fix`, `stats`, `trend`), and lib (`history.ts`, `project-hash.ts`)
@@ -55,7 +61,9 @@
 
 ## Done
 
+- `[Feature]` Suggestions from Claude — Claude suggested additional feature ideas: "Explain this" in the TUI, Vitals badge, `.vitalsrc` config, multi-repo team dashboard, dependency upgrade preview, and branch diff; all added to backlog
 - `[UI/UX]` Collapse top portion of Codebase tab — allow collapsing to see a bigger view of the module graph
+- `[Refactor]` Rename the TUI cockpit to `tui` — command is now `vitals tui`, directory renamed to `src/components/tui/`, component renamed to `TuiApp`
 - Add React compiler to the web project
 - Add Vitest tests to all projects
 - Add tests coverage reports to all projects
