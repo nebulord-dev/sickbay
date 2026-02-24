@@ -163,21 +163,21 @@ program
     );
   });
 
-// --- vitals cockpit ---
+// --- vitals tui ---
 program
-  .command("cockpit")
+  .command("tui")
   .description("Launch the persistent developer dashboard")
   .option("-p, --path <path>", "project path to monitor", process.cwd())
   .option("--no-watch", "disable file-watching auto-refresh")
   .option("--refresh <seconds>", "auto-refresh interval in seconds", "300")
   .option("-c, --checks <checks>", "comma-separated list of checks to run")
   .action(async (options) => {
-    const { CockpitApp } = await import("./components/cockpit/CockpitApp.js");
+    const { TuiApp } = await import("./components/tui/TuiApp.js");
     const checks = options.checks
       ? options.checks.split(",").map((s: string) => s.trim())
       : undefined;
     render(
-      React.createElement(CockpitApp, {
+      React.createElement(TuiApp, {
         projectPath: options.path,
         checks,
         watchEnabled: options.watch !== false,

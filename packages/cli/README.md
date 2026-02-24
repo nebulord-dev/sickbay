@@ -16,7 +16,7 @@ vitals [options]
 | `trend [options]`     | Show score history and trends over time               |
 | `stats [options]`     | Show a quick codebase overview and project summary    |
 | `doctor [options]`    | Diagnose project setup and configuration issues       |
-| `cockpit [options]`   | Persistent live dashboard with file watching and activity tracking |
+| `tui [options]`   | Persistent live dashboard with file watching and activity tracking |
 
 ### Flags
 
@@ -69,21 +69,21 @@ vitals stats
 # Diagnose project setup
 vitals doctor
 
-# Launch cockpit dashboard (current directory, file watching enabled)
-vitals cockpit
+# Launch tui dashboard (current directory, file watching enabled)
+vitals tui
 
-# Cockpit for a specific project, disable file watching
-vitals cockpit --path ~/projects/my-app --no-watch
+# TUI for a specific project, disable file watching
+vitals tui --path ~/projects/my-app --no-watch
 
-# Cockpit with faster auto-refresh (60 seconds) and specific checks only
-vitals cockpit --path ~/projects/my-app --refresh 60 --checks knip,npm-audit,eslint
+# TUI with faster auto-refresh (60 seconds) and specific checks only
+vitals tui --path ~/projects/my-app --refresh 60 --checks knip,npm-audit,eslint
 ```
 
-## Cockpit Dashboard
+## TUI Dashboard
 
-`vitals cockpit` opens a persistent split-pane TUI that continuously monitors your project. Unlike a one-shot scan, it stays running, watches for file changes, and lets you interact with results in real time.
+`vitals tui` opens a persistent split-pane TUI that continuously monitors your project. Unlike a one-shot scan, it stays running, watches for file changes, and lets you interact with results in real time.
 
-### Cockpit Flags
+### TUI Flags
 
 | Flag                      | Default         | Description                                          |
 | ------------------------- | --------------- | ---------------------------------------------------- |
@@ -94,7 +94,7 @@ vitals cockpit --path ~/projects/my-app --refresh 60 --checks knip,npm-audit,esl
 
 ### Panels
 
-The cockpit displays six panels arranged in a responsive grid:
+The tui displays six panels arranged in a responsive grid:
 
 | Panel          | Key  | Content                                                                 |
 | -------------- | ---- | ----------------------------------------------------------------------- |
@@ -143,8 +143,8 @@ src/
     ├── ScoreBar.tsx       # Colored horizontal bar (green/yellow/red)
     ├── Summary.tsx        # Overall score + issue counts
     ├── QuickWins.tsx      # Top actionable fix suggestions
-    └── cockpit/
-        ├── CockpitApp.tsx         # Cockpit root — layout, keyboard input, state
+    └── tui/
+        ├── TUIApp.tsx         # TUI root — layout, keyboard input, state
         ├── HealthPanel.tsx        # Check results with status icons and score bars
         ├── ScorePanel.tsx         # Overall score, issue counts, delta from last scan
         ├── TrendPanel.tsx         # Sparkline charts for score history (last 10 scans)

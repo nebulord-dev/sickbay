@@ -17,7 +17,7 @@ A zero-config health check CLI for React projects. Run `vitals` in any project t
 
 - **17 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
 - **Animated terminal UI** built with Ink (React for terminals)
-- **Cockpit dashboard** — persistent live TUI with real-time file watching, git status, trends, and activity log
+- **TUI dashboard** — persistent live TUI with real-time file watching, git status, trends, and activity log
 - **Web dashboard** served locally — opens automatically with `--web`
 - **AI-powered insights** with Claude — automated analysis and interactive chat (requires `ANTHROPIC_API_KEY`)
 - **Zero config** — all tools are bundled; no global installs required
@@ -99,7 +99,7 @@ Commands:
   trend [options]        Show score history and trends over time
   stats [options]        Show a quick codebase overview and project summary
   doctor [options]       Diagnose project setup and configuration issues
-  cockpit [options]      Persistent live dashboard with file watching and activity tracking
+  tui [options]      Persistent live dashboard with file watching and activity tracking
 ```
 
 ### Examples
@@ -124,15 +124,15 @@ vitals --path ~/projects/my-app --web
 export ANTHROPIC_API_KEY=sk-ant-...
 vitals --path ~/projects/my-app --web
 
-# Launch persistent cockpit dashboard (watches for file changes, auto-rescans)
-vitals cockpit --path ~/projects/my-app
+# Launch persistent tui dashboard (watches for file changes, auto-rescans)
+vitals tui --path ~/projects/my-app
 
-# Cockpit with AI web dashboard on demand (press W inside cockpit)
+# TUI with AI web dashboard on demand (press W inside tui)
 export ANTHROPIC_API_KEY=sk-ant-...
-vitals cockpit --path ~/projects/my-app
+vitals tui --path ~/projects/my-app
 ```
 
-> **Note:** See [packages/cli/README.md](packages/cli/README.md) for detailed documentation on the `fix`, `trend`, `stats`, `doctor`, and `cockpit` commands.
+> **Note:** See [packages/cli/README.md](packages/cli/README.md) for detailed documentation on the `fix`, `trend`, `stats`, `doctor`, and `tui` commands.
 
 ---
 

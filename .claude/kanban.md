@@ -16,17 +16,17 @@
 - `[Feature]` Monorepo detection — identify monorepos, determine how vitals runs across multiple apps, include language/framework detection (see vitals-monorepo-design.md); as part of this, fix coverage reporting to run per-package and aggregate results — currently running from the monorepo root instruments all source files including untested integration runners in `core`, producing misleadingly low numbers (~43%) despite per-package coverage being 95%+
 - `[Feature]` Add a vitals-py variant to the CLI — Python equivalent scanning using same terminal and web views
 - `[Feature]` Add more commands like `trends` and `doctor` — brainstorm other commands for quick visualizations
-- `[Feature]` Update About page to show checks based on language — when polyglot features land, show only checks that ran
+- `[Feature]` Make About page fully dynamic for polyglot support — the checks list already renders from `report.checks` dynamically, but `CHECK_DESCRIPTIONS` in `About.tsx` is a hardcoded map; as Python, Angular, Node etc. checks are added, their descriptions would need to be manually added to the web package; the fix is to move `description` onto each runner's `CheckResult` in `core` so the About page can just render `check.description` with no hardcoded map needed; do not implement until the polyglot/language detection work is underway
 - `[Feature]` Replace Claude Code API key with Enterprise license — support both enterprise and personal API key options
 - `[Feature]` Suggestions from Claude — have Claude suggest additional feature ideas for the app
-- `[Feature]` Add tips to quick wins — surface tips like "use the React compiler" or "ESLint isn't fully configured"
+- `[Feature]` Add context-aware tips to quick wins — surface tips like "use the React compiler" or "ESLint isn't fully configured", but tips must be framework/language aware (a React compiler tip is meaningless on Angular or Node); requires: (1) reliable framework detection from the polyglot/monorepo work, (2) a tip registry where each tip declares the context it applies to (framework, language, tooling), and (3) tip prioritization based on check scores; do not implement until framework detection is stable
 
 ### UI/UX
 - `[UI/UX]` Dependency Tree Visualization — interactive graph of dependency tree highlighting vulnerabilities, outdated packages, and circular imports
 - `[UI/UX]` Add tabs per project in the UI for a Monorepo — show a tab per project plus an overall summary dashboard
 
 ### Testing
-- `[Feature]` Add missing tests to `@vitals/cli` — only `QuickWins`, `ScoreBar`, and `Summary` are covered; needs tests for components (`App`, `CheckResult`, `ProgressList`, `Header`, all cockpit components and hooks), commands (`web`, `doctor`, `fix`, `stats`, `trend`), and lib (`history.ts`, `project-hash.ts`)
+- `[Feature]` Add missing tests to `@vitals/cli` — only `QuickWins`, `ScoreBar`, and `Summary` are covered; needs tests for components (`App`, `CheckResult`, `ProgressList`, `Header`, all tui components and hooks), commands (`web`, `doctor`, `fix`, `stats`, `trend`), and lib (`history.ts`, `project-hash.ts`)
 - `[Feature]` Add missing tests to `@vitals/core` — currently only `scoring.ts`, `base.ts`, `knip.ts`, and `file-helpers.ts` are covered; all integration runners (`git.ts`, `npm-audit.ts`, `eslint.ts`, `coverage.ts`, `madge.ts`, etc.) and `runner.ts` need tests
 - `[Feature]` Create `vitals-test-fixtures` repo — separate repo with fixture projects for testing Vitals against real project types; each fixture is self-contained in its own subfolder: `react-app/`, `angular-app/`, `ts-lib/`, `node-api/`, and `monorepo/` (Option B: a nested pnpm workspace with its own `pnpm-workspace.yaml` and sub-packages inside); some fixtures should intentionally contain known issues (outdated deps, circular imports, vulnerabilities) to verify Vitals catches them correctly
 - `[Docs]` Document how to add a new test fixture — contributing guide in `vitals-test-fixtures` explaining how to add a new language or framework fixture (e.g. Python), what intentional issues to include, and how to run Vitals against it
@@ -48,7 +48,6 @@
 
 - `[Quality]` Add linting across the monorepo — add ESLint to all packages
 - `[Quality]` Add quality checks to repo PRs — run vitals checks as part of PR CI
-- `[Refactor]` Rename the TUI cockpit — consider names like Bridge, Pulse, etc.
 
 ## In Progress
 

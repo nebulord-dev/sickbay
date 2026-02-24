@@ -13,19 +13,19 @@ import { useVitalsRunner } from "./hooks/useVitalsRunner.js";
 import { useFileWatcher } from "./hooks/useFileWatcher.js";
 import { useTerminalSize } from "./hooks/useTerminalSize.js";
 
-interface CockpitAppProps {
+interface TuiAppProps {
   projectPath: string;
   checks?: string[];
   watchEnabled: boolean;
   refreshInterval: number;
 }
 
-export function CockpitApp({
+export function TuiApp({
   projectPath,
   checks,
   watchEnabled,
   refreshInterval,
-}: CockpitAppProps) {
+}: TuiAppProps) {
   const { rows, columns } = useTerminalSize();
   const { report, isScanning, progress, scan } = useVitalsRunner({
     projectPath,
@@ -93,7 +93,7 @@ export function CockpitApp({
 
   // Initial scan
   useEffect(() => {
-    addActivity("info", "Cockpit started");
+    addActivity("info", "TUI started");
     addActivity("scan-start", "Starting initial health scan...");
     scan().then((result) => {
       if (result) handleScanComplete(result);
