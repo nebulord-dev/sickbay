@@ -45,18 +45,18 @@ A deliberately broken Node.js REST API. Used to verify that Vitals catches a bro
 
 **Intentional issues baked in:**
 
-| Check | What's broken |
-|-------|--------------|
-| `secrets` | Hardcoded AWS keys, Stripe secret, JWT secret in `src/config.js` |
-| `npm-audit` | `jsonwebtoken@8.5.1` has known CVEs |
-| `outdated` | `axios@0.27`, `mongoose@6`, `dotenv@14`, `nodemon@2` — all well behind current |
-| `madge` | Circular dependency: `src/utils/helpers.js` ↔ `src/utils/format.js` |
-| `jscpd` | `processUserData` and `processAdminData` in `helpers.js` are near-identical |
-| `complexity` | 4-level nested conditionals in `processUserData` |
-| `todo-scanner` | ~12 TODO/FIXME comments across routes and helpers |
-| `depcheck`/`knip` | `colors` and `left-pad` in `package.json` but never imported |
-| `coverage` | No test files |
-| `heavy-deps` | `moment`, `lodash`, `mongoose` |
+| Check             | What's broken                                                                  |
+| ----------------- | ------------------------------------------------------------------------------ |
+| `secrets`         | Hardcoded AWS keys, Stripe secret, JWT secret in `src/config.js`               |
+| `npm-audit`       | `jsonwebtoken@8.5.1` has known CVEs                                            |
+| `outdated`        | `axios@0.27`, `mongoose@6`, `dotenv@14`, `nodemon@2` — all well behind current |
+| `madge`           | Circular dependency: `src/utils/helpers.js` ↔ `src/utils/format.js`            |
+| `jscpd`           | `processUserData` and `processAdminData` in `helpers.js` are near-identical    |
+| `complexity`      | 4-level nested conditionals in `processUserData`                               |
+| `todo-scanner`    | ~12 TODO/FIXME comments across routes and helpers                              |
+| `depcheck`/`knip` | `colors` and `left-pad` in `package.json` but never imported                   |
+| `coverage`        | No test files                                                                  |
+| `heavy-deps`      | `moment`, `lodash`, `mongoose`                                                 |
 
 **Expect:** a low overall score with failures across most categories.
 
@@ -71,3 +71,4 @@ A deliberately broken Node.js REST API. Used to verify that Vitals catches a bro
 5. Document what the fixture tests and what score range to expect in this README
 
 Each fixture should test a specific scenario — avoid making a fixture that's just a clean healthy project (the react-app already covers that baseline). The goal is to verify Vitals catches real problems, not to show off a green dashboard.
+
