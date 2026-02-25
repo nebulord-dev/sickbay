@@ -26,7 +26,11 @@ const SHORT_LABELS: Record<string, string> = {
   git: "Git",
 };
 
-export function TrendPanel({ projectPath, lastScanTime, availableHeight }: TrendPanelProps) {
+export function TrendPanel({
+  projectPath,
+  lastScanTime,
+  availableHeight,
+}: TrendPanelProps) {
   const [trends, setTrends] = useState<
     Array<{
       label: string;
@@ -63,7 +67,9 @@ export function TrendPanel({ projectPath, lastScanTime, availableHeight }: Trend
       const values = entries
         .map((e) => e.categoryScores[cat])
         .filter((v): v is number => v !== undefined);
+
       if (values.length === 0) continue;
+
       const arrow = trendArrow(values);
       result.push({
         label: SHORT_LABELS[cat] || cat.charAt(0).toUpperCase() + cat.slice(1),

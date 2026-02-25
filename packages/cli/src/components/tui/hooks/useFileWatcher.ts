@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import type { FSWatcher } from "chokidar";
 
 interface UseFileWatcherOptions {
   projectPath: string;
@@ -14,9 +15,11 @@ export function useFileWatcher({
   onFilesChanged,
 }: UseFileWatcherOptions) {
   const [changedFiles, setChangedFiles] = useState<string[]>([]);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const pendingRef = useRef<string[]>([]);
-  const watcherRef = useRef<any>(null);
+  const watcherRef = useRef<FSWatcher | null>(null);
 
   useEffect(() => {
     if (!enabled) return;

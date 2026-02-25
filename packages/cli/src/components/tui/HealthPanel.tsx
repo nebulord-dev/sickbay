@@ -10,14 +10,6 @@ interface HealthPanelProps {
   availableHeight: number;
 }
 
-const CATEGORY_ICON: Record<string, string> = {
-  dependencies: "\u{1F4E6}",
-  security: "\u{1F512}",
-  "code-quality": "\u2714",
-  performance: "\u26A1",
-  git: "\u{1F500}",
-};
-
 function scoreColor(score: number): string {
   if (score >= 80) return "green";
   if (score >= 60) return "yellow";
@@ -69,7 +61,11 @@ export function HealthPanel({
                     : "gray"
               }
             >
-              {p.status === "done" ? "\u2713" : p.status === "running" ? "\u25CC" : "\u25CB"}
+              {p.status === "done"
+                ? "\u2713"
+                : p.status === "running"
+                  ? "\u25CC"
+                  : "\u25CB"}
             </Text>
             <Text> {p.name}</Text>
           </Box>
@@ -93,9 +89,7 @@ export function HealthPanel({
 
   return (
     <Box flexDirection="column">
-      {hasLess && (
-        <Text dimColor>  \u25B2 {scrollOffset} more above</Text>
-      )}
+      {hasLess && <Text dimColor> \u25B2 {scrollOffset} more above</Text>}
       {visible.map((check) => (
         <Box key={check.id}>
           <Text
@@ -127,9 +121,7 @@ export function HealthPanel({
           {checks.length - scrollOffset - maxVisible} more below
         </Text>
       )}
-      {isScanning && (
-        <Text color="yellow">{"  \u25CC Re-scanning..."}</Text>
-      )}
+      {isScanning && <Text color="yellow">{"  \u25CC Re-scanning..."}</Text>}
     </Box>
   );
 }

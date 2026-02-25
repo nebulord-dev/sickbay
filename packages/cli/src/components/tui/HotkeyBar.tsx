@@ -22,7 +22,7 @@ const HOTKEYS: Array<{ key: string; label: string; panel?: PanelId }> = [
 export function HotkeyBar({ activePanel }: HotkeyBarProps) {
   return (
     <Box>
-      {HOTKEYS.map((hk, i) => {
+      {HOTKEYS.map((hk) => {
         const isActive = hk.panel !== undefined && hk.panel === activePanel;
         return (
           <Box key={hk.key} marginRight={2}>

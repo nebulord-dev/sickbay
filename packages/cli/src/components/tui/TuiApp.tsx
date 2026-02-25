@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Box, Text, useInput, useApp } from "ink";
+import { Box, useInput } from "ink";
 import type { VitalsReport } from "@vitals/core";
 import { PanelBorder } from "./PanelBorder.js";
 import { HotkeyBar, type PanelId } from "./HotkeyBar.js";
@@ -38,7 +38,7 @@ export function TuiApp({
   const [previousScore, setPreviousScore] = useState<number | null>(null);
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [healthScrollOffset, setHealthScrollOffset] = useState(0);
-  const refreshRef = useRef<ReturnType<typeof setInterval>>();
+  const refreshRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const reportRef = useRef<VitalsReport | null>(null);
 
   // Keep reportRef in sync
@@ -98,6 +98,7 @@ export function TuiApp({
     scan().then((result) => {
       if (result) handleScanComplete(result);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-refresh timer
@@ -112,7 +113,7 @@ export function TuiApp({
     return () => {
       if (refreshRef.current) clearInterval(refreshRef.current);
     };
-  }, [refreshInterval, scan, handleScanComplete]);
+  }, [refreshInterval, scan, handleScanComplete, addActivity]);
 
   // File watcher
   useFileWatcher({
@@ -136,7 +137,7 @@ export function TuiApp({
     addActivity("scan-start", "Manual re-scan triggered");
     const result = await scan();
     if (result) handleScanComplete(result);
-  }, [scan, handleScanComplete]);
+  }, [addActivity, scan, handleScanComplete]);
 
   // Keyboard input — only active when stdin supports raw mode (interactive TTY)
   const isTTY = !!(process.stdin.isTTY && process.stdin.setRawMode);

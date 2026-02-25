@@ -29,7 +29,10 @@ async function fetchGitStatus(projectPath: string): Promise<GitStatus> {
   const [branch, porcelain, revList, stashList, logLine] = await Promise.all([
     git(["branch", "--show-current"], projectPath),
     git(["status", "--porcelain"], projectPath),
-    git(["rev-list", "--left-right", "--count", "HEAD...@{upstream}"], projectPath),
+    git(
+      ["rev-list", "--left-right", "--count", "HEAD...@{upstream}"],
+      projectPath,
+    ),
     git(["stash", "list"], projectPath),
     git(["log", "-1", "--format=%s|%cr"], projectPath),
   ]);
@@ -65,7 +68,9 @@ async function fetchGitStatus(projectPath: string): Promise<GitStatus> {
 
 export function useGitStatus(projectPath: string, pollInterval = 10000) {
   const [status, setStatus] = useState<GitStatus | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     fetchGitStatus(projectPath).then(setStatus);
