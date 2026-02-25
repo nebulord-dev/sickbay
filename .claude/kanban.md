@@ -38,6 +38,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Feature]` Custom check API for plugins — plug-in system for adding custom runners with a simple interface; do not implement before polyglot work is complete — the runner interface (language scoping, category registration, how checks are discovered) will change significantly once multi-language support lands; building this now would mean redesigning the plugin API twice
 - `[Feature]` AI quick fixes — let Claude suggest and apply one-click fixes for unused imports, outdated deps, missing docs; maybe a `vitals --fix` command
 - `[Feature]` VS Code Extension — inline warnings in editor, run checks on Save, show issues in the gutter; do not implement before monorepo and polyglot work is complete — the extension needs to know which package the user is editing in a monorepo, which language/framework applies, and which checks are relevant; building it now against a single-project JS assumption would require a significant rewrite later
+- `[Feature]` Framework-scoped checks — ensure each runner only runs when relevant to the detected framework/runtime, and add framework-specific checks where gaps exist; currently most checks gray out on non-React projects (e.g. the node-api fixture) because `isApplicable()` correctly skips them but there are no Node-specific replacements; work needed: (1) audit every runner's `isApplicable()` to confirm it correctly detects React vs Node vs vanilla TS vs other; (2) identify gaps where a framework has no targeted checks (e.g. Node APIs have no Express/Fastify-specific checks, no middleware audit, no route complexity check); (3) add Node-specific runners to fill those gaps; (4) verify against fixtures — running vitals on `fixtures/packages/react-app` should show a full React-appropriate check suite, and `fixtures/packages/node-api` should show a full Node-appropriate suite with minimal grayout; depends on reliable framework detection, which is part of the monorepo work but can be partially addressed now for the two known frameworks
 - `[Feature]` Fill the codebase tab out on all TypeScript-based projects — currently only fully populated on web projects
 - `[Feature]` Monorepo detection — identify monorepos, determine how vitals runs across multiple apps, include language/framework detection (see vitals-monorepo-design.md); as part of this, fix coverage reporting to run per-package and aggregate results — currently running from the monorepo root instruments all source files including untested integration runners in `core`, producing misleadingly low numbers (~43%) despite per-package coverage being 95%+
 - `[Feature]` Add a vitals-py variant to the CLI — Python equivalent scanning using same terminal and web views; this task IS polyglot work and should not be started until the polyglot architecture is established in `core` — building it beforehand risks creating a parallel codebase that has to be painfully retrofitted later; the right approach is to implement Python checks as first-class runners within the existing architecture once language detection and multi-language runner registration are in place
@@ -55,7 +56,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 ### UI/UX
 
 - `[UI/UX]` Dependency Tree Visualization — interactive graph of dependency tree highlighting vulnerabilities, outdated packages, and circular imports
-- `[UI/UX]` Add tabs per project in the UI for a Monorepo — show a tab per project plus an overall summary dashboard; blocked by monorepo detection — cannot be built until the core runner knows how to identify and scan individual packages within a workspace
+- `[UI/UX]` Add tabs per project in the UI for a Monorepo — when vitals detects a monorepo, the web view shows an Overview tab plus one tab per package; the Overview tab is a health dashboard summarising the whole repo: a score card grid showing each package's overall score, a rollup of total critical/warning/info counts, and quick wins across all packages; clicking a package tab switches to the standard full web view for that package (checks, scores, issues, dependency graph, etc.) scoped to just that package's report; the existing single-package dashboard components should be reusable per-tab with no changes — the tab just controls which `PackageReport` gets passed in; blocked by monorepo detection and the `MonorepoReport` data shape (Phase 3)
 - `[UI/UX]` Remove Future Enhancements page and its button from the About page — the tab and the button that navigates to it should both be deleted
 - `[UI/UX]` Remove CRT overlay easter egg — find and delete the CRT scanline/flicker overlay effect and any toggle that enables it
 - `[UI/UX]` Light theme support — add a light theme to the web dashboard with a toggle to switch between light and dark; dark remains the default
@@ -69,10 +70,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### Documentation
 
-- `[Docs]` Document how to add a new test fixture — contributing guide in `vitals-test-fixtures` explaining how to add a new language or framework fixture (e.g. Python), what intentional issues to include, and how to run Vitals against it
 - `[Docs]` Incremental checks — document only rerunning checks on changed files between commits (18x speedup for large codebases)
-- `[Docs]` Adding a new language — docs for how to add a new language for scanning and checks
-- `[Docs]` How to run the project locally — setup guide including global install steps
 - `[Docs]` Document patterns for AI consistency — scan monorepo for code patterns and document them for AI working on Vitals
 - `[Docs]` Add screenshots to the READMEs — add visuals of the app to package READMEs
 - `[Docs]` Create SKILLS.md and reference files — have Claude suggest what skill files and other docs would be useful
@@ -92,6 +90,10 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 <!-- Tasks currently being worked on -->
 
 ## Done
+
+- `[Docs]` Document how to add a new test fixture — covered in `CONTRIBUTING.md`
+- `[Docs]` Adding a new language — stub section in `CONTRIBUTING.md`, full docs deferred to Phase 4
+- `[Docs]` How to run the project locally — covered in `CONTRIBUTING.md`
 
 - `[Feature]` False positive suppression — allow users to mark specific findings as intentional/irrelevant so they stop appearing in results
 - `[Feature]` Suggestions from Claude — Claude suggested additional feature ideas: "Explain this" in the TUI, Vitals badge, `.vitalsrc` config, multi-repo team dashboard, dependency upgrade preview, and branch diff; all added to backlog
