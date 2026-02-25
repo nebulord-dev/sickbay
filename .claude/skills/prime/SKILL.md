@@ -15,8 +15,8 @@ Build comprehensive understanding of the Vitals monorepo before starting work. T
 List all tracked files:
 !`git ls-files`
 
-Show directory structure (try tree, fall back to find):
-!`tree -L 3 -I 'node_modules|.git|dist|build|coverage|.turbo' 2>/dev/null || find . -maxdepth 3 -not -path '*/node_modules/*' -not -path '*/.git/*' -not -path '*/dist/*' -not -path '*/coverage/*' -not -path '*/.turbo/*' | sort`
+Show directory structure:
+!`find . -maxdepth 3 -not -path '*/node_modules/*' -not -path '*/.git/*' -not -path '*/dist/*' -not -path '*/coverage/*' -not -path '*/.turbo/*' | sort`
 
 ### 2. Read Core Documentation
 
