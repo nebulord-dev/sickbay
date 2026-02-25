@@ -18,7 +18,7 @@ export interface ProjectInfo {
   hasESLint: boolean;
   hasPrettier: boolean;
   framework: 'react' | 'next' | 'vite' | 'cra' | 'unknown';
-  packageManager: 'npm' | 'pnpm' | 'yarn';
+  packageManager: 'npm' | 'pnpm' | 'yarn' | 'bun';
   totalDependencies: number;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;

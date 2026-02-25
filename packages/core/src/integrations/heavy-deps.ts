@@ -33,8 +33,8 @@ const HEAVY_DEPS: Record<string, HeavyDep> = {
     severity: 'warning',
   },
   'jquery': {
-    alternative: 'native DOM APIs or React refs',
-    reason: 'jQuery is unnecessary in React projects',
+    alternative: 'native DOM APIs (querySelector, fetch, classList, etc.)',
+    reason: 'Modern browsers cover virtually all jQuery use cases natively',
     severity: 'warning',
   },
   'request': {
@@ -80,6 +80,31 @@ const HEAVY_DEPS: Record<string, HeavyDep> = {
   'node-fetch': {
     alternative: 'native fetch (Node 18+)',
     reason: 'fetch is built-in to Node 18+',
+    severity: 'info',
+  },
+  'moment-timezone': {
+    alternative: 'Intl.DateTimeFormat or date-fns-tz',
+    reason: 'moment-timezone bundles all IANA timezone data — 500KB+ unminified',
+    severity: 'warning',
+  },
+  'uuid': {
+    alternative: 'crypto.randomUUID()',
+    reason: 'crypto.randomUUID() is native in Node 14.17+ and all modern browsers',
+    severity: 'info',
+  },
+  'rimraf': {
+    alternative: 'fs.rm(path, { recursive: true, force: true })',
+    reason: 'fs.rm with recursive option is built into Node 14.14+',
+    severity: 'info',
+  },
+  'mkdirp': {
+    alternative: 'fs.mkdir(path, { recursive: true })',
+    reason: 'fs.mkdir with recursive option is built into Node 10.12+',
+    severity: 'info',
+  },
+  'qs': {
+    alternative: 'URLSearchParams',
+    reason: 'URLSearchParams handles query string parsing natively in Node and browsers',
     severity: 'info',
   },
 };

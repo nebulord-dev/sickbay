@@ -1,8 +1,7 @@
 import { execa } from 'execa';
-import { existsSync } from 'fs';
-import { join } from 'path';
 import { BaseRunner } from './base.js';
 import { timer } from '../utils/file-helpers.js';
+import { detectPackageManager } from '../utils/detect-project.js';
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -11,8 +10,6 @@ import type { CheckResult, Issue } from '../types.js';
  * The runner reports issues with actionable feedback, including commands to update outdated packages, helping to keep the project up-to-date and secure.
  * It calculates an overall score based on the number of outdated packages found, providing insights into the project's maintenance status.
  */
-
-type Pm = 'pnpm' | 'npm' | 'yarn';
 
 interface OutdatedEntry {
   name: string;
@@ -25,19 +22,15 @@ export class OutdatedRunner extends BaseRunner {
   name = 'outdated';
   category = 'dependencies' as const;
 
-  private detectPm(projectPath: string): Pm {
-    if (existsSync(join(projectPath, 'pnpm-lock.yaml'))) return 'pnpm';
-    if (existsSync(join(projectPath, 'yarn.lock'))) return 'yarn';
-    return 'npm';
-  }
-
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
-    const pm = this.detectPm(projectPath);
+    const pm = detectPackageManager(projectPath);
 
-    if (pm === 'yarn') {
-      // yarn outdated JSON is NDJSON — complex to parse; skip gracefully
-      return this.skipped('yarn outdated JSON not supported — run: yarn outdated');
+    // yarn and bun don't support `--json` in a parseable way (yarn outputs NDJSON,
+    // bun outputs a formatted table). Rather than crash or return wrong results,
+    // skip the check and surface a hint to run the command manually instead.
+    if (pm === 'yarn' || pm === 'bun') {
+      return this.skipped(`${pm} outdated not supported — run: ${pm} outdated`);
     }
 
     try {

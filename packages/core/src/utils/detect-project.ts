@@ -54,10 +54,15 @@ function detectFramework(
   return "unknown";
 }
 
-function detectPackageManager(
+export function detectPackageManager(
   projectPath: string,
 ): ProjectInfo["packageManager"] {
   if (existsSync(join(projectPath, "pnpm-lock.yaml"))) return "pnpm";
   if (existsSync(join(projectPath, "yarn.lock"))) return "yarn";
+  if (
+    existsSync(join(projectPath, "bun.lockb")) ||
+    existsSync(join(projectPath, "bun.lock"))
+  )
+    return "bun";
   return "npm";
 }

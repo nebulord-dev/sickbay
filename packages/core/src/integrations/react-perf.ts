@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync } from "fs";
 import { join, extname } from "path";
 import type { CheckResult, Issue } from "../types.js";
 import { BaseRunner } from "./base.js";
-import { timer, fileExists } from "../utils/file-helpers.js";
+import { timer, fileExists, WARN_LINES } from "../utils/file-helpers.js";
 
 /**
  * ReactPerfRunner analyzes React component files for common performance anti-patterns.
@@ -12,8 +12,6 @@ import { timer, fileExists } from "../utils/file-helpers.js";
  */
 
 const COMPONENT_EXTENSIONS = new Set([".tsx", ".jsx"]);
-
-const WARN_LINES = 300;
 
 interface Finding {
   file: string;

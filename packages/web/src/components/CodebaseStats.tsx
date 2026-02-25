@@ -1,6 +1,10 @@
 import React, { lazy, Suspense, useState } from 'react';
 import type { VitalsReport } from '@vitals/core';
 
+// Mirror thresholds from @vitals/core WARN_LINES / CRITICAL_LINES (file-helpers.ts + complexity.ts)
+const WARN_LINES = 300;
+const CRITICAL_LINES = 500;
+
 // Lazy load heavy graph visualization
 const DependencyGraph = lazy(() => import('./DependencyGraph.js').then((m) => ({ default: m.DependencyGraph })));
 
@@ -126,7 +130,7 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
                         <div className="flex-1 bg-surface rounded-full h-4 overflow-hidden">
                           <div
                             className={`h-4 rounded-full flex items-center justify-end pr-2 text-xs font-mono text-black font-semibold
-                              ${f.lines >= 500 ? 'bg-red-400' : f.lines >= 300 ? 'bg-yellow-400' : 'bg-green-400'}`}
+                              ${f.lines >= CRITICAL_LINES ? 'bg-red-400' : f.lines >= WARN_LINES ? 'bg-yellow-400' : 'bg-green-400'}`}
                             style={{ width: `${Math.max(8, (f.lines / maxLines) * 100)}%` }}
                           >
                             {f.lines}

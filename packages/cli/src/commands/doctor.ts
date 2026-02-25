@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { detectProject } from "@vitals/core";
+import { detectProject, detectPackageManager } from "@vitals/core";
 
 /**
  * This module defines a set of diagnostic checks that can be run against a JavaScript/TypeScript project to identify common issues and best practice violations. Each check returns a DiagnosticResult indicating whether the check passed, failed, or has warnings, along with messages and potential fixes. The runDiagnostics function executes all checks and aggregates their results for reporting.
@@ -155,7 +155,10 @@ async function checkLockfile(projectPath: string): Promise<DiagnosticResult> {
   const hasNpmLock = existsSync(join(projectPath, "package-lock.json"));
   const hasPnpmLock = existsSync(join(projectPath, "pnpm-lock.yaml"));
   const hasYarnLock = existsSync(join(projectPath, "yarn.lock"));
-  if (!hasNpmLock && !hasPnpmLock && !hasYarnLock) {
+  const hasBunLock =
+    existsSync(join(projectPath, "bun.lockb")) ||
+    existsSync(join(projectPath, "bun.lock"));
+  if (!hasNpmLock && !hasPnpmLock && !hasYarnLock && !hasBunLock) {
     return {
       id: "lockfile",
       label: "Lockfile present",
@@ -165,15 +168,17 @@ async function checkLockfile(projectPath: string): Promise<DiagnosticResult> {
       fixDescription: "Generate lockfile with npm install",
     };
   }
+  const lockfileNames: Record<string, string> = {
+    pnpm: "pnpm-lock.yaml",
+    yarn: "yarn.lock",
+    bun: "bun.lockb",
+    npm: "package-lock.json",
+  };
   return {
     id: "lockfile",
     label: "Lockfile present",
     status: "pass",
-    message: hasPnpmLock
-      ? "pnpm-lock.yaml"
-      : hasYarnLock
-        ? "yarn.lock"
-        : "package-lock.json",
+    message: lockfileNames[detectPackageManager(projectPath)],
   };
 }
 
