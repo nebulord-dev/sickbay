@@ -55,6 +55,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[UI/UX]` Add tabs per project in the UI for a Monorepo — show a tab per project plus an overall summary dashboard; blocked by monorepo detection — cannot be built until the core runner knows how to identify and scan individual packages within a workspace
 - `[UI/UX]` Remove Future Enhancements page and its button from the About page — the tab and the button that navigates to it should both be deleted
 - `[UI/UX]` Remove CRT overlay easter egg — find and delete the CRT scanline/flicker overlay effect and any toggle that enables it
+- `[UI/UX]` Light theme support — add a light theme to the web dashboard with a toggle to switch between light and dark; dark remains the default
 
 ### Testing
 - `[Testing]` Add Playwright tests to the web project — add end-to-end tests covering key dashboard interactions (tab switching, collapsible sections, dependency graph, AI drawer)
