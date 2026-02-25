@@ -1,0 +1,28 @@
+{
+  "name": "vitals-fixture-node-api",
+  "version": "1.0.0",
+  "description": "Node.js REST API fixture — intentionally full of issues for Vitals testing",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bcrypt": "^5.0.1",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^14.3.2",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "left-pad": "^1.3.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "mongoose": "^6.9.2",
+    "request": "^2.88.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
