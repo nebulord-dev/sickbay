@@ -1,0 +1,192 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+const allMockRunners = vi.hoisted(() => {
+  const makeRunner = (name: string) => ({
+    name,
+    category: 'code-quality' as const,
+    isApplicable: vi.fn().mockResolvedValue(true),
+    run: vi.fn().mockResolvedValue({
+      id: name,
+      category: 'code-quality' as const,
+      name: `${name} check`,
+      score: 100,
+      status: 'pass' as const,
+      issues: [],
+      toolsUsed: [name],
+      duration: 0,
+    }),
+  });
+
+  return {
+    knip: makeRunner('knip'),
+    outdated: makeRunner('outdated'),
+    npmAudit: makeRunner('npm-audit'),
+    depcheck: makeRunner('depcheck'),
+    madge: makeRunner('madge'),
+    sourceMapExplorer: makeRunner('source-map-explorer'),
+    coverage: makeRunner('coverage'),
+    licenseChecker: makeRunner('license-checker'),
+    jscpd: makeRunner('jscpd'),
+    git: makeRunner('git'),
+    eslint: makeRunner('eslint'),
+    typescript: makeRunner('typescript'),
+    todoScanner: makeRunner('todo-scanner'),
+    complexity: makeRunner('complexity'),
+    secrets: makeRunner('secrets'),
+    heavyDeps: makeRunner('heavy-deps'),
+    reactPerf: makeRunner('react-perf'),
+    assetSize: makeRunner('asset-size'),
+  };
+});
+
+// Regular functions (not arrow functions) are required so they can be called with `new`
+/* eslint-disable @typescript-eslint/no-explicit-any */
+vi.mock('./integrations/knip.js', () => ({ KnipRunner: function () { return allMockRunners.knip; } }));
+vi.mock('./integrations/outdated.js', () => ({ OutdatedRunner: function () { return allMockRunners.outdated; } }));
+vi.mock('./integrations/npm-audit.js', () => ({ NpmAuditRunner: function () { return allMockRunners.npmAudit; } }));
+vi.mock('./integrations/depcheck.js', () => ({ DepcheckRunner: function () { return allMockRunners.depcheck; } }));
+vi.mock('./integrations/madge.js', () => ({ MadgeRunner: function () { return allMockRunners.madge; } }));
+vi.mock('./integrations/source-map-explorer.js', () => ({ SourceMapExplorerRunner: function () { return allMockRunners.sourceMapExplorer; } }));
+vi.mock('./integrations/coverage.js', () => ({ CoverageRunner: function () { return allMockRunners.coverage; } }));
+vi.mock('./integrations/license-checker.js', () => ({ LicenseCheckerRunner: function () { return allMockRunners.licenseChecker; } }));
+vi.mock('./integrations/jscpd.js', () => ({ JscpdRunner: function () { return allMockRunners.jscpd; } }));
+vi.mock('./integrations/git.js', () => ({ GitRunner: function () { return allMockRunners.git; } }));
+vi.mock('./integrations/eslint.js', () => ({ ESLintRunner: function () { return allMockRunners.eslint; } }));
+vi.mock('./integrations/typescript.js', () => ({ TypeScriptRunner: function () { return allMockRunners.typescript; } }));
+vi.mock('./integrations/todo-scanner.js', () => ({ TodoScannerRunner: function () { return allMockRunners.todoScanner; } }));
+vi.mock('./integrations/complexity.js', () => ({ ComplexityRunner: function () { return allMockRunners.complexity; } }));
+vi.mock('./integrations/secrets.js', () => ({ SecretsRunner: function () { return allMockRunners.secrets; } }));
+vi.mock('./integrations/heavy-deps.js', () => ({ HeavyDepsRunner: function () { return allMockRunners.heavyDeps; } }));
+vi.mock('./integrations/react-perf.js', () => ({ ReactPerfRunner: function () { return allMockRunners.reactPerf; } }));
+vi.mock('./integrations/asset-size.js', () => ({ AssetSizeRunner: function () { return allMockRunners.assetSize; } }));
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+const mockProjectInfo = {
+  name: 'test-project',
+  version: '1.0.0',
+  hasTypeScript: true,
+  hasESLint: true,
+  hasPrettier: false,
+  framework: 'react' as const,
+  packageManager: 'npm' as const,
+  totalDependencies: 10,
+  dependencies: {},
+  devDependencies: {},
+};
+
+vi.mock('./utils/detect-project.js', () => ({
+  detectProject: vi.fn(),
+}));
+
+vi.mock('./scoring.js', () => ({
+  calculateOverallScore: vi.fn().mockReturnValue(90),
+  buildSummary: vi.fn().mockReturnValue({ critical: 0, warnings: 0, info: 0 }),
+}));
+
+import { runVitals } from './runner.js';
+import { detectProject } from './utils/detect-project.js';
+
+describe('runVitals', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Re-apply detectProject mock (clearAllMocks clears call history but not implementations;
+    // re-assert defaults for any runners that tests may have reconfigured)
+    vi.mocked(detectProject).mockResolvedValue(mockProjectInfo);
+
+    for (const runner of Object.values(allMockRunners)) {
+      runner.isApplicable.mockResolvedValue(true);
+      runner.run.mockResolvedValue({
+        id: runner.name,
+        category: 'code-quality' as const,
+        name: `${runner.name} check`,
+        score: 100,
+        status: 'pass' as const,
+        issues: [],
+        toolsUsed: [runner.name],
+        duration: 0,
+      });
+    }
+  });
+
+  it('uses process.cwd() as default project path', async () => {
+    await runVitals();
+    expect(detectProject).toHaveBeenCalledWith(process.cwd());
+  });
+
+  it('uses provided projectPath', async () => {
+    await runVitals({ projectPath: '/my/project' });
+    expect(detectProject).toHaveBeenCalledWith('/my/project');
+  });
+
+  it('returns a report with the correct shape', async () => {
+    const report = await runVitals({ projectPath: '/my/project' });
+
+    expect(report).toMatchObject({
+      projectPath: '/my/project',
+      projectInfo: mockProjectInfo,
+      overallScore: 90,
+      summary: { critical: 0, warnings: 0, info: 0 },
+    });
+    expect(typeof report.timestamp).toBe('string');
+    expect(Array.isArray(report.checks)).toBe(true);
+  });
+
+  it('filters runners when checks option is provided', async () => {
+    const report = await runVitals({ projectPath: '/p', checks: ['knip', 'git'] });
+
+    const ids = report.checks.map((c) => c.id);
+    expect(ids).toContain('knip');
+    expect(ids).toContain('git');
+    expect(ids).not.toContain('eslint');
+    expect(ids).not.toContain('npm-audit');
+  });
+
+  it('excludes non-applicable runners from results', async () => {
+    allMockRunners.eslint.isApplicable.mockResolvedValue(false);
+
+    const report = await runVitals({ projectPath: '/p' });
+
+    expect(report.checks.map((c) => c.id)).not.toContain('eslint');
+    expect(allMockRunners.eslint.run).not.toHaveBeenCalled();
+  });
+
+  it('calls onCheckStart before running each check', async () => {
+    const onCheckStart = vi.fn();
+    await runVitals({ projectPath: '/p', checks: ['knip'], onCheckStart });
+
+    expect(onCheckStart).toHaveBeenCalledWith('knip');
+  });
+
+  it('calls onCheckComplete after each check with the result', async () => {
+    const onCheckComplete = vi.fn();
+    await runVitals({ projectPath: '/p', checks: ['knip'], onCheckComplete });
+
+    expect(onCheckComplete).toHaveBeenCalledTimes(1);
+    expect(onCheckComplete).toHaveBeenCalledWith(expect.objectContaining({ id: 'knip' }));
+  });
+
+  it('excludes a rejected runner without crashing', async () => {
+    allMockRunners.eslint.run.mockRejectedValue(new Error('runner exploded'));
+
+    const report = await runVitals({ projectPath: '/p' });
+
+    expect(report.checks.map((c) => c.id)).not.toContain('eslint');
+  });
+
+  it('includes results from all remaining runners when one fails', async () => {
+    allMockRunners.eslint.run.mockRejectedValue(new Error('boom'));
+
+    const report = await runVitals({ projectPath: '/p', checks: ['knip', 'eslint', 'git'] });
+
+    const ids = report.checks.map((c) => c.id);
+    expect(ids).toContain('knip');
+    expect(ids).toContain('git');
+    expect(ids).not.toContain('eslint');
+  });
+
+  it('passes verbose option to runner.run', async () => {
+    await runVitals({ projectPath: '/p', checks: ['knip'], verbose: true });
+
+    expect(allMockRunners.knip.run).toHaveBeenCalledWith('/p', { verbose: true });
+  });
+});

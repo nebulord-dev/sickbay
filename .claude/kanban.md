@@ -59,8 +59,8 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### Testing
 - `[Testing]` Add Playwright tests to the web project — add end-to-end tests covering key dashboard interactions (tab switching, collapsible sections, dependency graph, AI drawer)
-- `[Testing]` Add missing tests to `@vitals/cli` — only `QuickWins`, `ScoreBar`, and `Summary` are covered; needs tests for components (`App`, `CheckResult`, `ProgressList`, `Header`, all tui components and hooks), commands (`web`, `doctor`, `fix`, `stats`, `trend`), and lib (`history.ts`, `project-hash.ts`)
-- `[Testing]` Add missing tests to `@vitals/core` — currently only `scoring.ts`, `base.ts`, `knip.ts`, and `file-helpers.ts` are covered; all integration runners (`git.ts`, `npm-audit.ts`, `eslint.ts`, `coverage.ts`, `madge.ts`, etc.) and `runner.ts` need tests
+- `[Testing]` Add missing tests to `@vitals/cli` — `CheckResult`, `ProgressList`, `Header`, `history.ts`, and `project-hash.ts` now covered; still needs: `App`, all tui components and hooks, commands (`web`, `doctor`, `fix`, `stats`, `trend`)
+- `[Testing]` Add missing tests to `@vitals/core` — `runner.ts`, `detect-project.ts`, `npm-audit.ts`, `eslint.ts`, `git.ts`, `typescript.ts`, `outdated.ts`, `coverage.ts` now covered; still needs: `madge.ts`, `jscpd.ts`, `depcheck.ts`, `secrets.ts`, `heavy-deps.ts`, `react-perf.ts`, `asset-size.ts`, `todo-scanner.ts`, `complexity.ts`, `license-checker.ts`, `source-map-explorer.ts`
 - `[Testing]` Create `vitals-test-fixtures` repo — separate repo with fixture projects for testing Vitals against real project types; each fixture is self-contained in its own subfolder: `react-app/`, `angular-app/`, `ts-lib/`, `node-api/`, and `monorepo/` (Option B: a nested pnpm workspace with its own `pnpm-workspace.yaml` and sub-packages inside); some fixtures should intentionally contain known issues (outdated deps, circular imports, vulnerabilities) to verify Vitals catches them correctly
 
 ### Documentation
