@@ -53,6 +53,13 @@ Read based on the task at hand:
 - `packages/core/src/integrations/base.test.ts` — pattern for testing base class
 - `packages/cli/src/components/QuickWins.test.tsx` — pattern for testing Ink components
 
+**If working on test fixtures:**
+- `fixtures/README.md` — fixture structure, intentional issues per package, how to add new fixtures
+- `fixtures/packages/react-app/` — moderately healthy React + Vite + TypeScript app
+- `fixtures/packages/node-api/` — intentionally broken Node API (secrets, circular deps, outdated deps, no tests, duplicate code)
+- Run `vitals --path fixtures/packages/node-api` to verify checks catch real issues
+- Run `vitals --path fixtures/` to test monorepo detection (Phase 3)
+
 ### 4. Understand Current State
 
 Check recent activity:

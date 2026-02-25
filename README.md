@@ -33,6 +33,7 @@ vitals/
 │   ├── core/        # Analysis engine — all check runners & scoring
 │   ├── cli/         # Terminal UI (Ink + Commander)
 │   └── web/         # Web dashboard (Vite + React)
+├── fixtures/        # Test fixtures (pnpm monorepo with react-app + node-api)
 ├── package.json     # Root workspace config
 ├── pnpm-workspace.yaml
 ├── turbo.json       # Build pipeline
@@ -254,6 +255,18 @@ pnpm --filter @vitals/cli dev
 # Terminal 2 — test against a project
 node packages/cli/dist/index.js --path ~/Desktop/vitals-test-app
 ```
+
+### Test Fixtures
+
+The `fixtures/` directory is a pnpm monorepo with two intentionally broken packages for testing Vitals locally:
+
+```bash
+vitals --path fixtures/packages/react-app   # moderately healthy React app
+vitals --path fixtures/packages/node-api    # deliberately broken Node API
+vitals --path fixtures/                     # full monorepo (tests monorepo detection)
+```
+
+See [`fixtures/README.md`](fixtures/README.md) for the full list of intentional issues and how to add new fixtures.
 
 ### Iterating on the Web Dashboard
 

@@ -29,6 +29,8 @@ This is a **pnpm workspace** monorepo managed with **Turbo**. The packages have 
 @vitals/web (independent, but served by CLI)
 ```
 
+The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turbo build pipeline) used for testing Vitals against real project types. It contains two packages: `fixtures/packages/react-app` (moderately healthy React app) and `fixtures/packages/node-api` (intentionally broken Node API with hardcoded secrets, circular deps, outdated packages, duplicate code, no tests, etc.). See `fixtures/README.md` for the full breakdown of intentional issues and how to add new fixtures.
+
 ### Build System
 
 - **Package Manager**: pnpm (workspace mode)
