@@ -1,4 +1,3 @@
-import React from 'react';
 import type { CheckResult } from '@vitals/core';
 
 const CATEGORY_ICONS: Record<string, string> = {

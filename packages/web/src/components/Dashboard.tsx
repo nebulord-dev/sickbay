@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense, useEffect, useRef } from "react";
+import { useState, lazy, Suspense, useEffect, useRef } from "react";
 import type { VitalsReport } from "@vitals/core";
 
 function getScoreColor(score: number) {

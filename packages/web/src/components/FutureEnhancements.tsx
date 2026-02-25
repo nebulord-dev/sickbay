@@ -1,5 +1,3 @@
-import React from "react";
-
 interface Enhancement {
   title: string;
   description: string;
