@@ -1,5 +1,29 @@
 # Kanban Board
 
+## Roadmap
+
+Phases run roughly sequentially. Phase 2 can begin once Phase 1 core tests are in place — it doesn't need the full testing suite to be done first.
+
+```
+Phase 1 — Testing & Hygiene   ████████░░░░░░░░░░░░░░░░░░░░░░░░
+Phase 2 — Standalone Polish   ░░░░████████████░░░░░░░░░░░░░░░░  ← starts mid-P1
+Phase 3 — Monorepo Support    ░░░░░░░░░░░░████████░░░░░░░░░░░░
+Phase 4 — Polyglot Ecosystem  ░░░░░░░░░░░░░░░░░░░██████████░░░
+Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░░░░░░░░░░░░█████
+```
+
+| Phase | Focus | Key tasks | Unblocks |
+|-------|-------|-----------|----------|
+| **1** | Testing & Hygiene | Core runner tests, CLI component tests, `vitals-test-fixtures` repo, Playwright (web), linting, CI quality checks | Safe refactor in Phase 3 |
+| **2** | Standalone Polish | Fill codebase tab (TS projects), CI/CD guide, historical trends, branch diff, vitals badge, expand command suite, version bumping, publishing & registry | — |
+| **3** | Monorepo Support | Monorepo detection, `MonorepoReport` data shape, per-package runner, web tab UI, per-package coverage fix, About page dynamic, `--package` flag | Phase 4 features |
+| **4** | Polyglot Ecosystem | Custom plugins API, VS Code extension, `.vitalsrc` config, team dashboard, context-aware tips, Lighthouse integration | Phase 5 |
+| **5** | vitals-py + Unified | Python CLI (`vitals-py`), unified polyglot dashboard spanning both CLIs | — |
+
+> **Blocked items**: Custom plugins, VS Code ext, `.vitalsrc`, team dashboard, and context-aware tips all explicitly require Phase 3 to be complete before starting. See individual task descriptions for details.
+
+---
+
 ## Backlog
 
 ### General
@@ -52,8 +76,7 @@
 
 ### Code Quality & CI
 
-- `[Quality]` Add linting across the monorepo — add ESLint to all packages
-- `[Quality]` Add quality checks to repo PRs — run vitals checks as part of PR CI
+- `[Quality]` Add quality checks to repo PRs — run vitals checks as part of PR CI; no GitHub Actions workflows exist yet
 
 ## In Progress
 
@@ -64,6 +87,7 @@
 - `[Feature]` False positive suppression — allow users to mark specific findings as intentional/irrelevant so they stop appearing in results
 - `[Feature]` Suggestions from Claude — Claude suggested additional feature ideas: "Explain this" in the TUI, Vitals badge, `.vitalsrc` config, multi-repo team dashboard, dependency upgrade preview, and branch diff; all added to backlog
 - `[UI/UX]` Collapse top portion of Codebase tab — allow collapsing to see a bigger view of the module graph
+- `[Quality]` Add linting across the monorepo — ESLint configured at root with TS + React + hooks plugins; all packages have `lint` scripts; `turbo run lint` runs all
 - `[Refactor]` Rename the TUI cockpit to `tui` — command is now `vitals tui`, directory renamed to `src/components/tui/`, component renamed to `TuiApp`
 - Add React compiler to the web project
 - Add Vitest tests to all projects
