@@ -12,13 +12,13 @@ Phase 4 — Polyglot Ecosystem  ░░░░░░░░░░░░░░░░
 Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░░░░░░░░░░░░█████
 ```
 
-| Phase | Focus | Key tasks | Unblocks |
-|-------|-------|-----------|----------|
-| **1** | Testing & Hygiene | Core runner tests, CLI component tests, `vitals-test-fixtures` repo, Playwright (web), linting, CI quality checks | Safe refactor in Phase 3 |
-| **2** | Standalone Polish | Fill codebase tab (TS projects), CI/CD guide, historical trends, branch diff, vitals badge, expand command suite, version bumping, publishing & registry | — |
-| **3** | Monorepo Support | Monorepo detection, `MonorepoReport` data shape, per-package runner, web tab UI, per-package coverage fix, About page dynamic, `--package` flag | Phase 4 features |
-| **4** | Polyglot Ecosystem | Custom plugins API, VS Code extension, `.vitalsrc` config, team dashboard, context-aware tips, Lighthouse integration | Phase 5 |
-| **5** | vitals-py + Unified | Python CLI (`vitals-py`), unified polyglot dashboard spanning both CLIs | — |
+| Phase | Focus               | Key tasks                                                                                                                                                | Unblocks                 |
+| ----- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **1** | Testing & Hygiene   | Core runner tests, CLI component tests, `vitals-test-fixtures` repo, Playwright (web), linting, CI quality checks                                        | Safe refactor in Phase 3 |
+| **2** | Standalone Polish   | Fill codebase tab (TS projects), CI/CD guide, historical trends, branch diff, vitals badge, expand command suite, version bumping, publishing & registry | —                        |
+| **3** | Monorepo Support    | Monorepo detection, `MonorepoReport` data shape, per-package runner, web tab UI, per-package coverage fix, About page dynamic, `--package` flag          | Phase 4 features         |
+| **4** | Polyglot Ecosystem  | Custom plugins API, VS Code extension, `.vitalsrc` config, team dashboard, context-aware tips, Lighthouse integration                                    | Phase 5                  |
+| **5** | vitals-py + Unified | Python CLI (`vitals-py`), unified polyglot dashboard spanning both CLIs                                                                                  | —                        |
 
 > **Blocked items**: Custom plugins, VS Code ext, `.vitalsrc`, team dashboard, and context-aware tips all explicitly require Phase 3 to be complete before starting. See individual task descriptions for details.
 
@@ -27,9 +27,11 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 ## Backlog
 
 ### General
+
 - `[Task]` Scan the vitals project with the vitals CLI — run `vitals` against this monorepo and review the results; use findings to identify gaps and inform future work
 
 ### Features
+
 - `[Feature]` Historical Trends — track score changes over time, store past reports locally, visualize trends in a line chart
 - `[Feature]` CI/CD Integration Guide — pre-built GitHub Actions and GitLab CI templates, auto-comment PR summaries with score deltas, fail builds on critical thresholds; a basic single-project template can be built now, but monorepo support will require matrix build strategies and per-package runs — plan for a v2 of the templates once monorepo detection lands
 - `[Feature]` Lighthouse Integration — run Lighthouse audits for Web Vitals (LCP, FID, CLS) alongside code health checks with unified performance scoring
@@ -51,6 +53,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Feature]` Branch diff — `vitals diff main` (or `vitals diff <branch>`) compares health of the current branch against another; shows which checks regressed, which improved, and the overall delta; different from trend (historical over time) — this is branch-aware and perfect as a pre-push check or auto-comment on PRs
 
 ### UI/UX
+
 - `[UI/UX]` Dependency Tree Visualization — interactive graph of dependency tree highlighting vulnerabilities, outdated packages, and circular imports
 - `[UI/UX]` Add tabs per project in the UI for a Monorepo — show a tab per project plus an overall summary dashboard; blocked by monorepo detection — cannot be built until the core runner knows how to identify and scan individual packages within a workspace
 - `[UI/UX]` Remove Future Enhancements page and its button from the About page — the tab and the button that navigates to it should both be deleted
@@ -58,12 +61,14 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[UI/UX]` Light theme support — add a light theme to the web dashboard with a toggle to switch between light and dark; dark remains the default
 
 ### Testing
+
 - `[Testing]` Add Playwright tests to the web project — add end-to-end tests covering key dashboard interactions (tab switching, collapsible sections, dependency graph, AI drawer)
-- `[Testing]` Add missing tests to `@vitals/cli` — `CheckResult`, `ProgressList`, `Header`, `history.ts`, and `project-hash.ts` now covered; still needs: `App`, all tui components and hooks, commands (`web`, `doctor`, `fix`, `stats`, `trend`)
+- `[Testing]` Add missing tests to `@vitals/cli` — `CheckResult`, `ProgressList`, `Header`, `history.ts`, and `project-hash.ts` now covered; still needs: `App`, all tui components and hooks, commands (`web`, `doctor`, `fix`, `stats`, `trend`). Let's get all projects to around 90% coverage.
 - `[Testing]` Add missing tests to `@vitals/core` — `runner.ts`, `detect-project.ts`, `npm-audit.ts`, `eslint.ts`, `git.ts`, `typescript.ts`, `outdated.ts`, `coverage.ts` now covered; still needs: `madge.ts`, `jscpd.ts`, `depcheck.ts`, `secrets.ts`, `heavy-deps.ts`, `react-perf.ts`, `asset-size.ts`, `todo-scanner.ts`, `complexity.ts`, `license-checker.ts`, `source-map-explorer.ts`
 - `[Testing]` Create `vitals-test-fixtures` repo — separate repo with fixture projects for testing Vitals against real project types; each fixture is self-contained in its own subfolder: `react-app/`, `angular-app/`, `ts-lib/`, `node-api/`, and `monorepo/` (Option B: a nested pnpm workspace with its own `pnpm-workspace.yaml` and sub-packages inside); some fixtures should intentionally contain known issues (outdated deps, circular imports, vulnerabilities) to verify Vitals catches them correctly
 
 ### Documentation
+
 - `[Docs]` Document how to add a new test fixture — contributing guide in `vitals-test-fixtures` explaining how to add a new language or framework fixture (e.g. Python), what intentional issues to include, and how to run Vitals against it
 - `[Docs]` Incremental checks — document only rerunning checks on changed files between commits (18x speedup for large codebases)
 - `[Docs]` Adding a new language — docs for how to add a new language for scanning and checks
@@ -73,6 +78,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Docs]` Create SKILLS.md and reference files — have Claude suggest what skill files and other docs would be useful
 
 ### Versioning
+
 - `[Feature]` Auto-increment Vitals CLI version — set up automated version bumping (e.g. via `changesets` or a release script); display the current version number beneath the Vitals banner in the terminal UI
 - `[Feature]` Set up publishing and registry — once repo is moved to its permanent home, configure Changesets + `@changesets/action` GitHub Action and decide on registry strategy: (a) **public npm** — unscoped, `npx vitals` just works, no `.npmrc` needed for consumers, but code is public; (b) **GitHub Packages** — requires scoped package (e.g. `@acme/vitals`), so consumers must run `npx @acme/vitals` and need an `.npmrc` with a GitHub PAT; (c) **self-hosted registry** (Verdaccio/Artifactory) — supports unscoped but adds infrastructure overhead. Do not start until repo is in its permanent home. Chosen approach: **GitHub Packages** (`@r1-development/vitals`), global install via `npm install -g @r1-development/vitals`.
 - `[Feature]` Update notifications and `vitals update` command — on startup, non-blocking check against the registry for a newer version; if found, print a notice under the banner (e.g. `v0.2.0 available — run "vitals update" to upgrade`); also add a `vitals update` command that runs the global reinstall automatically
