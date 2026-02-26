@@ -180,7 +180,13 @@ describe('useVitalsRunner', () => {
   });
 
   it('populates progress items from the checks array', async () => {
-    mockRunVitals.mockResolvedValue(makeReport() as any);
+    // Use a pending promise so we can observe the mid-scan state.
+    // mockResolvedValue completes synchronously in microtasks before the Ink
+    // renderer flushes, so lastFrame() would still show the pre-render state.
+    let resolveVitals!: (r: VitalsReport) => void;
+    mockRunVitals.mockReturnValue(
+      new Promise<VitalsReport>((res) => { resolveVitals = res; }) as any,
+    );
 
     const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
 
@@ -201,6 +207,8 @@ describe('useVitalsRunner', () => {
     // Progress should be set to the 3 check names
     expect(lastFrame()).toContain('progress:3');
 
+    // Cleanup — resolve so the hook doesn't leak
+    resolveVitals(makeReport());
     await scanPromise;
   });
 
