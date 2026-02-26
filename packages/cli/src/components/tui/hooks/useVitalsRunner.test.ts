@@ -199,6 +199,7 @@ describe('useVitalsRunner', () => {
     );
 
     await new Promise((r) => setImmediate(r));
+    await new Promise((r) => setImmediate(r));
 
     // Start scan but don't await so we can observe mid-scan state
     const scanPromise = scanRef.current?.();
