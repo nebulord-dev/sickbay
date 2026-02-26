@@ -64,9 +64,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 ### Testing
 
 - `[Testing]` Add Playwright tests to the web project — add end-to-end tests covering key dashboard interactions (tab switching, collapsible sections, dependency graph, AI drawer)
-- `[Testing]` Add missing tests to `@vitals/cli` — `CheckResult`, `ProgressList`, `Header`, `history.ts`, and `project-hash.ts` now covered; still needs: `App`, all tui components and hooks, commands (`web`, `doctor`, `fix`, `stats`, `trend`). Let's get all projects to around 90% coverage.
-- `[Testing]` Add missing tests to `@vitals/core` — `runner.ts`, `detect-project.ts`, `npm-audit.ts`, `eslint.ts`, `git.ts`, `typescript.ts`, `outdated.ts`, `coverage.ts` now covered; still needs: `madge.ts`, `jscpd.ts`, `depcheck.ts`, `secrets.ts`, `heavy-deps.ts`, `react-perf.ts`, `asset-size.ts`, `todo-scanner.ts`, `complexity.ts`, `license-checker.ts`, `source-map-explorer.ts`
-- `[Testing]` Create `vitals-test-fixtures` repo — separate repo with fixture projects for testing Vitals against real project types; each fixture is self-contained in its own subfolder: `react-app/`, `angular-app/`, `ts-lib/`, `node-api/`, and `monorepo/` (Option B: a nested pnpm workspace with its own `pnpm-workspace.yaml` and sub-packages inside); some fixtures should intentionally contain known issues (outdated deps, circular imports, vulnerabilities) to verify Vitals catches them correctly
+- `[Testing]` Add missing tests to `@vitals/cli` — CLI overall at **74.26% stmts / 76.39% lines** (345 tests, 31 files). Covered: `CheckResult`, `ProgressList`, `Header`, `history.ts`, `project-hash.ts`, `App`, `DoctorApp`, `StatsApp`, `TrendApp`, `FixApp`, all TUI components, all TUI hooks, commands `doctor`/`fix`/`stats`/`trend`. Still needed to reach ~80%: `commands/web.ts` (91.5% already, just missing error branch L112-115), boost `TuiApp.tsx` (36.8% — interactive keyboard logic), boost `App.tsx` (56.6% — web-opening phase). `src/index.ts` (0%) and `src/services/ai.ts` (0%) are integration-only and excluded from target.
 
 - `[Feature]` `/create-fixture` skill — scaffold a new test fixture package under `fixtures/packages/<framework>/` from the command line (e.g. `/create-fixture angular` or `/create-fixture nextjs vue`); skill should generate a realistic `package.json` with framework-appropriate outdated deps, source files with intentional issues (circular deps, fake secrets, TODOs, complexity, no tests), run `pnpm install` from the fixtures root, and append a section to `fixtures/README.md` documenting what's broken; **do not build until framework-scoped checks exist for the target framework** — scaffolding an Angular fixture is only useful if Vitals has Angular-specific checks to run against it; this skill and the framework-scoped checks task should ship together
 
@@ -93,6 +91,8 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ## Done
 
+- `[Testing]` Add missing tests to `@vitals/core` — **97.16% statements**, all integrations covered
+- `[Testing]` Test fixtures — `fixtures/packages/react-app` and `fixtures/packages/node-api` live in the monorepo as a standalone pnpm workspace; `node-api` has intentional issues (secrets, circular deps, outdated packages, etc.)
 - `[Docs]` Document how to add a new test fixture — covered in `CONTRIBUTING.md`
 - `[Docs]` Adding a new language — stub section in `CONTRIBUTING.md`, full docs deferred to Phase 4
 - `[Docs]` How to run the project locally — covered in `CONTRIBUTING.md`
