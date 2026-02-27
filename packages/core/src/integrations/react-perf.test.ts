@@ -277,6 +277,85 @@ describe('ReactPerfRunner', () => {
       expect(result.metadata?.filesScanned).toBe(1);
     });
 
+    it('suppresses inline object warnings when React Compiler is detected', async () => {
+      const pkg = JSON.stringify({
+        devDependencies: { 'babel-plugin-react-compiler': '^1.0.0' },
+      });
+      const content = [
+        "import React from 'react';",
+        '',
+        'export function MyComponent() {',
+        '  return <div style={{ color: "red" }}>Hello</div>;',
+        '}',
+      ].join('\n');
+
+      // First readFileSync call is package.json, second is the component file
+      mockReadFileSync
+        .mockReturnValueOnce(pkg as never)
+        .mockReturnValue(content as never);
+      mockReaddirSync.mockReturnValue(['MyComponent.tsx'] as never);
+      mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
+
+      const result = await runner.run('/project');
+
+      expect(result.issues.find((i) => i.message.includes('Inline object'))).toBeUndefined();
+      expect(result.metadata?.reactCompiler).toBe(true);
+      expect(result.score).toBe(100);
+    });
+
+    it('still flags index-as-key when React Compiler is detected', async () => {
+      const pkg = JSON.stringify({
+        devDependencies: { 'babel-plugin-react-compiler': '^1.0.0' },
+      });
+      const content = [
+        "import React from 'react';",
+        '',
+        'export function MyList({ items }) {',
+        '  return <ul>{items.map((item, index) => <li key={index}>{item}</li>)}</ul>;',
+        '}',
+      ].join('\n');
+
+      mockReadFileSync
+        .mockReturnValueOnce(pkg as never)
+        .mockReturnValue(content as never);
+      mockReaddirSync.mockReturnValue(['MyList.tsx'] as never);
+      mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
+
+      const result = await runner.run('/project');
+
+      expect(result.issues.find((i) => i.message.includes('index as key'))).toBeDefined();
+      expect(result.metadata?.reactCompiler).toBe(true);
+    });
+
+    it('also detects @react-compiler/babel package name', async () => {
+      const pkg = JSON.stringify({
+        devDependencies: { '@react-compiler/babel': '^1.0.0' },
+      });
+      const content = [
+        "import React from 'react';",
+        'export function MyComponent() { return <div style={{ color: "red" }} />; }',
+      ].join('\n');
+
+      mockReadFileSync
+        .mockReturnValueOnce(pkg as never)
+        .mockReturnValue(content as never);
+      mockReaddirSync.mockReturnValue(['MyComponent.tsx'] as never);
+      mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
+
+      const result = await runner.run('/project');
+
+      expect(result.metadata?.reactCompiler).toBe(true);
+      expect(result.issues.find((i) => i.message.includes('Inline object'))).toBeUndefined();
+    });
+
+    it('sets reactCompiler: false in metadata when compiler not present', async () => {
+      mockReaddirSync.mockReturnValue([] as never);
+
+      const result = await runner.run('/project');
+
+      expect(result.metadata?.reactCompiler).toBe(false);
+    });
+
     it('detects lazy route opportunity in route file with many static imports', async () => {
       const content = [
         "import React from 'react';",

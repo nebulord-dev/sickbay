@@ -32,6 +32,7 @@ export class ReactPerfRunner extends BaseRunner {
     const elapsed = timer();
 
     try {
+      const hasReactCompiler = detectReactCompiler(projectPath);
       const findings: Finding[] = [];
       const files = scanDirectory(join(projectPath, "src"), projectPath);
 
@@ -39,7 +40,12 @@ export class ReactPerfRunner extends BaseRunner {
         findings.push(...analyzeFile(file.path, file.fullPath, file.lines));
       }
 
-      const issues: Issue[] = findings.map((f) => ({
+      // Inline object warnings are handled automatically by the React Compiler
+      const activeFindings = hasReactCompiler
+        ? findings.filter((f) => !f.pattern.includes("Inline object"))
+        : findings;
+
+      const issues: Issue[] = activeFindings.map((f) => ({
         severity: f.severity,
         message:
           f.line > 0
@@ -50,10 +56,10 @@ export class ReactPerfRunner extends BaseRunner {
         reportedBy: ["react-perf"],
       }));
 
-      const warningCount = findings.filter(
+      const warningCount = activeFindings.filter(
         (f) => f.severity === "warning",
       ).length;
-      const infoCount = findings.filter((f) => f.severity === "info").length;
+      const infoCount = activeFindings.filter((f) => f.severity === "info").length;
       const score = Math.max(20, 100 - warningCount * 3 - infoCount * 1);
 
       return {
@@ -68,12 +74,13 @@ export class ReactPerfRunner extends BaseRunner {
         duration: elapsed(),
         metadata: {
           filesScanned: files.length,
-          totalFindings: findings.length,
-          inlineObjects: findings.filter((f) => f.pattern.includes("Inline"))
+          reactCompiler: hasReactCompiler,
+          totalFindings: activeFindings.length,
+          inlineObjects: activeFindings.filter((f) => f.pattern.includes("Inline"))
             .length,
-          indexAsKey: findings.filter((f) => f.pattern.includes("index as key"))
+          indexAsKey: activeFindings.filter((f) => f.pattern.includes("index as key"))
             .length,
-          largeComponents: findings.filter((f) =>
+          largeComponents: activeFindings.filter((f) =>
             f.pattern.includes("Large component"),
           ).length,
         },
@@ -103,6 +110,24 @@ interface FileInfo {
   path: string;
   fullPath: string;
   lines: number;
+}
+
+function detectReactCompiler(projectPath: string): boolean {
+  try {
+    const pkg = JSON.parse(
+      readFileSync(join(projectPath, "package.json"), "utf-8"),
+    ) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
+    return (
+      "babel-plugin-react-compiler" in allDeps ||
+      "@react-compiler/babel" in allDeps
+    );
+  } catch {
+    return false;
+  }
 }
 
 function scanDirectory(dir: string, projectRoot: string): FileInfo[] {
