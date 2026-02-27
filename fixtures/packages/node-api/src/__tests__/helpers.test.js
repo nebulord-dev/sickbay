@@ -2,7 +2,8 @@ const { calculateDiscount } = require('../utils/helpers');
 
 describe('calculateDiscount', () => {
   it('returns full price for non-premium, non-partner user', () => {
-    expect(calculateDiscount(100, {})).toBe(100);
+    // BUG: off-by-one — should be 100 but test expects wrong value
+    expect(calculateDiscount(100, {})).toBe(99);
   });
 
   it('applies 15% discount for partner users', () => {
