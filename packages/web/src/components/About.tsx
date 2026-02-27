@@ -1,16 +1,7 @@
 import type { VitalsReport } from "@vitals/core";
 
-type View =
-  | "overview"
-  | "issues"
-  | "dependencies"
-  | "codebase"
-  | "about"
-  | "future-enhancements";
-
 interface AboutProps {
   report: VitalsReport;
-  onNavigate?: (view: View) => void;
 }
 
 const CATEGORY_WEIGHTS: Record<string, number> = {
@@ -88,7 +79,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function About({ report, onNavigate }: AboutProps) {
+export function About({ report }: AboutProps) {
   const checksByCategory = report.checks.reduce<
     Record<string, typeof report.checks>
   >((acc, c) => {
@@ -208,22 +199,6 @@ export function About({ report, onNavigate }: AboutProps) {
         </div>
       </section>
 
-      {/* Future Enhancements CTA */}
-      {onNavigate && (
-        <section className="border-t border-border pt-6">
-          <div className="bg-surface rounded-lg p-6 text-center">
-            <p className="text-gray-400 mb-3">
-              Curious about what's coming next for Vitals?
-            </p>
-            <button
-              onClick={() => onNavigate("future-enhancements")}
-              className="inline-block px-4 py-2 bg-accent text-black font-mono text-sm rounded hover:bg-accent/90 transition-colors"
-            >
-              View Future Enhancements →
-            </button>
-          </div>
-        </section>
-      )}
     </div>
   );
 }

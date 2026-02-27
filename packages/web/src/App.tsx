@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import type { VitalsReport } from "@vitals/core";
 import { loadReport } from "./lib/load-report.js";
 import { Dashboard } from "./components/Dashboard.js";
-import { CRTOverlay } from "./components/CRTOverlay.js";
 
 export function App() {
   const [report, setReport] = useState<VitalsReport | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showCRT, setShowCRT] = useState(false);
 
   useEffect(() => {
     loadReport()
@@ -19,23 +17,6 @@ export function App() {
         // treat load failures the same as no report found
         setLoading(false);
       });
-  }, []);
-
-  // Easter egg: Cmd/Ctrl + Shift + V triggers CRT overlay
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        (e.metaKey || e.ctrlKey) &&
-        e.shiftKey &&
-        e.key.toLowerCase() === "v"
-      ) {
-        e.preventDefault();
-        setShowCRT(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   if (loading) {
@@ -72,10 +53,5 @@ export function App() {
     );
   }
 
-  return (
-    <>
-      <Dashboard report={report} />
-      {showCRT && <CRTOverlay onClose={() => setShowCRT(false)} />}
-    </>
-  );
+  return <Dashboard report={report} />;
 }

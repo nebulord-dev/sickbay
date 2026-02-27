@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { About } from './About.js';
 import type { VitalsReport } from '@vitals/core';
 
@@ -77,20 +77,4 @@ describe('About', () => {
     expect(screen.getByText('72')).toBeInTheDocument();
   });
 
-  it('does not render the "Future Enhancements" CTA when onNavigate is not provided', () => {
-    render(<About report={makeReport()} />);
-    expect(screen.queryByText(/View Future Enhancements/)).not.toBeInTheDocument();
-  });
-
-  it('renders the "Future Enhancements" CTA when onNavigate is provided', () => {
-    render(<About report={makeReport()} onNavigate={vi.fn()} />);
-    expect(screen.getByText(/View Future Enhancements/)).toBeInTheDocument();
-  });
-
-  it('calls onNavigate with "future-enhancements" when CTA is clicked', () => {
-    const onNavigate = vi.fn();
-    render(<About report={makeReport()} onNavigate={onNavigate} />);
-    fireEvent.click(screen.getByText(/View Future Enhancements/));
-    expect(onNavigate).toHaveBeenCalledWith('future-enhancements');
-  });
 });

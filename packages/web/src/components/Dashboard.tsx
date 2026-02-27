@@ -24,7 +24,6 @@ import { IssuesList } from "./IssuesList.js";
 import { DependencyList } from "./DependencyList.js";
 import { CodebaseStats } from "./CodebaseStats.js";
 import { About } from "./About.js";
-import { FutureEnhancements } from "./FutureEnhancements.js";
 import { AISummary } from "./AISummary.js";
 import { CriticalIssues } from "./CriticalIssues.js";
 
@@ -37,13 +36,7 @@ interface DashboardProps {
   report: VitalsReport;
 }
 
-type View =
-  | "overview"
-  | "issues"
-  | "dependencies"
-  | "codebase"
-  | "about"
-  | "future-enhancements";
+type View = "overview" | "issues" | "dependencies" | "codebase" | "about";
 
 export function Dashboard({ report }: DashboardProps) {
   const [view, setView] = useState<View>("overview");
@@ -290,9 +283,7 @@ export function Dashboard({ report }: DashboardProps) {
 
           {view === "codebase" && <CodebaseStats report={report} />}
 
-          {view === "about" && <About report={report} onNavigate={setView} />}
-
-          {view === "future-enhancements" && <FutureEnhancements />}
+          {view === "about" && <About report={report} />}
         </div>
       </main>
 
