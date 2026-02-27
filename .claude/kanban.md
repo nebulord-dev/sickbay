@@ -87,6 +87,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Bug]` Fix source-map-explorer runner scoring logic — currently sums all chunk sizes and scores the total against a 1MB threshold, which flags projects as critical even when code splitting is properly configured; fix should score based on the largest single initial chunk rather than the combined total, and detect/note when manualChunks or dynamic imports are in use so the result isn't misleading
 - `[Bug]` Fix source-map-explorer runner not executing — when source maps are present the runner falls back to file-size-analysis with note "Source maps found but analysis failed"; investigate why `isCommandAvailable` returns false or why the JSON output isn't matching the expected format when run via `preferLocal: true` against `packages/core`'s local `node_modules`
 - `[Bug]` Fix todo-scanner false positives on string literals — the scanner matches TODO/FIXME inside string values in source code (e.g. the `CHECK_DESCRIPTIONS` map in `About.tsx` contains the string "Finds TODO, FIXME..." which triggers a match); fix should skip matches inside string literals or at minimum require the keyword to appear outside quotes
+- `[Bug]` Fix index-as-key in web dashboard components — `AISummary.tsx:199`, `CriticalIssues.tsx:74`, `IssuesList.tsx:43`, `ScoreCard.tsx:67` all use array index as React list key; replace with stable unique identifiers
 
 ## In Progress
 
