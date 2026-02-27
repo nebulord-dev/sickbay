@@ -39,8 +39,8 @@ export function IssuesList({ checks }: IssuesListProps) {
         {filtered.length === 0 && (
           <div className="text-gray-500 text-sm py-4 text-center">No issues found ✓</div>
         )}
-        {filtered.map((issue, i) => (
-          <IssueRow key={i} issue={issue} checkName={issue.checkName} />
+        {filtered.map((issue) => (
+          <IssueRow key={`${issue.checkName}-${issue.message}`} issue={issue} checkName={issue.checkName} />
         ))}
       </div>
     </div>

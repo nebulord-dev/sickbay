@@ -63,8 +63,8 @@ export function ScoreCard({ check, onClick, active }: ScoreCardProps) {
             🚨 {criticalIssues.length} Critical
           </div>
           <ul className="space-y-1 text-left">
-            {criticalIssues.slice(0, 2).map((issue, i) => (
-              <li key={i} className="text-xs text-gray-400 truncate">
+            {criticalIssues.slice(0, 2).map((issue) => (
+              <li key={issue.message} className="text-xs text-gray-400 truncate">
                 • {issue.message}
               </li>
             ))}

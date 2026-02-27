@@ -196,7 +196,7 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
               </div>
             ) : (
               sections.map((section, i) => (
-                <div key={i} className="space-y-1.5">
+                <div key={section.title} className="space-y-1.5">
                   <div className="flex items-center gap-1.5">
                     <SectionIcon title={section.title} />
                     <h3 className="text-base font-semibold text-white uppercase tracking-wide">

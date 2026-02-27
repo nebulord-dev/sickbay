@@ -70,8 +70,8 @@ export function CriticalIssues({ report, onCheckClick }: CriticalIssuesProps) {
                   </span>
                 </button>
                 <ul className="space-y-1 ml-4">
-                  {check.criticalIssues.slice(0, 3).map((issue, i) => (
-                    <li key={i} className="text-sm text-gray-300">
+                  {check.criticalIssues.slice(0, 3).map((issue) => (
+                    <li key={issue.message} className="text-sm text-gray-300">
                       <span className="text-red-400 mr-2">•</span>
                       {issue.message}
                     </li>
