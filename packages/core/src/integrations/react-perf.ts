@@ -113,7 +113,9 @@ function scanDirectory(dir: string, projectRoot: string): FileInfo[] {
         entry.startsWith(".") ||
         entry === "node_modules" ||
         entry === "__tests__" ||
-        entry === "__mocks__"
+        entry === "__mocks__" ||
+        entry.includes(".test.") ||
+        entry.includes(".spec.")
       )
         continue;
       const fullPath = join(dir, entry);

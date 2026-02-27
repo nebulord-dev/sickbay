@@ -26,6 +26,7 @@ export default defineConfig({
         },
       },
     },
+    sourcemap: true,
     chunkSizeWarningLimit: 600,
   },
 });
