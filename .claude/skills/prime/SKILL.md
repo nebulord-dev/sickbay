@@ -27,6 +27,11 @@ Read in this order — each builds on the previous:
 - `docs/vitals-monorepo-design.md` — architecture decisions for Phase 3 work
 - `packages/core/README.md`, `packages/cli/README.md`, `packages/web/README.md` — per-package implementation details
 
+List available design docs:
+!`ls docs/plans/`
+
+Read any plan docs relevant to the current task or phase. At minimum, read any doc whose subject overlaps with what's In Progress or coming next on the roadmap.
+
 ### 3. Identify Key Files
 
 Read based on the task at hand:
@@ -96,5 +101,6 @@ Provide a concise summary covering:
 - What phase of the roadmap we're in
 - Any blocked tasks or open architectural decisions
 - Immediate next actions
+- Available design docs in `docs/plans/` and which are relevant to current work
 
 **Make this summary easy to scan — use bullet points and clear headers.**
