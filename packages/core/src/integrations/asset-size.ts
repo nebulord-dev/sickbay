@@ -35,10 +35,7 @@ interface AssetFile {
 export class AssetSizeRunner extends BaseRunner {
   name = 'asset-size';
   category = 'performance' as const;
-
-  async isApplicable(projectPath: string): Promise<boolean> {
-    return ASSET_DIRS.some((dir) => fileExists(projectPath, dir));
-  }
+  applicableRuntimes = ['browser'] as const;
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();

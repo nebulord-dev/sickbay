@@ -30,22 +30,8 @@ describe('AssetSizeRunner', () => {
     vi.clearAllMocks();
   });
 
-  describe('isApplicable', () => {
-    it('returns false when none of the asset directories exist', async () => {
-      mockFileExists.mockReturnValue(false);
-
-      const result = await runner.isApplicable('/project');
-
-      expect(result).toBe(false);
-    });
-
-    it('returns true when at least one asset directory exists', async () => {
-      mockFileExists.mockImplementation((_root, dir) => dir === 'public');
-
-      const result = await runner.isApplicable('/project');
-
-      expect(result).toBe(true);
-    });
+  it('only applies to browser runtime', () => {
+    expect(runner.applicableRuntimes).toContain('browser');
   });
 
   describe('run', () => {
