@@ -53,15 +53,15 @@ export interface FixSuggestion {
   };
 }
 
-export type Framework     = 'react' | 'next' | 'angular' | 'vue' | 'svelte' | 'remix';
-export type Runtime       = 'browser' | 'node' | 'edge' | 'unknown';
-export type BuildTool     = 'vite' | 'webpack' | 'esbuild' | 'rollup' | 'tsc' | 'unknown';
+export type Framework = 'react' | 'next' | 'angular' | 'vue' | 'svelte' | 'remix';
+export type Runtime = 'browser' | 'node' | 'edge' | 'unknown';
+export type BuildTool = 'vite' | 'webpack' | 'esbuild' | 'rollup' | 'tsc' | 'unknown';
 export type TestFramework = 'vitest' | 'jest' | 'mocha' | null;
 
 export interface ProjectContext {
-  runtime:       Runtime;
-  frameworks:    Framework[];
-  buildTool:     BuildTool;
+  runtime: Runtime;
+  frameworks: Framework[];
+  buildTool: BuildTool;
   testFramework: TestFramework;
 }
 
