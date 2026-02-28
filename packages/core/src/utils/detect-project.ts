@@ -97,6 +97,7 @@ export async function detectContext(projectPath: string): Promise<ProjectContext
   else if ("webpack" in allDeps) buildTool = "webpack";
   else if ("esbuild" in allDeps) buildTool = "esbuild";
   else if ("rollup" in allDeps) buildTool = "rollup";
+  else if ("next" in allDeps) buildTool = "webpack";
   else if ("typescript" in allDeps) buildTool = "tsc";
 
   let testFramework: TestFramework = null;

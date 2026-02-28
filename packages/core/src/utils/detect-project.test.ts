@@ -257,6 +257,14 @@ describe('detectContext', () => {
     expect(ctx.frameworks).toEqual([]);
   });
 
+  it('detects webpack as build tool for Next.js projects', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ dependencies: { next: '^14.0.0', react: '^18.0.0' } }) as never,
+    );
+    const ctx = await detectContext('/project');
+    expect(ctx.buildTool).toBe('webpack');
+  });
+
   it('detects angular framework', async () => {
     mockReadFileSync.mockReturnValue(
       makePkg({ dependencies: { '@angular/core': '^17.0.0' } }) as never,
