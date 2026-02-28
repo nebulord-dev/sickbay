@@ -161,6 +161,16 @@ describe('runVitals', () => {
     expect(allMockRunners.eslint.run).not.toHaveBeenCalled();
   });
 
+  it('excludes runner and skips isApplicable/run when isApplicableToContext returns false', async () => {
+    allMockRunners.jscpd.isApplicableToContext.mockReturnValue(false);
+
+    const report = await runVitals({ projectPath: '/p' });
+
+    expect(report.checks.map((c) => c.id)).not.toContain('jscpd');
+    expect(allMockRunners.jscpd.isApplicable).not.toHaveBeenCalled();
+    expect(allMockRunners.jscpd.run).not.toHaveBeenCalled();
+  });
+
   it('calls onCheckStart before running each check', async () => {
     const onCheckStart = vi.fn();
     await runVitals({ projectPath: '/p', checks: ['knip'], onCheckStart });
