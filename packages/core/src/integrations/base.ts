@@ -7,8 +7,8 @@ export abstract class BaseRunner implements ToolRunner {
 
   abstract run(projectPath: string, options?: RunOptions): Promise<CheckResult>;
 
-  applicableFrameworks?: Framework[];
-  applicableRuntimes?: Runtime[];
+  applicableFrameworks?: readonly Framework[];
+  applicableRuntimes?: readonly Runtime[];
 
   isApplicableToContext(context: ProjectContext): boolean {
     if (this.applicableFrameworks) {

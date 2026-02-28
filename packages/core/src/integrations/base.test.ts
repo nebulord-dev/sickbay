@@ -95,32 +95,32 @@ describe('isApplicableToContext', () => {
 
   it('returns true when context frameworks include a match', () => {
     const runner = new TestRunner();
-    runner.applicableFrameworks = ['react'];
+    runner.applicableFrameworks = ['react'] as const;
     expect(runner.isApplicableToContext(makeContext({ frameworks: ['react'] }))).toBe(true);
   });
 
   it('returns false when context frameworks have no match', () => {
     const runner = new TestRunner();
-    runner.applicableFrameworks = ['angular'];
+    runner.applicableFrameworks = ['angular'] as const;
     expect(runner.isApplicableToContext(makeContext({ frameworks: ['react'] }))).toBe(false);
   });
 
   it('returns true when applicableRuntimes includes the project runtime', () => {
     const runner = new TestRunner();
-    runner.applicableRuntimes = ['node'];
+    runner.applicableRuntimes = ['node'] as const;
     expect(runner.isApplicableToContext(makeContext({ runtime: 'node', frameworks: [] }))).toBe(true);
   });
 
   it('returns false when runtime does not match applicableRuntimes', () => {
     const runner = new TestRunner();
-    runner.applicableRuntimes = ['browser'];
+    runner.applicableRuntimes = ['browser'] as const;
     expect(runner.isApplicableToContext(makeContext({ runtime: 'node', frameworks: [] }))).toBe(false);
   });
 
   it('returns false when frameworks match but runtime does not', () => {
     const runner = new TestRunner();
-    runner.applicableFrameworks = ['react'];
-    runner.applicableRuntimes = ['browser'];
+    runner.applicableFrameworks = ['react'] as const;
+    runner.applicableRuntimes = ['browser'] as const;
     expect(runner.isApplicableToContext(makeContext({ frameworks: ['react'], runtime: 'node' }))).toBe(false);
   });
 });
