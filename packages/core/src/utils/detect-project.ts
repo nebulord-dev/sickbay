@@ -90,6 +90,9 @@ export async function detectContext(projectPath: string): Promise<ProjectContext
   if ("vue" in allDeps) frameworks.push("vue");
   if ("svelte" in allDeps) frameworks.push("svelte");
 
+  // Projects with no recognised UI framework are assumed to be Node. Projects without
+  // a package.json return runtime: 'unknown', which causes all runtime-scoped runners
+  // (node-*, react-perf, etc.) to be silently skipped via isApplicableToContext().
   const runtime: Runtime = frameworks.length === 0 ? "node" : "browser";
 
   let buildTool: BuildTool = "unknown";
