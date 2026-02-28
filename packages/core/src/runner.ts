@@ -19,6 +19,9 @@ import { SecretsRunner } from './integrations/secrets.js';
 import { HeavyDepsRunner } from './integrations/heavy-deps.js';
 import { ReactPerfRunner } from './integrations/react-perf.js';
 import { AssetSizeRunner } from './integrations/asset-size.js';
+import { NodeSecurityRunner } from './integrations/node-security.js';
+import { NodeInputValidationRunner } from './integrations/node-input-validation.js';
+import { NodeAsyncErrorsRunner } from './integrations/node-async-errors.js';
 
 export interface RunnerOptions {
   projectPath?: string;
@@ -47,6 +50,9 @@ const ALL_RUNNERS: ToolRunner[] = [
   new HeavyDepsRunner(),
   new ReactPerfRunner(),
   new AssetSizeRunner(),
+  new NodeSecurityRunner(),
+  new NodeInputValidationRunner(),
+  new NodeAsyncErrorsRunner(),
 ];
 
 export async function runVitals(options: RunnerOptions = {}): Promise<VitalsReport> {
