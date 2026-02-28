@@ -153,9 +153,38 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
    }
    ```
 
-2. **Register** in `packages/core/src/runner.ts` → `ALL_RUNNERS` array
+2. **Scope it to the right runtime/framework** (skip if the check applies universally):
 
-3. **Rebuild**: `pnpm build` (or `pnpm --filter @vitals/core build`)
+   Use declarative fields on `BaseRunner` — checked synchronously before any I/O:
+
+   ```typescript
+   // Only runs on Node projects (no React/Vue/etc. in deps)
+   applicableRuntimes = ['node'] as const;
+
+   // Only runs on React/Next/Remix projects
+   applicableFrameworks = ['react', 'next', 'remix'] as const;
+   ```
+
+   Runtime is derived automatically: projects with no recognised UI framework get
+   `runtime: 'node'`; projects with React/Vue/Angular/etc. get `runtime: 'browser'`.
+   Projects without a `package.json` get `runtime: 'unknown'` and all scoped runners
+   are silently skipped.
+
+   For checks that need additional I/O-based filtering (e.g. "only if a config file
+   exists"), override `isApplicable()` too — but still set the declarative fields for
+   the cheap pre-filter:
+
+   ```typescript
+   applicableRuntimes = ['node'] as const;
+
+   async isApplicable(projectPath: string, context: ProjectContext): Promise<boolean> {
+     return fileExists(projectPath, 'some-config.json');
+   }
+   ```
+
+3. **Register** in `packages/core/src/runner.ts` → `ALL_RUNNERS` array
+
+4. **Rebuild**: `pnpm build` (or `pnpm --filter @vitals/core build`)
 
 ### Modifying the Terminal UI
 
