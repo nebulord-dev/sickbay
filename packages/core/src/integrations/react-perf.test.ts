@@ -9,17 +9,14 @@ vi.mock('fs', () => ({
 
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
-  fileExists: vi.fn(),
   WARN_LINES: 300,
 }));
 
 import { readdirSync, statSync, readFileSync } from 'fs';
-import { fileExists } from '../utils/file-helpers.js';
 
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
 const mockReadFileSync = vi.mocked(readFileSync);
-const mockFileExists = vi.mocked(fileExists);
 
 describe('ReactPerfRunner', () => {
   let runner: ReactPerfRunner;
@@ -29,23 +26,11 @@ describe('ReactPerfRunner', () => {
     vi.clearAllMocks();
   });
 
-  describe('isApplicable', () => {
-    it('returns false when no src directory exists', async () => {
-      mockFileExists.mockReturnValue(false);
-
-      const result = await runner.isApplicable('/project');
-
-      expect(result).toBe(false);
-      expect(mockFileExists).toHaveBeenCalledWith('/project', 'src');
-    });
-
-    it('returns true when src directory exists', async () => {
-      mockFileExists.mockReturnValue(true);
-
-      const result = await runner.isApplicable('/project');
-
-      expect(result).toBe(true);
-    });
+  it('declares applicableFrameworks for react, next, and remix', () => {
+    const runner = new ReactPerfRunner();
+    expect(runner.applicableFrameworks).toContain('react');
+    expect(runner.applicableFrameworks).toContain('next');
+    expect(runner.applicableFrameworks).toContain('remix');
   });
 
   describe('run', () => {

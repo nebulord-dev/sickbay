@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync } from "fs";
 import { join, extname } from "path";
 import type { CheckResult, Issue } from "../types.js";
 import { BaseRunner } from "./base.js";
-import { timer, fileExists, WARN_LINES } from "../utils/file-helpers.js";
+import { timer, WARN_LINES } from "../utils/file-helpers.js";
 
 /**
  * ReactPerfRunner analyzes React component files for common performance anti-patterns.
@@ -23,10 +23,7 @@ interface Finding {
 export class ReactPerfRunner extends BaseRunner {
   name = "react-perf";
   category = "performance" as const;
-
-  async isApplicable(projectPath: string): Promise<boolean> {
-    return fileExists(projectPath, "src");
-  }
+  applicableFrameworks = ['react', 'next', 'remix'] as const;
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
