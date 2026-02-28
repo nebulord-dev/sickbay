@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
-import type { ProjectInfo } from "../types.js";
+import type { ProjectInfo, ProjectContext, Framework, Runtime, BuildTool, TestFramework } from "../types.js";
 
 /**
  * detectProject analyzes the given project directory to extract key information about the project setup.
@@ -65,4 +65,44 @@ export function detectPackageManager(
   )
     return "bun";
   return "npm";
+}
+
+export async function detectContext(projectPath: string): Promise<ProjectContext> {
+  const pkgPath = join(projectPath, "package.json");
+  if (!existsSync(pkgPath)) {
+    return { runtime: "unknown", frameworks: [], buildTool: "unknown", testFramework: null };
+  }
+
+  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+  const deps: Record<string, string> = pkg.dependencies ?? {};
+  const devDeps: Record<string, string> = pkg.devDependencies ?? {};
+  const allDeps = { ...deps, ...devDeps };
+
+  const frameworks: Framework[] = [];
+  if ("@angular/core" in allDeps) frameworks.push("angular");
+  if ("next" in allDeps) {
+    frameworks.push("react", "next");
+  } else if ("@remix-run/react" in allDeps) {
+    frameworks.push("react", "remix");
+  } else if ("react" in allDeps) {
+    frameworks.push("react");
+  }
+  if ("vue" in allDeps) frameworks.push("vue");
+  if ("svelte" in allDeps) frameworks.push("svelte");
+
+  const runtime: Runtime = frameworks.length === 0 ? "node" : "browser";
+
+  let buildTool: BuildTool = "unknown";
+  if ("vite" in allDeps || "@vitejs/plugin-react" in allDeps) buildTool = "vite";
+  else if ("webpack" in allDeps) buildTool = "webpack";
+  else if ("esbuild" in allDeps) buildTool = "esbuild";
+  else if ("rollup" in allDeps) buildTool = "rollup";
+  else if ("typescript" in allDeps) buildTool = "tsc";
+
+  let testFramework: TestFramework = null;
+  if ("vitest" in allDeps) testFramework = "vitest";
+  else if ("jest" in allDeps) testFramework = "jest";
+  else if ("mocha" in allDeps) testFramework = "mocha";
+
+  return { runtime, frameworks, buildTool, testFramework };
 }

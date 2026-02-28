@@ -6,7 +6,7 @@ vi.mock('fs', () => ({
 }));
 
 import { existsSync, readFileSync } from 'fs';
-import { detectProject, detectPackageManager } from './detect-project.js';
+import { detectProject, detectPackageManager, detectContext } from './detect-project.js';
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReadFileSync = vi.mocked(readFileSync);
@@ -198,5 +198,71 @@ describe('detectPackageManager', () => {
 
   it('defaults to npm when no lock file found', () => {
     expect(detectPackageManager('/project')).toBe('npm');
+  });
+});
+
+describe('detectContext', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('package.json'));
+    mockReadFileSync.mockReturnValue(makePkg() as never);
+  });
+
+  it('returns node runtime when no frontend framework is detected', async () => {
+    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { express: '^4.0.0' } }) as never);
+    const ctx = await detectContext('/project');
+    expect(ctx.runtime).toBe('node');
+    expect(ctx.frameworks).toEqual([]);
+  });
+
+  it('returns browser runtime for a React project', async () => {
+    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { react: '^18.0.0' } }) as never);
+    const ctx = await detectContext('/project');
+    expect(ctx.runtime).toBe('browser');
+    expect(ctx.frameworks).toContain('react');
+  });
+
+  it('includes both react and next for a Next.js project', async () => {
+    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { next: '^14.0.0', react: '^18.0.0' } }) as never);
+    const ctx = await detectContext('/project');
+    expect(ctx.frameworks).toContain('react');
+    expect(ctx.frameworks).toContain('next');
+  });
+
+  it('detects vite as build tool', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ devDependencies: { vite: '^5.0.0' }, dependencies: { react: '^18.0.0' } }) as never,
+    );
+    const ctx = await detectContext('/project');
+    expect(ctx.buildTool).toBe('vite');
+  });
+
+  it('detects vitest as test framework', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ devDependencies: { vitest: '^1.0.0' } }) as never,
+    );
+    const ctx = await detectContext('/project');
+    expect(ctx.testFramework).toBe('vitest');
+  });
+
+  it('returns null testFramework when no test framework detected', async () => {
+    const ctx = await detectContext('/project');
+    expect(ctx.testFramework).toBeNull();
+  });
+
+  it('returns unknown runtime when package.json is missing', async () => {
+    mockExistsSync.mockReturnValue(false);
+    const ctx = await detectContext('/project');
+    expect(ctx.runtime).toBe('unknown');
+    expect(ctx.frameworks).toEqual([]);
+  });
+
+  it('detects angular framework', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ dependencies: { '@angular/core': '^17.0.0' } }) as never,
+    );
+    const ctx = await detectContext('/project');
+    expect(ctx.frameworks).toContain('angular');
+    expect(ctx.runtime).toBe('browser');
   });
 });
