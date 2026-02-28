@@ -53,11 +53,24 @@ export interface FixSuggestion {
   };
 }
 
+export type Framework     = 'react' | 'next' | 'angular' | 'vue' | 'svelte' | 'remix';
+export type Runtime       = 'browser' | 'node' | 'edge' | 'unknown';
+export type BuildTool     = 'vite' | 'webpack' | 'esbuild' | 'rollup' | 'tsc' | 'unknown';
+export type TestFramework = 'vitest' | 'jest' | 'mocha' | null;
+
+export interface ProjectContext {
+  runtime:       Runtime;
+  frameworks:    Framework[];
+  buildTool:     BuildTool;
+  testFramework: TestFramework;
+}
+
 export interface ToolRunner {
   name: string;
   category: CheckResult['category'];
   run(projectPath: string, options?: RunOptions): Promise<CheckResult>;
-  isApplicable(projectPath: string, info: ProjectInfo): Promise<boolean>;
+  isApplicable(projectPath: string, context: ProjectContext): Promise<boolean>;
+  isApplicableToContext(context: ProjectContext): boolean;
 }
 
 export interface RunOptions {
