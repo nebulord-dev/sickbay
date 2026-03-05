@@ -23,7 +23,7 @@ const MIME_TYPES: Record<string, string> = {
 };
 
 function findWebDist(): string | null {
-  // Resolve relative to this file's location: packages/cli/src/commands/web.ts → packages/web/dist
+  // Resolve relative to this file's location: apps/cli/dist/index.js → apps/web/dist
   const thisFile = fileURLToPath(import.meta.url);
   const candidates = [
     join(thisFile, "..", "..", "..", "..", "..", "web", "dist"), // from dist/commands/

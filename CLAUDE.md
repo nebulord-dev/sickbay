@@ -43,8 +43,8 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 > **Note**: Each package has its own detailed README with current implementation specifics:
 >
 > - `packages/core/README.md` - Analysis engine API, check runners, scoring details
-> - `packages/cli/README.md` - CLI flags, Ink UI architecture, web server details
-> - `packages/web/README.md` - Dashboard components, report loading, AI integration
+> - `apps/cli/README.md` - CLI flags, Ink UI architecture, web server details
+> - `apps/web/README.md` - Dashboard components, report loading, AI integration
 >
 > The sections below provide high-level navigation guidance. Refer to package READMEs for up-to-date implementation details.
 
@@ -73,7 +73,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 ---
 
-### 2. `packages/cli/` - Terminal Interface
+### 2. `apps/cli/` - Terminal Interface
 
 **Purpose**: Commander-based CLI with Ink UI for terminal rendering.
 
@@ -105,7 +105,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 ---
 
-### 3. `packages/web/` - Web Dashboard
+### 3. `apps/web/` - Web Dashboard
 
 **Purpose**: Vite + React + TailwindCSS dashboard with AI chat integration.
 
@@ -188,16 +188,16 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 ### Modifying the Terminal UI
 
-1. Edit components in `packages/cli/src/components/`
+1. Edit components in `apps/cli/src/components/`
 2. Use Ink hooks (`useEffect`, `useState`) and components (`<Box>`, `<Text>`)
-3. Test with: `pnpm --filter @vitals/cli dev` + `node packages/cli/dist/index.js --path <test-project>`
+3. Test with: `pnpm --filter @vitals/cli dev` + `node apps/cli/dist/index.js --path <test-project>`
 
 ### Updating the Web Dashboard
 
-1. Edit components in `packages/web/src/components/`
+1. Edit components in `apps/web/src/components/`
 2. Use TailwindCSS for styling
 3. Test with: `pnpm --filter @vitals/web dev`
-4. Generate test report: `node packages/cli/dist/index.js --path <project> --json > packages/web/public/vitals-report.json`
+4. Generate test report: `node apps/cli/dist/index.js --path <project> --json > apps/web/public/vitals-report.json`
 
 ### Changing Scoring Logic
 
@@ -207,7 +207,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 ### Adding CLI Flags
 
-1. Edit `packages/cli/src/index.ts` (Commander config)
+1. Edit `apps/cli/src/index.ts` (Commander config)
 2. Pass new options to `runVitals()` or UI components
 3. Update help text and README
 
@@ -236,7 +236,7 @@ packages/core/src/
 ### CLI Package Structure
 
 ```
-packages/cli/src/
+apps/cli/src/
 ├── index.ts              # Commander entry
 ├── components/           # Ink UI components
 │   ├── App.tsx
@@ -252,7 +252,7 @@ packages/cli/src/
 ### Web Package Structure
 
 ```
-packages/web/src/
+apps/web/src/
 ├── main.tsx              # Vite entry
 ├── App.tsx               # Root component
 ├── index.css             # Global styles + Tailwind
@@ -340,7 +340,7 @@ pnpm --filter @vitals/web dev       # Vite dev server :3030
 
 ```bash
 # Link CLI globally
-cd packages/cli && pnpm link --global
+cd apps/cli && pnpm link --global
 
 # Run against a test project
 vitals --path ~/Desktop/test-app
@@ -348,7 +348,7 @@ vitals --path ~/Desktop/test-app --web
 vitals --path ~/Desktop/test-app --json
 
 # Or use node directly (during development)
-node packages/cli/dist/index.js --path ~/Desktop/test-app
+node apps/cli/dist/index.js --path ~/Desktop/test-app
 ```
 
 ---
@@ -371,11 +371,11 @@ node packages/cli/dist/index.js --path ~/Desktop/test-app
 
 ### If changing terminal output:
 
-→ Look in `packages/cli/src/components/`
+→ Look in `apps/cli/src/components/`
 
 ### If updating web dashboard:
 
-→ Look in `packages/web/src/components/`
+→ Look in `apps/web/src/components/`
 
 ### If adding new data to reports:
 
@@ -387,6 +387,6 @@ node packages/cli/dist/index.js --path ~/Desktop/test-app
 
 ### If adding CLI options:
 
-→ Edit `packages/cli/src/index.ts`
+→ Edit `apps/cli/src/index.ts`
 
 Run `/prime` for full project context (stack, architecture, file locations, domain model, gotchas).
