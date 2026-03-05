@@ -4,8 +4,6 @@
 
 Project tasks are tracked in `.claude/kanban.md`. When the user mentions tasks, the board, or asks to add/move/update/list tasks, always read that file first, then edit it. Columns: Backlog → In Progress → Done.
 
-
-
 This document helps Claude Code understand the Vitals codebase structure and where to look when making updates.
 
 ## Project Overview
@@ -159,10 +157,10 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
    ```typescript
    // Only runs on Node projects (no React/Vue/etc. in deps)
-   applicableRuntimes = ['node'] as const;
+   applicableRuntimes = ["node"] as const;
 
    // Only runs on React/Next/Remix projects
-   applicableFrameworks = ['react', 'next', 'remix'] as const;
+   applicableFrameworks = ["react", "next", "remix"] as const;
    ```
 
    Runtime is derived automatically: projects with no recognised UI framework get
@@ -388,3 +386,5 @@ node packages/cli/dist/index.js --path ~/Desktop/test-app
 ### If adding CLI options:
 
 → Edit `packages/cli/src/index.ts`
+
+Run `/prime` for full project context (stack, architecture, file locations, domain model, gotchas).
