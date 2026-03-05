@@ -7,7 +7,16 @@
     },
     "packages/*": {
       "entry": ["src/index.ts", "src/index.tsx"],
-      "project": ["src/**/*.ts", "src/**/*.tsx"]
+      "project": ["src/**/*.ts", "src/**/*.tsx"],
+      "ignoreDependencies": [
+        "@vitals/core",
+        "@vitals/cli",
+        "@vitals/web",
+        "tsup",
+        "eslint-config-prettier",
+        "@testing-library/jest-dom",
+        "@testing-library/react"
+      ]
     }
   },
   "ignore": [
