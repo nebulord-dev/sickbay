@@ -2,8 +2,8 @@ import React, { lazy, Suspense, useState } from 'react';
 import type { VitalsReport } from '@vitals/core';
 
 // Mirror thresholds from @vitals/core WARN_LINES / CRITICAL_LINES (file-helpers.ts + complexity.ts)
-const WARN_LINES = 300;
-const CRITICAL_LINES = 500;
+const WARN_LINES = 400;
+const CRITICAL_LINES = 600;
 
 // Lazy load heavy graph visualization
 const DependencyGraph = lazy(() => import('./DependencyGraph.js').then((m) => ({ default: m.DependencyGraph })));
@@ -114,7 +114,7 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
                 <StatCard
                   label="oversized files"
                   value={complexity.oversizedCount as number}
-                  sub="> 300 lines"
+                  sub="> 400 lines"
                 />
               </div>
 

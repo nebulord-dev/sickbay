@@ -35,7 +35,7 @@ export function fileExists(projectPath: string, ...parts: string[]): boolean {
   return existsSync(join(projectPath, ...parts));
 }
 
-export const WARN_LINES = 300;
+export const WARN_LINES = 400;
 
 export function timer(): () => number {
   const start = Date.now();

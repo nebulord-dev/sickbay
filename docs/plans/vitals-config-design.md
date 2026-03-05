@@ -32,7 +32,7 @@ import { defineConfig } from 'vitals'
 export default defineConfig({
   checks: {
     'file-complexity': {
-      maxLines: 800,          // project default is 300
+      maxLines: 800,          // project default is 400
       maxCyclomaticComplexity: 20,
     },
     'dependency-age': {

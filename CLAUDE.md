@@ -4,6 +4,8 @@
 
 Project tasks are tracked in `.claude/kanban.md`. When the user mentions tasks, the board, or asks to add/move/update/list tasks, always read that file first, then edit it. Columns: Backlog → In Progress → Done.
 
+When a task is completed, move it from In Progress to Done immediately — do not wait to be asked. If work was done that matches a backlog task (even one not explicitly pulled into In Progress), move it to Done.
+
 This document helps Claude Code understand the Vitals codebase structure and where to look when making updates.
 
 ## Project Overview

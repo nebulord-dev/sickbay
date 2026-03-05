@@ -9,10 +9,11 @@ vi.mock('fs', () => ({
 
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
-  WARN_LINES: 300,
+  WARN_LINES: WARN_LINES,
 }));
 
 import { readdirSync, statSync, readFileSync } from 'fs';
+import { WARN_LINES } from '../utils/file-helpers.js';
 
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
