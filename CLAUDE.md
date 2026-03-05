@@ -4,8 +4,6 @@
 
 Project tasks are tracked in `.claude/kanban.md`. When the user mentions tasks, the board, or asks to add/move/update/list tasks, always read that file first, then edit it. Columns: Backlog → In Progress → Done.
 
-
-
 This document helps Claude Code understand the Vitals codebase structure and where to look when making updates.
 
 ## Project Overview
@@ -153,9 +151,38 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
    }
    ```
 
-2. **Register** in `packages/core/src/runner.ts` → `ALL_RUNNERS` array
+2. **Scope it to the right runtime/framework** (skip if the check applies universally):
 
-3. **Rebuild**: `pnpm build` (or `pnpm --filter @vitals/core build`)
+   Use declarative fields on `BaseRunner` — checked synchronously before any I/O:
+
+   ```typescript
+   // Only runs on Node projects (no React/Vue/etc. in deps)
+   applicableRuntimes = ["node"] as const;
+
+   // Only runs on React/Next/Remix projects
+   applicableFrameworks = ["react", "next", "remix"] as const;
+   ```
+
+   Runtime is derived automatically: projects with no recognised UI framework get
+   `runtime: 'node'`; projects with React/Vue/Angular/etc. get `runtime: 'browser'`.
+   Projects without a `package.json` get `runtime: 'unknown'` and all scoped runners
+   are silently skipped.
+
+   For checks that need additional I/O-based filtering (e.g. "only if a config file
+   exists"), override `isApplicable()` too — but still set the declarative fields for
+   the cheap pre-filter:
+
+   ```typescript
+   applicableRuntimes = ['node'] as const;
+
+   async isApplicable(projectPath: string, context: ProjectContext): Promise<boolean> {
+     return fileExists(projectPath, 'some-config.json');
+   }
+   ```
+
+3. **Register** in `packages/core/src/runner.ts` → `ALL_RUNNERS` array
+
+4. **Rebuild**: `pnpm build` (or `pnpm --filter @vitals/core build`)
 
 ### Modifying the Terminal UI
 
@@ -359,3 +386,5 @@ node packages/cli/dist/index.js --path ~/Desktop/test-app
 ### If adding CLI options:
 
 → Edit `packages/cli/src/index.ts`
+
+Run `/prime` for full project context (stack, architecture, file locations, domain model, gotchas).

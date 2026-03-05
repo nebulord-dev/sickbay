@@ -31,10 +31,7 @@ const SIZE_THRESHOLD_FAIL = 1024 * 1024; // 1MB
 export class SourceMapExplorerRunner extends BaseRunner {
   name = "source-map-explorer";
   category = "performance" as const;
-
-  async isApplicable(projectPath: string): Promise<boolean> {
-    return fileExists(projectPath, "dist") || fileExists(projectPath, "build");
-  }
+  applicableRuntimes = ['browser'] as const;
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { BaseRunner } from "./base.js";
-import type { CheckResult, ProjectInfo } from "../types.js";
+import type { CheckResult, ProjectContext } from "../types.js";
 
 // Concrete implementation for testing
 class TestRunner extends BaseRunner {
@@ -24,20 +24,14 @@ class TestRunner extends BaseRunner {
 describe("BaseRunner", () => {
   it("implements default isApplicable that returns true", async () => {
     const runner = new TestRunner();
-    const projectInfo: ProjectInfo = {
-      name: "test-project",
-      version: "1.0.0",
-      framework: "react",
-      packageManager: "npm",
-      totalDependencies: 0,
-      devDependencies: {},
-      dependencies: {},
-      hasESLint: false,
-      hasPrettier: false,
-      hasTypeScript: false,
+    const context: ProjectContext = {
+      runtime: 'browser',
+      frameworks: [],
+      buildTool: 'unknown',
+      testFramework: null,
     };
 
-    expect(await runner.isApplicable("/test/path", projectInfo)).toBe(true);
+    expect(await runner.isApplicable("/test/path", context)).toBe(true);
   });
 
   it("creates skipped result with correct structure", () => {
@@ -80,5 +74,53 @@ describe("BaseRunner", () => {
     expect(result.id).toBe("test-runner");
     expect(result.category).toBe("dependencies");
     expect(result.score).toBe(85);
+  });
+});
+
+function makeContext(overrides: Partial<ProjectContext> = {}): ProjectContext {
+  return {
+    runtime: 'browser',
+    frameworks: ['react'],
+    buildTool: 'vite',
+    testFramework: 'vitest',
+    ...overrides,
+  };
+}
+
+describe('isApplicableToContext', () => {
+  it('returns true when no applicableFrameworks or applicableRuntimes are set', () => {
+    const runner = new TestRunner();
+    expect(runner.isApplicableToContext(makeContext())).toBe(true);
+  });
+
+  it('returns true when context frameworks include a match', () => {
+    const runner = new TestRunner();
+    runner.applicableFrameworks = ['react'] as const;
+    expect(runner.isApplicableToContext(makeContext({ frameworks: ['react'] }))).toBe(true);
+  });
+
+  it('returns false when context frameworks have no match', () => {
+    const runner = new TestRunner();
+    runner.applicableFrameworks = ['angular'] as const;
+    expect(runner.isApplicableToContext(makeContext({ frameworks: ['react'] }))).toBe(false);
+  });
+
+  it('returns true when applicableRuntimes includes the project runtime', () => {
+    const runner = new TestRunner();
+    runner.applicableRuntimes = ['node'] as const;
+    expect(runner.isApplicableToContext(makeContext({ runtime: 'node', frameworks: [] }))).toBe(true);
+  });
+
+  it('returns false when runtime does not match applicableRuntimes', () => {
+    const runner = new TestRunner();
+    runner.applicableRuntimes = ['browser'] as const;
+    expect(runner.isApplicableToContext(makeContext({ runtime: 'node', frameworks: [] }))).toBe(false);
+  });
+
+  it('returns false when frameworks match but runtime does not', () => {
+    const runner = new TestRunner();
+    runner.applicableFrameworks = ['react'] as const;
+    runner.applicableRuntimes = ['browser'] as const;
+    expect(runner.isApplicableToContext(makeContext({ frameworks: ['react'], runtime: 'node' }))).toBe(false);
   });
 });

@@ -88,17 +88,11 @@ All checks live in `packages/core/src/integrations/`. Each is a class that exten
 // packages/core/src/integrations/my-check.ts
 import { BaseRunner } from './base.js';
 import { timer } from '../utils/file-helpers.js';
-import type { CheckResult, Issue, ProjectInfo } from '../types.js';
+import type { CheckResult, Issue } from '../types.js';
 
 export class MyCheckRunner extends BaseRunner {
   name = 'my-check';
   category = 'code-quality' as const; // dependencies | security | code-quality | performance | git
-
-  // Optional — return false to skip this check for non-applicable projects.
-  // Default implementation returns true (runs everywhere).
-  async isApplicable(_projectPath: string, info: ProjectInfo): Promise<boolean> {
-    return info.framework === 'react'; // example: React-only check
-  }
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
@@ -137,7 +131,38 @@ export class MyCheckRunner extends BaseRunner {
 }
 ```
 
-### 2. Register it in `runner.ts`
+### 2. Scope it to the right runtime or framework (if applicable)
+
+If a check only makes sense for a specific runtime or framework, declare that on the class using the built-in scoping fields. The orchestrator filters runners using these before any I/O runs — cheap and automatic.
+
+```typescript
+// Only runs on Node projects (no React/Vue/Angular/etc. in deps)
+applicableRuntimes = ['node'] as const;
+
+// Only runs on React/Next/Remix projects
+applicableFrameworks = ['react', 'next', 'remix'] as const;
+```
+
+Runtime is derived automatically from `detectContext()`:
+- Projects with no recognised UI framework → `runtime: 'node'`
+- Projects with React/Vue/Angular/etc. → `runtime: 'browser'`
+- Projects without a `package.json` → `runtime: 'unknown'` (all scoped runners silently skipped)
+
+You can use both fields together. A check that declares `applicableRuntimes = ['node']` will never run on a React app, even if it's technically a valid check.
+
+For checks that need additional I/O-based gating on top (e.g. "only if a specific config file exists"), override `isApplicable()` as well — but still set the declarative fields for the cheap pre-filter:
+
+```typescript
+applicableRuntimes = ['node'] as const;
+
+async isApplicable(projectPath: string, context: ProjectContext): Promise<boolean> {
+  return fileExists(projectPath, 'some-config.json');
+}
+```
+
+Omit both fields entirely if the check applies to all projects universally.
+
+### 3. Register it in `runner.ts`
 
 ```typescript
 // packages/core/src/runner.ts
@@ -149,7 +174,7 @@ const ALL_RUNNERS: ToolRunner[] = [
 ];
 ```
 
-### 3. Write a test
+### 4. Write a test
 
 ```typescript
 // packages/core/src/integrations/my-check.test.ts
@@ -167,9 +192,9 @@ describe('MyCheckRunner', () => {
 });
 ```
 
-Use `fixtures/packages/react-app` or `fixtures/packages/node-api` as real test targets.
+Use `fixtures/packages/react-app` or `fixtures/packages/node-api` as real test targets. Verify that scoped runners don't appear in the wrong fixture's output.
 
-### 4. Rebuild core
+### 5. Rebuild core
 
 ```bash
 pnpm --filter @vitals/core build
@@ -180,6 +205,7 @@ pnpm --filter @vitals/core build
 - If your check requires an external tool, add it as a **dependency in `packages/core/package.json`** — all tools must be bundled, not installed globally by the user
 - Use `this.skipped('reason')` from `BaseRunner` to return a clean skip result rather than throwing
 - Score thresholds: **80+** = pass, **60–79** = warning, **< 60** = fail
+- All new `ProjectContext` types (`Framework`, `Runtime`, `BuildTool`, `TestFramework`) and `detectContext` are exported from `@vitals/core` public API
 
 ---
 

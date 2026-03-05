@@ -40,30 +40,8 @@ describe('SourceMapExplorerRunner', () => {
     vi.clearAllMocks();
   });
 
-  describe('isApplicable', () => {
-    it('returns false when neither dist nor build directory exists', async () => {
-      mockFileExists.mockReturnValue(false);
-
-      const result = await runner.isApplicable('/project');
-
-      expect(result).toBe(false);
-    });
-
-    it('returns true when dist directory exists', async () => {
-      mockFileExists.mockImplementation((_root, dir) => dir === 'dist');
-
-      const result = await runner.isApplicable('/project');
-
-      expect(result).toBe(true);
-    });
-
-    it('returns true when build directory exists', async () => {
-      mockFileExists.mockImplementation((_root, dir) => dir === 'build');
-
-      const result = await runner.isApplicable('/project');
-
-      expect(result).toBe(true);
-    });
+  it('only applies to browser runtime', () => {
+    expect(runner.applicableRuntimes).toContain('browser');
   });
 
   describe('run — fallback path (no source maps)', () => {

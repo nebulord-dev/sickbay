@@ -1,4 +1,4 @@
-import type { CheckResult, ProjectInfo, RunOptions, ToolRunner } from '../types.js';
+import type { CheckResult, Framework, ProjectContext, Runtime, RunOptions, ToolRunner } from '../types.js';
 import { timer } from '../utils/file-helpers.js';
 
 export abstract class BaseRunner implements ToolRunner {
@@ -7,7 +7,21 @@ export abstract class BaseRunner implements ToolRunner {
 
   abstract run(projectPath: string, options?: RunOptions): Promise<CheckResult>;
 
-  async isApplicable(_projectPath: string, _info: ProjectInfo): Promise<boolean> {
+  applicableFrameworks?: readonly Framework[];
+  applicableRuntimes?: readonly Runtime[];
+
+  isApplicableToContext(context: ProjectContext): boolean {
+    if (this.applicableFrameworks) {
+      const hasMatch = this.applicableFrameworks.some((f) => context.frameworks.includes(f));
+      if (!hasMatch) return false;
+    }
+    if (this.applicableRuntimes) {
+      if (!this.applicableRuntimes.includes(context.runtime)) return false;
+    }
+    return true;
+  }
+
+  async isApplicable(_projectPath: string, _context: ProjectContext): Promise<boolean> {
     return true;
   }
 

@@ -1,5 +1,5 @@
 import type { VitalsReport, CheckResult, ToolRunner } from './types.js';
-import { detectProject } from './utils/detect-project.js';
+import { detectProject, detectContext } from './utils/detect-project.js';
 import { calculateOverallScore, buildSummary } from './scoring.js';
 import { KnipRunner } from './integrations/knip.js';
 import { OutdatedRunner } from './integrations/outdated.js';
@@ -19,6 +19,9 @@ import { SecretsRunner } from './integrations/secrets.js';
 import { HeavyDepsRunner } from './integrations/heavy-deps.js';
 import { ReactPerfRunner } from './integrations/react-perf.js';
 import { AssetSizeRunner } from './integrations/asset-size.js';
+import { NodeSecurityRunner } from './integrations/node-security.js';
+import { NodeInputValidationRunner } from './integrations/node-input-validation.js';
+import { NodeAsyncErrorsRunner } from './integrations/node-async-errors.js';
 
 export interface RunnerOptions {
   projectPath?: string;
@@ -47,22 +50,29 @@ const ALL_RUNNERS: ToolRunner[] = [
   new HeavyDepsRunner(),
   new ReactPerfRunner(),
   new AssetSizeRunner(),
+  new NodeSecurityRunner(),
+  new NodeInputValidationRunner(),
+  new NodeAsyncErrorsRunner(),
 ];
 
 export async function runVitals(options: RunnerOptions = {}): Promise<VitalsReport> {
   const projectPath = options.projectPath ?? process.cwd();
   const projectInfo = await detectProject(projectPath);
+  const context = await detectContext(projectPath);
 
-  const runners = options.checks
+  const candidateRunners = options.checks
     ? ALL_RUNNERS.filter((r) => options.checks!.includes(r.name))
     : ALL_RUNNERS;
+
+  // Filter by context first (synchronous, cheap) then by isApplicable (async, may do I/O)
+  const runners = candidateRunners.filter((r) => r.isApplicableToContext(context));
 
   const checks: CheckResult[] = [];
 
   // Run all checks concurrently
   const results = await Promise.allSettled(
     runners.map(async (runner) => {
-      const applicable = await runner.isApplicable(projectPath, projectInfo);
+      const applicable = await runner.isApplicable(projectPath, context);
       if (!applicable) return null;
 
       options.onCheckStart?.(runner.name);
