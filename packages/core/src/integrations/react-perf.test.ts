@@ -9,11 +9,11 @@ vi.mock('fs', () => ({
 
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
-  WARN_LINES: WARN_LINES,
+  WARN_LINES: 400,
 }));
 
 import { readdirSync, statSync, readFileSync } from 'fs';
-import { WARN_LINES } from '../utils/file-helpers.js';
+import { WARN_LINES } from '@vitals/constants';
 
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
@@ -143,9 +143,9 @@ describe('ReactPerfRunner', () => {
       expect(keyIssue?.severity).toBe('warning');
     });
 
-    it('detects large component files (>300 lines) as info', async () => {
-      // Build a file with 301 lines
-      const lines = Array.from({ length: 301 }, (_, i) => `// line ${i}`);
+    it('detects large component files (>400 lines) as info', async () => {
+      // Build a file with 401 lines
+      const lines = Array.from({ length: 401 }, (_, i) => `// line ${i}`);
       const content = lines.join('\n');
 
       mockReaddirSync.mockReturnValue(['BigComponent.tsx'] as never);

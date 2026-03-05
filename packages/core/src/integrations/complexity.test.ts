@@ -11,11 +11,11 @@ vi.mock("fs", () => ({
 vi.mock("../utils/file-helpers.js", () => ({
   timer: vi.fn(() => () => 100),
   fileExists: vi.fn(),
-  WARN_LINES: WARN_LINES,
+  WARN_LINES: 400,
 }));
 
 import { existsSync, readdirSync, statSync, readFileSync } from "fs";
-import { WARN_LINES } from "../utils/file-helpers.js";
+import { WARN_LINES } from "@vitals/constants";
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReaddirSync = vi.mocked(readdirSync);
@@ -68,18 +68,18 @@ describe("ComplexityRunner", () => {
     expect(result.id).toBe("complexity");
   });
 
-  it("returns warning status and info severity for a file with 350 lines (>=WARN_LINES, <CRITICAL_LINES)", async () => {
+  it("returns warning status and info severity for a file with 450 lines (>=WARN_LINES, <CRITICAL_LINES)", async () => {
     mockExistsSync.mockReturnValue(true);
     mockReaddirSync.mockReturnValue(["big.ts"] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(makeLines(350) as any);
+    mockReadFileSync.mockReturnValue(makeLines(450) as any);
 
     const result = await runner.run("/project");
 
     expect(result.status).toBe("warning");
     expect(result.issues).toHaveLength(1);
     expect(result.issues[0].severity).toBe("info");
-    expect(result.issues[0].message).toContain("350 lines");
+    expect(result.issues[0].message).toContain("450 lines");
     expect(result.score).toBe(90); // 100 - 1*10
   });
 
@@ -102,7 +102,7 @@ describe("ComplexityRunner", () => {
     // 3 files, each 350 lines
     mockReaddirSync.mockReturnValue(["a.ts", "b.ts", "c.ts"] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(makeLines(350) as any);
+    mockReadFileSync.mockReturnValue(makeLines(450) as any);
 
     const result = await runner.run("/project");
 
@@ -116,7 +116,7 @@ describe("ComplexityRunner", () => {
     const files = Array.from({ length: 11 }, (_, i) => `file${i}.ts`);
     mockReaddirSync.mockReturnValue(files as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(makeLines(350) as any);
+    mockReadFileSync.mockReturnValue(makeLines(450) as any);
 
     const result = await runner.run("/project");
 
@@ -159,14 +159,14 @@ describe("ComplexityRunner", () => {
     // First file: 100 lines, second file: 350 lines
     mockReadFileSync
       .mockReturnValueOnce(makeLines(100) as any)
-      .mockReturnValueOnce(makeLines(350) as any);
+      .mockReturnValueOnce(makeLines(450) as any);
 
     const result = await runner.run("/project");
 
     expect(result.metadata?.totalFiles).toBe(2);
     expect(result.metadata?.oversizedCount).toBe(1);
-    expect(result.metadata?.totalLines).toBe(450);
-    expect(result.metadata?.avgLines).toBe(225);
+    expect(result.metadata?.totalLines).toBe(550);
+    expect(result.metadata?.avgLines).toBe(275);
   });
 
   it("returns pass with no issues when src dir is empty", async () => {
@@ -184,7 +184,7 @@ describe("ComplexityRunner", () => {
     mockExistsSync.mockReturnValue(true);
     mockReaddirSync.mockReturnValue(["bigfile.ts"] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(makeLines(350) as any);
+    mockReadFileSync.mockReturnValue(makeLines(450) as any);
 
     const result = await runner.run("/project");
 

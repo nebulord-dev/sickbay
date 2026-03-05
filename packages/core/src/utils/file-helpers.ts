@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execa } from "execa";
+import { WARN_LINES } from "@vitals/constants";
 
 /**
  * This module provides utility functions for file operations, command availability checks, timing, and robust JSON parsing.
@@ -35,7 +36,7 @@ export function fileExists(projectPath: string, ...parts: string[]): boolean {
   return existsSync(join(projectPath, ...parts));
 }
 
-export const WARN_LINES = 400;
+export { WARN_LINES };
 
 export function timer(): () => number {
   const start = Date.now();

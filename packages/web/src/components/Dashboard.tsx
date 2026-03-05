@@ -1,9 +1,10 @@
 import { useState, lazy, Suspense, useEffect, useRef } from "react";
 import type { VitalsReport } from "@vitals/core";
+import { SCORE_GOOD, SCORE_FAIR } from "@vitals/constants";
 
 function getScoreColor(score: number) {
-  if (score >= 80) return "green";
-  if (score >= 60) return "yellow";
+  if (score >= SCORE_GOOD) return "green";
+  if (score >= SCORE_FAIR) return "yellow";
   return "red";
 }
 
@@ -166,9 +167,9 @@ export function Dashboard({ report }: DashboardProps) {
           <div className="text-xs text-gray-500 px-2 py-1">checks</div>
           {report.checks.map((check) => {
             const color =
-              check.score >= 80
+              check.score >= SCORE_GOOD
                 ? "text-green-400"
-                : check.score >= 60
+                : check.score >= SCORE_FAIR
                   ? "text-yellow-400"
                   : "text-red-400";
             return (

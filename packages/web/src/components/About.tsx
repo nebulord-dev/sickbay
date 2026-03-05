@@ -1,4 +1,5 @@
 import type { VitalsReport } from "@vitals/core";
+import { SCORE_GOOD, SCORE_FAIR } from "@vitals/constants";
 
 interface AboutProps {
   report: VitalsReport;
@@ -53,9 +54,9 @@ const CHECK_DESCRIPTIONS: Record<string, string> = {
 
 function ScoreRing({ score }: { score: number }) {
   const color =
-    score >= 80
+    score >= SCORE_GOOD
       ? "text-green-400"
-      : score >= 60
+      : score >= SCORE_FAIR
         ? "text-yellow-400"
         : "text-red-400";
   return (

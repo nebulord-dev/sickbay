@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TodoScannerRunner } from './todo-scanner.js';
 
 import { existsSync, readdirSync, statSync, readFileSync } from 'fs';
-import { WARN_LINES } from '../utils/file-helpers.js';
+import { WARN_LINES } from '@vitals/constants';
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
@@ -14,7 +14,7 @@ vi.mock('fs', () => ({
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
   fileExists: vi.fn(),
-  WARN_LINES: WARN_LINES,
+  WARN_LINES: 400,
 }));
 
 

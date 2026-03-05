@@ -1,4 +1,5 @@
 import type { CheckResult, VitalsReport } from './types.js';
+import { SCORE_EXCELLENT, SCORE_GOOD, SCORE_FAIR } from '@vitals/constants';
 
 /**
  * This module provides functions to calculate the overall health score of a project based on various checks,
@@ -45,14 +46,14 @@ export function buildSummary(checks: CheckResult[]): VitalsReport['summary'] {
 }
 
 export function getScoreColor(score: number): 'green' | 'yellow' | 'red' {
-  if (score >= 80) return 'green';
-  if (score >= 60) return 'yellow';
+  if (score >= SCORE_GOOD) return 'green';
+  if (score >= SCORE_FAIR) return 'yellow';
   return 'red';
 }
 
 export function getScoreEmoji(score: number): string {
-  if (score >= 90) return 'Good';
-  if (score >= 80) return 'Fair';
-  if (score >= 60) return 'Poor';
+  if (score >= SCORE_EXCELLENT) return 'Good';
+  if (score >= SCORE_GOOD) return 'Fair';
+  if (score >= SCORE_FAIR) return 'Poor';
   return 'Bad';
 }

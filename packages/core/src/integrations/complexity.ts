@@ -2,6 +2,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from "fs";
 import { join, extname } from "path";
 import { BaseRunner } from "./base.js";
 import { timer, WARN_LINES } from "../utils/file-helpers.js";
+import { CRITICAL_LINES } from "@vitals/constants";
 import type { CheckResult, Issue } from "../types.js";
 
 /**
@@ -18,7 +19,6 @@ const SOURCE_EXTENSIONS = new Set([
   ".mts",
   ".cts",
 ]);
-const CRITICAL_LINES = 600;
 
 interface FileStats {
   path: string;

@@ -1,9 +1,6 @@
 import React, { lazy, Suspense, useState } from 'react';
 import type { VitalsReport } from '@vitals/core';
-
-// Mirror thresholds from @vitals/core WARN_LINES / CRITICAL_LINES (file-helpers.ts + complexity.ts)
-const WARN_LINES = 400;
-const CRITICAL_LINES = 600;
+import { WARN_LINES, CRITICAL_LINES } from '@vitals/constants';
 
 // Lazy load heavy graph visualization
 const DependencyGraph = lazy(() => import('./DependencyGraph.js').then((m) => ({ default: m.DependencyGraph })));

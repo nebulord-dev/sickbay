@@ -1,4 +1,5 @@
 import type { CheckResult } from '@vitals/core';
+import { SCORE_GOOD, SCORE_FAIR } from '@vitals/constants';
 
 const CATEGORY_ICONS: Record<string, string> = {
   dependencies: '📦',
@@ -16,9 +17,9 @@ interface ScoreCardProps {
 
 export function ScoreCard({ check, onClick, active }: ScoreCardProps) {
   const color =
-    check.score >= 80 ? 'text-green-400' : check.score >= 60 ? 'text-yellow-400' : 'text-red-400';
+    check.score >= SCORE_GOOD ? 'text-green-400' : check.score >= SCORE_FAIR ? 'text-yellow-400' : 'text-red-400';
   const ring =
-    check.score >= 80 ? 'stroke-green-400' : check.score >= 60 ? 'stroke-yellow-400' : 'stroke-red-400';
+    check.score >= SCORE_GOOD ? 'stroke-green-400' : check.score >= SCORE_FAIR ? 'stroke-yellow-400' : 'stroke-red-400';
   const circumference = 2 * Math.PI * 28;
   const offset = circumference - (check.score / 100) * circumference;
 

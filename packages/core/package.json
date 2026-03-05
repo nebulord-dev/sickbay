@@ -25,6 +25,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@vitals/constants": "workspace:*",
     "depcheck": "^1.4.7",
     "execa": "^9.5.0",
     "globby": "^14.0.2",
