@@ -20,6 +20,8 @@
     "@vitals/cli",
     "@vitals/web",
     "tsup",
-    "eslint-config-prettier"
+    "eslint-config-prettier",
+    "@testing-library/jest-dom",
+    "@testing-library/react"
   ]
 }

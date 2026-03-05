@@ -99,6 +99,8 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 ### Code Quality & CI
 
 - `[Quality]` Add quality checks to repo PRs — run vitals checks as part of PR CI; no GitHub Actions workflows exist yet
+- `[Bug]` Fix Node security runners firing on non-server projects — `NodeSecurity` and `NodeInputValidation` runners fire on any project classified as `runtime: node`, including CLI tools, monorepo roots, and build tooling; they should only run when an HTTP server framework (express, fastify, koa, hapi, etc.) is present in deps; fix is to strengthen `isApplicable()` on both runners to check for HTTP framework presence before flagging missing helmet/CORS/rate-limiting/validation; confirmed by running vitals against itself — the monorepo root got a score of 0 on node-security and a critical issue for missing helmet on a CLI tool
+- `[Bug]` Fix ESLint runner silently scanning 0 files — runner reports score 100 and passes but metadata shows `"files": 0`; it's returning clean because it found nothing to scan rather than actually linting the source; needs investigation into why the file glob or ESLint config resolution is producing an empty file set when run against the monorepo root; a pass with 0 files scanned should be treated as a configuration error, not a clean result
 - `[Bug]` Fix source-map-explorer runner scoring logic — currently sums all chunk sizes and scores the total against a 1MB threshold, which flags projects as critical even when code splitting is properly configured; fix should score based on the largest single initial chunk rather than the combined total, and detect/note when manualChunks or dynamic imports are in use so the result isn't misleading
 - `[Bug]` Fix source-map-explorer runner not executing — when source maps are present the runner falls back to file-size-analysis with note "Source maps found but analysis failed"; investigate why `isCommandAvailable` returns false or why the JSON output isn't matching the expected format when run via `preferLocal: true` against `packages/core`'s local `node_modules`
 - `[Bug]` Fix todo-scanner false positives on string literals — the scanner matches TODO/FIXME inside string values in source code (e.g. the `CHECK_DESCRIPTIONS` map in `About.tsx` contains the string "Finds TODO, FIXME..." which triggers a match); fix should skip matches inside string literals or at minimum require the keyword to appear outside quotes
@@ -106,10 +108,10 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ## In Progress
 
-<!-- Tasks currently being worked on -->
-
 ## Done
 
+- `[Bug]` Fix Node security runners firing on non-server projects — added `isApplicable()` to `NodeSecurityRunner` and `NodeInputValidationRunner` to check for HTTP server framework presence (express, fastify, koa, etc.) before running; confirmed by scanning vitals against itself: score went from 83 → 98
+- `[Bug]` Fix ESLint runner silently scanning 0 files — runner now detects available source directories (`src`, `lib`, `app`) and returns `skipped` if none exist, instead of passing with 0 files scanned
 - `[Refactor]` `ProjectContext` infrastructure — rich `ProjectContext` type (`frameworks`, `runtime`, `buildTool`, `testFramework`); declarative `applicableFrameworks`/`applicableRuntimes` on `BaseRunner`; runner filtering done once in `runner.ts` rather than per-runner filesystem checks
 - `[Feature]` Framework-scoped checks — all runners migrated to declarative scoping; Node-specific runners added (`NodeSecurity`, `NodeInputValidation`, `NodeAsyncErrors`); verified against `react-app` and `node-api` fixtures
 - `[Testing]` Add missing tests to `@vitals/core` — **97.16% statements**, all integrations covered

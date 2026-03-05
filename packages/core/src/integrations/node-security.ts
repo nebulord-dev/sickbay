@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, ProjectContext } from '../types.js';
 import { BaseRunner } from './base.js';
 import { timer } from '../utils/file-helpers.js';
 
@@ -12,11 +12,23 @@ const RATE_LIMIT_PACKAGES = [
   '@fastify/rate-limit',
   'koa-ratelimit',
 ];
+const HTTP_SERVER_PACKAGES = [
+  'express', 'fastify', 'koa', 'hapi', '@hapi/hapi',
+  'restify', 'polka', 'micro', '@nestjs/core', 'h3',
+];
 
 export class NodeSecurityRunner extends BaseRunner {
   name     = 'node-security';
   category = 'security' as const;
   applicableRuntimes = ['node'] as const;
+
+  async isApplicable(projectPath: string, _context: ProjectContext): Promise<boolean> {
+    const pkgPath = join(projectPath, 'package.json');
+    if (!existsSync(pkgPath)) return false;
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    const allDeps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
+    return HTTP_SERVER_PACKAGES.some((p) => p in allDeps);
+  }
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();

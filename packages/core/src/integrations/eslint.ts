@@ -47,9 +47,16 @@ export class ESLintRunner extends BaseRunner {
     const elapsed = timer();
 
     try {
+      const candidateDirs = ['src', 'lib', 'app'];
+      const dirsToScan = candidateDirs.filter((d) => existsSync(join(projectPath, d)));
+
+      if (dirsToScan.length === 0) {
+        return this.skipped('No source directory found (looked for src, lib, app)');
+      }
+
       const { stdout } = await execa(
         'eslint',
-        ['src', '--format', 'json', '--no-error-on-unmatched-pattern'],
+        [...dirsToScan, '--format', 'json', '--no-error-on-unmatched-pattern'],
         { cwd: projectPath, reject: false, preferLocal: true, timeout: 60_000 }
       );
 
