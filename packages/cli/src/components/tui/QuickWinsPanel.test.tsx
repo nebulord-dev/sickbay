@@ -213,4 +213,94 @@ describe("QuickWinsPanel", () => {
     );
     expect(lastFrame()).toContain("Short fix");
   });
+
+  it("truncates long description containing a deep file path", () => {
+    // Covers shortenPath (path > 2 parts) and smartTruncate path branch
+    // availableWidth=20 → maxTextLen=16; description is 39 chars > 16
+    const report = createMockReport([
+      createCheckWithIssues([
+        {
+          severity: "warning",
+          message: "Issue",
+          fix: {
+            description: "Fix /src/components/deep/nested/file.ts",
+            command: "cmd",
+          },
+          reportedBy: ["test"],
+        },
+      ]),
+    ]);
+    const { lastFrame } = render(
+      <QuickWinsPanel report={report} availableWidth={20} />
+    );
+    expect(lastFrame()).toContain("\u2026");
+  });
+
+  it("uses shortened path in description when it makes the text fit within maxLen", () => {
+    // Covers smartTruncate L22 true branch (shortened fits after path shortening)
+    // availableWidth=40 → maxTextLen=36; "Fix issue in /very/long/path/to/file.ts" is 39 chars
+    // shortenPath produces "…/to/file.ts" → shortened = 25 chars which fits
+    const report = createMockReport([
+      createCheckWithIssues([
+        {
+          severity: "warning",
+          message: "Issue",
+          fix: {
+            description: "Fix issue in /very/long/path/to/file.ts",
+            command: "cmd",
+          },
+          reportedBy: ["test"],
+        },
+      ]),
+    ]);
+    const { lastFrame } = render(
+      <QuickWinsPanel report={report} availableWidth={40} />
+    );
+    expect(lastFrame()).toContain("\u2026/to/file.ts");
+  });
+
+  it("truncates long command containing a deep file path", () => {
+    // Covers shortenCommand L31+L33 (path shortened but still exceeds maxLen)
+    // availableWidth=20 → maxTextLen=16; command is 48 chars
+    const report = createMockReport([
+      createCheckWithIssues([
+        {
+          severity: "warning",
+          message: "Issue",
+          fix: {
+            description: "Short",
+            command: "eslint --fix /src/components/deep/nested/file.ts",
+          },
+          reportedBy: ["test"],
+        },
+      ]),
+    ]);
+    const { lastFrame } = render(
+      <QuickWinsPanel report={report} availableWidth={20} />
+    );
+    expect(lastFrame()).toContain("\u2026");
+  });
+
+  it("uses shortened path in command when it makes the command fit within maxLen", () => {
+    // Covers shortenCommand L32 true branch
+    // availableWidth=40 → maxTextLen=36; "eslint --fix /very/long/path/to/file.ts" is 39 chars
+    // shortenPath produces "…/to/file.ts" → shortened = 25 chars which fits
+    const report = createMockReport([
+      createCheckWithIssues([
+        {
+          severity: "warning",
+          message: "Issue",
+          fix: {
+            description: "Short",
+            command: "eslint --fix /very/long/path/to/file.ts",
+          },
+          reportedBy: ["test"],
+        },
+      ]),
+    ]);
+    const { lastFrame } = render(
+      <QuickWinsPanel report={report} availableWidth={40} />
+    );
+    expect(lastFrame()).toContain("\u2026/to/file.ts");
+  });
 });

@@ -190,6 +190,18 @@ describe('serveWeb', () => {
       expect(data.error).toContain('API rate limit');
     });
 
+    it('serves an existing static file with the correct content-type', async () => {
+      // Override: existsSync returns true for everything so static file branch fires (L112-115)
+      mockExistsSync.mockImplementation(() => true);
+      mockReadFileSync.mockReturnValue(Buffer.from('console.log("hello")'));
+
+      const url = await serveWeb(makeReport(), 0);
+
+      const res = await fetch(`${url}/assets/app.js`);
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('javascript');
+    });
+
     it('unknown routes return the SPA fallback (index.html)', async () => {
       const url = await serveWeb(makeReport(), 0);
 

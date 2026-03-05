@@ -25,6 +25,7 @@ vi.mock("ink", async () => {
 import { FixApp } from "./FixApp.js";
 import { runVitals } from "@vitals/core";
 import { collectFixableIssues, executeFix } from "../commands/fix.js";
+import { useInput } from "ink";
 
 const mockRunVitals = vi.mocked(runVitals);
 const mockCollectFixableIssues = vi.mocked(collectFixableIssues);
@@ -217,6 +218,119 @@ describe("FixApp", () => {
     );
 
     expect(result.lastFrame()).toContain("Dry Run Results");
+  });
+
+  describe("keyboard navigation in selection phase", () => {
+    type KeyEvent = { upArrow: boolean; downArrow: boolean; return: boolean };
+    const noKey: KeyEvent = { upArrow: false, downArrow: false, return: false };
+
+    async function renderInSelectingPhase() {
+      let latestHandler: ((input: string, key: KeyEvent) => void) | undefined;
+      vi.mocked(useInput).mockImplementation((handler: (input: string, key: KeyEvent) => void) => {
+        // Always update — component recreates handleInput when selected/cursor changes
+        latestHandler = handler;
+      });
+
+      mockRunVitals.mockResolvedValue(makeReport() as never);
+      mockCollectFixableIssues.mockReturnValue([makeFixableIssue(), makeFixableIssue()]);
+
+      const result = await renderAndFlush(
+        <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+      );
+
+      // Wrap so callers always invoke the latest handler (re-captured after each re-render)
+      const fire = (input: string, key: KeyEvent) => latestHandler!(input, key);
+      return { result, fire };
+    }
+
+    it("moves cursor down with downArrow key", async () => {
+      const { result, fire } = await renderInSelectingPhase();
+
+      await act(async () => {
+        fire("", { ...noKey, downArrow: true });
+        await Promise.resolve();
+      });
+
+      // Still in selecting phase — no crash
+      expect(result.lastFrame()).toContain("Select fixes to apply");
+    });
+
+    it("moves cursor up with upArrow key", async () => {
+      const { result, fire } = await renderInSelectingPhase();
+
+      await act(async () => {
+        fire("", { ...noKey, upArrow: true });
+        await Promise.resolve();
+      });
+
+      expect(result.lastFrame()).toContain("Select fixes to apply");
+    });
+
+    it("toggles item selection with space key", async () => {
+      const { result, fire } = await renderInSelectingPhase();
+
+      await act(async () => {
+        fire(" ", noKey);
+        await Promise.resolve();
+      });
+
+      expect(result.lastFrame()).toContain("Select fixes to apply");
+    });
+
+    it("selects all items with 'a' key", async () => {
+      const { result, fire } = await renderInSelectingPhase();
+
+      await act(async () => {
+        fire("a", noKey);
+        await Promise.resolve();
+      });
+
+      expect(result.lastFrame()).toContain("Select fixes to apply");
+    });
+
+    it("deselects all items with 'n' key", async () => {
+      const { result, fire } = await renderInSelectingPhase();
+
+      await act(async () => {
+        fire("n", noKey);
+        await Promise.resolve();
+      });
+
+      expect(result.lastFrame()).toContain("Select fixes to apply");
+    });
+
+    it("does nothing on Enter when nothing is selected", async () => {
+      const { result, fire } = await renderInSelectingPhase();
+
+      await act(async () => {
+        fire("", { ...noKey, return: true });
+        await Promise.resolve();
+      });
+
+      // Stays in selecting phase — selected.size === 0
+      expect(result.lastFrame()).toContain("Select fixes to apply");
+    });
+
+    it("enters fixing phase on Enter when items are selected", async () => {
+      const { result, fire } = await renderInSelectingPhase();
+
+      // Space selects item — flush fully so React re-renders and latestHandler updates
+      await act(async () => {
+        fire(" ", noKey);
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      // Now latestHandler has selected={0} in its closure — Enter transitions to fixing
+      await act(async () => {
+        fire("", { ...noKey, return: true });
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      // executeFix resolves immediately so component reaches done phase
+      expect(result.lastFrame()).toContain("Fix Results");
+    });
   });
 
   it("shows fix count summary in done phase", async () => {

@@ -28,6 +28,14 @@ vi.mock("../lib/history.js", () => ({
   saveEntry: vi.fn(),
 }));
 
+vi.mock("../commands/web.js", () => ({
+  serveWeb: vi.fn(),
+}));
+
+vi.mock("open", () => ({
+  default: vi.fn(),
+}));
+
 // Mock ink's useApp so the test process doesn't exit
 vi.mock("ink", async () => {
   const actual = await vi.importActual<typeof import("ink")>("ink");
@@ -36,8 +44,10 @@ vi.mock("ink", async () => {
 
 import { App } from "./App.js";
 import { runVitals } from "@vitals/core";
+import { serveWeb } from "../commands/web.js";
 
 const mockRunVitals = vi.mocked(runVitals);
+const mockServeWeb = vi.mocked(serveWeb);
 
 const { act } = React;
 
@@ -198,6 +208,62 @@ describe("App", () => {
 
     // hasRun ref prevents double execution
     expect(mockRunVitals).toHaveBeenCalledTimes(1);
+  });
+
+  it("invokes onCheckStart and onCheckComplete callbacks without crashing", async () => {
+    let capturedOnCheckStart: ((name: string) => void) | undefined;
+    let capturedOnCheckComplete: ((result: ReturnType<typeof makeCheckResult>) => void) | undefined;
+
+    mockRunVitals.mockImplementation((options: Parameters<typeof runVitals>[0]) => {
+      capturedOnCheckStart = options?.onCheckStart;
+      capturedOnCheckComplete = options?.onCheckComplete;
+      return new Promise(() => {}); // never resolves — stay in loading phase
+    });
+
+    let result!: ReturnType<typeof render>;
+    await act(async () => {
+      result = render(<App projectPath="/test" checks={["eslint"]} />);
+      await Promise.resolve();
+    });
+
+    await act(async () => {
+      capturedOnCheckStart?.("eslint");
+      capturedOnCheckComplete?.(makeCheckResult("eslint", "ESLint"));
+      await Promise.resolve();
+    });
+
+    // Still in loading phase — callbacks fired without error
+    expect(result.lastFrame()).toContain("Running health checks...");
+  });
+
+  it("enters opening-web phase and shows dashboard URL when openWeb is true", async () => {
+    const report = createMockReport();
+    mockRunVitals.mockResolvedValue(report);
+    mockServeWeb.mockResolvedValue("http://localhost:3030");
+
+    let result!: ReturnType<typeof render>;
+    await act(async () => {
+      result = render(<App projectPath="/test" openWeb={true} />);
+      // Flush: effect → runVitals resolves → saveEntry import → web.js import →
+      // serveWeb resolves → open import → openBrowser → state settle
+      for (let i = 0; i < 10; i++) await Promise.resolve();
+    });
+
+    expect(result.lastFrame()).toContain("Dashboard running at");
+  });
+
+  it("shows error phase when web server fails to start", async () => {
+    const report = createMockReport();
+    mockRunVitals.mockResolvedValue(report);
+    mockServeWeb.mockRejectedValue(new Error("Port already in use"));
+
+    let result!: ReturnType<typeof render>;
+    await act(async () => {
+      result = render(<App projectPath="/test" openWeb={true} />);
+      for (let i = 0; i < 10; i++) await Promise.resolve();
+    });
+
+    expect(result.lastFrame()).toContain("Port already in use");
   });
 
   it("shows overall score summary after resolving", async () => {
