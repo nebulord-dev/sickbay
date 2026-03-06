@@ -7,10 +7,6 @@ vi.mock('fs', () => ({
   mkdirSync: vi.fn(),
 }));
 
-vi.mock('./project-hash.js', () => ({
-  projectHash: vi.fn().mockReturnValue('abc123def456abcd'),
-}));
-
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { loadHistory, saveEntry, detectRegressions } from './history.js';
 import type { VitalsReport } from '@vitals/core';

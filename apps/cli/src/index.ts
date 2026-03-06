@@ -80,6 +80,16 @@ program
     );
   });
 
+// --- vitals init ---
+program
+  .command("init")
+  .description("Initialize .vitals/ folder and run an initial baseline scan")
+  .option("-p, --path <path>", "project path to initialize", process.cwd())
+  .action(async (options) => {
+    const { initVitals } = await import("./commands/init.js");
+    await initVitals(options.path);
+  });
+
 // --- vitals fix ---
 program
   .command("fix")

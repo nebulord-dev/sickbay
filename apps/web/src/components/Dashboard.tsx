@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useEffect, useRef } from "react";
+import { useState, lazy, Suspense, useEffect, useRef, useCallback } from "react";
 import type { VitalsReport } from "@vitals/core";
 import { SCORE_GOOD, SCORE_FAIR } from "@vitals/constants";
 
@@ -27,6 +27,8 @@ import { CodebaseStats } from "./CodebaseStats.js";
 import { About } from "./About.js";
 import { AISummary } from "./AISummary.js";
 import { CriticalIssues } from "./CriticalIssues.js";
+import { HistoryChart } from "./HistoryChart.js";
+import type { TrendHistory } from "./HistoryChart.js";
 
 // Lazy load heavy components
 const ChatDrawer = lazy(() =>
@@ -37,12 +39,14 @@ interface DashboardProps {
   report: VitalsReport;
 }
 
-type View = "overview" | "issues" | "dependencies" | "codebase" | "about";
+type View = "overview" | "issues" | "dependencies" | "codebase" | "history" | "about";
 
 export function Dashboard({ report }: DashboardProps) {
   const [view, setView] = useState<View>("overview");
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
   const [isAIDrawerOpen, setIsAIDrawerOpen] = useState(false);
+  const [history, setHistory] = useState<TrendHistory | null>(null);
+  const historyFetched = useRef(false);
   const scoreColor = getScoreColor(report.overallScore);
   const mainContentRef = useRef<HTMLDivElement>(null);
 
@@ -50,6 +54,20 @@ export function Dashboard({ report }: DashboardProps) {
   useEffect(() => {
     mainContentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [view]);
+
+  // Lazily fetch history when History tab is first activated
+  const fetchHistory = useCallback(() => {
+    if (historyFetched.current) return;
+    historyFetched.current = true;
+    fetch("/vitals-history.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: TrendHistory | null) => {
+        if (data && Array.isArray(data.entries) && data.entries.length > 0) {
+          setHistory(data);
+        }
+      })
+      .catch(() => {/* no history available */});
+  }, []);
 
   const complexityMeta = getMeta(report, "complexity");
   const gitMeta = getMeta(report, "git");
@@ -219,6 +237,16 @@ export function Dashboard({ report }: DashboardProps) {
                 </button>
               ),
             )}
+            <button
+              onClick={() => {
+                setView("history");
+                fetchHistory();
+              }}
+              className={`px-3 py-1 rounded text-sm font-mono transition-colors
+                ${view === "history" ? "bg-accent text-black font-semibold" : "text-gray-400 hover:text-white"}`}
+            >
+              history
+            </button>
           </div>
           <div className="flex gap-2">
             <button
@@ -283,6 +311,16 @@ export function Dashboard({ report }: DashboardProps) {
           {view === "dependencies" && <DependencyList report={report} />}
 
           {view === "codebase" && <CodebaseStats report={report} />}
+
+          {view === "history" && (
+            history
+              ? <HistoryChart history={history} />
+              : (
+                <div className="flex items-center justify-center h-48 text-gray-500 text-sm font-mono">
+                  No history found — run <code className="mx-1 px-1 bg-card rounded">vitals init</code> then scan at least once
+                </div>
+              )
+          )}
 
           {view === "about" && <About report={report} />}
         </div>

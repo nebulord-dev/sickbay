@@ -81,6 +81,19 @@ export async function serveWeb(
       return;
     }
 
+    // Serve project-local history
+    if (url === "/vitals-history.json") {
+      const historyPath = join(report.projectPath, ".vitals", "history.json");
+      if (existsSync(historyPath)) {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(readFileSync(historyPath, "utf-8"));
+      } else {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        res.end("{}");
+      }
+      return;
+    }
+
     // AI summary endpoint
     if (url === "/ai/summary" && aiSummary) {
       res.writeHead(200, { "Content-Type": "application/json" });

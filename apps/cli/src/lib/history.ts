@@ -1,16 +1,6 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import { homedir } from "os";
 import type { VitalsReport } from "@vitals/core";
-import { projectHash } from "./project-hash.js";
-
-/**
- * This module manages the historical trend data of project health scores.
- * It provides functions to save new entries to the history, load existing history, and detect regressions in scores.
- * The history is stored as JSON files in a directory under the user's home folder.
- */
-
-const HISTORY_DIR = join(homedir(), ".vitals", "history");
 
 export interface TrendEntry {
   timestamp: string;
@@ -27,7 +17,7 @@ export interface TrendHistory {
 }
 
 function historyFilePath(projectPath: string): string {
-  return join(HISTORY_DIR, `${projectHash(projectPath)}.json`);
+  return join(projectPath, ".vitals", "history.json");
 }
 
 export function loadHistory(projectPath: string): TrendHistory | null {
@@ -41,7 +31,7 @@ export function loadHistory(projectPath: string): TrendHistory | null {
 }
 
 export function saveEntry(report: VitalsReport): void {
-  mkdirSync(HISTORY_DIR, { recursive: true });
+  mkdirSync(join(report.projectPath, ".vitals"), { recursive: true });
 
   const filePath = historyFilePath(report.projectPath);
   const existing = loadHistory(report.projectPath) ?? {
