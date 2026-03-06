@@ -56,8 +56,6 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### UI/UX
 
-- `[UI/UX]` TUI column widths — widen the Health Checks and Quick Wins columns so text isn't truncated; content is currently cut off on typical terminal widths
-- `[UI/UX]` TUI package manager detection — Quick Wins currently hardcodes `npm` in suggested commands (e.g. "Use npm uninstall jquery"); detect the project's actual package manager (pnpm, yarn, bun, npm) and use the correct command in suggestions
 - `[UI/UX]` TUI score reveal animation — on startup, the overall score counts up from 0 to the final number with a color transition (red → yellow → green); cheap to build, disproportionately satisfying; categories animate in sequence after the overall score settles
 - `[UI/UX]` TUI panel entrance animations — panels animate in sequentially on startup rather than all appearing at once; creates a "cockpit powering on" feel that makes a strong first impression
 - `[UI/UX]` TUI live score feedback — when a background re-scan completes and a score changes, the relevant panel border briefly pulses red (regression) or green (improvement); makes the live-updating nature of the tool viscerally obvious
@@ -101,7 +99,6 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Bug]` Fix ESLint runner silently scanning 0 files — runner reports score 100 and passes but metadata shows `"files": 0`; it's returning clean because it found nothing to scan rather than actually linting the source; needs investigation into why the file glob or ESLint config resolution is producing an empty file set when run against the monorepo root; a pass with 0 files scanned should be treated as a configuration error, not a clean result
 - `[Bug]` Fix source-map-explorer runner scoring logic — currently sums all chunk sizes and scores the total against a 1MB threshold, which flags projects as critical even when code splitting is properly configured; fix should score based on the largest single initial chunk rather than the combined total, and detect/note when manualChunks or dynamic imports are in use so the result isn't misleading
 - `[Bug]` Fix source-map-explorer runner not executing — when source maps are present the runner falls back to file-size-analysis with note "Source maps found but analysis failed"; investigate why `isCommandAvailable` returns false or why the JSON output isn't matching the expected format when run via `preferLocal: true` against `packages/core`'s local `node_modules`
-- `[Bug]` Fix test count showing zero in web Codebase tab — when running against apps with hundreds of passing tests, the Codebase tab displays "Total tests: 0, Passing: 0"; test runner detection or result parsing is failing silently, likely in the test runner integration in `packages/core/src/integrations/`
 - `[Bug]` Fix todo-scanner false positives on string literals — the scanner matches TODO/FIXME inside string values in source code (e.g. the `CHECK_DESCRIPTIONS` map in `About.tsx` contains the string "Finds TODO, FIXME..." which triggers a match); fix should skip matches inside string literals or at minimum require the keyword to appear outside quotes
 - `[Bug]` Fix index-as-key in web dashboard components — `AISummary.tsx:199`, `CriticalIssues.tsx:74`, `IssuesList.tsx:43`, `ScoreCard.tsx:67` all use array index as React list key; replace with stable unique identifiers
 
@@ -131,3 +128,6 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - Add tests coverage reports to all projects
 - Configure coverage to show in the vitest UI for each project
 - `[Feature]` Historical Trends — `vitals init` scaffolds `.vitals/` with `.gitignore` and `baseline.json`; history stored in `<projectPath>/.vitals/history.json`; exposed via `/vitals-history.json` HTTP endpoint; web dashboard shows a History tab with SVG line chart, toggleable category lines, score delta, and empty state
+- `[Bug]` Fix test count showing zero in web Codebase tab — root causes: (1) `execa` `preferLocal` without `localDir` resolved vitals' own vitest instead of the project's; (2) stdout parsing was fragile when `vite.config.ts` emitted `console.log` before JSON output; fixed by adding `localDir: projectPath` and switching to `--outputFile` temp file approach
+- `[UI/UX]` TUI column widths — bumped Health Checks name column from 18 to 26 chars (fits all check names); passed calculated `availableWidth` from `columns` to `QuickWinsPanel` so it uses actual terminal width instead of the 22-char default
+- `[UI/UX]` TUI package manager detection — `QuickWinsPanel` and `QuickWins` now replace hardcoded `npm` commands with the detected package manager (`pnpm add`, `yarn add`, `bun add`, etc.) using `report.projectInfo.packageManager`

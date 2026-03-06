@@ -104,8 +104,8 @@ export function HealthPanel({
             {statusIcon(check.status)}
           </Text>
           <Text> </Text>
-          <Box width={18}>
-            <Text wrap="truncate">{truncate(check.name, 18)}</Text>
+          <Box width={26}>
+            <Text wrap="truncate">{truncate(check.name, 26)}</Text>
           </Box>
           <Text> </Text>
           <Text color={scoreColor(check.score)}>{scoreBar(check.score)}</Text>

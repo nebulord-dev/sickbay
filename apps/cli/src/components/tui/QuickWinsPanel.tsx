@@ -7,6 +7,19 @@ interface QuickWinsPanelProps {
   availableWidth?: number;
 }
 
+function replacePackageManager(cmd: string, pm: string): string {
+  if (pm === "npm") return cmd;
+  const install = pm === "pnpm" ? "pnpm add" : pm === "yarn" ? "yarn add" : "bun add";
+  const uninstall = pm === "pnpm" ? "pnpm remove" : pm === "yarn" ? "yarn remove" : "bun remove";
+  const update = pm === "pnpm" ? "pnpm update" : pm === "yarn" ? "yarn upgrade" : "bun update";
+  const auditFix = pm === "pnpm" ? "pnpm audit --fix" : pm === "yarn" ? "yarn npm audit --fix" : "bun audit";
+  return cmd
+    .replace(/^npm install(?=\s)/, install)
+    .replace(/^npm uninstall(?=\s)/, uninstall)
+    .replace(/^npm update(?=\s)/, update)
+    .replace(/^npm audit fix/, auditFix);
+}
+
 function shortenPath(filepath: string): string {
   const parts = filepath.split("/");
   if (parts.length <= 2) return filepath;
@@ -72,6 +85,7 @@ export function QuickWinsPanel({ report, availableWidth }: QuickWinsPanelProps) 
     );
   }
 
+  const pm = report.projectInfo?.packageManager ?? "npm";
   const maxTextLen = Math.max(16, (availableWidth ?? 26) - 4);
 
   return (
@@ -96,7 +110,7 @@ export function QuickWinsPanel({ report, availableWidth }: QuickWinsPanelProps) 
             </Text>
             {smartTruncate(fix.description, maxTextLen)}
           </Text>
-          <Text dimColor>{"  "}{shortenCommand(fix.command, maxTextLen)}</Text>
+          <Text dimColor>{"  "}{shortenCommand(replacePackageManager(fix.command, pm), maxTextLen)}</Text>
         </Box>
       ))}
     </Box>

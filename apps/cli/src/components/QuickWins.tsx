@@ -11,7 +11,21 @@ interface QuickWinsProps {
   report: VitalsReport;
 }
 
+function replacePackageManager(cmd: string, pm: string): string {
+  if (pm === "npm") return cmd;
+  const install = pm === "pnpm" ? "pnpm add" : pm === "yarn" ? "yarn add" : "bun add";
+  const uninstall = pm === "pnpm" ? "pnpm remove" : pm === "yarn" ? "yarn remove" : "bun remove";
+  const update = pm === "pnpm" ? "pnpm update" : pm === "yarn" ? "yarn upgrade" : "bun update";
+  const auditFix = pm === "pnpm" ? "pnpm audit --fix" : pm === "yarn" ? "yarn npm audit --fix" : "bun audit";
+  return cmd
+    .replace(/^npm install(?=\s)/, install)
+    .replace(/^npm uninstall(?=\s)/, uninstall)
+    .replace(/^npm update(?=\s)/, update)
+    .replace(/^npm audit fix/, auditFix);
+}
+
 export function QuickWins({ report }: QuickWinsProps) {
+  const pm = report.projectInfo?.packageManager ?? "npm";
   const fixes = report.checks
     .flatMap((c) => c.issues)
     .filter((i) => i.fix?.command)
@@ -30,7 +44,7 @@ export function QuickWins({ report }: QuickWinsProps) {
         <Box key={`${fix.severity}-${fix.message}`} marginLeft={2}>
           <Text dimColor>→ </Text>
           <Text>{fix.fix!.description}</Text>
-          {fix.fix!.command && <Text dimColor>: {fix.fix!.command}</Text>}
+          {fix.fix!.command && <Text dimColor>: {replacePackageManager(fix.fix!.command, pm)}</Text>}
         </Box>
       ))}
     </Box>

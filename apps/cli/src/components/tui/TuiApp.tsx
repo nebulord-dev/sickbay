@@ -316,7 +316,10 @@ export function TuiApp({
             color="red"
             focused={focusedPanel === "quickwins"}
           >
-            <QuickWinsPanel report={report} />
+            <QuickWinsPanel
+              report={report}
+              availableWidth={Math.floor(columns * 0.30) - 4}
+            />
           </PanelBorder>
         </Box>
         <Box width="45%">
