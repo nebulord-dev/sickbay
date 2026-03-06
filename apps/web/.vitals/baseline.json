@@ -1,0 +1,629 @@
+{
+  "timestamp": "2026-03-06T01:01:55.024Z",
+  "projectPath": "/Users/chmc-gd9nn2t4fv/Documents/code/vitals/apps/web",
+  "projectInfo": {
+    "name": "@vitals/web",
+    "version": "0.0.1",
+    "hasTypeScript": true,
+    "hasESLint": false,
+    "hasPrettier": false,
+    "framework": "vite",
+    "packageManager": "npm",
+    "totalDependencies": 25,
+    "dependencies": {
+      "@vitals/constants": "workspace:*",
+      "@vitals/core": "workspace:*",
+      "@xyflow/react": "^12.10.0",
+      "dagre": "^0.8.5",
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "react-markdown": "^9.1.0",
+      "react-syntax-highlighter": "^15.5.0"
+    },
+    "devDependencies": {
+      "@testing-library/jest-dom": "^6.9.1",
+      "@testing-library/react": "^16.3.2",
+      "@types/dagre": "^0.7.53",
+      "@types/react": "^19.0.0",
+      "@types/react-dom": "^19.0.0",
+      "@types/react-syntax-highlighter": "^15.5.13",
+      "@vitejs/plugin-react": "^4.3.0",
+      "@vitest/coverage-v8": "^4.0.18",
+      "@vitest/ui": "^4.0.18",
+      "autoprefixer": "^10.4.20",
+      "babel-plugin-react-compiler": "^1.0.0",
+      "jsdom": "^28.0.0",
+      "postcss": "^8.4.49",
+      "tailwindcss": "^3.4.0",
+      "typescript": "^5.7.0",
+      "vite": "^6.0.0",
+      "vitest": "^4.0.18"
+    }
+  },
+  "checks": [
+    {
+      "id": "knip",
+      "category": "dependencies",
+      "name": "Unused Code",
+      "score": 95,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Unused dependency: @vitals/constants",
+          "fix": {
+            "description": "Remove @vitals/constants",
+            "command": "npm uninstall @vitals/constants"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "knip"
+      ],
+      "duration": 1087,
+      "metadata": {
+        "unusedFiles": 0,
+        "unusedDeps": 1,
+        "unusedDevDeps": 0,
+        "unusedExports": 0
+      }
+    },
+    {
+      "id": "depcheck",
+      "category": "dependencies",
+      "name": "Dependency Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "depcheck"
+      ],
+      "duration": 2171,
+      "metadata": {
+        "unused": 0,
+        "missing": 0
+      }
+    },
+    {
+      "id": "outdated",
+      "category": "dependencies",
+      "name": "Outdated Packages",
+      "score": 70,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "@types/dagre: 0.7.53 → 0.7.54",
+          "fix": {
+            "description": "Update @types/dagre to 0.7.54",
+            "command": "npm update @types/dagre"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@vitejs/plugin-react: 4.7.0 → 5.1.4",
+          "fix": {
+            "description": "Update @vitejs/plugin-react to 5.1.4",
+            "command": "npm update @vitejs/plugin-react"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "@xyflow/react: 12.10.0 → 12.10.1",
+          "fix": {
+            "description": "Update @xyflow/react to 12.10.1",
+            "command": "npm update @xyflow/react"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "autoprefixer: 10.4.24 → 10.4.27",
+          "fix": {
+            "description": "Update autoprefixer to 10.4.27",
+            "command": "npm update autoprefixer"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "jsdom: 28.0.0 → 28.1.0",
+          "fix": {
+            "description": "Update jsdom to 28.1.0",
+            "command": "npm update jsdom"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "postcss: 8.5.6 → 8.5.8",
+          "fix": {
+            "description": "Update postcss to 8.5.8",
+            "command": "npm update postcss"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "react-markdown: 9.1.0 → 10.1.0",
+          "fix": {
+            "description": "Update react-markdown to 10.1.0",
+            "command": "npm update react-markdown"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "react-syntax-highlighter: 15.6.6 → 16.1.1",
+          "fix": {
+            "description": "Update react-syntax-highlighter to 16.1.1",
+            "command": "npm update react-syntax-highlighter"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "tailwindcss: 3.4.19 → 4.2.1",
+          "fix": {
+            "description": "Update tailwindcss to 4.2.1",
+            "command": "npm update tailwindcss"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "vite: 6.4.1 → 7.3.1",
+          "fix": {
+            "description": "Update vite to 7.3.1",
+            "command": "npm update vite"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "npm"
+      ],
+      "duration": 4331,
+      "metadata": {
+        "outdatedCount": 10
+      }
+    },
+    {
+      "id": "npm-audit",
+      "category": "security",
+      "name": "Security Vulnerabilities",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "npm-audit"
+      ],
+      "duration": 709,
+      "metadata": {}
+    },
+    {
+      "id": "madge",
+      "category": "code-quality",
+      "name": "Circular Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "madge"
+      ],
+      "duration": 1034,
+      "metadata": {
+        "circularCount": 0,
+        "graph": {
+          "../../../packages/core/dist/index.d.ts": [],
+          "App.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/Dashboard.tsx",
+            "lib/load-report.ts"
+          ],
+          "components/AISummary.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/AISummary.tsx"
+          ],
+          "components/AISummary.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/About.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/About.tsx"
+          ],
+          "components/About.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/ChatDrawer.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/ChatDrawer.tsx"
+          ],
+          "components/ChatDrawer.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/CodebaseStats.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/CodebaseStats.tsx"
+          ],
+          "components/CodebaseStats.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/DependencyGraph.tsx"
+          ],
+          "components/CriticalIssues.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/CriticalIssues.tsx"
+          ],
+          "components/CriticalIssues.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/Dashboard.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/Dashboard.tsx"
+          ],
+          "components/Dashboard.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/AISummary.tsx",
+            "components/About.tsx",
+            "components/ChatDrawer.tsx",
+            "components/CodebaseStats.tsx",
+            "components/CriticalIssues.tsx",
+            "components/DependencyList.tsx",
+            "components/HistoryChart.tsx",
+            "components/IssuesList.tsx",
+            "components/ScoreCard.tsx"
+          ],
+          "components/DependencyGraph.test.tsx": [
+            "components/DependencyGraph.tsx"
+          ],
+          "components/DependencyGraph.tsx": [],
+          "components/DependencyList.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/DependencyList.tsx"
+          ],
+          "components/DependencyList.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/HistoryChart.test.tsx": [
+            "components/HistoryChart.tsx"
+          ],
+          "components/HistoryChart.tsx": [],
+          "components/IssuesList.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/IssuesList.tsx"
+          ],
+          "components/IssuesList.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/ScoreCard.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/ScoreCard.tsx"
+          ],
+          "components/ScoreCard.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "index.css": [],
+          "lib/load-report.test.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "lib/load-report.ts"
+          ],
+          "lib/load-report.ts": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "main.tsx": [
+            "App.tsx",
+            "index.css"
+          ],
+          "test/setup.ts": []
+        }
+      }
+    },
+    {
+      "id": "source-map-explorer",
+      "category": "performance",
+      "name": "Bundle Size",
+      "score": 40,
+      "status": "fail",
+      "issues": [
+        {
+          "severity": "critical",
+          "message": "Bundle size is 1255KB — exceeds 1MB threshold",
+          "fix": {
+            "description": "Use code splitting and lazy imports to reduce bundle size"
+          },
+          "reportedBy": [
+            "bundle-size-check"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "file-size-analysis"
+      ],
+      "duration": 306,
+      "metadata": {
+        "totalBytes": 1285552,
+        "totalKB": 1255,
+        "fileCount": 6,
+        "method": "file-size-analysis",
+        "note": "Source maps found but analysis failed"
+      }
+    },
+    {
+      "id": "coverage",
+      "category": "code-quality",
+      "name": "Tests & Coverage",
+      "score": 94,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Function coverage: 78.8% (target: 80%)",
+          "fix": {
+            "description": "Add tests for uncovered functions"
+          },
+          "reportedBy": [
+            "coverage"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "vitest"
+      ],
+      "duration": 4202,
+      "metadata": {
+        "testRunner": "vitest",
+        "totalTests": 118,
+        "passed": 118,
+        "failed": 0,
+        "skipped": 0,
+        "lines": 90.33,
+        "statements": 88.01,
+        "functions": 78.84,
+        "branches": 79.78
+      }
+    },
+    {
+      "id": "license-checker",
+      "category": "security",
+      "name": "License Compliance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "license-checker"
+      ],
+      "duration": 341,
+      "metadata": {
+        "totalPackages": 17,
+        "flagged": 0
+      }
+    },
+    {
+      "id": "jscpd",
+      "category": "code-quality",
+      "name": "Code Duplication",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "jscpd"
+      ],
+      "duration": 1029,
+      "metadata": {
+        "percentage": 0,
+        "clones": 0
+      }
+    },
+    {
+      "id": "typescript",
+      "category": "code-quality",
+      "name": "Type Safety",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "tsc"
+      ],
+      "duration": 5754,
+      "metadata": {
+        "errors": 0
+      }
+    },
+    {
+      "id": "todo-scanner",
+      "category": "code-quality",
+      "name": "Technical Debt",
+      "score": 94,
+      "status": "pass",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "src/components/About.tsx:41 — TODO: -scanner\":",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "src/components/About.tsx:42 — TODO: , FIXME, and HACK comments left in source code.\",",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "todo-scanner"
+      ],
+      "duration": 5,
+      "metadata": {
+        "total": 2,
+        "todo": 2,
+        "fixme": 0,
+        "hack": 0
+      }
+    },
+    {
+      "id": "complexity",
+      "category": "code-quality",
+      "name": "File Complexity",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "complexity"
+      ],
+      "duration": 1,
+      "metadata": {
+        "totalFiles": 14,
+        "totalLines": 2131,
+        "avgLines": 152,
+        "oversizedCount": 0,
+        "topFiles": [
+          {
+            "path": "src/components/Dashboard.tsx",
+            "lines": 314
+          },
+          {
+            "path": "src/components/ChatDrawer.tsx",
+            "lines": 263
+          },
+          {
+            "path": "src/components/HistoryChart.tsx",
+            "lines": 240
+          },
+          {
+            "path": "src/components/CodebaseStats.tsx",
+            "lines": 209
+          },
+          {
+            "path": "src/components/AISummary.tsx",
+            "lines": 206
+          },
+          {
+            "path": "src/components/About.tsx",
+            "lines": 194
+          },
+          {
+            "path": "src/components/DependencyGraph.tsx",
+            "lines": 182
+          },
+          {
+            "path": "src/components/DependencyList.tsx",
+            "lines": 170
+          },
+          {
+            "path": "src/components/IssuesList.tsx",
+            "lines": 90
+          },
+          {
+            "path": "src/components/CriticalIssues.tsx",
+            "lines": 87
+          }
+        ]
+      }
+    },
+    {
+      "id": "secrets",
+      "category": "security",
+      "name": "Secrets Detection",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "secrets"
+      ],
+      "duration": 4,
+      "metadata": {
+        "findings": 0
+      }
+    },
+    {
+      "id": "heavy-deps",
+      "category": "performance",
+      "name": "Heavy Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "heavy-deps"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalDeps": 25,
+        "heavyDepsFound": 0,
+        "heavyDeps": []
+      }
+    },
+    {
+      "id": "react-perf",
+      "category": "performance",
+      "name": "React Performance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "react-perf"
+      ],
+      "duration": 3,
+      "metadata": {
+        "filesScanned": 13,
+        "reactCompiler": true,
+        "totalFindings": 0,
+        "inlineObjects": 0,
+        "indexAsKey": 0,
+        "largeComponents": 0
+      }
+    },
+    {
+      "id": "asset-size",
+      "category": "performance",
+      "name": "Asset Sizes",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "asset-size"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalAssets": 0,
+        "totalSizeBytes": 0,
+        "totalSizeMB": "0.0",
+        "images": 0,
+        "svgs": 0,
+        "fonts": 0
+      }
+    }
+  ],
+  "overallScore": 94,
+  "summary": {
+    "critical": 1,
+    "warnings": 7,
+    "info": 7
+  }
+}

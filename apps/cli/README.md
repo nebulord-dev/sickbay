@@ -12,11 +12,12 @@ vitals [options]
 
 | Command               | Description                                           |
 | --------------------- | ----------------------------------------------------- |
+| `init [options]`      | Scaffold `.vitals/`, run baseline scan, seed history  |
 | `fix [options]`       | Interactively fix issues found by vitals scan         |
 | `trend [options]`     | Show score history and trends over time               |
 | `stats [options]`     | Show a quick codebase overview and project summary    |
 | `doctor [options]`    | Diagnose project setup and configuration issues       |
-| `tui [options]`   | Persistent live dashboard with file watching and activity tracking |
+| `tui [options]`       | Persistent live dashboard with file watching and activity tracking |
 
 ### Flags
 
@@ -56,6 +57,12 @@ vitals --json | jq '.checks[] | select(.status == "fail")'
 
 # Open web dashboard
 vitals --web
+
+# Initialize .vitals/ folder with baseline scan
+vitals init
+
+# Initialize for a specific project
+vitals init --path ~/projects/my-app
 
 # Interactively fix issues
 vitals fix

@@ -1,0 +1,337 @@
+{
+  "timestamp": "2026-03-06T01:00:57.206Z",
+  "projectPath": "/Users/chmc-gd9nn2t4fv/Documents/code/vitals",
+  "projectInfo": {
+    "name": "vitals-monorepo",
+    "version": "0.0.1",
+    "hasTypeScript": true,
+    "hasESLint": true,
+    "hasPrettier": false,
+    "framework": "unknown",
+    "packageManager": "pnpm",
+    "totalDependencies": 13,
+    "dependencies": {},
+    "devDependencies": {
+      "@eslint/js": "^9.39.3",
+      "@types/node": "^22.19.11",
+      "@typescript-eslint/eslint-plugin": "^8.55.0",
+      "@typescript-eslint/parser": "^8.55.0",
+      "@vitest/coverage-v8": "^4.0.18",
+      "vitest": "^4.0.18",
+      "eslint": "^9.39.3",
+      "eslint-config-prettier": "^10.1.8",
+      "eslint-plugin-react": "^7.37.5",
+      "eslint-plugin-react-hooks": "^7.0.1",
+      "tsup": "^8.3.0",
+      "turbo": "^2.8.5",
+      "typescript": "^5.7.0"
+    }
+  },
+  "checks": [
+    {
+      "id": "knip",
+      "category": "dependencies",
+      "name": "Unused Code",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "knip"
+      ],
+      "duration": 5390,
+      "metadata": {
+        "unusedFiles": 0,
+        "unusedDeps": 0,
+        "unusedDevDeps": 0,
+        "unusedExports": 0
+      }
+    },
+    {
+      "id": "depcheck",
+      "category": "dependencies",
+      "name": "Dependency Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "depcheck"
+      ],
+      "duration": 739,
+      "metadata": {
+        "unused": 0,
+        "missing": 0
+      }
+    },
+    {
+      "id": "outdated",
+      "category": "dependencies",
+      "name": "Outdated Packages",
+      "score": 82,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "turbo: 2.8.5 → 2.8.13",
+          "fix": {
+            "description": "Update turbo to 2.8.13",
+            "command": "pnpm update turbo"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "@typescript-eslint/eslint-plugin: 8.55.0 → 8.56.1",
+          "fix": {
+            "description": "Update @typescript-eslint/eslint-plugin to 8.56.1",
+            "command": "pnpm update @typescript-eslint/eslint-plugin"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "@typescript-eslint/parser: 8.55.0 → 8.56.1",
+          "fix": {
+            "description": "Update @typescript-eslint/parser to 8.56.1",
+            "command": "pnpm update @typescript-eslint/parser"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@eslint/js: 9.39.3 → 10.0.1",
+          "fix": {
+            "description": "Update @eslint/js to 10.0.1",
+            "command": "pnpm update @eslint/js"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@types/node: 22.19.11 → 25.3.5",
+          "fix": {
+            "description": "Update @types/node to 25.3.5",
+            "command": "pnpm update @types/node"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "eslint: 9.39.3 → 10.0.2",
+          "fix": {
+            "description": "Update eslint to 10.0.2",
+            "command": "pnpm update eslint"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "pnpm"
+      ],
+      "duration": 1004,
+      "metadata": {
+        "outdatedCount": 6
+      }
+    },
+    {
+      "id": "npm-audit",
+      "category": "security",
+      "name": "Security Vulnerabilities",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "npm-audit"
+      ],
+      "duration": 674,
+      "metadata": {}
+    },
+    {
+      "id": "madge",
+      "category": "code-quality",
+      "name": "Circular Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "madge"
+      ],
+      "duration": 603,
+      "metadata": {
+        "circularCount": 0,
+        "graph": {}
+      }
+    },
+    {
+      "id": "coverage",
+      "category": "code-quality",
+      "name": "Tests & Coverage",
+      "score": 86,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Line coverage: 68.3% (target: 80%)",
+          "fix": {
+            "description": "Add tests to improve coverage",
+            "command": "vitest run --coverage"
+          },
+          "reportedBy": [
+            "coverage"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Function coverage: 67.3% (target: 80%)",
+          "fix": {
+            "description": "Add tests for uncovered functions"
+          },
+          "reportedBy": [
+            "coverage"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "vitest"
+      ],
+      "duration": 6568,
+      "metadata": {
+        "testRunner": "vitest",
+        "totalTests": 0,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "lines": 68.3,
+        "statements": 66.51,
+        "functions": 67.34,
+        "branches": 56.82
+      }
+    },
+    {
+      "id": "license-checker",
+      "category": "security",
+      "name": "License Compliance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "license-checker"
+      ],
+      "duration": 277,
+      "metadata": {
+        "totalPackages": 1,
+        "flagged": 0
+      }
+    },
+    {
+      "id": "jscpd",
+      "category": "code-quality",
+      "name": "Code Duplication",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "jscpd"
+      ],
+      "duration": 614,
+      "metadata": {
+        "percentage": 0,
+        "clones": 0
+      }
+    },
+    {
+      "id": "git",
+      "category": "git",
+      "name": "Git Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "git"
+      ],
+      "duration": 107,
+      "metadata": {
+        "lastCommit": "7 minutes ago",
+        "commitCount": 108,
+        "contributorCount": 1,
+        "remoteBranches": 3
+      }
+    },
+    {
+      "id": "eslint",
+      "category": "code-quality",
+      "name": "eslint",
+      "score": 100,
+      "status": "skipped",
+      "issues": [],
+      "toolsUsed": [
+        "eslint"
+      ],
+      "duration": 0,
+      "metadata": {
+        "reason": "No source directory found (looked for src, lib, app)"
+      }
+    },
+    {
+      "id": "secrets",
+      "category": "security",
+      "name": "Secrets Detection",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "secrets"
+      ],
+      "duration": 0,
+      "metadata": {
+        "findings": 0
+      }
+    },
+    {
+      "id": "heavy-deps",
+      "category": "performance",
+      "name": "Heavy Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "heavy-deps"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalDeps": 13,
+        "heavyDepsFound": 0,
+        "heavyDeps": []
+      }
+    },
+    {
+      "id": "node-async-errors",
+      "category": "code-quality",
+      "name": "Async Error Handling",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "node-async-errors"
+      ],
+      "duration": 38
+    }
+  ],
+  "overallScore": 97,
+  "summary": {
+    "critical": 0,
+    "warnings": 5,
+    "info": 3
+  }
+}

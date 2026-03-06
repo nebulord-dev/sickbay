@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync, existsSync } from "fs";
+import { mkdirSync, writeFileSync, existsSync, readFileSync, appendFileSync } from "fs";
 import { join } from "path";
 import { runVitals } from "@vitals/core";
 import { saveEntry } from "../lib/history.js";
@@ -14,6 +14,18 @@ export async function initVitals(projectPath: string): Promise<void> {
     join(vitalsDir, ".gitignore"),
     "history.json\ncache/\n",
   );
+
+  // Add .vitals entries to project's root .gitignore if not already present
+  const rootGitignorePath = join(projectPath, ".gitignore");
+  const gitignoreEntries = [".vitals/history.json", ".vitals/cache/"];
+  const existingGitignore = existsSync(rootGitignorePath)
+    ? readFileSync(rootGitignorePath, "utf-8")
+    : "";
+  const toAdd = gitignoreEntries.filter((e) => !existingGitignore.includes(e));
+  if (toAdd.length > 0) {
+    const prefix = existingGitignore.endsWith("\n") || existingGitignore === "" ? "" : "\n";
+    appendFileSync(rootGitignorePath, `${prefix}${toAdd.join("\n")}\n`);
+  }
 
   const baselinePath = join(vitalsDir, "baseline.json");
   if (existsSync(baselinePath)) {
@@ -47,5 +59,8 @@ export async function initVitals(projectPath: string): Promise<void> {
   console.log(`\nCreated:`);
   console.log(`  .vitals/baseline.json   — committed (team baseline)`);
   console.log(`  .vitals/.gitignore      — ignores history.json + cache/`);
+  if (toAdd.length > 0) {
+    console.log(`  .gitignore              — added ${toAdd.join(", ")}`);
+  }
   console.log(`\nRun \`vitals\` to add history entries over time.`);
 }

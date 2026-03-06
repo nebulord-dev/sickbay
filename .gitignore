@@ -7,3 +7,5 @@ coverage/
 .env
 *.local
 .worktrees/
+.vitals/history.json
+.vitals/cache/
