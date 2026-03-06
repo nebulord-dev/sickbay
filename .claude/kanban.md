@@ -80,7 +80,6 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### Documentation
 
-- `[Docs]` Scoring documentation — write comprehensive docs explaining how scores are calculated for every check: what data each runner collects, how raw findings map to a 0–100 score, what thresholds trigger critical/warning/info severity, and how per-check scores roll up into category scores and the overall weighted total; primary audience is external developers integrating or extending Vitals who need to understand why a project scored the way it did
 - `[Docs]` Incremental checks — document only rerunning checks on changed files between commits (18x speedup for large codebases)
 - `[Docs]` Document patterns for AI consistency — scan monorepo for code patterns and document them for AI working on Vitals
 - `[Docs]` Add screenshots to the READMEs — add visuals of the app to package READMEs
@@ -131,3 +130,4 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[UI/UX]` TUI column widths — bumped Health Checks name column from 18 to 26 chars (fits all check names); passed calculated `availableWidth` from `columns` to `QuickWinsPanel` so it uses actual terminal width instead of the 22-char default
 - `[UI/UX]` TUI package manager detection — `QuickWinsPanel` and `QuickWins` now replace hardcoded `npm` commands with the detected package manager (`pnpm add`, `yarn add`, `bun add`, etc.) using `report.projectInfo.packageManager`
 - `[Bug]` Fix index-as-key in web dashboard components — original four spots (AISummary, CriticalIssues, IssuesList, ScoreCard) were already using stable keys; fixed remaining index-as-key issues in `HistoryChart.tsx` (X-axis labels and score dots now use `e.timestamp`) and `ChatDrawer.tsx` (messages now use `${msg.role}-${i}`)
+- `[Docs]` Scoring documentation — `docs/scoring.md`; covers category weights, overall score formula, all 20 checks with score formulas, issue severity thresholds, status thresholds, applicability conditions, and JSON output structure
