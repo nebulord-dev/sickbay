@@ -1,8 +1,9 @@
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, unlinkSync } from 'fs';
 import { join } from 'path';
+import { tmpdir } from 'os';
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
-import { timer, readPackageJson, parseJsonOutput } from '../utils/file-helpers.js';
+import { timer, readPackageJson } from '../utils/file-helpers.js';
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -79,29 +80,37 @@ export class CoverageRunner extends BaseRunner {
 
     try {
       const hasCoverage = this.hasCoverageProvider(projectPath, runner);
-      const args = runner === 'vitest'
-        ? ['run', '--reporter=json', ...(hasCoverage ? ['--coverage', '--coverage.reporter=json-summary'] : [])]
-        : ['--json', ...(hasCoverage ? ['--coverage'] : [])];
 
-      const { stdout } = await execa(runner, args, {
+      // Write JSON results to a temp file — avoids stdout-parsing fragility
+      // (console.log noise from vite.config.ts, coverage text output, etc.)
+      const tmpFile = join(tmpdir(), `vitals-test-${Date.now()}.json`);
+      const args = runner === 'vitest'
+        ? ['run', '--reporter=json', `--outputFile=${tmpFile}`, ...(hasCoverage ? ['--coverage', '--coverage.reporter=json-summary'] : [])]
+        : ['--json', `--outputFile=${tmpFile}`, ...(hasCoverage ? ['--coverage'] : [])];
+
+      await execa(runner, args, {
         cwd: projectPath,
         reject: false,
+        // localDir ensures we use the project's own vitest, not vitals' hoisted binary
+        localDir: projectPath,
         preferLocal: true,
         timeout: 120_000,
       });
 
-      // Parse test results from JSON stdout
+      // Read test counts from the temp file
       let testCounts = { total: 0, passed: 0, failed: 0, skipped: 0 };
-      try {
-        const parsed = parseJsonOutput(stdout, '{}') as VitestJsonResult;
-        testCounts = {
-          total: parsed.numTotalTests ?? 0,
-          passed: parsed.numPassedTests ?? 0,
-          failed: parsed.numFailedTests ?? 0,
-          skipped: parsed.numSkippedTests ?? 0,
-        };
-      } catch {
-        // JSON parse failed — tests might have errored badly
+      if (existsSync(tmpFile)) {
+        try {
+          const parsed = JSON.parse(readFileSync(tmpFile, 'utf-8')) as VitestJsonResult;
+          testCounts = {
+            total: parsed.numTotalTests ?? 0,
+            passed: parsed.numPassedTests ?? 0,
+            failed: parsed.numFailedTests ?? 0,
+            skipped: parsed.numSkippedTests ?? 0,
+          };
+        } finally {
+          try { unlinkSync(tmpFile); } catch { /* ignore cleanup error */ }
+        }
       }
 
       // Read coverage report if generated
