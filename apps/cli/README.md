@@ -10,14 +10,14 @@ vitals [options]
 
 ### Commands
 
-| Command               | Description                                           |
-| --------------------- | ----------------------------------------------------- |
-| `init [options]`      | Scaffold `.vitals/`, run baseline scan, seed history  |
-| `fix [options]`       | Interactively fix issues found by vitals scan         |
-| `trend [options]`     | Show score history and trends over time               |
-| `stats [options]`     | Show a quick codebase overview and project summary    |
-| `doctor [options]`    | Diagnose project setup and configuration issues       |
-| `tui [options]`       | Persistent live dashboard with file watching and activity tracking |
+| Command            | Description                                                        |
+| ------------------ | ------------------------------------------------------------------ |
+| `init [options]`   | Scaffold `.vitals/`, run baseline scan, seed history               |
+| `fix [options]`    | Interactively fix issues found by vitals scan                      |
+| `trend [options]`  | Show score history and trends over time                            |
+| `stats [options]`  | Show a quick codebase overview and project summary                 |
+| `doctor [options]` | Diagnose project setup and configuration issues                    |
+| `tui [options]`    | Persistent live dashboard with file watching and activity tracking |
 
 ### Flags
 
@@ -86,47 +86,67 @@ vitals tui --path ~/projects/my-app --no-watch
 vitals tui --path ~/projects/my-app --refresh 60 --checks knip,npm-audit,eslint
 ```
 
+## `vitals init` vs `vitals`
+
+**Run `vitals init` once when setting up a project for the first time.**
+
+It scaffolds the `.vitals/` data folder, saves a `baseline.json` snapshot of the project's current health, and wires up `.gitignore` entries so `history.json` doesn't pollute your repo. Think of it as "onboarding" Vitals to a project.
+
+**Run `vitals` for every subsequent scan.**
+
+Each scan automatically appends an entry to `.vitals/history.json`, so your score trend builds up over time without any extra steps. The History tab in the web dashboard (`vitals --web`) reads from this file.
+
+|                           | First time    | Ongoing        |
+| ------------------------- | ------------- | -------------- |
+| Command                   | `vitals init` | `vitals`       |
+| Creates `.vitals/`        | ✓             | ✓ (if missing) |
+| Saves `baseline.json`     | ✓             | ✗              |
+| Updates root `.gitignore` | ✓             | ✗              |
+| Appends to `history.json` | ✓             | ✓              |
+
+> If you skip `vitals init` and go straight to `vitals`, history will still accumulate — you just won't have a baseline snapshot or gitignore entries for `.vitals/`. But you can always ignore it manually.
+
 ## TUI Dashboard
 
 `vitals tui` opens a persistent split-pane TUI that continuously monitors your project. Unlike a one-shot scan, it stays running, watches for file changes, and lets you interact with results in real time.
 
 ### TUI Flags
 
-| Flag                      | Default         | Description                                          |
-| ------------------------- | --------------- | ---------------------------------------------------- |
-| `-p, --path <path>`       | `process.cwd()` | Project path to monitor                              |
-| `--no-watch`              | watch enabled   | Disable file-watching auto-refresh                   |
-| `--refresh <seconds>`     | `300`           | Auto-refresh interval in seconds                     |
-| `-c, --checks <checks>`   | all             | Comma-separated list of checks to run                |
+| Flag                    | Default         | Description                           |
+| ----------------------- | --------------- | ------------------------------------- |
+| `-p, --path <path>`     | `process.cwd()` | Project path to monitor               |
+| `--no-watch`            | watch enabled   | Disable file-watching auto-refresh    |
+| `--refresh <seconds>`   | `300`           | Auto-refresh interval in seconds      |
+| `-c, --checks <checks>` | all             | Comma-separated list of checks to run |
 
 ### Panels
 
 The tui displays six panels arranged in a responsive grid:
 
-| Panel          | Key  | Content                                                                 |
-| -------------- | ---- | ----------------------------------------------------------------------- |
-| **Health**     | `h`  | All check results with status icons, names, and score bars              |
-| **Score**      | —    | Overall score (0–100), color-coded status, issue counts, score delta    |
-| **Trend**      | `t`  | Sparkline charts for overall score and each category (last 10 scans)   |
-| **Git**        | `g`  | Branch, commits ahead/behind, modified/staged/untracked files, last commit |
-| **Quick Wins** | `q`  | Top 5 actionable fixes prioritized by severity                         |
-| **Activity**   | `a`  | Time-stamped event log (scans, file changes, regressions, git changes)  |
+| Panel          | Key | Content                                                                    |
+| -------------- | --- | -------------------------------------------------------------------------- |
+| **Health**     | `h` | All check results with status icons, names, and score bars                 |
+| **Score**      | —   | Overall score (0–100), color-coded status, issue counts, score delta       |
+| **Trend**      | `t` | Sparkline charts for overall score and each category (last 10 scans)       |
+| **Git**        | `g` | Branch, commits ahead/behind, modified/staged/untracked files, last commit |
+| **Quick Wins** | `q` | Top 5 actionable fixes prioritized by severity                             |
+| **Activity**   | `a` | Time-stamped event log (scans, file changes, regressions, git changes)     |
 
 ### Keyboard Controls
 
-| Key        | Action                                              |
-| ---------- | --------------------------------------------------- |
-| `r`        | Manually trigger a rescan                           |
-| `w`        | Launch web dashboard (without AI)                  |
-| `W`        | Launch web dashboard with AI analysis               |
-| `f`        | Expand focused panel to fullscreen                  |
-| `Escape`   | Unfocus current panel                               |
-| `↑ / ↓`   | Scroll Health Panel results (when focused)          |
-| `h`        | Focus Health panel                                  |
-| `g`        | Focus Git panel                                     |
-| `t`        | Focus Trend panel                                   |
-| `q`        | Focus Quick Wins panel                              |
-| `a`        | Focus Activity panel                                |
+| Key      | Action                                     |
+| -------- | ------------------------------------------ |
+| `r`      | Manually trigger a rescan                  |
+| `w`      | Launch web dashboard (without AI)          |
+| `W`      | Launch web dashboard with AI analysis      |
+| `f`      | Expand focused panel to fullscreen         |
+| `Escape` | Unfocus current panel                      |
+| `↑ / ↓`  | Scroll Health Panel results (when focused) |
+| `h`      | Focus Health panel                         |
+| `g`      | Focus Git panel                            |
+| `t`      | Focus Trend panel                          |
+| `q`      | Focus Quick Wins panel                     |
+| `a`      | Focus Activity panel                       |
 
 ### Automatic Triggers
 
