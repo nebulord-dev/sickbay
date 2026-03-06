@@ -3,7 +3,7 @@ import { SourceMapExplorerRunner } from './source-map-explorer.js';
 
 vi.mock('execa', () => ({ execa: vi.fn() }));
 vi.mock('globby', () => ({ globby: vi.fn() }));
-vi.mock('fs', () => ({ statSync: vi.fn() }));
+vi.mock('fs', () => ({ statSync: vi.fn(), readFileSync: vi.fn() }));
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
   fileExists: vi.fn(),
@@ -20,12 +20,13 @@ vi.mock('../utils/file-helpers.js', () => ({
 
 import { execa } from 'execa';
 import { globby } from 'globby';
-import { statSync } from 'fs';
+import { statSync, readFileSync } from 'fs';
 import { fileExists, isCommandAvailable } from '../utils/file-helpers.js';
 
 const mockExeca = vi.mocked(execa);
 const mockGlobby = vi.mocked(globby);
 const mockStatSync = vi.mocked(statSync);
+const mockReadFileSync = vi.mocked(readFileSync);
 const mockFileExists = vi.mocked(fileExists);
 const mockIsCommandAvailable = vi.mocked(isCommandAvailable);
 
@@ -38,6 +39,8 @@ describe('SourceMapExplorerRunner', () => {
   beforeEach(() => {
     runner = new SourceMapExplorerRunner();
     vi.clearAllMocks();
+    // Default: no index.html — falls back to total bundle measurement
+    mockReadFileSync.mockImplementation(() => { throw new Error('ENOENT'); });
   });
 
   it('only applies to browser runtime', () => {
@@ -109,6 +112,96 @@ describe('SourceMapExplorerRunner', () => {
 
       expect(result.status).toBe('skipped');
       expect(result.score).toBe(100);
+    });
+
+    it('scores on initial bundle when index.html is found, reports total as metadata', async () => {
+      mockGlobby
+        .mockResolvedValueOnce([]) // no source maps
+        .mockResolvedValueOnce([
+          '/project/dist/assets/index-abc.js',   // entry chunk (200KB)
+          '/project/dist/assets/documents-xyz.js', // lazy chunk (900KB)
+        ]);
+
+      // index.html references only the entry chunk
+      mockReadFileSync.mockReturnValue(
+        '<script type="module" src="/assets/index-abc.js"></script>'
+      );
+
+      mockStatSync.mockImplementation((file: unknown) => {
+        if (String(file).includes('documents')) return { size: 900 * KB } as never;
+        return { size: 200 * KB } as never;
+      });
+
+      const result = await runner.run('/project');
+
+      // Initial bundle is 200KB — pass
+      expect(result.status).toBe('pass');
+      expect(result.score).toBe(100);
+      expect(result.metadata?.initialKB).toBe(200);
+      // Total is reported but does not affect score
+      expect(result.metadata?.totalKB).toBe(1100);
+      expect(result.metadata?.entryChunks).toBe(1);
+    });
+
+    it('passes when initial bundle is under threshold even if total bundle would fail', async () => {
+      mockGlobby
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([
+          '/project/dist/assets/index-abc.js',
+          '/project/dist/assets/chunk-1.js',
+          '/project/dist/assets/chunk-2.js',
+          '/project/dist/assets/chunk-3.js',
+        ]);
+
+      mockReadFileSync.mockReturnValue(
+        '<script type="module" src="/assets/index-abc.js"></script>'
+      );
+
+      mockStatSync.mockImplementation((file: unknown) => {
+        // Entry: 300KB, each lazy chunk: 600KB → total ~2.1MB
+        if (String(file).includes('index')) return { size: 300 * KB } as never;
+        return { size: 600 * KB } as never;
+      });
+
+      const result = await runner.run('/project');
+
+      expect(result.status).toBe('pass');
+      expect(result.score).toBe(100);
+      expect(result.metadata?.initialKB).toBe(300);
+      expect(result.metadata?.totalKB).toBe(2100);
+    });
+
+    it('fails on initial bundle when entry chunk itself exceeds 1MB', async () => {
+      mockGlobby
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce(['/project/dist/assets/index-abc.js']);
+
+      mockReadFileSync.mockReturnValue(
+        '<script type="module" src="/assets/index-abc.js"></script>'
+      );
+
+      mockStatSync.mockReturnValue({ size: 1.5 * MB } as never);
+
+      const result = await runner.run('/project');
+
+      expect(result.status).toBe('fail');
+      expect(result.score).toBe(40);
+      expect(result.issues[0].message).toContain('Initial bundle');
+    });
+
+    it('falls back to total bundle when index.html has no script tags', async () => {
+      mockGlobby
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce(['/project/dist/main.js']);
+
+      // HTML with no script src tags
+      mockReadFileSync.mockReturnValue('<html><body></body></html>');
+      mockStatSync.mockReturnValue({ size: 200 * KB } as never);
+
+      const result = await runner.run('/project');
+
+      expect(result.status).toBe('pass');
+      expect(result.metadata?.entryChunks).toBe(0);
     });
   });
 

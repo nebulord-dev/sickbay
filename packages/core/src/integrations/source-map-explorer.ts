@@ -1,6 +1,6 @@
 import { execa } from "execa";
 import { globby } from "globby";
-import { statSync } from "fs";
+import { statSync, readFileSync } from "fs";
 import { join } from "path";
 import { BaseRunner } from "./base.js";
 import {
@@ -27,6 +27,20 @@ interface SmeOutput {
 
 const SIZE_THRESHOLD_WARN = 500 * 1024; // 500KB
 const SIZE_THRESHOLD_FAIL = 1024 * 1024; // 1MB
+
+/**
+ * Parses index.html in the build dir to find entry chunk script tags.
+ * Returns absolute paths to the entry JS files, or [] if not determinable.
+ */
+function findEntryChunks(buildPath: string): string[] {
+  try {
+    const html = readFileSync(join(buildPath, 'index.html'), 'utf8');
+    const matches = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"[^>]*>/gi)];
+    return matches.map((m) => join(buildPath, m[1].replace(/^\//, '')));
+  } catch {
+    return [];
+  }
+}
 
 export class SourceMapExplorerRunner extends BaseRunner {
   name = "source-map-explorer";
@@ -147,13 +161,27 @@ export class SourceMapExplorerRunner extends BaseRunner {
         }
       }, 0);
 
+      // Detect entry chunks from index.html to score on initial bundle only
+      const entryChunks = findEntryChunks(buildPath);
+      const hasEntryChunkInfo = entryChunks.length > 0;
+      const initialBytes = hasEntryChunkInfo
+        ? entryChunks.reduce((sum, file) => {
+            try {
+              return sum + statSync(file).size;
+            } catch {
+              return sum;
+            }
+          }, 0)
+        : totalBytes;
+
       const totalKB = Math.round(totalBytes / 1024);
+      const initialKB = Math.round(initialBytes / 1024);
       const issues: Issue[] = [];
 
-      if (totalBytes > SIZE_THRESHOLD_FAIL) {
+      if (initialBytes > SIZE_THRESHOLD_FAIL) {
         issues.push({
           severity: "critical",
-          message: `Bundle size is ${totalKB}KB — exceeds 1MB threshold`,
+          message: `Initial bundle is ${initialKB}KB — exceeds 1MB threshold`,
           fix: {
             description:
               "Use code splitting and lazy imports to reduce bundle size",
@@ -163,10 +191,10 @@ export class SourceMapExplorerRunner extends BaseRunner {
           },
           reportedBy: ["bundle-size-check"],
         });
-      } else if (totalBytes > SIZE_THRESHOLD_WARN) {
+      } else if (initialBytes > SIZE_THRESHOLD_WARN) {
         issues.push({
           severity: "warning",
-          message: `Bundle size is ${totalKB}KB — consider optimizing`,
+          message: `Initial bundle is ${initialKB}KB — consider optimizing`,
           fix: {
             description: "Review large dependencies and consider tree-shaking",
             command: hasSourceMaps
@@ -178,9 +206,9 @@ export class SourceMapExplorerRunner extends BaseRunner {
       }
 
       const score =
-        totalBytes > SIZE_THRESHOLD_FAIL
+        initialBytes > SIZE_THRESHOLD_FAIL
           ? 40
-          : totalBytes > SIZE_THRESHOLD_WARN
+          : initialBytes > SIZE_THRESHOLD_WARN
             ? 70
             : 100;
 
@@ -199,13 +227,18 @@ export class SourceMapExplorerRunner extends BaseRunner {
         toolsUsed: ["file-size-analysis"],
         duration: elapsed(),
         metadata: {
+          initialBytes,
+          initialKB,
           totalBytes,
           totalKB,
           fileCount: jsFiles.length,
+          entryChunks: entryChunks.length,
           method: "file-size-analysis",
-          note: hasSourceMaps
-            ? "Source maps found but analysis failed"
-            : "No source maps — using file size analysis",
+          note: hasEntryChunkInfo
+            ? `Total bundle: ${totalKB}KB across ${jsFiles.length} chunks`
+            : hasSourceMaps
+              ? "Source maps found but analysis failed"
+              : "No source maps — using total bundle size",
         },
       };
     } catch (err) {
