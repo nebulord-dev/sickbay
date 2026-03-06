@@ -152,6 +152,23 @@ describe('DepcheckRunner', () => {
     expect(result.issues).toHaveLength(1);
   });
 
+  it('returns pass with score 100 when only virtual: modules are missing', async () => {
+    mockIsAvailable.mockResolvedValue(true);
+    mockExeca.mockResolvedValue({
+      stdout: JSON.stringify({
+        dependencies: [],
+        devDependencies: [],
+        missing: { 'virtual:pwa-register': ['src/main.tsx'], 'virtual:config': ['vite.config.ts'] },
+      }),
+    } as never);
+
+    const result = await runner.run('/project');
+
+    expect(result.status).toBe('pass');
+    expect(result.score).toBe(100);
+    expect(result.issues).toHaveLength(0);
+  });
+
   it('returns fail status when missing keys are present', async () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({

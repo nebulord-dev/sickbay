@@ -62,7 +62,7 @@ export class DepcheckRunner extends BaseRunner {
         category: this.category,
         name: 'Dependency Health',
         score,
-        status: (data.missing && Object.keys(data.missing).length > 0) ? 'fail' : issues.length > 0 ? 'warning' : 'pass',
+        status: issues.length === 0 ? 'pass' : issues[0].severity === 'critical' ? 'fail' : 'warning',
         issues,
         toolsUsed: ['depcheck'],
         duration: elapsed(),
