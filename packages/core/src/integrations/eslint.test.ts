@@ -33,6 +33,9 @@ describe('ESLintRunner', () => {
   beforeEach(() => {
     runner = new ESLintRunner();
     vi.clearAllMocks();
+    // Default: src dir exists so run() doesn't bail out with skipped.
+    // Individual isApplicable tests override this as needed.
+    mockExistsSync.mockReturnValue(true);
   });
 
   describe('isApplicable', () => {
