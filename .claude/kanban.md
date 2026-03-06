@@ -34,7 +34,6 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### Features
 
-- `[Feature]` Historical Trends — track score changes over time; reports stored as timestamped JSON in `.vitals/history/`; visualized as a line chart in the web dashboard with per-category toggles and a baseline marker; data structure and folder layout defined in `docs/plans/vitals-config-design.md`; depends on the `vitals.config.ts` / `.vitals/` folder task shipping first
 - `[Feature]` CI/CD Integration Guide — pre-built GitHub Actions and GitLab CI templates, auto-comment PR summaries with score deltas, fail builds on critical thresholds; a basic single-project template can be built now, but monorepo support will require matrix build strategies and per-package runs — plan for a v2 of the templates once monorepo detection lands
 - `[Feature]` Lighthouse Integration — run Lighthouse audits for Web Vitals (LCP, FID, CLS) alongside code health checks with unified performance scoring
 - `[Feature]` Custom check API for plugins — plug-in system for adding custom runners with a simple interface; do not implement before polyglot work is complete — the runner interface (language scoping, category registration, how checks are discovered) will change significantly once multi-language support lands; building this now would mean redesigning the plugin API twice
@@ -102,6 +101,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Bug]` Fix ESLint runner silently scanning 0 files — runner reports score 100 and passes but metadata shows `"files": 0`; it's returning clean because it found nothing to scan rather than actually linting the source; needs investigation into why the file glob or ESLint config resolution is producing an empty file set when run against the monorepo root; a pass with 0 files scanned should be treated as a configuration error, not a clean result
 - `[Bug]` Fix source-map-explorer runner scoring logic — currently sums all chunk sizes and scores the total against a 1MB threshold, which flags projects as critical even when code splitting is properly configured; fix should score based on the largest single initial chunk rather than the combined total, and detect/note when manualChunks or dynamic imports are in use so the result isn't misleading
 - `[Bug]` Fix source-map-explorer runner not executing — when source maps are present the runner falls back to file-size-analysis with note "Source maps found but analysis failed"; investigate why `isCommandAvailable` returns false or why the JSON output isn't matching the expected format when run via `preferLocal: true` against `packages/core`'s local `node_modules`
+- `[Bug]` Fix test count showing zero in web Codebase tab — when running against apps with hundreds of passing tests, the Codebase tab displays "Total tests: 0, Passing: 0"; test runner detection or result parsing is failing silently, likely in the test runner integration in `packages/core/src/integrations/`
 - `[Bug]` Fix todo-scanner false positives on string literals — the scanner matches TODO/FIXME inside string values in source code (e.g. the `CHECK_DESCRIPTIONS` map in `About.tsx` contains the string "Finds TODO, FIXME..." which triggers a match); fix should skip matches inside string literals or at minimum require the keyword to appear outside quotes
 - `[Bug]` Fix index-as-key in web dashboard components — `AISummary.tsx:199`, `CriticalIssues.tsx:74`, `IssuesList.tsx:43`, `ScoreCard.tsx:67` all use array index as React list key; replace with stable unique identifiers
 
@@ -130,3 +130,4 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - Add Vitest tests to all projects
 - Add tests coverage reports to all projects
 - Configure coverage to show in the vitest UI for each project
+- `[Feature]` Historical Trends — `vitals init` scaffolds `.vitals/` with `.gitignore` and `baseline.json`; history stored in `<projectPath>/.vitals/history.json`; exposed via `/vitals-history.json` HTTP endpoint; web dashboard shows a History tab with SVG line chart, toggleable category lines, score delta, and empty state
