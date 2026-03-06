@@ -217,7 +217,7 @@ export function ChatDrawer({ report: _report }: ChatDrawerProps) {
             )}
             {messages.map((msg, i) => (
               <div
-                key={i}
+                key={`${msg.role}-${i}`}
                 className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div

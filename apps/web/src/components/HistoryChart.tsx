@@ -86,7 +86,7 @@ export function HistoryChart({ history }: HistoryChartProps) {
   // X-axis labels — show at most 8 to avoid crowding
   const labelStep = Math.max(1, Math.ceil(n / 8));
   const xLabels = entries
-    .map((e, i) => ({ i, label: formatDate(e.timestamp) }))
+    .map((e, i) => ({ i, timestamp: e.timestamp, label: formatDate(e.timestamp) }))
     .filter(({ i }) => i % labelStep === 0 || i === n - 1);
 
   // Y-axis labels
@@ -135,9 +135,9 @@ export function HistoryChart({ history }: HistoryChartProps) {
           ))}
 
           {/* X-axis labels */}
-          {xLabels.map(({ i, label }) => (
+          {xLabels.map(({ i, timestamp, label }) => (
             <text
-              key={i}
+              key={timestamp}
               x={entryToX(i, n)}
               y={VIEW_H - 8}
               textAnchor="middle"
@@ -177,7 +177,7 @@ export function HistoryChart({ history }: HistoryChartProps) {
           {/* Overall score dots */}
           {entries.map((e, i) => (
             <circle
-              key={i}
+              key={e.timestamp}
               cx={entryToX(i, n)}
               cy={scoreToY(e.overallScore)}
               r={3}
