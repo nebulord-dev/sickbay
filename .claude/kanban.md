@@ -34,6 +34,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### Features
 
+- `[Feature]` Claude Code skill for Vitals — a static, evergreen skill file covering: where the report lives (`.vitals/last-report.json`), the JSON schema shape (`VitalsReport`, `CheckResult`, `Issue`), score interpretation (0–100, 80+ green, 60–79 yellow, <60 red), severity levels (critical/warning/info), and how to act on fix suggestions (`issue.fix.command`); content is deliberately high-level so it never goes stale; ship as a doc (`docs/claude-skill.md`) and optionally as `vitals claude` command that writes it to `.claude/skills/vitals.md` in the target project
 - `[Feature]` CI/CD Integration Guide — pre-built GitHub Actions and GitLab CI templates, auto-comment PR summaries with score deltas, fail builds on critical thresholds; a basic single-project template can be built now, but monorepo support will require matrix build strategies and per-package runs — plan for a v2 of the templates once monorepo detection lands
 - `[Feature]` Lighthouse Integration — run Lighthouse audits for Web Vitals (LCP, FID, CLS) alongside code health checks with unified performance scoring
 - `[Feature]` Custom check API for plugins — plug-in system for adding custom runners with a simple interface; do not implement before polyglot work is complete — the runner interface (language scoping, category registration, how checks are discovered) will change significantly once multi-language support lands; building this now would mean redesigning the plugin API twice
@@ -54,8 +55,6 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### UI/UX
 
-- `[UI/UX]` TUI score reveal animation — on startup, the overall score counts up from 0 to the final number with a color transition (red → yellow → green); cheap to build, disproportionately satisfying; categories animate in sequence after the overall score settles
-- `[UI/UX]` TUI panel entrance animations — panels animate in sequentially on startup rather than all appearing at once; creates a "cockpit powering on" feel that makes a strong first impression
 - `[UI/UX]` TUI live score feedback — when a background re-scan completes and a score changes, the relevant panel border briefly pulses red (regression) or green (improvement); makes the live-updating nature of the tool viscerally obvious
 - `[Feature]` TUI issue drill-down with file preview — in the Health panel, press Enter on a selected check to open a half-screen overlay showing the actual file path and relevant lines causing the issue, rendered with ANSI syntax highlighting; lets users investigate problems without leaving the terminal; needs: (1) check results to carry file + line metadata, (2) a file-excerpt renderer with color, (3) overlay component with scroll support
 - `[Feature]` TUI command palette — press `:` to open a vim-style input bar at the bottom of the screen; supports commands like `scan`, `export`, `open web`, `open web ai`, `compare <branch>`, `theme <name>`; gives power users a discoverable shortcut layer without cluttering the hotkey bar
@@ -67,7 +66,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### Testing
 
-- `[Testing]` Extract fixtures to a dedicated `vitals-test-fixtures` repo — as the fixture library grows (Angular, Next.js, React variants, Node variants, Express examples, etc.) it will bloat the main monorepo; extract `fixtures/` to its own repo with the following benefits: (1) versioned independently — vitals CI can pin to a specific fixtures tag for stability; (2) contributors can add fixture apps without touching the main vitals repo; (3) fixtures can have their own README explaining each app's intentional issues and which checks they exercise; (4) CI clones the fixtures repo on demand instead of bundling it; migration path is clean since `fixtures/` is already a separate pnpm workspace — extract the directory, `git init`, push to new repo, update CI workflow to clone it, remove `fixtures/` from the vitals workspace; **do not extract until the fixture library is meaningfully larger** — the overhead isn't worth it for two packages
+- `[Testing]` Extract fixtures to a dedicated private `vitals-test-fixtures` repo — **primary driver is security compliance**: `node-api` contains intentional hardcoded secrets and vulnerable dependencies that will fail GitHub Enterprise security scanning and block Vitals from reaching any internal main branch or environment; a private repo is not subject to the same scanning gates; secondary benefits: (1) CI clones the fixtures repo on demand instead of bundling it; (2) fixtures can have their own permissive security policy since issues are intentional by design; (3) versioned independently — vitals CI can pin to a specific fixtures tag; migration path is clean since `fixtures/` is already a separate pnpm workspace — extract the directory, `git init`, push to new private repo, update CI workflow to clone it, remove `fixtures/` from the vitals workspace; **this should be done before Vitals is pushed to any internal infrastructure**
 
 - `[Testing]` Snapshot regression testing against fixtures — run `vitals --json` against each fixture app and commit the output as a snapshot (e.g. `fixtures/snapshots/react-app.json`, `node-api.json`); in CI, re-run and diff against the committed snapshot — any unexpected change in scores, check names, issue counts, or severity fails the build; this isn't about validating correctness (that requires human judgment on first run) but about catching unintended regressions when runners are modified; workflow: (1) initial snapshot is generated and reviewed manually, (2) committed as the source of truth, (3) future changes require a deliberate snapshot update (`vitals --json > fixtures/snapshots/<name>.json`) which shows up in the PR diff for review; pairs naturally with the fixtures extraction task but can be built now against the existing `react-app` and `node-api` fixtures
 
@@ -99,6 +98,10 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 ## In Progress
 
 ## Done
+
+- `[Feature]` Auto-save last report to `.vitals/last-report.json` — writes full JSON report after every scan (App.tsx, index.ts --json path, TuiApp.tsx); always overwrites; silent fail; discoverable by Claude Code and other tools without any flags
+- `[UI/UX]` TUI score reveal animation — score counts up from 0 on first load, from previous score on re-scans; color transitions red→yellow→green naturally as the number crosses thresholds; 20ms/tick interval
+- `[UI/UX]` TUI panel entrance animations — panels appear sequentially on startup (health→score→trend→git→quickwins→activity, 120ms stagger); `PanelBorder` renders `···` placeholder until revealed; creates cockpit powering-on feel
 
 - `[Testing]` Add missing tests to `@vitals/cli` — boosted from 74.26% → 80.34% statements / 82.21% lines (360 tests, 31 files); added coverage for onCheckStart/onCheckComplete callbacks, opening-web phase, FixApp keyboard navigation, QuickWinsPanel path shortening helpers, and web.ts static file serving branch
 - `[Bug]` Fix Node security runners firing on non-server projects — added `isApplicable()` to `NodeSecurityRunner` and `NodeInputValidationRunner` to check for HTTP server framework presence (express, fastify, koa, etc.) before running; confirmed by scanning vitals against itself: score went from 83 → 98
