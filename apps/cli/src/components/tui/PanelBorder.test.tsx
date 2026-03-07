@@ -117,4 +117,33 @@ describe("PanelBorder", () => {
     const hasSingleBorder = output.includes("┌") || output.includes("─");
     expect(hasSingleBorder).toBe(true);
   });
+
+  it("renders placeholder when visible is false", () => {
+    const { lastFrame } = render(
+      <PanelBorder title="Score" color="blue" visible={false}>
+        <Text>real content</Text>
+      </PanelBorder>
+    );
+    const output = lastFrame() ?? "";
+    expect(output).toContain("···");
+    expect(output).not.toContain("real content");
+  });
+
+  it("renders children when visible is true", () => {
+    const { lastFrame } = render(
+      <PanelBorder title="Score" color="blue" visible={true}>
+        <Text>real content</Text>
+      </PanelBorder>
+    );
+    expect(lastFrame()).toContain("real content");
+  });
+
+  it("renders children when visible is omitted (defaults to true)", () => {
+    const { lastFrame } = render(
+      <PanelBorder title="Score" color="blue">
+        <Text>real content</Text>
+      </PanelBorder>
+    );
+    expect(lastFrame()).toContain("real content");
+  });
 });

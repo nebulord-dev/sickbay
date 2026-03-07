@@ -5,10 +5,11 @@ interface PanelBorderProps {
   title: string;
   color: string;
   focused?: boolean;
+  visible?: boolean;
   children: React.ReactNode;
 }
 
-export function PanelBorder({ title, color, focused, children }: PanelBorderProps) {
+export function PanelBorder({ title, color, focused, visible = true, children }: PanelBorderProps) {
   return (
     <Box
       flexDirection="column"
@@ -20,7 +21,7 @@ export function PanelBorder({ title, color, focused, children }: PanelBorderProp
       <Text bold color={color}>
         {title}
       </Text>
-      {children}
+      {visible ? children : <Text dimColor>···</Text>}
     </Box>
   );
 }
