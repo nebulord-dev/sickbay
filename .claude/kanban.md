@@ -82,6 +82,10 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Docs]` Add screenshots to the READMEs — add visuals of the app to package READMEs
 - `[Docs]` Create SKILLS.md and reference files — have Claude suggest what skill files and other docs would be useful
 
+### Security
+
+- `[Security]` Resolve transitive `minimatch` ReDoS vulnerabilities before publishing — all are in transitive deps (`eslint`, `@typescript-eslint`, `depcheck`, `source-map-explorer`); fix via `pnpm.overrides` in root `package.json` once internal GitHub hosting is set up and audit gates are enforced; also a `rollup` path-traversal issue via `vite`; none are exploitable in current usage but will block publishing to internal registry
+
 ### Versioning
 
 - `[Feature]` Auto-increment Vitals CLI version — set up automated version bumping (e.g. via `changesets` or a release script); display the current version number beneath the Vitals banner in the terminal UI
