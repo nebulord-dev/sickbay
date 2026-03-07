@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, Text } from "ink";
 import type { VitalsReport } from "@vitals/core";
 
@@ -19,6 +19,34 @@ function scoreBar(score: number, width = 15): string {
 }
 
 export function ScorePanel({ report, previousScore }: ScorePanelProps) {
+  const [displayScore, setDisplayScore] = useState(0);
+  const prevTargetRef = useRef(0);
+
+  useEffect(() => {
+    if (!report) {
+      setDisplayScore(0);
+      prevTargetRef.current = 0;
+      return;
+    }
+
+    const target = report.overallScore;
+    const start = prevTargetRef.current;
+    prevTargetRef.current = target;
+
+    if (start === target) return;
+
+    let current = start;
+    const step = target > start ? 1 : -1;
+
+    const id = setInterval(() => {
+      current += step;
+      setDisplayScore(current);
+      if (current === target) clearInterval(id);
+    }, 20);
+
+    return () => clearInterval(id);
+  }, [report]);
+
   if (!report) {
     return (
       <Box>
@@ -27,17 +55,16 @@ export function ScorePanel({ report, previousScore }: ScorePanelProps) {
     );
   }
 
-  const score = report.overallScore;
-  const delta = previousScore !== null ? score - previousScore : null;
+  const delta = previousScore !== null ? report.overallScore - previousScore : null;
 
   return (
     <Box flexDirection="column">
       <Box>
-        <Text color={scoreColor(score)} bold>
-          {score}/100
+        <Text color={scoreColor(displayScore)} bold>
+          {displayScore}/100
         </Text>
         <Text> </Text>
-        <Text color={scoreColor(score)}>{scoreBar(score)}</Text>
+        <Text color={scoreColor(displayScore)}>{scoreBar(displayScore)}</Text>
       </Box>
       {delta !== null && (
         <Text dimColor>
