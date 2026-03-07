@@ -10,6 +10,7 @@ import { GitPanel } from "./GitPanel.js";
 import { QuickWinsPanel } from "./QuickWinsPanel.js";
 import { MonorepoPanel } from "./MonorepoPanel.js";
 import { ActivityPanel, type ActivityEntry } from "./ActivityPanel.js";
+import { HelpPanel } from "./HelpPanel.js";
 import { useVitalsRunner } from "./hooks/useVitalsRunner.js";
 import { useFileWatcher } from "./hooks/useFileWatcher.js";
 import { useTerminalSize } from "./hooks/useTerminalSize.js";
@@ -37,6 +38,7 @@ export function TuiApp({
 
   const [focusedPanel, setFocusedPanel] = useState<PanelId | null>(null);
   const [expandedPanel, setExpandedPanel] = useState<PanelId | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
   const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
   const [previousScore, setPreviousScore] = useState<number | null>(null);
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
@@ -181,12 +183,25 @@ export function TuiApp({
   // Keyboard input — only active when stdin supports raw mode (interactive TTY)
   const isTTY = !!(process.stdin.isTTY && process.stdin.setRawMode);
   useInput((input, key) => {
+    // Help overlay: ? toggles, Escape closes
+    if (showHelp) {
+      if (input === "?" || key.escape) {
+        setShowHelp(false);
+      }
+      return;
+    }
+
     // Expanded panel: escape or f to exit
     if (expandedPanel) {
       if (key.escape || input === "f") {
         setExpandedPanel(null);
         return;
       }
+    }
+
+    if (input === "?") {
+      setShowHelp(true);
+      return;
     }
 
     // Panel focus toggles
@@ -250,6 +265,20 @@ export function TuiApp({
   // Layout calculations
   const topHeight = Math.floor((rows - 1) * 0.6);
   const bottomHeight = rows - 1 - topHeight;
+
+  // Help overlay
+  if (showHelp) {
+    return (
+      <Box flexDirection="column" width={columns} height={rows}>
+        <Box flexGrow={1}>
+          <PanelBorder title="HELP" color="cyan" focused>
+            <HelpPanel />
+          </PanelBorder>
+        </Box>
+        <HotkeyBar activePanel={focusedPanel} />
+      </Box>
+    );
+  }
 
   // Full-screen expand mode
   if (expandedPanel) {
