@@ -2,7 +2,7 @@ import http from "http";
 import { readFileSync, existsSync } from "fs";
 import { join, extname } from "path";
 import { fileURLToPath } from "url";
-import type { VitalsReport } from "@vitals/core";
+import type { VitalsReport, MonorepoReport } from "@vitals/core";
 import type { AIService } from "../services/ai.js";
 
 /**
@@ -47,7 +47,7 @@ async function getFreePort(preferred: number): Promise<number> {
 }
 
 export async function serveWeb(
-  report: VitalsReport,
+  report: VitalsReport | MonorepoReport,
   preferredPort = 3030,
   aiService?: AIService,
 ): Promise<string> {
@@ -61,9 +61,9 @@ export async function serveWeb(
   const reportJson = JSON.stringify(report);
   const port = await getFreePort(preferredPort);
 
-  // Generate AI summary on startup if service is available
+  // Generate AI summary on startup if service is available (single-project only)
   let aiSummary: string | null = null;
-  if (aiService) {
+  if (aiService && !("isMonorepo" in report)) {
     try {
       aiSummary = await aiService.generateSummary(report);
     } catch (err) {
@@ -83,7 +83,8 @@ export async function serveWeb(
 
     // Serve project-local history
     if (url === "/vitals-history.json") {
-      const historyPath = join(report.projectPath, ".vitals", "history.json");
+      const basePath = "isMonorepo" in report ? report.rootPath : report.projectPath;
+      const historyPath = join(basePath, ".vitals", "history.json");
       if (existsSync(historyPath)) {
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(readFileSync(historyPath, "utf-8"));
@@ -101,8 +102,8 @@ export async function serveWeb(
       return;
     }
 
-    // AI chat endpoint
-    if (url === "/ai/chat" && req.method === "POST" && aiService) {
+    // AI chat endpoint (single-project only)
+    if (url === "/ai/chat" && req.method === "POST" && aiService && !("isMonorepo" in report)) {
       let body = "";
       req.on("data", (chunk) => (body += chunk));
       req.on("end", async () => {

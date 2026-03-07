@@ -1,6 +1,7 @@
-export { runVitals } from './runner.js';
+export { runVitals, runVitalsMonorepo } from './runner.js';
 export { calculateOverallScore, buildSummary, getScoreColor, getScoreEmoji } from './scoring.js';
 export { detectProject, detectPackageManager, detectContext } from './utils/detect-project.js';
+export { detectMonorepo } from './utils/detect-monorepo.js';
 export type {
   VitalsReport,
   ProjectInfo,
@@ -15,4 +16,7 @@ export type {
   Runtime,
   BuildTool,
   TestFramework,
+  MonorepoInfo,
+  PackageReport,
+  MonorepoReport,
 } from './types.js';

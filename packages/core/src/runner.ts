@@ -1,5 +1,7 @@
-import type { VitalsReport, CheckResult, ToolRunner } from './types.js';
+import { relative } from 'path';
+import type { VitalsReport, CheckResult, ToolRunner, MonorepoReport, PackageReport } from './types.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
+import { detectMonorepo } from './utils/detect-monorepo.js';
 import { calculateOverallScore, buildSummary } from './scoring.js';
 import { KnipRunner } from './integrations/knip.js';
 import { OutdatedRunner } from './integrations/outdated.js';
@@ -30,6 +32,8 @@ export interface RunnerOptions {
   onRunnersReady?: (names: string[]) => void;
   onCheckStart?: (name: string) => void;
   onCheckComplete?: (result: CheckResult) => void;
+  onPackageStart?: (name: string) => void;
+  onPackageComplete?: (report: PackageReport) => void;
 }
 
 const ALL_RUNNERS: ToolRunner[] = [
@@ -98,6 +102,63 @@ export async function runVitals(options: RunnerOptions = {}): Promise<VitalsRepo
     projectPath,
     projectInfo,
     checks,
+    overallScore,
+    summary,
+  };
+}
+
+export async function runVitalsMonorepo(options: RunnerOptions = {}): Promise<MonorepoReport> {
+  const rootPath = options.projectPath ?? process.cwd();
+  const monorepoInfo = await detectMonorepo(rootPath);
+
+  if (!monorepoInfo.isMonorepo) {
+    throw new Error(`Not a monorepo root: ${rootPath}`);
+  }
+
+  const packageReports = await Promise.all(
+    monorepoInfo.packagePaths.map(async (pkgPath): Promise<PackageReport> => {
+      const report = await runVitals({ ...options, projectPath: pkgPath });
+      const context = await detectContext(pkgPath);
+
+      options.onPackageStart?.(report.projectInfo.name);
+
+      const packageReport: PackageReport = {
+        name: report.projectInfo.name,
+        path: pkgPath,
+        relativePath: relative(rootPath, pkgPath),
+        framework: report.projectInfo.framework,
+        runtime: context.runtime,
+        checks: report.checks,
+        score: report.overallScore,
+        summary: report.summary,
+      };
+
+      options.onPackageComplete?.(packageReport);
+      return packageReport;
+    }),
+  );
+
+  const overallScore =
+    packageReports.length > 0
+      ? Math.round(packageReports.reduce((sum, p) => sum + p.score, 0) / packageReports.length)
+      : 0;
+
+  const summary = packageReports.reduce(
+    (acc, p) => ({
+      critical: acc.critical + p.summary.critical,
+      warnings: acc.warnings + p.summary.warnings,
+      info: acc.info + p.summary.info,
+    }),
+    { critical: 0, warnings: 0, info: 0 },
+  );
+
+  return {
+    isMonorepo: true,
+    timestamp: new Date().toISOString(),
+    rootPath,
+    monorepoType: monorepoInfo.type,
+    packageManager: monorepoInfo.packageManager,
+    packages: packageReports,
     overallScore,
     summary,
   };

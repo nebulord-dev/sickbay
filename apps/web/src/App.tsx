@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import type { VitalsReport } from "@vitals/core";
+import type { VitalsReport, MonorepoReport } from "@vitals/core";
 import { loadReport } from "./lib/load-report.js";
 import { Dashboard } from "./components/Dashboard.js";
 
 export function App() {
-  const [report, setReport] = useState<VitalsReport | null>(null);
+  const [report, setReport] = useState<VitalsReport | MonorepoReport | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

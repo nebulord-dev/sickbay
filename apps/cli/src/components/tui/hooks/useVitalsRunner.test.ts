@@ -6,6 +6,10 @@ import type { VitalsReport } from '@vitals/core';
 
 vi.mock('@vitals/core', () => ({
   runVitals: vi.fn(),
+  runVitalsMonorepo: vi.fn(),
+  detectMonorepo: vi.fn().mockResolvedValue({ isMonorepo: false }),
+  buildSummary: vi.fn().mockReturnValue({ critical: 0, warnings: 0, info: 0 }),
+  calculateOverallScore: vi.fn().mockReturnValue(0),
 }));
 
 vi.mock('../../../lib/history.js', () => ({
