@@ -43,6 +43,7 @@ export function TuiApp({
   const [previousScore, setPreviousScore] = useState<number | null>(null);
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [healthScrollOffset, setHealthScrollOffset] = useState(0);
+  const [scoreFlash, setScoreFlash] = useState<"green" | "red" | undefined>();
   const ALL_PANELS = new Set(["health", "score", "trend", "git", "quickwins", "activity"]);
   const [visiblePanels, setVisiblePanels] = useState<Set<string>>(
     animateOnMount ? new Set() : ALL_PANELS,
@@ -109,6 +110,13 @@ export function TuiApp({
         "scan-complete",
         `Scan complete: ${result.overallScore}/100${delta !== null ? ` (${delta >= 0 ? "+" : ""}${delta})` : ""}`,
       );
+
+      // Flash score panel border on score change
+      if (delta !== null && delta !== 0) {
+        const flash = delta > 0 ? "green" : "red";
+        setScoreFlash(flash);
+        setTimeout(() => setScoreFlash(undefined), 600);
+      }
 
       // Check for regressions
       try {
@@ -355,7 +363,7 @@ export function TuiApp({
         </Box>
         <Box width="45%" flexDirection="column">
           <Box height="50%">
-            <PanelBorder title="SCORE" color="blue" visible={visiblePanels.has("score")}>
+            <PanelBorder title="SCORE" color="blue" visible={visiblePanels.has("score")} flash={scoreFlash}>
               <ScorePanel report={report} previousScore={previousScore} animate={animateOnMount} />
             </PanelBorder>
           </Box>
