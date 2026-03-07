@@ -1,5 +1,5 @@
 import { readFileSync, existsSync } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
 import type { ProjectInfo, ProjectContext, Framework, Runtime, BuildTool, TestFramework } from "../types.js";
 
 /**
@@ -51,19 +51,26 @@ function detectFramework(
   if ("@vitejs/plugin-react" in deps || "vite" in deps) return "vite";
   if ("react-scripts" in deps) return "cra";
   if ("react" in deps) return "react";
-  return "unknown";
+  if ("express" in deps) return "express";
+  if ("fastify" in deps) return "fastify";
+  if ("koa" in deps) return "koa";
+  if ("hono" in deps) return "hono";
+  if ("@hapi/hapi" in deps || "hapi" in deps) return "hapi";
+  return "node";
 }
 
 export function detectPackageManager(
   projectPath: string,
 ): ProjectInfo["packageManager"] {
-  if (existsSync(join(projectPath, "pnpm-lock.yaml"))) return "pnpm";
-  if (existsSync(join(projectPath, "yarn.lock"))) return "yarn";
-  if (
-    existsSync(join(projectPath, "bun.lockb")) ||
-    existsSync(join(projectPath, "bun.lock"))
-  )
-    return "bun";
+  let dir = projectPath;
+  while (true) {
+    if (existsSync(join(dir, "pnpm-lock.yaml"))) return "pnpm";
+    if (existsSync(join(dir, "yarn.lock"))) return "yarn";
+    if (existsSync(join(dir, "bun.lockb")) || existsSync(join(dir, "bun.lock"))) return "bun";
+    const parent = dirname(dir);
+    if (parent === dir) break; // reached filesystem root
+    dir = parent;
+  }
   return "npm";
 }
 

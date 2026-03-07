@@ -86,12 +86,44 @@ describe('detectProject', () => {
     expect(info.framework).toBe('react');
   });
 
-  it('returns unknown framework when no match', async () => {
+  it('detects express framework', async () => {
     mockReadFileSync.mockReturnValue(
       makePkg({ dependencies: { express: '^4.0.0' } }) as never,
     );
     const info = await detectProject('/project');
-    expect(info.framework).toBe('unknown');
+    expect(info.framework).toBe('express');
+  });
+
+  it('detects fastify framework', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ dependencies: { fastify: '^4.0.0' } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.framework).toBe('fastify');
+  });
+
+  it('detects koa framework', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ dependencies: { koa: '^2.0.0' } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.framework).toBe('koa');
+  });
+
+  it('detects hapi framework', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ dependencies: { '@hapi/hapi': '^21.0.0' } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.framework).toBe('hapi');
+  });
+
+  it('returns node when no recognized framework found', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ dependencies: { lodash: '^4.0.0' } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.framework).toBe('node');
   });
 
   it('detects TypeScript via tsconfig.json file', async () => {
@@ -198,6 +230,25 @@ describe('detectPackageManager', () => {
 
   it('defaults to npm when no lock file found', () => {
     expect(detectPackageManager('/project')).toBe('npm');
+  });
+
+  it('walks up to parent directory to find pnpm-lock.yaml', () => {
+    mockExistsSync.mockImplementation((p) => String(p) === '/parent/pnpm-lock.yaml');
+    expect(detectPackageManager('/parent/child')).toBe('pnpm');
+  });
+
+  it('walks up to parent directory to find yarn.lock', () => {
+    mockExistsSync.mockImplementation((p) => String(p) === '/parent/yarn.lock');
+    expect(detectPackageManager('/parent/child')).toBe('yarn');
+  });
+
+  it('prefers lock file in closer directory over parent', () => {
+    mockExistsSync.mockImplementation((p) => {
+      if (String(p) === '/parent/child/pnpm-lock.yaml') return true;
+      if (String(p) === '/parent/yarn.lock') return true;
+      return false;
+    });
+    expect(detectPackageManager('/parent/child')).toBe('pnpm');
   });
 });
 
