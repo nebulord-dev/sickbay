@@ -105,10 +105,11 @@ program
         verbose: options.verbose,
       });
 
-      // Auto-save to trend history
+      // Auto-save to trend history and last-report snapshot
       try {
-        const { saveEntry } = await import("./lib/history.js");
+        const { saveEntry, saveLastReport } = await import("./lib/history.js");
         saveEntry(report);
+        saveLastReport(report);
       } catch {
         // Non-critical
       }

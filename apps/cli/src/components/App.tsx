@@ -154,10 +154,11 @@ export function App({
         setProjectName(r.projectInfo.name);
         setReport(r);
 
-        // Auto-save to trend history
+        // Auto-save to trend history and last-report snapshot
         try {
-          const { saveEntry } = await import("../lib/history.js");
+          const { saveEntry, saveLastReport } = await import("../lib/history.js");
           saveEntry(r);
+          saveLastReport(r);
         } catch {
           // Non-critical — silently ignore history save failures
         }

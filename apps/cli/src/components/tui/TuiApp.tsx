@@ -68,6 +68,14 @@ export function TuiApp({
       if (prevScore !== null) setPreviousScore(prevScore);
       setLastScanTime(new Date());
 
+      // Auto-save last report snapshot
+      try {
+        const { saveLastReport } = await import("../../lib/history.js");
+        saveLastReport(result);
+      } catch {
+        // Non-critical
+      }
+
       const delta =
         prevScore !== null ? result.overallScore - prevScore : null;
       addActivity(
