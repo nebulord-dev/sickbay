@@ -21,6 +21,23 @@ interface AppProps {
 
 type Phase = "loading" | "results" | "opening-web" | "error";
 
+const MONOREPO_LOADING_MESSAGES = [
+  "Scanning for pre-existing conditions…",
+  "Counting packages… still counting…",
+  "Still here. Still scanning...",
+  "The unused dependencies know what they did...",
+  "Every unused export is a tiny cry for help...",
+  "Checking if 'TODO: fix later' was ever fixed later...",
+  "Your secrets are safe with us. Unlike your .env file...",
+  "Good things take time. This is one of the good things. Probably...",
+  "npm audit found issues. npm audit --fix found different issues.",
+  "This is fine...",
+  "Evaluating life choices. Yours. Via package.json.",
+  "Almost done. (This is not a legally binding statement.)",
+  "node_modules: depth unknown. Will not attempt.",
+  "Performing checks. Results may vary...",
+];
+
 interface ProgressItem {
   name: string;
   status: "pending" | "running" | "done";
@@ -48,7 +65,16 @@ export function App({
   const [webUrl, setWebUrl] = useState<string | null>(null);
   const [projectName, setProjectName] = useState<string | undefined>();
   const [scanningPackage, setScanningPackage] = useState<string | undefined>();
+  const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
   const hasRun = useRef(false);
+
+  useEffect(() => {
+    if (!isMonorepo) return;
+    const id = setInterval(() => {
+      setLoadingMsgIdx((i) => (i + 1) % MONOREPO_LOADING_MESSAGES.length);
+    }, 4000);
+    return () => clearInterval(id);
+  }, [isMonorepo]);
 
   useEffect(() => {
     // Prevent double execution (React 18+ can run effects twice in dev/certain conditions)
@@ -180,11 +206,13 @@ export function App({
         <Box flexDirection="column">
           {isMonorepo ? (
             <Box flexDirection="column">
-              <Text dimColor>Scanning monorepo packages...</Text>
+              <Box>
+                <Text color="magenta"><Spinner type="dots" /></Text>
+                <Text dimColor> {MONOREPO_LOADING_MESSAGES[loadingMsgIdx]}</Text>
+              </Box>
               {scanningPackage && (
                 <Box marginTop={1} marginLeft={2}>
-                  <Text color="magenta"><Spinner type="dots" /></Text>
-                  <Text dimColor> scanning </Text>
+                  <Text dimColor>→ </Text>
                   <Text color="cyan">{scanningPackage}</Text>
                 </Box>
               )}

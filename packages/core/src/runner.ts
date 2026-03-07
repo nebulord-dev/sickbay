@@ -131,6 +131,8 @@ export async function runVitalsMonorepo(options: RunnerOptions = {}): Promise<Mo
         checks: report.checks,
         score: report.overallScore,
         summary: report.summary,
+        dependencies: report.projectInfo.dependencies,
+        devDependencies: report.projectInfo.devDependencies,
       };
 
       options.onPackageComplete?.(packageReport);

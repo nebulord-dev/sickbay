@@ -58,9 +58,9 @@ function packageReportToVitalsReport(pkg: PackageReport, parentReport: MonorepoR
       hasPrettier: false,
       framework: pkg.framework,
       packageManager: parentReport.packageManager,
-      totalDependencies: 0,
-      dependencies: {},
-      devDependencies: {},
+      totalDependencies: Object.keys(pkg.dependencies).length + Object.keys(pkg.devDependencies).length,
+      dependencies: pkg.dependencies,
+      devDependencies: pkg.devDependencies,
     },
     checks: pkg.checks,
     overallScore: pkg.score,
@@ -91,6 +91,7 @@ export function Dashboard({ report }: DashboardProps) {
   useEffect(() => {
     setView("overview");
     setSelectedCheck(null);
+    setIsAIDrawerOpen(false);
   }, [selectedPackageIdx]);
 
   // Scroll to top when view changes
@@ -356,7 +357,7 @@ export function Dashboard({ report }: DashboardProps) {
                 )}
               </div>
               <div className="flex gap-2">
-                {!monorepo && (
+                {(!monorepo || selectedPackageIdx >= 0) && (
                   <button
                     onClick={() => setIsAIDrawerOpen(!isAIDrawerOpen)}
                     className={`px-3 py-1 rounded text-sm font-mono transition-colors flex items-center gap-1.5
@@ -437,19 +438,23 @@ export function Dashboard({ report }: DashboardProps) {
         ) : null}
       </main>
 
-      {/* AI Insights Drawer (single-project only) */}
-      {!monorepo && activeReport && (
+      {/* AI Insights Drawer */}
+      {activeReport && (!monorepo || selectedPackageIdx >= 0) && (
         <AISummary
           report={activeReport}
           isOpen={isAIDrawerOpen}
           onToggle={setIsAIDrawerOpen}
+          packageName={monorepo ? monorepo.packages[selectedPackageIdx]?.name : undefined}
         />
       )}
 
-      {/* AI Chat Drawer (single-project only) */}
-      {!monorepo && activeReport && (
+      {/* AI Chat Drawer */}
+      {activeReport && (!monorepo || selectedPackageIdx >= 0) && (
         <Suspense fallback={null}>
-          <ChatDrawer report={activeReport} />
+          <ChatDrawer
+            report={activeReport}
+            packageName={monorepo ? monorepo.packages[selectedPackageIdx]?.name : undefined}
+          />
         </Suspense>
       )}
     </div>

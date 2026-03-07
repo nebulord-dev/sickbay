@@ -102,6 +102,8 @@ export interface PackageReport {
   checks: CheckResult[];
   score: number;
   summary: { critical: number; warnings: number; info: number };
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
 }
 
 export interface MonorepoReport {

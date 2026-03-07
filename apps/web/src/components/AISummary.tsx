@@ -6,6 +6,7 @@ interface AISummaryProps {
   report: VitalsReport;
   isOpen: boolean;
   onToggle: (open: boolean) => void;
+  packageName?: string;
 }
 
 interface ParsedSection {
@@ -81,13 +82,18 @@ function SectionIcon({ title }: { title: string }) {
   );
 }
 
-export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
+export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryProps) {
   const [summary, setSummary] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [regenerating, setRegenerating] = useState(false);
 
+  const summaryUrl = packageName
+    ? `/ai/summary?package=${encodeURIComponent(packageName)}`
+    : "/ai/summary";
+  const cacheKeySuffix = packageName ? `${report.timestamp}-${packageName}` : report.timestamp;
+
   const fetchSummary = useCallback(async () => {
-    const cacheKey = `vitals-ai-summary-${report.timestamp}`;
+    const cacheKey = `vitals-ai-summary-${cacheKeySuffix}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached && !regenerating) {
       setSummary(cached);
@@ -96,11 +102,11 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
     }
 
     try {
-      const response = await fetch("/ai/summary");
+      const response = await fetch(summaryUrl);
       if (response.ok) {
         const data = await response.json();
         setSummary(data.summary);
-        localStorage.setItem(cacheKey, data.summary);
+        localStorage.setItem(`vitals-ai-summary-${cacheKeySuffix}`, data.summary);
       } else {
         setSummary(null);
       }
@@ -110,7 +116,7 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
       setLoading(false);
       setRegenerating(false);
     }
-  }, [report.timestamp, regenerating]);
+  }, [summaryUrl, cacheKeySuffix, regenerating]);
 
   useEffect(() => {
     fetchSummary();
@@ -119,8 +125,7 @@ export function AISummary({ report, isOpen, onToggle }: AISummaryProps) {
   const handleRegenerate = () => {
     setRegenerating(true);
     setLoading(true);
-    const cacheKey = `vitals-ai-summary-${report.timestamp}`;
-    localStorage.removeItem(cacheKey);
+    localStorage.removeItem(`vitals-ai-summary-${cacheKeySuffix}`);
     fetchSummary();
   };
 

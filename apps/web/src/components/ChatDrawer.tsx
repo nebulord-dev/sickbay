@@ -6,6 +6,7 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface ChatDrawerProps {
   report: VitalsReport;
+  packageName?: string;
 }
 
 interface Message {
@@ -94,7 +95,7 @@ function MarkdownMessage({ content }: { content: string }) {
   );
 }
 
-export function ChatDrawer({ report: _report }: ChatDrawerProps) {
+export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -109,6 +110,12 @@ export function ChatDrawer({ report: _report }: ChatDrawerProps) {
       .catch(() => setIsAvailable(false));
   }, []);
 
+  // Reset conversation when switching packages
+  useEffect(() => {
+    setMessages([]);
+    setIsOpen(false);
+  }, [packageName]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -122,7 +129,10 @@ export function ChatDrawer({ report: _report }: ChatDrawerProps) {
     setLoading(true);
 
     try {
-      const response = await fetch("/ai/chat", {
+      const chatUrl = packageName
+        ? `/ai/chat?package=${encodeURIComponent(packageName)}`
+        : "/ai/chat";
+      const response = await fetch(chatUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

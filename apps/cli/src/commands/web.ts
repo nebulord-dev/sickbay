@@ -46,6 +46,33 @@ async function getFreePort(preferred: number): Promise<number> {
   });
 }
 
+function packageReportToVitalsReport(
+  pkg: import("@vitals/core").PackageReport,
+  parent: MonorepoReport,
+): VitalsReport {
+  return {
+    timestamp: parent.timestamp,
+    projectPath: pkg.path,
+    projectInfo: {
+      name: pkg.name,
+      version: "unknown",
+      hasTypeScript: false,
+      hasESLint: false,
+      hasPrettier: false,
+      framework: pkg.framework,
+      packageManager: parent.packageManager,
+      totalDependencies:
+        Object.keys(pkg.dependencies).length +
+        Object.keys(pkg.devDependencies).length,
+      dependencies: pkg.dependencies,
+      devDependencies: pkg.devDependencies,
+    },
+    checks: pkg.checks,
+    overallScore: pkg.score,
+    summary: pkg.summary,
+  };
+}
+
 export async function serveWeb(
   report: VitalsReport | MonorepoReport,
   preferredPort = 3030,
@@ -96,20 +123,73 @@ export async function serveWeb(
     }
 
     // AI summary endpoint
-    if (url === "/ai/summary" && aiSummary) {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ summary: aiSummary }));
+    const parsedUrl = new URL(url, "http://localhost");
+    const packageName = parsedUrl.searchParams.get("package");
+
+    if (parsedUrl.pathname === "/ai/summary") {
+      if (req.method === "HEAD") {
+        // Availability check
+        if (aiService) {
+          res.writeHead(200);
+        } else {
+          res.writeHead(404);
+        }
+        res.end();
+        return;
+      }
+      if (packageName && aiService && "isMonorepo" in report) {
+        // Per-package summary: generate on demand
+        const pkg = report.packages.find((p) => p.name === packageName);
+        if (!pkg) {
+          res.writeHead(404, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Package not found" }));
+          return;
+        }
+        try {
+          const pkgReport = packageReportToVitalsReport(pkg, report);
+          const summary = await aiService.generateSummary(pkgReport);
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ summary }));
+        } catch (err) {
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: String(err) }));
+        }
+        return;
+      }
+      if (aiSummary) {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ summary: aiSummary }));
+        return;
+      }
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end("{}");
       return;
     }
 
-    // AI chat endpoint (single-project only)
-    if (url === "/ai/chat" && req.method === "POST" && aiService && !("isMonorepo" in report)) {
+    // AI chat endpoint
+    if (parsedUrl.pathname === "/ai/chat" && req.method === "POST" && aiService) {
       let body = "";
       req.on("data", (chunk) => (body += chunk));
       req.on("end", async () => {
         try {
           const { message, history } = JSON.parse(body);
-          const response = await aiService.chat(message, report, history ?? []);
+          let chatReport: VitalsReport;
+          if (packageName && "isMonorepo" in report) {
+            const pkg = report.packages.find((p) => p.name === packageName);
+            if (!pkg) {
+              res.writeHead(404, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ error: "Package not found" }));
+              return;
+            }
+            chatReport = packageReportToVitalsReport(pkg, report);
+          } else if (!("isMonorepo" in report)) {
+            chatReport = report;
+          } else {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Package name required for monorepo" }));
+            return;
+          }
+          const response = await aiService.chat(message, chatReport, history ?? []);
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ response }));
         } catch (err) {
