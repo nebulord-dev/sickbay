@@ -120,16 +120,11 @@ describe('serveWeb', () => {
       expect(data.checks[0].id).toBe('eslint');
     });
 
-    it('/ai/summary returns 404-like (no AI content) when no aiService provided', async () => {
+    it('/ai/summary returns 404 when no aiService provided', async () => {
       const url = await serveWeb(makeReport(), 0);
 
-      // Without aiService the /ai/summary branch is skipped — falls through to static
-      // file handler which returns index.html (SPA fallback, status 200)
       const res = await fetch(`${url}/ai/summary`);
-      // The SPA fallback returns 200 with HTML, not a JSON summary
-      expect(res.status).toBe(200);
-      const text = await res.text();
-      expect(text).toContain('<html');
+      expect(res.status).toBe(404);
     });
 
     it('/ai/summary returns AI summary when aiService provided', async () => {
