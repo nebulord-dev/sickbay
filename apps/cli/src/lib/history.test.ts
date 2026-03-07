@@ -8,7 +8,7 @@ vi.mock('fs', () => ({
 }));
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { loadHistory, saveEntry, detectRegressions } from './history.js';
+import { loadHistory, saveEntry, detectRegressions, saveLastReport } from './history.js';
 import type { VitalsReport } from '@vitals/core';
 import type { TrendEntry } from './history.js';
 
@@ -239,5 +239,49 @@ describe('detectRegressions', () => {
     expect(categories).toContain('overall');
     expect(categories).toContain('security');
     expect(categories).not.toContain('code-quality'); // only dropped by 0
+  });
+});
+
+describe('saveLastReport', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('creates the .vitals directory', () => {
+    saveLastReport(makeReport());
+
+    expect(mockMkdirSync).toHaveBeenCalledWith(
+      expect.stringContaining('.vitals'),
+      { recursive: true },
+    );
+  });
+
+  it('writes report JSON to last-report.json', () => {
+    const report = makeReport({ overallScore: 72 });
+
+    saveLastReport(report);
+
+    expect(mockWriteFileSync).toHaveBeenCalledWith(
+      expect.stringContaining('last-report.json'),
+      expect.stringContaining('"overallScore": 72'),
+    );
+  });
+
+  it('overwrites on second call (always latest)', () => {
+    saveLastReport(makeReport({ overallScore: 70 }));
+    saveLastReport(makeReport({ overallScore: 85 }));
+
+    const paths = mockWriteFileSync.mock.calls.map((c) => c[0] as string);
+    expect(paths.every((p) => p.endsWith('last-report.json'))).toBe(true);
+    expect(mockWriteFileSync).toHaveBeenCalledTimes(2);
+  });
+
+  it('writes to projectPath/.vitals/last-report.json', () => {
+    const report = makeReport({ projectPath: '/my/project' });
+
+    saveLastReport(report);
+
+    expect(mockWriteFileSync).toHaveBeenCalledWith(
+      '/my/project/.vitals/last-report.json',
+      expect.any(String),
+    );
   });
 });

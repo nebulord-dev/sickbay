@@ -68,6 +68,14 @@ export function saveEntry(report: VitalsReport): void {
   writeFileSync(filePath, JSON.stringify(existing, null, 2));
 }
 
+export function saveLastReport(report: VitalsReport): void {
+  mkdirSync(join(report.projectPath, ".vitals"), { recursive: true });
+  writeFileSync(
+    join(report.projectPath, ".vitals", "last-report.json"),
+    JSON.stringify(report, null, 2),
+  );
+}
+
 export function detectRegressions(
   entries: TrendEntry[],
 ): Array<{ category: string; drop: number; from: number; to: number }> {
