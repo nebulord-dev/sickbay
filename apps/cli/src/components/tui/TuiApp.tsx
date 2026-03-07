@@ -269,7 +269,7 @@ export function TuiApp({
           )}
           {expandedPanel === "git" && (
             <PanelBorder title="GIT STATUS" color="yellow" focused>
-              <GitPanel projectPath={projectPath} />
+              <GitPanel projectPath={projectPath} availableWidth={columns - 4} />
             </PanelBorder>
           )}
           {expandedPanel === "trend" && (
@@ -356,7 +356,7 @@ export function TuiApp({
             focused={focusedPanel === "git"}
             visible={visiblePanels.has("git")}
           >
-            <GitPanel projectPath={projectPath} />
+            <GitPanel projectPath={projectPath} availableWidth={Math.floor(columns * 0.25) - 4} />
           </PanelBorder>
         </Box>
         <Box width="30%">

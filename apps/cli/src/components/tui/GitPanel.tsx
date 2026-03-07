@@ -4,9 +4,10 @@ import { useGitStatus } from "./hooks/useGitStatus.js";
 
 interface GitPanelProps {
   projectPath: string;
+  availableWidth?: number;
 }
 
-export function GitPanel({ projectPath }: GitPanelProps) {
+export function GitPanel({ projectPath, availableWidth = 30 }: GitPanelProps) {
   const status = useGitStatus(projectPath);
 
   if (!status) {
@@ -61,8 +62,8 @@ export function GitPanel({ projectPath }: GitPanelProps) {
         <Box marginTop={1} flexDirection="column">
           <Text dimColor>Last commit:</Text>
           <Text>
-            {status.lastCommit.length > 30
-              ? status.lastCommit.slice(0, 30) + "..."
+            {status.lastCommit.length > availableWidth
+              ? status.lastCommit.slice(0, availableWidth - 3) + "..."
               : status.lastCommit}
           </Text>
           <Text dimColor>{status.lastCommitTime}</Text>

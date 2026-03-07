@@ -108,15 +108,15 @@ describe("GitPanel", () => {
     expect(output).toContain("3 hours ago");
   });
 
-  it("truncates long commit messages to 30 characters", () => {
+  it("truncates long commit messages to availableWidth", () => {
     const longMessage = "fix: this is a very long commit message that exceeds limit";
     mockUseGitStatus.mockReturnValue(makeGitStatus({ lastCommit: longMessage }));
 
-    const { lastFrame } = render(<GitPanel projectPath="/test/project" />);
+    const { lastFrame } = render(<GitPanel projectPath="/test/project" availableWidth={30} />);
 
     const output = lastFrame();
-    // Should be truncated to 30 chars + "..."
-    expect(output).toContain(longMessage.slice(0, 30) + "...");
+    // Should be truncated to (availableWidth - 3) chars + "..."
+    expect(output).toContain(longMessage.slice(0, 27) + "...");
     expect(output).not.toContain(longMessage);
   });
 
