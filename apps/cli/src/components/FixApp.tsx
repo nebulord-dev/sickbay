@@ -212,6 +212,13 @@ export function FixApp({
       {/* Selection phase */}
       {phase === "selecting" && (
         <Box flexDirection="column">
+          <Box marginBottom={1}>
+            <Text color="yellow">⚠ </Text>
+            <Text dimColor>
+              Vitals can make mistakes. Review each fix before applying —
+              false positives exist and some commands modify your project.
+            </Text>
+          </Box>
           <Text bold>
             Select fixes to apply ({fixableIssues.length} available)
           </Text>
@@ -248,6 +255,15 @@ export function FixApp({
       )}
 
       {/* Fixing phase */}
+      {phase === "fixing" && !dryRun && (
+        <Box marginBottom={1}>
+          <Text color="yellow">⚠ </Text>
+          <Text dimColor>
+            Vitals can make mistakes — verify results afterwards and revert
+            anything that looks wrong.
+          </Text>
+        </Box>
+      )}
       {phase === "fixing" && (
         <Box flexDirection="column">
           <Text bold>

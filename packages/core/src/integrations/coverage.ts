@@ -160,7 +160,7 @@ export class CoverageRunner extends BaseRunner {
       issues.push({
         severity: 'critical',
         message: `${counts.failed} test${counts.failed > 1 ? 's' : ''} failing (${counts.passed}/${counts.total} passing)`,
-        fix: { description: 'Fix failing tests', command: `${packageManager} test` },
+        fix: { description: 'Fix failing tests' },
         reportedBy: ['coverage'],
       });
     }
@@ -170,7 +170,7 @@ export class CoverageRunner extends BaseRunner {
         issues.push({
           severity: coverage.lines.pct < 50 ? 'critical' : 'warning',
           message: `Line coverage: ${coverage.lines.pct.toFixed(1)}% (target: 80%)`,
-          fix: { description: 'Add tests to improve coverage', command: `${runner} run --coverage` },
+          fix: { description: 'Add tests to improve coverage' },
           reportedBy: ['coverage'],
         });
       }
