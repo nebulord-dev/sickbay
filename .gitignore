@@ -9,3 +9,5 @@ coverage/
 .worktrees/
 .vitals/history.json
 .vitals/cache/
+
+wallaby.cjs
