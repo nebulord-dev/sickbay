@@ -44,6 +44,7 @@ describe("ScorePanel", () => {
   });
 
   it("starts at 0 before animation completes", () => {
+    vi.useFakeTimers(); // freeze timers so interval is cleaned up in afterEach
     const report = createMockReport(85);
     const { lastFrame } = render(
       <ScorePanel report={report} previousScore={null} />

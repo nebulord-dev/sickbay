@@ -19,6 +19,7 @@ interface TuiAppProps {
   checks?: string[];
   watchEnabled: boolean;
   refreshInterval: number;
+  animateOnMount?: boolean;
 }
 
 export function TuiApp({
@@ -26,6 +27,7 @@ export function TuiApp({
   checks,
   watchEnabled,
   refreshInterval,
+  animateOnMount = true,
 }: TuiAppProps) {
   const { rows, columns } = useTerminalSize();
   const { report, monorepoReport, isScanning, progress, scan } = useVitalsRunner({
@@ -39,18 +41,21 @@ export function TuiApp({
   const [previousScore, setPreviousScore] = useState<number | null>(null);
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [healthScrollOffset, setHealthScrollOffset] = useState(0);
-  const [visiblePanels, setVisiblePanels] = useState<Set<string>>(new Set());
+  const ALL_PANELS = new Set(["health", "score", "trend", "git", "quickwins", "activity"]);
+  const [visiblePanels, setVisiblePanels] = useState<Set<string>>(
+    animateOnMount ? new Set() : ALL_PANELS,
+  );
   const refreshRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   // Panel entrance animation — stagger panels appearing on mount
   useEffect(() => {
     const schedule: Array<[string, number]> = [
-      ["health", 0],
-      ["score", 120],
-      ["trend", 240],
-      ["git", 360],
-      ["quickwins", 480],
-      ["activity", 600],
+      ["health", 100],
+      ["score", 300],
+      ["trend", 500],
+      ["git", 700],
+      ["quickwins", 900],
+      ["activity", 1100],
     ];
     const timers = schedule.map(([panel, delay]) =>
       setTimeout(() => {
@@ -322,7 +327,7 @@ export function TuiApp({
         <Box width="45%" flexDirection="column">
           <Box height="50%">
             <PanelBorder title="SCORE" color="blue" visible={visiblePanels.has("score")}>
-              <ScorePanel report={report} previousScore={previousScore} />
+              <ScorePanel report={report} previousScore={previousScore} animate={animateOnMount} />
             </PanelBorder>
           </Box>
           <Box height="50%">

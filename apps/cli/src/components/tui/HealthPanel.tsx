@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Text } from "ink";
+import { LOADING_MESSAGES } from "../../lib/messages.js";
 import type { CheckResult } from "@vitals/core";
 
 interface HealthPanelProps {
@@ -47,7 +48,24 @@ export function HealthPanel({
   scrollOffset,
   availableHeight,
 }: HealthPanelProps) {
+  const [msgIdx, setMsgIdx] = useState(0);
+
+  useEffect(() => {
+    if (!isScanning || progress.length > 0) return;
+    const id = setInterval(() => {
+      setMsgIdx((i) => (i + 1) % LOADING_MESSAGES.length);
+    }, 4000);
+    return () => clearInterval(id);
+  }, [isScanning, progress.length]);
+
   if (isScanning && checks.length === 0) {
+    if (progress.length === 0) {
+      return (
+        <Box>
+          <Text dimColor>{LOADING_MESSAGES[msgIdx]}</Text>
+        </Box>
+      );
+    }
     return (
       <Box flexDirection="column">
         {progress.map((p) => (

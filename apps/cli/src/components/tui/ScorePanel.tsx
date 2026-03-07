@@ -5,6 +5,7 @@ import type { VitalsReport } from "@vitals/core";
 interface ScorePanelProps {
   report: VitalsReport | null;
   previousScore: number | null;
+  animate?: boolean;
 }
 
 function scoreColor(score: number): string {
@@ -18,13 +19,15 @@ function scoreBar(score: number, width = 15): string {
   return "\u2588".repeat(filled) + "\u2591".repeat(width - filled);
 }
 
-export function ScorePanel({ report, previousScore }: ScorePanelProps) {
-  const [displayScore, setDisplayScore] = useState(0);
+export function ScorePanel({ report, previousScore, animate = true }: ScorePanelProps) {
+  const [animatedScore, setAnimatedScore] = useState(0);
   const prevTargetRef = useRef(0);
 
   useEffect(() => {
+    if (!animate) return;
+
     if (!report) {
-      setDisplayScore(0);
+      setAnimatedScore(0);
       prevTargetRef.current = 0;
       return;
     }
@@ -40,12 +43,15 @@ export function ScorePanel({ report, previousScore }: ScorePanelProps) {
 
     const id = setInterval(() => {
       current += step;
-      setDisplayScore(current);
+      setAnimatedScore(current);
       if (current === target) clearInterval(id);
     }, 20);
 
     return () => clearInterval(id);
-  }, [report]);
+  }, [report, animate]);
+
+  // When animate=false, render score directly from prop (no state update needed)
+  const displayScore = animate ? animatedScore : (report?.overallScore ?? 0);
 
   if (!report) {
     return (

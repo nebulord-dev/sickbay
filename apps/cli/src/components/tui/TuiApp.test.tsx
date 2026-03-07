@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
 import type { VitalsReport, CheckResult } from "@vitals/core";
@@ -85,6 +85,10 @@ describe("TuiApp", () => {
 
     mockUseTerminalSize.mockReturnValue({ rows: 40, columns: 120 });
     mockUseVitalsRunner.mockReturnValue(makeDefaultRunnerResult());
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("renders without crashing (smoke test)", () => {
@@ -196,6 +200,7 @@ describe("TuiApp", () => {
         projectPath="/test/project"
         watchEnabled={false}
         refreshInterval={0}
+        animateOnMount={false}
       />,
     );
 
@@ -209,18 +214,20 @@ describe("TuiApp", () => {
     const report = createMockReport({ overallScore: 78 });
     mockUseVitalsRunner.mockReturnValue(makeDefaultRunnerResult(report));
 
-    const { frames, lastFrame } = render(
+    const { lastFrame } = render(
       <TuiApp
         projectPath="/test/project"
         watchEnabled={false}
         refreshInterval={0}
+        animateOnMount={false}
       />,
     );
 
+    // animateOnMount=false: score comes directly from props (no state update),
+    // panels are visible immediately — just need one event-loop cycle to render
     await new Promise((r) => setImmediate(r));
 
-    const output = frames[frames.length - 1] ?? lastFrame();
-    expect(output).toContain("78");
+    expect(lastFrame()).toContain("78");
   });
 
   it("calls useVitalsRunner with the provided projectPath", () => {
@@ -264,12 +271,11 @@ describe("TuiApp", () => {
         projectPath="/test/project"
         watchEnabled={false}
         refreshInterval={0}
+        animateOnMount={false}
       />,
     );
 
-    const output = lastFrame();
-    // HealthPanel shows progress items — eslint should appear
-    expect(output).toContain("eslint");
+    expect(lastFrame()).toContain("eslint");
   });
 
   it("renders all panel titles even with no report", () => {

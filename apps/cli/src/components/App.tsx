@@ -9,6 +9,7 @@ import { ProgressList } from "./ProgressList.js";
 import { CheckResultRow } from "./CheckResult.js";
 import { Summary } from "./Summary.js";
 import { QuickWins } from "./QuickWins.js";
+import { LOADING_MESSAGES } from "../lib/messages.js";
 
 interface AppProps {
   projectPath: string;
@@ -21,22 +22,6 @@ interface AppProps {
 
 type Phase = "loading" | "results" | "opening-web" | "error";
 
-const MONOREPO_LOADING_MESSAGES = [
-  "Scanning for pre-existing conditions…",
-  "Counting packages… still counting…",
-  "Still here. Still scanning...",
-  "The unused dependencies know what they did...",
-  "Every unused export is a tiny cry for help...",
-  "Checking if 'TODO: fix later' was ever fixed later...",
-  "Your secrets are safe with us. Unlike your .env file...",
-  "Good things take time. This is one of the good things. Probably...",
-  "npm audit found issues. npm audit --fix found different issues.",
-  "This is fine...",
-  "Evaluating life choices. Yours. Via package.json.",
-  "Almost done. (This is not a legally binding statement.)",
-  "node_modules: depth unknown. Will not attempt.",
-  "Performing checks. Results may vary...",
-];
 
 interface ProgressItem {
   name: string;
@@ -71,7 +56,7 @@ export function App({
   useEffect(() => {
     if (!isMonorepo) return;
     const id = setInterval(() => {
-      setLoadingMsgIdx((i) => (i + 1) % MONOREPO_LOADING_MESSAGES.length);
+      setLoadingMsgIdx((i) => (i + 1) % LOADING_MESSAGES.length);
     }, 4000);
     return () => clearInterval(id);
   }, [isMonorepo]);
@@ -209,7 +194,7 @@ export function App({
             <Box flexDirection="column">
               <Box>
                 <Text color="magenta"><Spinner type="dots" /></Text>
-                <Text dimColor> {MONOREPO_LOADING_MESSAGES[loadingMsgIdx]}</Text>
+                <Text dimColor> {LOADING_MESSAGES[loadingMsgIdx]}</Text>
               </Box>
               {scanningPackage && (
                 <Box marginTop={1} marginLeft={2}>
