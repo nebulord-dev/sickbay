@@ -184,9 +184,10 @@ describe('useVitalsRunner', () => {
     // mockResolvedValue completes synchronously in microtasks before the Ink
     // renderer flushes, so lastFrame() would still show the pre-render state.
     let resolveVitals!: (r: VitalsReport) => void;
-    mockRunVitals.mockReturnValue(
-      new Promise<VitalsReport>((res) => { resolveVitals = res; }) as any,
-    );
+    mockRunVitals.mockImplementation((options: Parameters<typeof runVitals>[0]) => {
+      options?.onRunnersReady?.(options.checks ?? ['eslint', 'knip', 'typescript']);
+      return new Promise<VitalsReport>((res) => { resolveVitals = res; }) as any;
+    });
 
     const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
 

@@ -20,9 +20,14 @@ import type { CheckResult, Issue } from "../types.js";
  * It calculates an overall score based on the total bundle size, providing insights into the project's performance health regarding bundle optimization.
  */
 
-interface SmeOutput {
+interface SmeResult {
+  bundleName: string;
+  totalBytes: number;
   files: Record<string, { size: number }>;
-  totalBytes?: number;
+}
+
+interface SmeOutput {
+  results?: SmeResult[];
 }
 
 const SIZE_THRESHOLD_WARN = 500 * 1024; // 500KB
@@ -78,62 +83,68 @@ export class SourceMapExplorerRunner extends BaseRunner {
           // Validate JSON output before parsing
           if (stdout && stdout.trim().startsWith("{")) {
             const data = parseJsonOutput(stdout, "{}") as SmeOutput;
-            const totalBytes =
-              data.totalBytes ??
-              Object.values(data.files).reduce((sum, f) => sum + f.size, 0);
-            const totalKB = Math.round(totalBytes / 1024);
+            const results = data.results ?? [];
 
-            const issues: Issue[] = [];
-            if (totalBytes > SIZE_THRESHOLD_FAIL) {
-              issues.push({
-                severity: "critical",
-                message: `Bundle size is ${totalKB}KB — exceeds 1MB threshold`,
-                fix: {
-                  description:
-                    "Use code splitting and lazy imports to reduce bundle size",
+            if (results.length > 0) {
+              const totalBytes = results.reduce((sum, r) => sum + r.totalBytes, 0);
+              const largestBytes = Math.max(...results.map((r) => r.totalBytes));
+              const totalKB = Math.round(totalBytes / 1024);
+              const largestKB = Math.round(largestBytes / 1024);
+
+              const issues: Issue[] = [];
+              if (largestBytes > SIZE_THRESHOLD_FAIL) {
+                issues.push({
+                  severity: "critical",
+                  message: `Largest bundle is ${largestKB}KB — exceeds 1MB threshold`,
+                  fix: {
+                    description:
+                      "Use code splitting and lazy imports to reduce bundle size",
+                  },
+                  reportedBy: ["source-map-explorer"],
+                });
+              } else if (largestBytes > SIZE_THRESHOLD_WARN) {
+                issues.push({
+                  severity: "warning",
+                  message: `Largest bundle is ${largestKB}KB — consider optimizing`,
+                  fix: {
+                    description:
+                      "Review large dependencies and consider tree-shaking",
+                  },
+                  reportedBy: ["source-map-explorer"],
+                });
+              }
+
+              const score =
+                largestBytes > SIZE_THRESHOLD_FAIL
+                  ? 40
+                  : largestBytes > SIZE_THRESHOLD_WARN
+                    ? 70
+                    : 100;
+
+              return {
+                id: "source-map-explorer",
+                category: this.category,
+                name: "Bundle Size",
+                score,
+                status:
+                  issues.length === 0
+                    ? "pass"
+                    : issues[0].severity === "critical"
+                      ? "fail"
+                      : "warning",
+                issues,
+                toolsUsed: ["source-map-explorer"],
+                duration: elapsed(),
+                metadata: {
+                  largestBytes,
+                  largestKB,
+                  totalBytes,
+                  totalKB,
+                  bundleCount: results.length,
+                  method: "source-map-explorer",
                 },
-                reportedBy: ["source-map-explorer"],
-              });
-            } else if (totalBytes > SIZE_THRESHOLD_WARN) {
-              issues.push({
-                severity: "warning",
-                message: `Bundle size is ${totalKB}KB — consider optimizing`,
-                fix: {
-                  description:
-                    "Review large dependencies and consider tree-shaking",
-                },
-                reportedBy: ["source-map-explorer"],
-              });
+              };
             }
-
-            const score =
-              totalBytes > SIZE_THRESHOLD_FAIL
-                ? 40
-                : totalBytes > SIZE_THRESHOLD_WARN
-                  ? 70
-                  : 100;
-
-            return {
-              id: "source-map-explorer",
-              category: this.category,
-              name: "Bundle Size",
-              score,
-              status:
-                issues.length === 0
-                  ? "pass"
-                  : issues[0].severity === "critical"
-                    ? "fail"
-                    : "warning",
-              issues,
-              toolsUsed: ["source-map-explorer"],
-              duration: elapsed(),
-              metadata: {
-                totalBytes,
-                totalKB,
-                files: data.files,
-                method: "source-map-explorer",
-              },
-            };
           }
         } catch {
           // Fall through to file size analysis

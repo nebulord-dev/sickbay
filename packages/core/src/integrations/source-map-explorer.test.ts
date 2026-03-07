@@ -210,13 +210,12 @@ describe('SourceMapExplorerRunner', () => {
       mockFileExists.mockImplementation((_root, dir) => dir === 'dist');
     });
 
-    it('returns pass with score 100 when SME reports totalBytes under 500KB', async () => {
+    it('returns pass with score 100 when SME reports largest bundle under 500KB', async () => {
       mockGlobby.mockResolvedValueOnce(['/project/dist/main.js.map']); // source maps found
       mockIsCommandAvailable.mockResolvedValue(true);
 
       const smeOutput = JSON.stringify({
-        files: { 'src/index.js': { size: 200 * KB } },
-        totalBytes: 200 * KB,
+        results: [{ bundleName: 'dist/main.js', totalBytes: 200 * KB, files: { 'src/index.js': { size: 200 * KB } } }],
       });
       mockExeca.mockResolvedValue({ stdout: smeOutput } as never);
 
@@ -228,13 +227,12 @@ describe('SourceMapExplorerRunner', () => {
       expect(result.metadata?.method).toBe('source-map-explorer');
     });
 
-    it('returns warning with score 70 when SME reports totalBytes between 500KB and 1MB', async () => {
+    it('returns warning with score 70 when SME reports largest bundle between 500KB and 1MB', async () => {
       mockGlobby.mockResolvedValueOnce(['/project/dist/main.js.map']);
       mockIsCommandAvailable.mockResolvedValue(true);
 
       const smeOutput = JSON.stringify({
-        files: { 'src/index.js': { size: 700 * KB } },
-        totalBytes: 700 * KB,
+        results: [{ bundleName: 'dist/main.js', totalBytes: 700 * KB, files: { 'src/index.js': { size: 700 * KB } } }],
       });
       mockExeca.mockResolvedValue({ stdout: smeOutput } as never);
 
@@ -246,16 +244,12 @@ describe('SourceMapExplorerRunner', () => {
       expect(result.issues[0].message).toContain('KB');
     });
 
-    it('returns fail with score 40 when SME reports totalBytes over 1MB', async () => {
+    it('returns fail with score 40 when SME reports largest bundle over 1MB', async () => {
       mockGlobby.mockResolvedValueOnce(['/project/dist/main.js.map']);
       mockIsCommandAvailable.mockResolvedValue(true);
 
       const smeOutput = JSON.stringify({
-        files: {
-          'src/index.js': { size: 800 * KB },
-          'src/vendor.js': { size: 400 * KB },
-        },
-        totalBytes: 1.2 * MB,
+        results: [{ bundleName: 'dist/main.js', totalBytes: 1.2 * MB, files: { 'src/index.js': { size: 1.2 * MB } } }],
       });
       mockExeca.mockResolvedValue({ stdout: smeOutput } as never);
 
@@ -264,6 +258,28 @@ describe('SourceMapExplorerRunner', () => {
       expect(result.status).toBe('fail');
       expect(result.score).toBe(40);
       expect(result.issues[0].severity).toBe('critical');
+    });
+
+    it('scores on largest bundle when multiple bundles exist (code-split app passes even with large total)', async () => {
+      mockGlobby.mockResolvedValueOnce(['/project/dist/main.js.map']);
+      mockIsCommandAvailable.mockResolvedValue(true);
+
+      // Entry chunk 300KB, lazy chunk 900KB — total 1.2MB but largest single is 900KB (warning not fail)
+      const smeOutput = JSON.stringify({
+        results: [
+          { bundleName: 'dist/index.js', totalBytes: 300 * KB, files: {} },
+          { bundleName: 'dist/vendor.js', totalBytes: 900 * KB, files: {} },
+        ],
+      });
+      mockExeca.mockResolvedValue({ stdout: smeOutput } as never);
+
+      const result = await runner.run('/project');
+
+      expect(result.status).toBe('warning');
+      expect(result.score).toBe(70);
+      expect(result.metadata?.largestKB).toBe(900);
+      expect(result.metadata?.totalKB).toBe(1200);
+      expect(result.metadata?.bundleCount).toBe(2);
     });
 
     it('falls back to file size analysis when SME output is non-JSON', async () => {
@@ -312,24 +328,20 @@ describe('SourceMapExplorerRunner', () => {
       expect(result.metadata?.method).toBe('file-size-analysis');
     });
 
-    it('computes totalBytes from files when totalBytes is absent in SME output', async () => {
-      mockGlobby.mockResolvedValueOnce(['/project/dist/main.js.map']);
+    it('falls back to file size analysis when SME output has empty results array', async () => {
+      mockGlobby
+        .mockResolvedValueOnce(['/project/dist/main.js.map'])
+        .mockResolvedValueOnce(['/project/dist/main.js']);
       mockIsCommandAvailable.mockResolvedValue(true);
 
-      // No totalBytes field — runner should sum file sizes
-      const smeOutput = JSON.stringify({
-        files: {
-          'src/a.js': { size: 100 * KB },
-          'src/b.js': { size: 100 * KB },
-        },
-      });
+      const smeOutput = JSON.stringify({ results: [] });
       mockExeca.mockResolvedValue({ stdout: smeOutput } as never);
+      mockStatSync.mockReturnValue({ size: 200 * KB } as never);
 
       const result = await runner.run('/project');
 
-      expect(result.status).toBe('pass'); // 200KB total
-      expect(result.score).toBe(100);
-      expect(result.metadata?.totalBytes).toBe(200 * KB);
+      expect(result.status).toBe('pass');
+      expect(result.metadata?.method).toBe('file-size-analysis');
     });
   });
 

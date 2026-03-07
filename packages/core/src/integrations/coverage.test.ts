@@ -13,14 +13,20 @@ vi.mock('../utils/file-helpers.js', () => ({
   readPackageJson: vi.fn(),
 }));
 
+vi.mock('../utils/detect-project.js', () => ({
+  detectPackageManager: vi.fn(() => 'npm'),
+}));
+
 import { execa } from 'execa';
 import { existsSync, readFileSync } from 'fs';
 import { readPackageJson } from '../utils/file-helpers.js';
+import { detectPackageManager } from '../utils/detect-project.js';
 
 const mockExeca = vi.mocked(execa);
 const mockExistsSync = vi.mocked(existsSync);
 const mockReadFileSync = vi.mocked(readFileSync);
 const mockReadPackageJson = vi.mocked(readPackageJson);
+const mockDetectPackageManager = vi.mocked(detectPackageManager);
 
 const goodCoverage = {
   total: {
@@ -134,6 +140,22 @@ describe('CoverageRunner', () => {
     expect(result.status).toBe('fail');
     const failIssue = result.issues.find((i) => i.message.includes('failing'));
     expect(failIssue?.severity).toBe('critical');
+    expect(failIssue?.fix?.command).toBe('npm test');
+  });
+
+  it('uses detected package manager in the fix command for failing tests', async () => {
+    mockDetectPackageManager.mockReturnValue('pnpm');
+    mockReadPackageJson.mockReturnValue({ devDependencies: { vitest: '^1.0.0' } });
+    mockExistsSync.mockImplementation((p) => String(p).includes('vitals-test-'));
+    mockExeca.mockResolvedValue({} as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({ numTotalTests: 5, numPassedTests: 3, numFailedTests: 2 }) as never,
+    );
+
+    const result = await runner.run('/project');
+
+    const failIssue = result.issues.find((i) => i.message.includes('failing'));
+    expect(failIssue?.fix?.command).toBe('pnpm test');
   });
 
   it('warns about low line coverage', async () => {

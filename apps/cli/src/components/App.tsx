@@ -45,45 +45,28 @@ export function App({
     // Prevent double execution (React 18+ can run effects twice in dev/certain conditions)
     if (hasRun.current) return;
     hasRun.current = true;
-    const initial: ProgressItem[] = (
-      checks ?? [
-        "knip",
-        "depcheck",
-        "outdated-updates",
-        "npm-audit",
-        "madge",
-        "source-map-explorer",
-        "coverage",
-        "license-checker",
-        "jscpd",
-        "git",
-        "eslint",
-        "typescript",
-        "todo-scanner",
-        "complexity",
-        "secrets",
-        "heavy-deps",
-        "react-perf",
-        "asset-size",
-      ]
-    ).map((name) => ({ name, status: "pending" as const }));
-    setProgress(initial);
-
     runVitals({
       projectPath,
       checks,
       verbose,
+      onRunnersReady: (names) => {
+        setProgress(names.map((name) => ({ name, status: "pending" as const })));
+      },
       onCheckStart: (name) => {
         setProgress((prev) =>
           prev.map((p) => (p.name === name ? { ...p, status: "running" } : p)),
         );
       },
       onCheckComplete: (result) => {
-        setProgress((prev) =>
-          prev.map((p) =>
-            p.name === result.id ? { ...p, status: "done" } : p,
-          ),
-        );
+        if (result.status === "skipped") {
+          setProgress((prev) => prev.filter((p) => p.name !== result.id));
+        } else {
+          setProgress((prev) =>
+            prev.map((p) =>
+              p.name === result.id ? { ...p, status: "done" } : p,
+            ),
+          );
+        }
       },
     })
       .then(async (r) => {
@@ -155,7 +138,7 @@ export function App({
 
       {phase === "results" && report && (
         <Box flexDirection="column">
-          {report.checks.map((check) => (
+          {report.checks.filter((c) => c.status !== "skipped").map((check) => (
             <CheckResultRow key={check.id} result={check} />
           ))}
           <Summary report={report} />
@@ -169,7 +152,7 @@ export function App({
 
       {phase === "opening-web" && report && (
         <Box flexDirection="column">
-          {report.checks.map((check) => (
+          {report.checks.filter((c) => c.status !== "skipped").map((check) => (
             <CheckResultRow key={check.id} result={check} />
           ))}
           <Summary report={report} />

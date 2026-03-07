@@ -4,6 +4,7 @@ import { tmpdir } from 'os';
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
 import { timer, readPackageJson } from '../utils/file-helpers.js';
+import { detectPackageManager } from '../utils/detect-project.js';
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -129,7 +130,8 @@ export class CoverageRunner extends BaseRunner {
         }
       }
 
-      return this.buildResult(elapsed, testCounts, coverageData, runner, hasCoverage);
+      const packageManager = detectPackageManager(projectPath);
+      return this.buildResult(elapsed, testCounts, coverageData, runner, hasCoverage, packageManager);
     } catch (err) {
       return {
         id: 'coverage',
@@ -150,6 +152,7 @@ export class CoverageRunner extends BaseRunner {
     coverage: CoverageSummary['total'] | null,
     runner: string,
     hasCoverage: boolean,
+    packageManager = 'npm',
   ): CheckResult {
     const issues: Issue[] = [];
 
@@ -157,7 +160,7 @@ export class CoverageRunner extends BaseRunner {
       issues.push({
         severity: 'critical',
         message: `${counts.failed} test${counts.failed > 1 ? 's' : ''} failing (${counts.passed}/${counts.total} passing)`,
-        fix: { description: 'Fix failing tests', command: `${runner} run` },
+        fix: { description: 'Fix failing tests', command: `${packageManager} test` },
         reportedBy: ['coverage'],
       });
     }

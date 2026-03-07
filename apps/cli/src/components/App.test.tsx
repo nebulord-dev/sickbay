@@ -182,7 +182,10 @@ describe("App", () => {
   });
 
   it("shows progress items for each check in loading phase", async () => {
-    mockRunVitals.mockReturnValue(new Promise(() => {}));
+    mockRunVitals.mockImplementation((options: Parameters<typeof runVitals>[0]) => {
+      options?.onRunnersReady?.(["eslint", "knip"]);
+      return new Promise(() => {});
+    });
 
     // setProgress(initial) is called inside useEffect, which fires after the first
     // render. Wrap in act + Promise.resolve so the effect flushes before we assert.

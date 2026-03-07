@@ -12,6 +12,12 @@ import type { CheckResult, Issue } from "../types.js";
  */
 
 const TODO_PATTERN = /\b(TODO|FIXME|HACK)\b[:\s]*(.*)/i;
+// Matches single-quoted, double-quoted, and single-line template literal strings
+const STRING_LITERAL_RE = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g;
+
+function stripStringLiterals(line: string): string {
+  return line.replace(STRING_LITERAL_RE, (m) => " ".repeat(m.length));
+}
 const SOURCE_EXTENSIONS = new Set([
   ".ts",
   ".tsx",
@@ -122,7 +128,7 @@ function scanFile(filePath: string, projectRoot: string): TodoItem[] {
     const lines = readFileSync(filePath, "utf-8").split("\n");
     const relPath = filePath.replace(projectRoot + "/", "");
     for (let i = 0; i < lines.length; i++) {
-      const match = lines[i].match(TODO_PATTERN);
+      const match = stripStringLiterals(lines[i]).match(TODO_PATTERN);
       if (match) {
         todos.push({
           file: relPath,

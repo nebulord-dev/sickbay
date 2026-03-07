@@ -209,4 +209,58 @@ describe('TodoScannerRunner', () => {
     expect(result.id).toBe('todo-scanner');
     expect(result.category).toBe('code-quality');
   });
+
+  it('does not flag TODO inside a double-quoted string literal', async () => {
+    mockExistsSync.mockReturnValue(true);
+    mockReaddirSync.mockReturnValue(['about.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    // String value contains "TODO" but it is not a comment
+    mockReadFileSync.mockReturnValue(
+      'const desc = "Finds TODO, FIXME and HACK comments";\n' as any,
+    );
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(0);
+  });
+
+  it('does not flag TODO inside a single-quoted string literal', async () => {
+    mockExistsSync.mockReturnValue(true);
+    mockReaddirSync.mockReturnValue(['labels.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(
+      "const label = 'TODO: this is a label key';\n" as any,
+    );
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(0);
+  });
+
+  it('does not flag TODO inside a template literal', async () => {
+    mockExistsSync.mockReturnValue(true);
+    mockReaddirSync.mockReturnValue(['template.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(
+      'const msg = `TODO: ${name} needs attention`;\n' as any,
+    );
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(0);
+  });
+
+  it('still flags TODO in a comment on the same line as a string', async () => {
+    mockExistsSync.mockReturnValue(true);
+    mockReaddirSync.mockReturnValue(['mixed.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(
+      'const x = "some string"; // TODO: clean this up\n' as any,
+    );
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(1);
+    expect(result.issues[0].message).toContain('TODO');
+  });
 });

@@ -25,18 +25,13 @@ export function useVitalsRunner({ projectPath, checks }: UseVitalsRunnerOptions)
     setIsScanning(true);
     setError(null);
 
-    const checkNames = checks ?? [
-      "knip", "depcheck", "npm-check-updates", "npm-audit",
-      "madge", "source-map-explorer", "coverage", "license-checker",
-      "jscpd", "git", "eslint", "typescript", "todo-scanner",
-      "complexity", "secrets", "heavy-deps", "react-perf", "asset-size",
-    ];
-    setProgress(checkNames.map((name) => ({ name, status: "pending" as const })));
-
     try {
       const result = await runVitals({
         projectPath,
         checks,
+        onRunnersReady: (names) => {
+          setProgress(names.map((name) => ({ name, status: "pending" as const })));
+        },
         onCheckStart: (name) => {
           setProgress((prev) =>
             prev.map((p) => (p.name === name ? { ...p, status: "running" } : p)),

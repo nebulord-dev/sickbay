@@ -27,6 +27,7 @@ export interface RunnerOptions {
   projectPath?: string;
   checks?: string[];
   verbose?: boolean;
+  onRunnersReady?: (names: string[]) => void;
   onCheckStart?: (name: string) => void;
   onCheckComplete?: (result: CheckResult) => void;
 }
@@ -66,6 +67,7 @@ export async function runVitals(options: RunnerOptions = {}): Promise<VitalsRepo
 
   // Filter by context first (synchronous, cheap) then by isApplicable (async, may do I/O)
   const runners = candidateRunners.filter((r) => r.isApplicableToContext(context));
+  options.onRunnersReady?.(runners.map((r) => r.name));
 
   const checks: CheckResult[] = [];
 

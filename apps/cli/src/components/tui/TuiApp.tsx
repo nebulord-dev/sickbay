@@ -199,11 +199,13 @@ export function TuiApp({
       if (key.upArrow)
         setHealthScrollOffset((prev) => Math.max(0, prev - 1));
       if (key.downArrow) {
-        const maxOffset = Math.max(0, (report?.checks.length ?? 0) - 5);
+        const maxOffset = Math.max(0, visibleChecks.length - 5);
         setHealthScrollOffset((prev) => Math.min(maxOffset, prev + 1));
       }
     }
   }, { isActive: isTTY });
+
+  const visibleChecks = report?.checks.filter((c) => c.status !== "skipped") ?? [];
 
   // Layout calculations
   const topHeight = Math.floor((rows - 1) * 0.6);
@@ -217,7 +219,7 @@ export function TuiApp({
           {expandedPanel === "health" && (
             <PanelBorder title="HEALTH CHECKS" color="green" focused>
               <HealthPanel
-                checks={report?.checks ?? []}
+                checks={visibleChecks}
                 isScanning={isScanning}
                 progress={progress}
                 scrollOffset={healthScrollOffset}
@@ -269,7 +271,7 @@ export function TuiApp({
             focused={focusedPanel === "health"}
           >
             <HealthPanel
-              checks={report?.checks ?? []}
+              checks={visibleChecks}
               isScanning={isScanning}
               progress={progress}
               scrollOffset={healthScrollOffset}
