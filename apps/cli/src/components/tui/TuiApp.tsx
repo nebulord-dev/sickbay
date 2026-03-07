@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Box, useInput } from "ink";
-import type { VitalsReport } from "@vitals/core";
+import type { VitalsReport, MonorepoReport } from "@vitals/core";
 import { PanelBorder } from "./PanelBorder.js";
 import { HotkeyBar, type PanelId } from "./HotkeyBar.js";
 import { HealthPanel } from "./HealthPanel.js";
@@ -8,6 +8,7 @@ import { ScorePanel } from "./ScorePanel.js";
 import { TrendPanel } from "./TrendPanel.js";
 import { GitPanel } from "./GitPanel.js";
 import { QuickWinsPanel } from "./QuickWinsPanel.js";
+import { MonorepoPanel } from "./MonorepoPanel.js";
 import { ActivityPanel, type ActivityEntry } from "./ActivityPanel.js";
 import { useVitalsRunner } from "./hooks/useVitalsRunner.js";
 import { useFileWatcher } from "./hooks/useFileWatcher.js";
@@ -27,7 +28,7 @@ export function TuiApp({
   refreshInterval,
 }: TuiAppProps) {
   const { rows, columns } = useTerminalSize();
-  const { report, isScanning, progress, scan } = useVitalsRunner({
+  const { report, monorepoReport, isScanning, progress, scan } = useVitalsRunner({
     projectPath,
     checks,
   });
@@ -40,11 +41,16 @@ export function TuiApp({
   const [healthScrollOffset, setHealthScrollOffset] = useState(0);
   const refreshRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const reportRef = useRef<VitalsReport | null>(null);
+  const monorepoReportRef = useRef<MonorepoReport | null>(null);
 
-  // Keep reportRef in sync
+  // Keep refs in sync
   useEffect(() => {
     reportRef.current = report;
   }, [report]);
+
+  useEffect(() => {
+    monorepoReportRef.current = monorepoReport;
+  }, [monorepoReport]);
 
   const addActivity = useCallback(
     (type: ActivityEntry["type"], message: string) => {
@@ -166,13 +172,14 @@ export function TuiApp({
     else if (input === "w" || input === "W") {
       const withAI = input === "W";
       (async () => {
-        if (!reportRef.current) return;
+        const webReport = monorepoReportRef.current ?? reportRef.current;
+        if (!webReport) return;
         try {
           const { serveWeb } = await import("../../commands/web.js");
           const { default: openBrowser } = await import("open");
 
           let aiService;
-          if (withAI && process.env.ANTHROPIC_API_KEY) {
+          if (withAI && process.env.ANTHROPIC_API_KEY && !monorepoReportRef.current) {
             const { createAIService } = await import("../../services/ai.js");
             aiService = createAIService(process.env.ANTHROPIC_API_KEY);
             addActivity("info", "Launching web dashboard with AI...");
@@ -180,7 +187,7 @@ export function TuiApp({
             addActivity("info", "Launching web dashboard...");
           }
 
-          const url = await serveWeb(reportRef.current, 3030, aiService);
+          const url = await serveWeb(webReport, 3030, aiService);
           await openBrowser(url);
           addActivity("info", `Web dashboard at ${url}${withAI && aiService ? " (AI enabled)" : ""}`);
         } catch (err) {
@@ -241,8 +248,12 @@ export function TuiApp({
             </PanelBorder>
           )}
           {expandedPanel === "quickwins" && (
-            <PanelBorder title="QUICK WINS" color="red" focused>
-              <QuickWinsPanel report={report} />
+            <PanelBorder title={monorepoReport ? "MONOREPO" : "QUICK WINS"} color="red" focused>
+              {monorepoReport ? (
+                <MonorepoPanel report={monorepoReport} />
+              ) : (
+                <QuickWinsPanel report={report} />
+              )}
             </PanelBorder>
           )}
           {expandedPanel === "activity" && (
@@ -314,14 +325,21 @@ export function TuiApp({
         </Box>
         <Box width="30%">
           <PanelBorder
-            title="QUICK WINS"
+            title={monorepoReport ? "MONOREPO" : "QUICK WINS"}
             color="red"
             focused={focusedPanel === "quickwins"}
           >
-            <QuickWinsPanel
-              report={report}
-              availableWidth={Math.floor(columns * 0.30) - 4}
-            />
+            {monorepoReport ? (
+              <MonorepoPanel
+                report={monorepoReport}
+                availableWidth={Math.floor(columns * 0.30) - 4}
+              />
+            ) : (
+              <QuickWinsPanel
+                report={report}
+                availableWidth={Math.floor(columns * 0.30) - 4}
+              />
+            )}
           </PanelBorder>
         </Box>
         <Box width="45%">

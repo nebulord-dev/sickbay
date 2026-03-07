@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Box, Text, useApp } from "ink";
 import Spinner from "ink-spinner";
 import Gradient from "ink-gradient";
-import type { VitalsReport } from "@vitals/core";
-import { runVitals } from "@vitals/core";
+import type { VitalsReport, MonorepoReport, PackageReport } from "@vitals/core";
+import { runVitals, runVitalsMonorepo } from "@vitals/core";
 import { Header } from "./Header.js";
 import { ProgressList } from "./ProgressList.js";
 import { CheckResultRow } from "./CheckResult.js";
@@ -16,6 +16,7 @@ interface AppProps {
   openWeb?: boolean;
   enableAI?: boolean;
   verbose?: boolean;
+  isMonorepo?: boolean;
 }
 
 type Phase = "loading" | "results" | "opening-web" | "error";
@@ -25,26 +26,80 @@ interface ProgressItem {
   status: "pending" | "running" | "done";
 }
 
+function scoreBar(score: number, width = 10): string {
+  const filled = Math.round((score / 100) * width);
+  return "█".repeat(filled) + "░".repeat(width - filled);
+}
+
 export function App({
   projectPath,
   checks,
   openWeb,
   enableAI,
   verbose,
+  isMonorepo,
 }: AppProps) {
   const { exit } = useApp();
   const [phase, setPhase] = useState<Phase>("loading");
   const [report, setReport] = useState<VitalsReport | null>(null);
+  const [monorepoReport, setMonorepoReport] = useState<MonorepoReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<ProgressItem[]>([]);
   const [webUrl, setWebUrl] = useState<string | null>(null);
   const [projectName, setProjectName] = useState<string | undefined>();
+  const [scanningPackage, setScanningPackage] = useState<string | undefined>();
   const hasRun = useRef(false);
 
   useEffect(() => {
     // Prevent double execution (React 18+ can run effects twice in dev/certain conditions)
     if (hasRun.current) return;
     hasRun.current = true;
+
+    if (isMonorepo) {
+      runVitalsMonorepo({
+        projectPath,
+        checks,
+        verbose,
+        onPackageStart: (name) => setScanningPackage(name),
+        onPackageComplete: () => setScanningPackage(undefined),
+      })
+        .then(async (r) => {
+          setMonorepoReport(r);
+          setProjectName(`monorepo (${r.packages.length} packages)`);
+
+          if (openWeb) {
+            setPhase("opening-web");
+            try {
+              const { serveWeb } = await import("../commands/web.js");
+              const { default: openBrowser } = await import("open");
+
+              let aiService;
+              if (enableAI && process.env.ANTHROPIC_API_KEY) {
+                const { createAIService } = await import("../services/ai.js");
+                aiService = createAIService(process.env.ANTHROPIC_API_KEY);
+              }
+
+              const url = await serveWeb(r, 3030, aiService);
+              setWebUrl(url);
+              await openBrowser(url);
+            } catch (e) {
+              setError(e instanceof Error ? e.message : String(e));
+              setPhase("error");
+              setTimeout(() => exit(), 100);
+            }
+          } else {
+            setPhase("results");
+            setTimeout(() => exit(), 100);
+          }
+        })
+        .catch((err) => {
+          setError(err.message ?? String(err));
+          setPhase("error");
+          setTimeout(() => exit(err), 100);
+        });
+      return;
+    }
+
     runVitals({
       projectPath,
       checks,
@@ -123,10 +178,25 @@ export function App({
 
       {phase === "loading" && (
         <Box flexDirection="column">
-          <Text dimColor>Running health checks...</Text>
-          <Box marginTop={1} marginLeft={2}>
-            <ProgressList items={progress} />
-          </Box>
+          {isMonorepo ? (
+            <Box flexDirection="column">
+              <Text dimColor>Scanning monorepo packages...</Text>
+              {scanningPackage && (
+                <Box marginTop={1} marginLeft={2}>
+                  <Text color="magenta"><Spinner type="dots" /></Text>
+                  <Text dimColor> scanning </Text>
+                  <Text color="cyan">{scanningPackage}</Text>
+                </Box>
+              )}
+            </Box>
+          ) : (
+            <Box flexDirection="column">
+              <Text dimColor>Running health checks...</Text>
+              <Box marginTop={1} marginLeft={2}>
+                <ProgressList items={progress} />
+              </Box>
+            </Box>
+          )}
         </Box>
       )}
 
@@ -134,6 +204,10 @@ export function App({
         <Box>
           <Text color="red">✗ Error: {error}</Text>
         </Box>
+      )}
+
+      {phase === "results" && monorepoReport && (
+        <MonorepoSummaryTable report={monorepoReport} />
       )}
 
       {phase === "results" && report && (
@@ -150,12 +224,18 @@ export function App({
         </Box>
       )}
 
-      {phase === "opening-web" && report && (
+      {phase === "opening-web" && (monorepoReport ?? report) && (
         <Box flexDirection="column">
-          {report.checks.filter((c) => c.status !== "skipped").map((check) => (
-            <CheckResultRow key={check.id} result={check} />
-          ))}
-          <Summary report={report} />
+          {monorepoReport ? (
+            <MonorepoSummaryTable report={monorepoReport} />
+          ) : report ? (
+            <>
+              {report.checks.filter((c) => c.status !== "skipped").map((check) => (
+                <CheckResultRow key={check.id} result={check} />
+              ))}
+              <Summary report={report} />
+            </>
+          ) : null}
           <Box marginTop={1}>
             {webUrl ? (
               <>
@@ -176,6 +256,44 @@ export function App({
           </Box>
         </Box>
       )}
+    </Box>
+  );
+}
+
+function MonorepoSummaryTable({ report }: { report: MonorepoReport }) {
+  const scoreColor = (score: number) =>
+    score >= 80 ? "green" : score >= 60 ? "yellow" : "red";
+
+  return (
+    <Box flexDirection="column">
+      <Box marginBottom={1}>
+        <Text bold>Monorepo · </Text>
+        <Text dimColor>{report.monorepoType} workspaces · </Text>
+        <Text>{report.packages.length} packages</Text>
+      </Box>
+      {report.packages.map((pkg: PackageReport) => (
+        <Box key={pkg.path} marginLeft={2} gap={1}>
+          <Text color={scoreColor(pkg.score)}>{scoreBar(pkg.score)}</Text>
+          <Text bold color={scoreColor(pkg.score)}>{String(pkg.score).padStart(3)}</Text>
+          <Text>{pkg.name}</Text>
+          <Text dimColor>{pkg.framework}</Text>
+          {pkg.summary.critical > 0 && (
+            <Text color="red">  {pkg.summary.critical} critical</Text>
+          )}
+        </Box>
+      ))}
+      <Box marginTop={1} gap={2}>
+        <Text bold>Overall: </Text>
+        <Text color={scoreColor(report.overallScore)} bold>{report.overallScore}</Text>
+        <Text dimColor>· </Text>
+        <Text color="red">{report.summary.critical} critical</Text>
+        <Text dimColor>· </Text>
+        <Text color="yellow">{report.summary.warnings} warnings</Text>
+      </Box>
+      <Box marginTop={1}>
+        <Text dimColor>Per-package details: </Text>
+        <Text color="cyan">vitals --web</Text>
+      </Box>
     </Box>
   );
 }

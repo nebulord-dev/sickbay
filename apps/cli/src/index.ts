@@ -32,6 +32,7 @@ program
   .version("0.0.1")
   .option("-p, --path <path>", "project path to analyze", process.cwd())
   .option("-c, --checks <checks>", "comma-separated list of checks to run")
+  .option("--package <name>", "scope to a single named package (monorepo only)")
   .option("--json", "output raw JSON report")
   .option("--web", "open web dashboard after scan")
   .option("--no-ai", "disable AI features")
@@ -49,8 +50,55 @@ program
       ? options.checks.split(",").map((s: string) => s.trim())
       : undefined;
 
+    const { detectMonorepo, runVitals, runVitalsMonorepo } = await import("@vitals/core");
+    const monorepoInfo = await detectMonorepo(options.path);
+
+    // --package flag: scope to a single named package within a monorepo
+    if (options.package && monorepoInfo.isMonorepo) {
+      const { readFileSync } = await import("fs");
+      const targetPath = monorepoInfo.packagePaths.find((p) => {
+        try {
+          const pkg = JSON.parse(readFileSync(join(p, "package.json"), "utf-8"));
+          return pkg.name === options.package || pkg.name?.endsWith(`/${options.package}`);
+        } catch {
+          return false;
+        }
+      });
+
+      if (!targetPath) {
+        process.stderr.write(`Package "${options.package}" not found in monorepo\n`);
+        process.exit(1);
+      }
+
+      if (options.json) {
+        const report = await runVitals({ projectPath: targetPath, checks, verbose: options.verbose });
+        process.stdout.write(JSON.stringify(report, null, 2) + "\n");
+        process.exit(0);
+      }
+
+      render(
+        React.createElement(App, {
+          projectPath: targetPath,
+          checks,
+          openWeb: options.web,
+          enableAI: options.ai !== false,
+          verbose: options.verbose,
+        }),
+      );
+      return;
+    }
+
     if (options.json) {
-      const { runVitals } = await import("@vitals/core");
+      if (monorepoInfo.isMonorepo) {
+        const report = await runVitalsMonorepo({
+          projectPath: options.path,
+          checks,
+          verbose: options.verbose,
+        });
+        process.stdout.write(JSON.stringify(report, null, 2) + "\n");
+        process.exit(0);
+      }
+
       const report = await runVitals({
         projectPath: options.path,
         checks,
@@ -76,6 +124,7 @@ program
         openWeb: options.web,
         enableAI: options.ai !== false,
         verbose: options.verbose,
+        isMonorepo: monorepoInfo.isMonorepo,
       }),
     );
   });

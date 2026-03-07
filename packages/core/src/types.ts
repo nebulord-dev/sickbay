@@ -85,3 +85,32 @@ export interface ToolResult {
   duration: number;
   error?: string;
 }
+
+export interface MonorepoInfo {
+  isMonorepo: true;
+  type: 'pnpm' | 'npm' | 'yarn' | 'turbo' | 'nx' | 'lerna';
+  packageManager: ProjectInfo['packageManager'];
+  packagePaths: string[];
+}
+
+export interface PackageReport {
+  name: string;
+  path: string;
+  relativePath: string;
+  framework: ProjectInfo['framework'];
+  runtime: Runtime;
+  checks: CheckResult[];
+  score: number;
+  summary: { critical: number; warnings: number; info: number };
+}
+
+export interface MonorepoReport {
+  isMonorepo: true;
+  timestamp: string;
+  rootPath: string;
+  monorepoType: MonorepoInfo['type'];
+  packageManager: ProjectInfo['packageManager'];
+  packages: PackageReport[];
+  overallScore: number;
+  summary: { critical: number; warnings: number; info: number };
+}
