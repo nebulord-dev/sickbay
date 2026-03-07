@@ -1,0 +1,984 @@
+{
+  "timestamp": "2026-03-07T22:30:02.249Z",
+  "projectPath": "/Users/chmc-gd9nn2t4fv/Documents/code/vitals",
+  "projectInfo": {
+    "name": "monorepo (4 packages)",
+    "version": "0.0.0",
+    "hasTypeScript": false,
+    "hasESLint": false,
+    "hasPrettier": false,
+    "framework": "node",
+    "packageManager": "pnpm",
+    "totalDependencies": 0,
+    "dependencies": {},
+    "devDependencies": {}
+  },
+  "checks": [
+    {
+      "id": "knip",
+      "category": "dependencies",
+      "name": "Unused Code",
+      "score": 90,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Unused dependency: @vitals/core",
+          "fix": {
+            "description": "Remove @vitals/core",
+            "command": "npm uninstall @vitals/core"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "Unused export: src/components/tui/hooks/useVitalsRunner.ts: calculateOverallScore",
+          "reportedBy": [
+            "knip"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "knip"
+      ],
+      "duration": 4441,
+      "metadata": {
+        "unusedFiles": 0,
+        "unusedDeps": 1,
+        "unusedDevDeps": 0,
+        "unusedExports": 1
+      }
+    },
+    {
+      "id": "depcheck",
+      "category": "dependencies",
+      "name": "Dependency Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "depcheck"
+      ],
+      "duration": 5575,
+      "metadata": {
+        "unused": 0,
+        "missing": 0
+      }
+    },
+    {
+      "id": "outdated",
+      "category": "dependencies",
+      "name": "Outdated Packages",
+      "score": 70,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "@xyflow/react: 12.10.0 → 12.10.1",
+          "fix": {
+            "description": "Update @xyflow/react to 12.10.1",
+            "command": "pnpm update @xyflow/react"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "autoprefixer: 10.4.24 → 10.4.27",
+          "fix": {
+            "description": "Update autoprefixer to 10.4.27",
+            "command": "pnpm update autoprefixer"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "postcss: 8.5.6 → 8.5.8",
+          "fix": {
+            "description": "Update postcss to 8.5.8",
+            "command": "pnpm update postcss"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "jsdom: 28.0.0 → 28.1.0",
+          "fix": {
+            "description": "Update jsdom to 28.1.0",
+            "command": "pnpm update jsdom"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@vitejs/plugin-react: 4.7.0 → 5.1.4",
+          "fix": {
+            "description": "Update @vitejs/plugin-react to 5.1.4",
+            "command": "pnpm update @vitejs/plugin-react"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "react-markdown: 9.1.0 → 10.1.0",
+          "fix": {
+            "description": "Update react-markdown to 10.1.0",
+            "command": "pnpm update react-markdown"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "react-syntax-highlighter: 15.6.6 → 16.1.1",
+          "fix": {
+            "description": "Update react-syntax-highlighter to 16.1.1",
+            "command": "pnpm update react-syntax-highlighter"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "tailwindcss: 3.4.19 → 4.2.1",
+          "fix": {
+            "description": "Update tailwindcss to 4.2.1",
+            "command": "pnpm update tailwindcss"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "vite: 6.4.1 → 7.3.1",
+          "fix": {
+            "description": "Update vite to 7.3.1",
+            "command": "pnpm update vite"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "@types/dagre: 0.7.53 → 0.7.54",
+          "fix": {
+            "description": "Update @types/dagre to 0.7.54",
+            "command": "pnpm update @types/dagre"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "pnpm"
+      ],
+      "duration": 1840,
+      "metadata": {
+        "outdatedCount": 10
+      }
+    },
+    {
+      "id": "npm-audit",
+      "category": "security",
+      "name": "Security Vulnerabilities",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "npm-audit"
+      ],
+      "duration": 6185,
+      "metadata": {}
+    },
+    {
+      "id": "madge",
+      "category": "code-quality",
+      "name": "Circular Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "madge"
+      ],
+      "duration": 6251,
+      "metadata": {
+        "circularCount": 0,
+        "graph": {
+          "../../../packages/core/dist/index.d.ts": [],
+          "commands/doctor.test.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/doctor.ts"
+          ],
+          "commands/doctor.ts": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "commands/fix.test.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/fix.ts"
+          ],
+          "commands/fix.ts": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "commands/init.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "lib/history.ts"
+          ],
+          "commands/stats.test.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/stats.ts"
+          ],
+          "commands/stats.ts": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "commands/trend.test.ts": [
+            "commands/trend.ts"
+          ],
+          "commands/trend.ts": [],
+          "commands/web.test.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/web.ts"
+          ],
+          "commands/web.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "services/ai.ts"
+          ],
+          "components/App.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/web.ts",
+            "components/App.tsx"
+          ],
+          "components/App.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/web.ts",
+            "components/CheckResult.tsx",
+            "components/Header.tsx",
+            "components/ProgressList.tsx",
+            "components/QuickWins.tsx",
+            "components/Summary.tsx",
+            "lib/history.ts",
+            "lib/messages.ts",
+            "services/ai.ts"
+          ],
+          "components/CheckResult.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/CheckResult.tsx"
+          ],
+          "components/CheckResult.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/ScoreBar.tsx"
+          ],
+          "components/DoctorApp.test.tsx": [
+            "commands/doctor.ts",
+            "components/DoctorApp.tsx"
+          ],
+          "components/DoctorApp.tsx": [
+            "commands/doctor.ts",
+            "components/Header.tsx"
+          ],
+          "components/FixApp.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/fix.ts",
+            "components/FixApp.tsx"
+          ],
+          "components/FixApp.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/fix.ts",
+            "components/Header.tsx",
+            "components/ProgressList.tsx"
+          ],
+          "components/Header.test.tsx": [
+            "components/Header.tsx"
+          ],
+          "components/Header.tsx": [],
+          "components/ProgressList.test.tsx": [
+            "components/ProgressList.tsx"
+          ],
+          "components/ProgressList.tsx": [],
+          "components/QuickWins.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/QuickWins.tsx"
+          ],
+          "components/QuickWins.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/ScoreBar.test.tsx": [
+            "components/ScoreBar.tsx"
+          ],
+          "components/ScoreBar.tsx": [],
+          "components/StatsApp.test.tsx": [
+            "commands/stats.ts",
+            "components/StatsApp.tsx"
+          ],
+          "components/StatsApp.tsx": [
+            "commands/stats.ts",
+            "components/Header.tsx"
+          ],
+          "components/Summary.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/Summary.tsx"
+          ],
+          "components/Summary.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/ScoreBar.tsx"
+          ],
+          "components/TrendApp.test.tsx": [
+            "components/TrendApp.tsx",
+            "lib/history.ts"
+          ],
+          "components/TrendApp.tsx": [
+            "commands/trend.ts",
+            "components/Header.tsx",
+            "lib/history.ts"
+          ],
+          "components/tui/ActivityPanel.test.tsx": [
+            "components/tui/ActivityPanel.tsx"
+          ],
+          "components/tui/ActivityPanel.tsx": [],
+          "components/tui/GitPanel.test.tsx": [
+            "components/tui/GitPanel.tsx",
+            "components/tui/hooks/useGitStatus.ts"
+          ],
+          "components/tui/GitPanel.tsx": [
+            "components/tui/hooks/useGitStatus.ts"
+          ],
+          "components/tui/HealthPanel.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/tui/HealthPanel.tsx"
+          ],
+          "components/tui/HealthPanel.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "lib/messages.ts"
+          ],
+          "components/tui/HotkeyBar.test.tsx": [
+            "components/tui/HotkeyBar.tsx"
+          ],
+          "components/tui/HotkeyBar.tsx": [],
+          "components/tui/MonorepoPanel.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/tui/PanelBorder.test.tsx": [
+            "components/tui/PanelBorder.tsx"
+          ],
+          "components/tui/PanelBorder.tsx": [],
+          "components/tui/QuickWinsPanel.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/tui/QuickWinsPanel.tsx"
+          ],
+          "components/tui/QuickWinsPanel.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/tui/ScorePanel.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/tui/ScorePanel.tsx"
+          ],
+          "components/tui/ScorePanel.tsx": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "components/tui/TrendPanel.test.tsx": [
+            "components/tui/TrendPanel.tsx",
+            "lib/history.ts"
+          ],
+          "components/tui/TrendPanel.tsx": [
+            "commands/trend.ts",
+            "lib/history.ts"
+          ],
+          "components/tui/TuiApp.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/tui/TuiApp.tsx",
+            "components/tui/hooks/useTerminalSize.ts",
+            "components/tui/hooks/useVitalsRunner.ts"
+          ],
+          "components/tui/TuiApp.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/web.ts",
+            "components/tui/ActivityPanel.tsx",
+            "components/tui/GitPanel.tsx",
+            "components/tui/HealthPanel.tsx",
+            "components/tui/HotkeyBar.tsx",
+            "components/tui/MonorepoPanel.tsx",
+            "components/tui/PanelBorder.tsx",
+            "components/tui/QuickWinsPanel.tsx",
+            "components/tui/ScorePanel.tsx",
+            "components/tui/TrendPanel.tsx",
+            "components/tui/hooks/useFileWatcher.ts",
+            "components/tui/hooks/useTerminalSize.ts",
+            "components/tui/hooks/useVitalsRunner.ts",
+            "lib/history.ts",
+            "services/ai.ts"
+          ],
+          "components/tui/hooks/useFileWatcher.test.ts": [
+            "components/tui/hooks/useFileWatcher.ts"
+          ],
+          "components/tui/hooks/useFileWatcher.ts": [],
+          "components/tui/hooks/useGitStatus.test.ts": [
+            "components/tui/hooks/useGitStatus.ts"
+          ],
+          "components/tui/hooks/useGitStatus.ts": [],
+          "components/tui/hooks/useTerminalSize.test.ts": [
+            "components/tui/hooks/useTerminalSize.ts"
+          ],
+          "components/tui/hooks/useTerminalSize.ts": [],
+          "components/tui/hooks/useVitalsRunner.test.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/tui/hooks/useVitalsRunner.ts",
+            "lib/history.ts"
+          ],
+          "components/tui/hooks/useVitalsRunner.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "lib/history.ts"
+          ],
+          "index.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "commands/init.ts",
+            "components/App.tsx",
+            "components/DoctorApp.tsx",
+            "components/FixApp.tsx",
+            "components/StatsApp.tsx",
+            "components/TrendApp.tsx",
+            "components/tui/TuiApp.tsx",
+            "lib/history.ts"
+          ],
+          "lib/history.test.ts": [
+            "../../../packages/core/dist/index.d.ts",
+            "lib/history.ts"
+          ],
+          "lib/history.ts": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
+          "lib/messages.ts": [],
+          "lib/project-hash.test.ts": [
+            "lib/project-hash.ts"
+          ],
+          "lib/project-hash.ts": [],
+          "services/ai.ts": [
+            "../../../packages/core/dist/index.d.ts"
+          ]
+        }
+      }
+    },
+    {
+      "id": "source-map-explorer",
+      "category": "performance",
+      "name": "Bundle Size",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "file-size-analysis"
+      ],
+      "duration": 320,
+      "metadata": {
+        "initialBytes": 120765,
+        "initialKB": 118,
+        "totalBytes": 120765,
+        "totalKB": 118,
+        "fileCount": 15,
+        "entryChunks": 0,
+        "method": "file-size-analysis",
+        "note": "No source maps — using total bundle size"
+      }
+    },
+    {
+      "id": "coverage",
+      "category": "code-quality",
+      "name": "Tests & Coverage",
+      "score": 93,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Function coverage: 75.9% (target: 80%)",
+          "fix": {
+            "description": "Add tests for uncovered functions"
+          },
+          "reportedBy": [
+            "coverage"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "vitest"
+      ],
+      "duration": 9201,
+      "metadata": {
+        "testRunner": "vitest",
+        "totalTests": 118,
+        "passed": 118,
+        "failed": 0,
+        "skipped": 0,
+        "lines": 89.22,
+        "statements": 86.92,
+        "functions": 75.9,
+        "branches": 74.43
+      }
+    },
+    {
+      "id": "license-checker",
+      "category": "security",
+      "name": "License Compliance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "license-checker"
+      ],
+      "duration": 2222,
+      "metadata": {
+        "totalPackages": 20,
+        "flagged": 0
+      }
+    },
+    {
+      "id": "jscpd",
+      "category": "code-quality",
+      "name": "Code Duplication",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "jscpd"
+      ],
+      "duration": 7173,
+      "metadata": {
+        "percentage": 0,
+        "clones": 0
+      }
+    },
+    {
+      "id": "typescript",
+      "category": "code-quality",
+      "name": "Type Safety",
+      "score": 35,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/FixApp.test.tsx: TS2345: Argument of type '(handler: (input: string, key: KeyEvent) => void) => void' is not assignable to parameter of type '(inputHandler: Handler, options?: Options | undefined) => void'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ report: VitalsReport | null; isScanning: boolean; progress: never[]; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ report: VitalsReport | null; isScanning: boolean; progress: never[]; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ report: VitalsReport | null; isScanning: boolean; progress: never[]; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ isScanning: true; progress: { name: string; status: \"running\"; }[]; report: VitalsReport | null; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ report: VitalsReport | null; isScanning: boolean; progress: never[]; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
+          "reportedBy": [
+            "tsc"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "tsc"
+      ],
+      "duration": 7178,
+      "metadata": {
+        "errors": 13
+      }
+    },
+    {
+      "id": "todo-scanner",
+      "category": "code-quality",
+      "name": "Technical Debt",
+      "score": 67,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "src/integrations/todo-scanner.test.ts:109 — TODO: lines",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/integrations/todo-scanner.test.ts:123 — FIXME: lines",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "src/integrations/todo-scanner.test.ts:181 — TODO: ).toBe(2);",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/integrations/todo-scanner.test.ts:182 — FIXME: metadata = FIXME + HACK combined (both treated as fixmeCount in the runner)",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/integrations/todo-scanner.test.ts:183 — FIXME: ).toBe(2);",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/integrations/todo-scanner.test.ts:184 — HACK: ).toBe(1);",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "src/integrations/todo-scanner.ts:8 — TODO: , FIXME, and HACK comments that indicate technical debt or areas needing attention.",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "src/integrations/todo-scanner.ts:14 — TODO: |FIXME|HACK)\\b[:\\s]*(.*)/i;",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "src/integrations/todo-scanner.ts:80 — TODO: todos.filter((t) => t.kind ===       ).length,",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/integrations/todo-scanner.ts:81 — FIXME: fixmeCount,",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/integrations/todo-scanner.ts:82 — HACK: todos.filter((t) => t.kind ===       ).length,",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "todo-scanner"
+      ],
+      "duration": 71,
+      "metadata": {
+        "total": 11,
+        "todo": 5,
+        "fixme": 6,
+        "hack": 2
+      }
+    },
+    {
+      "id": "complexity",
+      "category": "code-quality",
+      "name": "File Complexity",
+      "score": 90,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "src/components/Dashboard.tsx: 446 lines — consider splitting into smaller modules",
+          "fix": {
+            "description": "Extract concerns into smaller, focused files"
+          },
+          "reportedBy": [
+            "complexity"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "complexity"
+      ],
+      "duration": 2,
+      "metadata": {
+        "totalFiles": 15,
+        "totalLines": 2440,
+        "avgLines": 163,
+        "oversizedCount": 1,
+        "topFiles": [
+          {
+            "path": "src/components/Dashboard.tsx",
+            "lines": 446
+          },
+          {
+            "path": "src/components/ChatDrawer.tsx",
+            "lines": 272
+          },
+          {
+            "path": "src/components/HistoryChart.tsx",
+            "lines": 240
+          },
+          {
+            "path": "src/components/AISummary.tsx",
+            "lines": 210
+          },
+          {
+            "path": "src/components/CodebaseStats.tsx",
+            "lines": 209
+          },
+          {
+            "path": "src/components/About.tsx",
+            "lines": 194
+          },
+          {
+            "path": "src/components/DependencyGraph.tsx",
+            "lines": 182
+          },
+          {
+            "path": "src/components/DependencyList.tsx",
+            "lines": 170
+          },
+          {
+            "path": "src/components/MonorepoOverview.tsx",
+            "lines": 162
+          },
+          {
+            "path": "src/components/IssuesList.tsx",
+            "lines": 90
+          }
+        ]
+      }
+    },
+    {
+      "id": "secrets",
+      "category": "security",
+      "name": "Secrets Detection",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "secrets"
+      ],
+      "duration": 7,
+      "metadata": {
+        "findings": 0
+      }
+    },
+    {
+      "id": "heavy-deps",
+      "category": "performance",
+      "name": "Heavy Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "heavy-deps"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalDeps": 17,
+        "heavyDepsFound": 0,
+        "heavyDeps": []
+      }
+    },
+    {
+      "id": "react-perf",
+      "category": "performance",
+      "name": "React Performance",
+      "score": 87,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "src/components/FixApp.tsx:259 — Using index as key in list — can cause rendering issues with dynamic lists",
+          "file": "src/components/FixApp.tsx",
+          "fix": {
+            "description": "Use a unique identifier (id, slug, etc.) as the key instead of the array index"
+          },
+          "reportedBy": [
+            "react-perf"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/FixApp.tsx:299 — Using index as key in list — can cause rendering issues with dynamic lists",
+          "file": "src/components/FixApp.tsx",
+          "fix": {
+            "description": "Use a unique identifier (id, slug, etc.) as the key instead of the array index"
+          },
+          "reportedBy": [
+            "react-perf"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/TrendApp.tsx:129 — Using index as key in list — can cause rendering issues with dynamic lists",
+          "file": "src/components/TrendApp.tsx",
+          "fix": {
+            "description": "Use a unique identifier (id, slug, etc.) as the key instead of the array index"
+          },
+          "reportedBy": [
+            "react-perf"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/tui/ActivityPanel.tsx:48 — Using index as key in list — can cause rendering issues with dynamic lists",
+          "file": "src/components/tui/ActivityPanel.tsx",
+          "fix": {
+            "description": "Use a unique identifier (id, slug, etc.) as the key instead of the array index"
+          },
+          "reportedBy": [
+            "react-perf"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "src/components/tui/TuiApp.tsx — Large component file (402 lines) — consider splitting",
+          "file": "src/components/tui/TuiApp.tsx",
+          "fix": {
+            "description": "Break into smaller, focused components to improve readability and render performance"
+          },
+          "reportedBy": [
+            "react-perf"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "react-perf"
+      ],
+      "duration": 5,
+      "metadata": {
+        "filesScanned": 21,
+        "reactCompiler": false,
+        "totalFindings": 5,
+        "inlineObjects": 0,
+        "indexAsKey": 4,
+        "largeComponents": 1
+      }
+    },
+    {
+      "id": "asset-size",
+      "category": "performance",
+      "name": "Asset Sizes",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "asset-size"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalAssets": 0,
+        "totalSizeBytes": 0,
+        "totalSizeMB": "0.0",
+        "images": 0,
+        "svgs": 0,
+        "fonts": 0
+      }
+    },
+    {
+      "id": "node-async-errors",
+      "category": "code-quality",
+      "name": "Async Error Handling",
+      "score": 90,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "node-async-errors"
+      ],
+      "duration": 1
+    }
+  ],
+  "overallScore": 96,
+  "summary": {
+    "critical": 0,
+    "warnings": 30,
+    "info": 13
+  }
+}
