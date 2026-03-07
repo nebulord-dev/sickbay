@@ -39,7 +39,27 @@ export function TuiApp({
   const [previousScore, setPreviousScore] = useState<number | null>(null);
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [healthScrollOffset, setHealthScrollOffset] = useState(0);
+  const [visiblePanels, setVisiblePanels] = useState<Set<string>>(new Set());
   const refreshRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
+  // Panel entrance animation — stagger panels appearing on mount
+  useEffect(() => {
+    const schedule: Array<[string, number]> = [
+      ["health", 0],
+      ["score", 120],
+      ["trend", 240],
+      ["git", 360],
+      ["quickwins", 480],
+      ["activity", 600],
+    ];
+    const timers = schedule.map(([panel, delay]) =>
+      setTimeout(() => {
+        setVisiblePanels((prev) => new Set([...prev, panel]));
+      }, delay),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   const reportRef = useRef<VitalsReport | null>(null);
   const monorepoReportRef = useRef<MonorepoReport | null>(null);
 
@@ -288,6 +308,7 @@ export function TuiApp({
             title="HEALTH CHECKS"
             color="green"
             focused={focusedPanel === "health"}
+            visible={visiblePanels.has("health")}
           >
             <HealthPanel
               checks={visibleChecks}
@@ -300,7 +321,7 @@ export function TuiApp({
         </Box>
         <Box width="45%" flexDirection="column">
           <Box height="50%">
-            <PanelBorder title="SCORE" color="blue">
+            <PanelBorder title="SCORE" color="blue" visible={visiblePanels.has("score")}>
               <ScorePanel report={report} previousScore={previousScore} />
             </PanelBorder>
           </Box>
@@ -309,6 +330,7 @@ export function TuiApp({
               title="TREND"
               color="magenta"
               focused={focusedPanel === "trend"}
+              visible={visiblePanels.has("trend")}
             >
               <TrendPanel
                 projectPath={projectPath}
@@ -327,6 +349,7 @@ export function TuiApp({
             title="GIT STATUS"
             color="yellow"
             focused={focusedPanel === "git"}
+            visible={visiblePanels.has("git")}
           >
             <GitPanel projectPath={projectPath} />
           </PanelBorder>
@@ -336,6 +359,7 @@ export function TuiApp({
             title={monorepoReport ? "MONOREPO" : "QUICK WINS"}
             color="red"
             focused={focusedPanel === "quickwins"}
+            visible={visiblePanels.has("quickwins")}
           >
             {monorepoReport ? (
               <MonorepoPanel
@@ -355,6 +379,7 @@ export function TuiApp({
             title="ACTIVITY"
             color="cyan"
             focused={focusedPanel === "activity"}
+            visible={visiblePanels.has("activity")}
           >
             <ActivityPanel
               entries={activityLog}
