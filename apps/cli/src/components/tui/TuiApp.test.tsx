@@ -73,6 +73,7 @@ const createMockReport = (overrides?: Partial<VitalsReport>): VitalsReport => ({
 
 const makeDefaultRunnerResult = (report: VitalsReport | null = null) => ({
   report,
+  monorepoReport: null,
   isScanning: false,
   progress: [],
   error: null,

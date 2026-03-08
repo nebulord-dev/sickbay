@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-07T22:30:02.249Z",
+  "timestamp": "2026-03-08T03:56:34.232Z",
   "projectPath": "/Users/chmc-gd9nn2t4fv/Documents/code/vitals",
   "projectInfo": {
     "name": "monorepo (4 packages)",
@@ -43,7 +43,7 @@
       "toolsUsed": [
         "knip"
       ],
-      "duration": 4441,
+      "duration": 1016472,
       "metadata": {
         "unusedFiles": 0,
         "unusedDeps": 1,
@@ -61,7 +61,7 @@
       "toolsUsed": [
         "depcheck"
       ],
-      "duration": 5575,
+      "duration": 1016094,
       "metadata": {
         "unused": 0,
         "missing": 0
@@ -188,7 +188,7 @@
       "toolsUsed": [
         "pnpm"
       ],
-      "duration": 1840,
+      "duration": 1017189,
       "metadata": {
         "outdatedCount": 10
       }
@@ -203,7 +203,7 @@
       "toolsUsed": [
         "npm-audit"
       ],
-      "duration": 6185,
+      "duration": 1011747,
       "metadata": {}
     },
     {
@@ -216,7 +216,7 @@
       "toolsUsed": [
         "madge"
       ],
-      "duration": 6251,
+      "duration": 1016297,
       "metadata": {
         "circularCount": 0,
         "graph": {
@@ -365,6 +365,7 @@
             "../../../packages/core/dist/index.d.ts",
             "lib/messages.ts"
           ],
+          "components/tui/HelpPanel.tsx": [],
           "components/tui/HotkeyBar.test.tsx": [
             "components/tui/HotkeyBar.tsx"
           ],
@@ -410,6 +411,7 @@
             "components/tui/ActivityPanel.tsx",
             "components/tui/GitPanel.tsx",
             "components/tui/HealthPanel.tsx",
+            "components/tui/HelpPanel.tsx",
             "components/tui/HotkeyBar.tsx",
             "components/tui/MonorepoPanel.tsx",
             "components/tui/PanelBorder.tsx",
@@ -482,12 +484,12 @@
       "toolsUsed": [
         "file-size-analysis"
       ],
-      "duration": 320,
+      "duration": 1011212,
       "metadata": {
-        "initialBytes": 120765,
-        "initialKB": 118,
-        "totalBytes": 120765,
-        "totalKB": 118,
+        "initialBytes": 126610,
+        "initialKB": 124,
+        "totalBytes": 126610,
+        "totalKB": 124,
         "fileCount": 15,
         "entryChunks": 0,
         "method": "file-size-analysis",
@@ -498,34 +500,19 @@
       "id": "coverage",
       "category": "code-quality",
       "name": "Tests & Coverage",
-      "score": 93,
-      "status": "warning",
-      "issues": [
-        {
-          "severity": "warning",
-          "message": "Function coverage: 75.9% (target: 80%)",
-          "fix": {
-            "description": "Add tests for uncovered functions"
-          },
-          "reportedBy": [
-            "coverage"
-          ]
-        }
-      ],
+      "score": 100,
+      "status": "pass",
+      "issues": [],
       "toolsUsed": [
         "vitest"
       ],
-      "duration": 9201,
+      "duration": 1011189,
       "metadata": {
         "testRunner": "vitest",
-        "totalTests": 118,
-        "passed": 118,
+        "totalTests": 0,
+        "passed": 0,
         "failed": 0,
-        "skipped": 0,
-        "lines": 89.22,
-        "statements": 86.92,
-        "functions": 75.9,
-        "branches": 74.43
+        "skipped": 0
       }
     },
     {
@@ -538,7 +525,7 @@
       "toolsUsed": [
         "license-checker"
       ],
-      "duration": 2222,
+      "duration": 1015153,
       "metadata": {
         "totalPackages": 20,
         "flagged": 0
@@ -554,7 +541,7 @@
       "toolsUsed": [
         "jscpd"
       ],
-      "duration": 7173,
+      "duration": 1016805,
       "metadata": {
         "percentage": 0,
         "clones": 0
@@ -564,107 +551,15 @@
       "id": "typescript",
       "category": "code-quality",
       "name": "Type Safety",
-      "score": 35,
-      "status": "warning",
-      "issues": [
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/components/FixApp.test.tsx: TS2345: Argument of type '(handler: (input: string, key: KeyEvent) => void) => void' is not assignable to parameter of type '(inputHandler: Handler, options?: Options | undefined) => void'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ report: VitalsReport | null; isScanning: boolean; progress: never[]; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ report: VitalsReport | null; isScanning: boolean; progress: never[]; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ report: VitalsReport | null; isScanning: boolean; progress: never[]; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ isScanning: true; progress: { name: string; status: \"running\"; }[]; report: VitalsReport | null; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/components/tui/TuiApp.test.tsx: TS2345: Argument of type '{ report: VitalsReport | null; isScanning: boolean; progress: never[]; error: null; scan: Mock<Procedure>; }' is not assignable to parameter of type '{ report: VitalsReport | null; monorepoReport: MonorepoReport | null; isScanning: boolean; progress: ProgressItem[]; error: string | null; scan: () => Promise<...>; }'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        }
-      ],
+      "score": 100,
+      "status": "pass",
+      "issues": [],
       "toolsUsed": [
         "tsc"
       ],
-      "duration": 7178,
+      "duration": 1011175,
       "metadata": {
-        "errors": 13
+        "errors": 0
       }
     },
     {
@@ -755,7 +650,7 @@
       "toolsUsed": [
         "todo-scanner"
       ],
-      "duration": 71,
+      "duration": 141,
       "metadata": {
         "total": 11,
         "todo": 5,
@@ -772,7 +667,7 @@
       "issues": [
         {
           "severity": "info",
-          "message": "src/components/Dashboard.tsx: 446 lines — consider splitting into smaller modules",
+          "message": "src/components/tui/TuiApp.tsx: 422 lines — consider splitting into smaller modules",
           "fix": {
             "description": "Extract concerns into smaller, focused files"
           },
@@ -784,52 +679,52 @@
       "toolsUsed": [
         "complexity"
       ],
-      "duration": 2,
+      "duration": 3,
       "metadata": {
-        "totalFiles": 15,
-        "totalLines": 2440,
-        "avgLines": 163,
+        "totalFiles": 37,
+        "totalLines": 4158,
+        "avgLines": 112,
         "oversizedCount": 1,
         "topFiles": [
           {
-            "path": "src/components/Dashboard.tsx",
-            "lines": 446
+            "path": "src/components/tui/TuiApp.tsx",
+            "lines": 422
           },
           {
-            "path": "src/components/ChatDrawer.tsx",
-            "lines": 272
+            "path": "src/commands/doctor.ts",
+            "lines": 368
           },
           {
-            "path": "src/components/HistoryChart.tsx",
-            "lines": 240
+            "path": "src/components/FixApp.tsx",
+            "lines": 326
           },
           {
-            "path": "src/components/AISummary.tsx",
-            "lines": 210
+            "path": "src/components/App.tsx",
+            "lines": 288
           },
           {
-            "path": "src/components/CodebaseStats.tsx",
-            "lines": 209
+            "path": "src/index.ts",
+            "lines": 249
           },
           {
-            "path": "src/components/About.tsx",
-            "lines": 194
+            "path": "src/commands/stats.ts",
+            "lines": 227
           },
           {
-            "path": "src/components/DependencyGraph.tsx",
-            "lines": 182
+            "path": "src/components/StatsApp.tsx",
+            "lines": 216
           },
           {
-            "path": "src/components/DependencyList.tsx",
-            "lines": 170
+            "path": "src/commands/web.ts",
+            "lines": 206
           },
           {
-            "path": "src/components/MonorepoOverview.tsx",
-            "lines": 162
+            "path": "src/components/tui/HealthPanel.tsx",
+            "lines": 134
           },
           {
-            "path": "src/components/IssuesList.tsx",
-            "lines": 90
+            "path": "src/components/TrendApp.tsx",
+            "lines": 133
           }
         ]
       }
@@ -875,7 +770,7 @@
       "issues": [
         {
           "severity": "warning",
-          "message": "src/components/FixApp.tsx:259 — Using index as key in list — can cause rendering issues with dynamic lists",
+          "message": "src/components/FixApp.tsx:275 — Using index as key in list — can cause rendering issues with dynamic lists",
           "file": "src/components/FixApp.tsx",
           "fix": {
             "description": "Use a unique identifier (id, slug, etc.) as the key instead of the array index"
@@ -886,7 +781,7 @@
         },
         {
           "severity": "warning",
-          "message": "src/components/FixApp.tsx:299 — Using index as key in list — can cause rendering issues with dynamic lists",
+          "message": "src/components/FixApp.tsx:315 — Using index as key in list — can cause rendering issues with dynamic lists",
           "file": "src/components/FixApp.tsx",
           "fix": {
             "description": "Use a unique identifier (id, slug, etc.) as the key instead of the array index"
@@ -919,7 +814,7 @@
         },
         {
           "severity": "info",
-          "message": "src/components/tui/TuiApp.tsx — Large component file (402 lines) — consider splitting",
+          "message": "src/components/tui/TuiApp.tsx — Large component file (457 lines) — consider splitting",
           "file": "src/components/tui/TuiApp.tsx",
           "fix": {
             "description": "Break into smaller, focused components to improve readability and render performance"
@@ -932,9 +827,9 @@
       "toolsUsed": [
         "react-perf"
       ],
-      "duration": 5,
+      "duration": 3,
       "metadata": {
-        "filesScanned": 21,
+        "filesScanned": 22,
         "reactCompiler": false,
         "totalFindings": 5,
         "inlineObjects": 0,
@@ -972,13 +867,13 @@
       "toolsUsed": [
         "node-async-errors"
       ],
-      "duration": 1
+      "duration": 0
     }
   ],
-  "overallScore": 96,
+  "overallScore": 98,
   "summary": {
     "critical": 0,
-    "warnings": 30,
+    "warnings": 16,
     "info": 13
   }
 }

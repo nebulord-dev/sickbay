@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Box, useInput } from "ink";
+import { Box, Text, useInput } from "ink";
 import type { VitalsReport, MonorepoReport } from "@vitals/core";
 import { PanelBorder } from "./PanelBorder.js";
 import { HotkeyBar, type PanelId } from "./HotkeyBar.js";
@@ -270,9 +270,9 @@ export function TuiApp({
 
   const visibleChecks = report?.checks.filter((c) => c.status !== "skipped") ?? [];
 
-  // Layout calculations
-  const topHeight = Math.floor((rows - 1) * 0.6);
-  const bottomHeight = rows - 1 - topHeight;
+  // Layout calculations — reserve 1 row for project header + 1 for hotkey bar
+  const topHeight = Math.floor((rows - 2) * 0.6);
+  const bottomHeight = rows - 2 - topHeight;
 
   // Help overlay
   if (showHelp) {
@@ -341,8 +341,26 @@ export function TuiApp({
   }
 
   // Normal grid layout
+  const projectName = monorepoReport
+    ? `${monorepoReport.rootPath.split("/").pop()} (monorepo)`
+    : (report?.projectInfo?.name ?? "—");
+  const projectVersion = report?.projectInfo?.version;
+  const scanLabel = lastScanTime
+    ? `Last scan ${lastScanTime.toLocaleTimeString()}`
+    : isScanning ? "Scanning…" : "Not yet scanned";
+
   return (
     <Box flexDirection="column" width={columns} height={rows}>
+      {/* Project header */}
+      <Box paddingX={1} justifyContent="space-between">
+        <Box gap={1}>
+          <Text bold color="cyan">VITALS</Text>
+          <Text bold>{projectName}</Text>
+          {projectVersion && <Text dimColor>v{projectVersion}</Text>}
+        </Box>
+        <Text dimColor>{scanLabel}</Text>
+      </Box>
+
       {/* Top Row */}
       <Box height={topHeight}>
         <Box width="55%">
