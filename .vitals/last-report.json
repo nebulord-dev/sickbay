@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-08T03:56:34.232Z",
+  "timestamp": "2026-03-08T05:57:27.060Z",
   "projectPath": "/Users/chmc-gd9nn2t4fv/Documents/code/vitals",
   "projectInfo": {
     "name": "monorepo (4 packages)",
@@ -43,7 +43,7 @@
       "toolsUsed": [
         "knip"
       ],
-      "duration": 1016472,
+      "duration": 1009757,
       "metadata": {
         "unusedFiles": 0,
         "unusedDeps": 1,
@@ -61,7 +61,7 @@
       "toolsUsed": [
         "depcheck"
       ],
-      "duration": 1016094,
+      "duration": 1009236,
       "metadata": {
         "unused": 0,
         "missing": 0
@@ -71,15 +71,59 @@
       "id": "outdated",
       "category": "dependencies",
       "name": "Outdated Packages",
-      "score": 70,
+      "score": 82,
       "status": "warning",
       "issues": [
         {
           "severity": "info",
-          "message": "@xyflow/react: 12.10.0 → 12.10.1",
+          "message": "dotenv: 17.2.4 → 17.3.1",
           "fix": {
-            "description": "Update @xyflow/react to 12.10.1",
-            "command": "pnpm update @xyflow/react"
+            "description": "Update dotenv to 17.3.1",
+            "command": "pnpm update dotenv"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "chokidar: 4.0.3 → 5.0.0",
+          "fix": {
+            "description": "Update chokidar to 5.0.0",
+            "command": "pnpm update chokidar"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "commander: 12.1.0 → 14.0.3",
+          "fix": {
+            "description": "Update commander to 14.0.3",
+            "command": "pnpm update commander"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "ink-gradient: 3.0.0 → 4.0.0",
+          "fix": {
+            "description": "Update ink-gradient to 4.0.0",
+            "command": "pnpm update ink-gradient"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "open: 10.2.0 → 11.0.0",
+          "fix": {
+            "description": "Update open to 11.0.0",
+            "command": "pnpm update open"
           },
           "reportedBy": [
             "outdated"
@@ -87,98 +131,10 @@
         },
         {
           "severity": "info",
-          "message": "autoprefixer: 10.4.24 → 10.4.27",
+          "message": "@anthropic-ai/sdk: 0.32.1 → 0.78.0",
           "fix": {
-            "description": "Update autoprefixer to 10.4.27",
-            "command": "pnpm update autoprefixer"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "info",
-          "message": "postcss: 8.5.6 → 8.5.8",
-          "fix": {
-            "description": "Update postcss to 8.5.8",
-            "command": "pnpm update postcss"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "info",
-          "message": "jsdom: 28.0.0 → 28.1.0",
-          "fix": {
-            "description": "Update jsdom to 28.1.0",
-            "command": "pnpm update jsdom"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "@vitejs/plugin-react: 4.7.0 → 5.1.4",
-          "fix": {
-            "description": "Update @vitejs/plugin-react to 5.1.4",
-            "command": "pnpm update @vitejs/plugin-react"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "react-markdown: 9.1.0 → 10.1.0",
-          "fix": {
-            "description": "Update react-markdown to 10.1.0",
-            "command": "pnpm update react-markdown"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "react-syntax-highlighter: 15.6.6 → 16.1.1",
-          "fix": {
-            "description": "Update react-syntax-highlighter to 16.1.1",
-            "command": "pnpm update react-syntax-highlighter"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "tailwindcss: 3.4.19 → 4.2.1",
-          "fix": {
-            "description": "Update tailwindcss to 4.2.1",
-            "command": "pnpm update tailwindcss"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "vite: 6.4.1 → 7.3.1",
-          "fix": {
-            "description": "Update vite to 7.3.1",
-            "command": "pnpm update vite"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "info",
-          "message": "@types/dagre: 0.7.53 → 0.7.54",
-          "fix": {
-            "description": "Update @types/dagre to 0.7.54",
-            "command": "pnpm update @types/dagre"
+            "description": "Update @anthropic-ai/sdk to 0.78.0",
+            "command": "pnpm update @anthropic-ai/sdk"
           },
           "reportedBy": [
             "outdated"
@@ -188,9 +144,9 @@
       "toolsUsed": [
         "pnpm"
       ],
-      "duration": 1017189,
+      "duration": 4507,
       "metadata": {
-        "outdatedCount": 10
+        "outdatedCount": 6
       }
     },
     {
@@ -203,7 +159,7 @@
       "toolsUsed": [
         "npm-audit"
       ],
-      "duration": 1011747,
+      "duration": 684,
       "metadata": {}
     },
     {
@@ -216,7 +172,7 @@
       "toolsUsed": [
         "madge"
       ],
-      "duration": 1016297,
+      "duration": 1009942,
       "metadata": {
         "circularCount": 0,
         "graph": {
@@ -484,7 +440,7 @@
       "toolsUsed": [
         "file-size-analysis"
       ],
-      "duration": 1011212,
+      "duration": 159,
       "metadata": {
         "initialBytes": 126610,
         "initialKB": 124,
@@ -506,7 +462,7 @@
       "toolsUsed": [
         "vitest"
       ],
-      "duration": 1011189,
+      "duration": 1009496,
       "metadata": {
         "testRunner": "vitest",
         "totalTests": 0,
@@ -525,7 +481,7 @@
       "toolsUsed": [
         "license-checker"
       ],
-      "duration": 1015153,
+      "duration": 4556,
       "metadata": {
         "totalPackages": 20,
         "flagged": 0
@@ -541,7 +497,7 @@
       "toolsUsed": [
         "jscpd"
       ],
-      "duration": 1016805,
+      "duration": 1010223,
       "metadata": {
         "percentage": 0,
         "clones": 0
@@ -557,7 +513,7 @@
       "toolsUsed": [
         "tsc"
       ],
-      "duration": 1011175,
+      "duration": 1009227,
       "metadata": {
         "errors": 0
       }
@@ -650,7 +606,7 @@
       "toolsUsed": [
         "todo-scanner"
       ],
-      "duration": 141,
+      "duration": 15,
       "metadata": {
         "total": 11,
         "todo": 5,
@@ -739,7 +695,7 @@
       "toolsUsed": [
         "secrets"
       ],
-      "duration": 7,
+      "duration": 4,
       "metadata": {
         "findings": 0
       }
@@ -827,7 +783,7 @@
       "toolsUsed": [
         "react-perf"
       ],
-      "duration": 3,
+      "duration": 6,
       "metadata": {
         "filesScanned": 22,
         "reactCompiler": false,
@@ -873,7 +829,7 @@
   "overallScore": 98,
   "summary": {
     "critical": 0,
-    "warnings": 16,
-    "info": 13
+    "warnings": 15,
+    "info": 10
   }
 }

@@ -96,6 +96,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 ### Code Quality & CI
 
 - `[Quality]` Add quality checks to repo PRs — run vitals checks as part of PR CI; no GitHub Actions workflows exist yet
+- `[Quality]` Switch ESLint to oxc — replace the current ESLint setup with oxc (oxlint) for faster linting; oxc is written in Rust and is orders of magnitude faster than ESLint; update root lint config, remove ESLint dependencies, and update `turbo run lint` scripts across all packages
 
 ## In Progress
 
