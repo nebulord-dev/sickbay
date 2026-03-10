@@ -6,6 +6,7 @@ settings:
 
 overrides:
   minimatch: '>=10.2.3'
+  '@types/minimatch': '>=3.0.5'
   rollup: '>=4.59.0'
   prismjs: '>=1.30.0'
 
