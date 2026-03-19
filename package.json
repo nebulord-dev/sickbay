@@ -15,9 +15,12 @@
     "lint:fix": "turbo run lint:fix",
     "test": "pnpm -r test",
     "test:coverage": "pnpm -r test:coverage",
-    "test:web": "pnpm --filter @vitals/web test:ui",
-    "test:cli": "pnpm --filter @vitals/cli test:ui",
-    "test:core": "pnpm --filter @vitals/core test:ui",
+    "test:web": "pnpm --filter @vitals/web",
+    "test:web:ui": "pnpm --filter @vitals/web test:ui",
+    "test:cli": "pnpm --filter @vitals/cli",
+    "test:cli:ui": "pnpm --filter @vitals/cli test:ui",
+    "test:core": "pnpm --filter @vitals/core",
+    "test:core:ui": "pnpm --filter @vitals/core test:ui",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
