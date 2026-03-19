@@ -30,7 +30,7 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### General
 
-- `[Task]` Rename Vitals to VitalStar — `vitals` is taken on npm; `steth`; update package names, CLI command, imports, branding, README, and registry config (`@r1-development/vitalstar`)
+- `[Task]` Rename Vitals to `steth` — `vitals` is taken on npm; update package names, CLI command, imports, branding, README, and registry config (`@r1-development/steth`)
 - `[Task]` Scan the vitals project with the vitals CLI — run `vitals` against this monorepo and review the results; use findings to identify gaps and inform future work
 - `[Feature]` Monorepo-aware subcommands (`doctor`, `stats`, `trend`, `fix`) — when run from a monorepo root, these commands currently scan the root package only and produce misleading results (e.g. `vitals doctor` against the fixtures monorepo shows browser-targeted checks irrelevant to a Node API); fix: detect monorepo on startup using the same detection logic as the main scan, then either (a) prompt the user to pick a package, (b) accept a `--package <name>` flag, or (c) run against each package and aggregate output; `--package` flag already exists on the main scan command, so threading it through to subcommands is the logical path
 
