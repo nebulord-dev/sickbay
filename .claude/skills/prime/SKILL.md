@@ -77,24 +77,6 @@ Check current branch and status:
 
 Provide a concise summary covering:
 
-### Project Overview
-
-- Purpose and current phase of development
-- What's actively being worked on (from kanban In Progress)
-- What's coming next (from kanban + roadmap)
-
-### Architecture
-
-- Monorepo package dependency order (`core` → `cli` → `web`)
-- Key architectural patterns in each package
-- Any hardcoded assumptions to be aware of (single-project vs monorepo)
-
-### Tech Stack
-
-- TypeScript throughout; Ink (React for terminals) in CLI; Vite + React + Tailwind in web
-- pnpm workspaces + Turbo for build orchestration
-- Vitest for testing; tsup for bundling core/cli; Vite for web
-
 ### Current State
 
 - Active branch and recent commits
