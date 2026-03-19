@@ -208,6 +208,9 @@ describe('useVitalsRunner', () => {
 
     // Start scan but don't await so we can observe mid-scan state
     const scanPromise = scanRef.current?.();
+    // First flush: lets detectMonorepo microtask resolve → runVitals called → onRunnersReady fires → setProgress queued
+    // Second flush: lets React process the batched state update and re-render
+    await new Promise((r) => setTimeout(r, 0));
     await new Promise((r) => setTimeout(r, 0));
 
     // Progress should be set to the 3 check names

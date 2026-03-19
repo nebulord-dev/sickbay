@@ -118,13 +118,11 @@ describe("App", () => {
     const report = createMockReport();
     mockRunVitals.mockResolvedValue(report);
 
-    let result!: ReturnType<typeof render>;
-    await act(async () => {
-      result = render(<App projectPath="/test/project" />);
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
-    });
+    const result = render(<App projectPath="/test/project" />);
+    // The component's useEffect calls runVitals → .then() does a dynamic import
+    // (await import("../lib/history.js")) before setting phase to "results".
+    // setTimeout lets microtasks, the dynamic import, and React's render all flush.
+    await new Promise((r) => setTimeout(r, 50));
 
     const output = result.lastFrame();
     // In results phase, check names are rendered via CheckResultRow
@@ -135,13 +133,8 @@ describe("App", () => {
     const report = createMockReport();
     mockRunVitals.mockResolvedValue(report);
 
-    let result!: ReturnType<typeof render>;
-    await act(async () => {
-      result = render(<App projectPath="/test/project" />);
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
-    });
+    const result = render(<App projectPath="/test/project" />);
+    await new Promise((r) => setTimeout(r, 50));
 
     expect(result.lastFrame()).toContain("vitals --web");
   });
@@ -150,13 +143,8 @@ describe("App", () => {
     const report = createMockReport({ overallScore: 91 });
     mockRunVitals.mockResolvedValue(report);
 
-    let result!: ReturnType<typeof render>;
-    await act(async () => {
-      result = render(<App projectPath="/test/project" />);
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
-    });
+    const result = render(<App projectPath="/test/project" />);
+    await new Promise((r) => setTimeout(r, 50));
 
     expect(result.lastFrame()).toContain("91");
   });
@@ -276,13 +264,8 @@ describe("App", () => {
     });
     mockRunVitals.mockResolvedValue(report);
 
-    let result!: ReturnType<typeof render>;
-    await act(async () => {
-      result = render(<App projectPath="/test/project" />);
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
-    });
+    const result = render(<App projectPath="/test/project" />);
+    await new Promise((r) => setTimeout(r, 50));
 
     const output = result.lastFrame();
     expect(output).toContain("Overall Health Score");
