@@ -30,10 +30,14 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### General
 
+- `[Task]` Rename Vitals to VitalStar — `vitals` is taken on npm; `steth`; update package names, CLI command, imports, branding, README, and registry config (`@r1-development/vitalstar`)
 - `[Task]` Scan the vitals project with the vitals CLI — run `vitals` against this monorepo and review the results; use findings to identify gaps and inform future work
 - `[Feature]` Monorepo-aware subcommands (`doctor`, `stats`, `trend`, `fix`) — when run from a monorepo root, these commands currently scan the root package only and produce misleading results (e.g. `vitals doctor` against the fixtures monorepo shows browser-targeted checks irrelevant to a Node API); fix: detect monorepo on startup using the same detection logic as the main scan, then either (a) prompt the user to pick a package, (b) accept a `--package <name>` flag, or (c) run against each package and aggregate output; `--package` flag already exists on the main scan command, so threading it through to subcommands is the logical path
 
 ### Features
+
+- `[UI/UX]` Add dependency update totals to the top of the Dependencies tab — show aggregate counts of major, minor, and patch updates available as summary stats at the top of the tab before the individual package list
+- `[Feature]` Show pnpm overrides in the Dependencies tab — detect `pnpm.overrides` (and npm `overrides` / yarn `resolutions`) in `package.json` and surface them in the web dashboard's Dependencies tab; show which packages are pinned, what version they're forced to, and why it matters (e.g. security patch, compatibility fix); helps teams track overrides that were added as temporary fixes and never cleaned up
 
 - `[Feature]` Claude Code skill for Vitals — a static, evergreen skill file covering: where the report lives (`.vitals/last-report.json`), the JSON schema shape (`VitalsReport`, `CheckResult`, `Issue`), score interpretation (0–100, 80+ green, 60–79 yellow, <60 red), severity levels (critical/warning/info), and how to act on fix suggestions (`issue.fix.command`); content is deliberately high-level so it never goes stale; ship as a doc (`docs/claude-skill.md`) and optionally as `vitals claude` command that writes it to `.claude/skills/vitals.md` in the target project
 - `[Feature]` CI/CD Integration Guide — pre-built GitHub Actions and GitLab CI templates, auto-comment PR summaries with score deltas, fail builds on critical thresholds; a basic single-project template can be built now, but monorepo support will require matrix build strategies and per-package runs — plan for a v2 of the templates once monorepo detection lands
