@@ -39,7 +39,7 @@ function parseStructuredSummary(text: string): ParsedSection[] {
 const markdownComponents: Partial<Components> = {
   code: ({ children, ...props }) => (
     <code
-      className="px-1.5 py-0.5 bg-gray-800/60 text-purple-300 rounded text-xs font-mono border border-gray-700/50"
+      className="px-1.5 py-0.5 bg-gray-800/60 text-purple-300 rounded-sm text-xs font-mono border border-gray-700/50"
       {...props}
     >
       {children}
@@ -135,9 +135,9 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
     <>
       {/* Drawer */}
       {isOpen && (
-        <div className="fixed top-6 right-6 w-[26rem] max-h-[calc(100vh-3rem)] bg-surface border border-border rounded-lg shadow-2xl flex flex-col z-50 overflow-hidden">
+        <div className="fixed top-6 right-6 w-104 max-h-[calc(100vh-3rem)] bg-surface border border-border rounded-lg shadow-2xl flex flex-col z-50 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-b border-purple-500/20">
+          <div className="flex items-center justify-between px-4 py-3 bg-linear-to-r from-purple-500/10 to-blue-500/10 border-b border-purple-500/20">
             <div className="flex items-center gap-2">
               <span className="text-lg">
                 <svg
@@ -163,7 +163,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
                 <button
                   onClick={handleRegenerate}
                   disabled={regenerating}
-                  className="text-xl text-gray-500 hover:text-accent transition-colors disabled:opacity-50 px-2 py-1 rounded hover:bg-purple-500/10"
+                  className="text-xl text-gray-500 hover:text-accent transition-colors disabled:opacity-50 px-2 py-1 rounded-sm hover:bg-purple-500/10"
                   title="Regenerate insights"
                 >
                   {regenerating ? "⠋" : "↻"}
@@ -171,7 +171,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
               )}
               <button
                 onClick={() => onToggle(false)}
-                className="text-gray-500 hover:text-white transition-colors text-xl w-6 h-6 flex items-center justify-center rounded hover:bg-purple-500/10"
+                className="text-gray-500 hover:text-white transition-colors text-xl w-6 h-6 flex items-center justify-center rounded-sm hover:bg-purple-500/10"
               >
                 ✕
               </button>
@@ -191,7 +191,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
                   AI insights are not available. This feature requires an
                   Anthropic API key.
                 </div>
-                <div className="text-base text-gray-500 bg-card p-2.5 rounded border border-border font-mono">
+                <div className="text-base text-gray-500 bg-card p-2.5 rounded-sm border border-border font-mono">
                   <div className="mb-1.5 text-gray-400">
                     To enable AI features:
                   </div>

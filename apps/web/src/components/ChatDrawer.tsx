@@ -35,7 +35,7 @@ function MarkdownMessage({ content }: { content: string }) {
               style={vscDarkPlus}
               language={match[1]}
               PreTag="div"
-              className="rounded-md !bg-black/30 !mt-2 !mb-2"
+              className="rounded-md bg-black/30! mt-2! mb-2!"
               customStyle={{ margin: 0, padding: "0.75rem" }}
               {...props}
             >
@@ -43,7 +43,7 @@ function MarkdownMessage({ content }: { content: string }) {
             </SyntaxHighlighter>
           ) : (
             <code
-              className="bg-black/30 px-1.5 py-0.5 rounded text-accent font-mono text-xs"
+              className="bg-black/30 px-1.5 py-0.5 rounded-sm text-accent font-mono text-xs"
               {...props}
             >
               {children}
@@ -176,7 +176,7 @@ export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-accent text-black rounded shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center justify-center text-2xl z-50"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-accent text-black rounded-sm shadow-lg hover:shadow-xl transition-all hover:scale-110 flex items-center justify-center text-2xl z-50"
           title="AI Assistant"
         >
           VAI
@@ -185,7 +185,7 @@ export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
 
       {/* Drawer */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[35rem] h-[50rem]  bg-surface border border-border rounded-lg shadow-2xl flex flex-col z-50">
+        <div className="fixed bottom-6 right-6 w-140 h-200  bg-surface border border-border rounded-lg shadow-2xl flex flex-col z-50">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
@@ -270,12 +270,12 @@ export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about your project..."
                 disabled={loading}
-                className="flex-1 bg-card border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-accent disabled:opacity-50"
+                className="flex-1 bg-card border border-border rounded-sm px-3 py-2 text-sm focus:outline-hidden focus:border-accent disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="px-4 py-2 bg-accent text-black rounded text-sm font-semibold hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-accent text-black rounded-sm text-sm font-semibold hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Send
               </button>

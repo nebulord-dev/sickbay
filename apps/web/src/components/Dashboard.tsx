@@ -427,7 +427,7 @@ export function Dashboard({ report }: DashboardProps) {
                   ? <HistoryChart history={history} />
                   : (
                     <div className="flex items-center justify-center h-48 text-gray-500 text-sm font-mono">
-                      No history found — run <code className="mx-1 px-1 bg-card rounded">vitals init</code> then scan at least once
+                      No history found — run <code className="mx-1 px-1 bg-card rounded-sm">vitals init</code> then scan at least once
                     </div>
                   )
               )}

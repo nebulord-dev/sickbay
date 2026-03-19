@@ -67,7 +67,7 @@ export function HistoryChart({ history }: HistoryChartProps) {
   if (entries.length === 0) {
     return (
       <div className="flex items-center justify-center h-48 text-gray-500 text-sm font-mono">
-        No history yet — run <code className="mx-1 px-1 bg-card rounded">vitals</code> to start tracking
+        No history yet — run <code className="mx-1 px-1 bg-card rounded-sm">vitals</code> to start tracking
       </div>
     );
   }
@@ -193,7 +193,7 @@ export function HistoryChart({ history }: HistoryChartProps) {
       <div className="flex flex-wrap gap-3 px-1">
         {/* Overall */}
         <div className="flex items-center gap-1.5 text-xs font-mono text-white">
-          <span className="inline-block w-5 h-0.5 bg-white rounded" />
+          <span className="inline-block w-5 h-0.5 bg-white rounded-sm" />
           overall
         </div>
 
@@ -208,7 +208,7 @@ export function HistoryChart({ history }: HistoryChartProps) {
               style={{ color }}
             >
               <span
-                className="inline-block w-5 h-0.5 rounded"
+                className="inline-block w-5 h-0.5 rounded-sm"
                 style={{ backgroundColor: color }}
               />
               {cat}

@@ -94,7 +94,7 @@ export function DependencyList({ report }: Props) {
               <span className="text-gray-500">ℹ</span>
             </span>
             <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-56 z-10">
-              <div className="bg-gray-900 text-gray-200 text-xs rounded px-3 py-2 shadow-lg border border-gray-700">
+              <div className="bg-gray-900 text-gray-200 text-xs rounded-sm px-3 py-2 shadow-lg border border-gray-700">
                 Dependencies that are <strong className="text-yellow-400">unused</strong>, <strong className="text-red-400">missing</strong>, or <strong className="text-blue-400">outdated</strong>
                 <div className="absolute top-full right-4 -mt-1 w-2 h-2 bg-gray-900 border-r border-b border-gray-700 transform rotate-45"></div>
               </div>
@@ -136,7 +136,7 @@ export function DependencyList({ report }: Props) {
                   )}
                 </td>
                 <td className="px-4 py-2.5">
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${dep.dev ? 'bg-gray-700 text-gray-400' : 'bg-gray-800 text-gray-500'}`}>
+                  <span className={`text-xs px-1.5 py-0.5 rounded-sm ${dep.dev ? 'bg-gray-700 text-gray-400' : 'bg-gray-800 text-gray-500'}`}>
                     {dep.dev ? 'dev' : 'prod'}
                   </span>
                 </td>

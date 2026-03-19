@@ -73,7 +73,7 @@ function StatusBadge({ status }: { status: string }) {
   };
   return (
     <span
-      className={`text-xs px-1.5 py-0.5 rounded font-mono ${styles[status] ?? styles.skipped}`}
+      className={`text-xs px-1.5 py-0.5 rounded-sm font-mono ${styles[status] ?? styles.skipped}`}
     >
       {status}
     </span>

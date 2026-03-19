@@ -88,7 +88,7 @@ function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
       )}
 
       {issue.fix?.codeChange && (
-        <div className="bg-black/30 rounded p-3 font-mono text-xs border border-red-800/30">
+        <div className="bg-black/30 rounded-sm p-3 font-mono text-xs border border-red-800/30">
           <div className="text-red-400 mb-2 flex items-center gap-1.5">
             <span>⚠️</span>
             <span className="font-semibold">Offensive code:</span>
