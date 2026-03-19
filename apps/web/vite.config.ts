@@ -1,14 +1,14 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [
     tailwindcss(),
-    react({
-      babel: {
-        plugins: [['babel-plugin-react-compiler', {}]],
-      },
+    react(),
+    babel({
+      presets: [reactCompilerPreset()],
     }),
   ],
   server: {
@@ -18,13 +18,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Separate React and vendor code
-          react: ['react', 'react-dom'],
-          // Heavy visualization libs (only loaded when viewing dependency graph)
-          'graph-viz': ['@xyflow/react', 'dagre'],
-          // Heavy markdown/syntax libs (only loaded when using AI chat)
-          markdown: ['react-markdown', 'react-syntax-highlighter'],
+        manualChunks(id) {
+          if (id.includes('react-dom') || id.includes('react/')) return 'react';
+          if (id.includes('@xyflow/react') || id.includes('dagre')) return 'graph-viz';
+          if (id.includes('react-markdown') || id.includes('react-syntax-highlighter')) return 'markdown';
         },
       },
     },
