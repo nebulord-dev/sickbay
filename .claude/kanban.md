@@ -103,9 +103,9 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ## In Progress
 
-- `[Feature]` Monorepo-aware subcommands (`doctor`, `stats`, `trend`, `fix`) — thread `--package` flag and monorepo detection through all subcommands so they work correctly from monorepo roots
-
 ## Done
+
+- `[Feature]` Monorepo-aware subcommands (`doctor`, `stats`, `trend`, `fix`) — added `--package` flag and auto-detection to all subcommands; shared `resolveProject` helper; per-package grouped output for doctor/stats/trend/fix; 390 tests passing
 
 - `[Feature]` Auto-save last report to `.vitals/last-report.json` — writes full JSON report after every scan (App.tsx, index.ts --json path, TuiApp.tsx); always overwrites; silent fail; discoverable by Claude Code and other tools without any flags
 - `[UI/UX]` TUI score reveal animation — score counts up from 0 on first load, from previous score on re-scans; color transitions red→yellow→green naturally as the number crosses thresholds; 20ms/tick interval
