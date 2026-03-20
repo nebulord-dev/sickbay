@@ -10,6 +10,7 @@ import {
   type FixableIssue,
   type FixResult,
 } from "../commands/fix.js";
+import { shortName } from "../lib/resolve-package.js";
 
 interface FixAppProps {
   projectPath: string;
@@ -17,6 +18,9 @@ interface FixAppProps {
   applyAll: boolean;
   dryRun: boolean;
   verbose: boolean;
+  isMonorepo?: boolean;
+  packagePaths?: string[];
+  packageNames?: Map<string, string>;
 }
 
 type Phase = "scanning" | "selecting" | "fixing" | "done" | "error";
@@ -24,6 +28,11 @@ type Phase = "scanning" | "selecting" | "fixing" | "done" | "error";
 interface ProgressItem {
   name: string;
   status: "pending" | "running" | "done";
+}
+
+interface MonorepoFixableIssue extends FixableIssue {
+  packageName: string;
+  packagePath: string;
 }
 
 const SEVERITY_COLOR = {
@@ -38,10 +47,15 @@ export function FixApp({
   applyAll,
   dryRun,
   verbose,
+  isMonorepo,
+  packagePaths,
+  packageNames,
 }: FixAppProps) {
   const { exit } = useApp();
   const [phase, setPhase] = useState<Phase>("scanning");
-  const [fixableIssues, setFixableIssues] = useState<FixableIssue[]>([]);
+  const [fixableIssues, setFixableIssues] = useState<MonorepoFixableIssue[]>(
+    [],
+  );
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [cursor, setCursor] = useState(0);
   const [results, setResults] = useState<FixResult[]>([]);
@@ -52,66 +66,136 @@ export function FixApp({
 
   // Phase 1: Run scan
   useEffect(() => {
-    const initial: ProgressItem[] = (
-      checks ?? [
-        "knip",
-        "depcheck",
-        "npm-check-updates",
-        "npm-audit",
-        "madge",
-        "source-map-explorer",
-        "coverage",
-        "license-checker",
-        "jscpd",
-        "git",
-        "eslint",
-        "typescript",
-        "todo-scanner",
-        "complexity",
-        "secrets",
-        "heavy-deps",
-        "react-perf",
-        "asset-size",
-      ]
-    ).map((name) => ({ name, status: "pending" as const }));
-    setProgress(initial);
+    if (isMonorepo && packagePaths && packageNames) {
+      // Monorepo: scan each package
+      const pkgItems = packagePaths.map((p) => ({
+        name: shortName(packageNames.get(p) ?? p),
+        status: "pending" as const,
+      }));
+      setProgress(pkgItems);
 
-    runVitals({
-      projectPath,
-      checks,
-      verbose,
-      onCheckStart: (name) => {
-        setProgress((prev) =>
-          prev.map((p) => (p.name === name ? { ...p, status: "running" } : p)),
-        );
-      },
-      onCheckComplete: (result) => {
-        setProgress((prev) =>
-          prev.map((p) =>
-            p.name === result.id ? { ...p, status: "done" } : p,
-          ),
-        );
-      },
-    })
-      .then((r) => {
-        setProjectName(r.projectInfo.name);
-        const fixable = collectFixableIssues(r);
-        setFixableIssues(fixable);
+      (async () => {
+        try {
+          const allFixable: MonorepoFixableIssue[] = [];
 
-        if (fixable.length === 0) {
-          setPhase("done");
-        } else if (applyAll) {
-          setSelected(new Set(fixable.map((_, i) => i)));
-          setPhase("fixing");
-        } else {
-          setPhase("selecting");
+          for (const pkgPath of packagePaths) {
+            const pkgName = packageNames.get(pkgPath) ?? pkgPath;
+            const display = shortName(pkgName);
+
+            setProgress((prev) =>
+              prev.map((p) =>
+                p.name === display ? { ...p, status: "running" } : p,
+              ),
+            );
+
+            const report = await runVitals({
+              projectPath: pkgPath,
+              checks,
+              verbose,
+            });
+
+            const fixable = collectFixableIssues(report);
+            for (const fix of fixable) {
+              allFixable.push({
+                ...fix,
+                packageName: pkgName,
+                packagePath: pkgPath,
+              });
+            }
+
+            setProgress((prev) =>
+              prev.map((p) =>
+                p.name === display ? { ...p, status: "done" } : p,
+              ),
+            );
+          }
+
+          setFixableIssues(allFixable);
+
+          if (allFixable.length === 0) {
+            setPhase("done");
+          } else if (applyAll) {
+            setSelected(new Set(allFixable.map((_, i) => i)));
+            setPhase("fixing");
+          } else {
+            setPhase("selecting");
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err.message : String(err));
+          setPhase("error");
+          setTimeout(() => exit(), 100);
         }
+      })();
+    } else {
+      // Single project scan
+      const initial: ProgressItem[] = (
+        checks ?? [
+          "knip",
+          "depcheck",
+          "npm-check-updates",
+          "npm-audit",
+          "madge",
+          "source-map-explorer",
+          "coverage",
+          "license-checker",
+          "jscpd",
+          "git",
+          "eslint",
+          "typescript",
+          "todo-scanner",
+          "complexity",
+          "secrets",
+          "heavy-deps",
+          "react-perf",
+          "asset-size",
+        ]
+      ).map((name) => ({ name, status: "pending" as const }));
+      setProgress(initial);
+
+      runVitals({
+        projectPath,
+        checks,
+        verbose,
+        onCheckStart: (name) => {
+          setProgress((prev) =>
+            prev.map((p) =>
+              p.name === name ? { ...p, status: "running" } : p,
+            ),
+          );
+        },
+        onCheckComplete: (result) => {
+          setProgress((prev) =>
+            prev.map((p) =>
+              p.name === result.id ? { ...p, status: "done" } : p,
+            ),
+          );
+        },
       })
-      .catch((err) => {
-        setError(err instanceof Error ? err.message : String(err));
-        setPhase("error");
-        setTimeout(() => exit(), 100);
-      });
+        .then((r) => {
+          setProjectName(r.projectInfo.name);
+          const fixable = collectFixableIssues(r);
+          const tagged = fixable.map((f) => ({
+            ...f,
+            packageName: r.projectInfo.name,
+            packagePath: projectPath,
+          }));
+          setFixableIssues(tagged);
+
+          if (fixable.length === 0) {
+            setPhase("done");
+          } else if (applyAll) {
+            setSelected(new Set(fixable.map((_, i) => i)));
+            setPhase("fixing");
+          } else {
+            setPhase("selecting");
+          }
+        })
+        .catch((err) => {
+          setError(err instanceof Error ? err.message : String(err));
+          setPhase("error");
+          setTimeout(() => exit(), 100);
+        });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -139,7 +223,7 @@ export function FixApp({
             duration: 0,
           });
         } else {
-          const result = await executeFix(toFix[i], projectPath);
+          const result = await executeFix(toFix[i], toFix[i].packagePath);
           fixResults.push(result);
         }
         setResults([...fixResults]);
@@ -195,7 +279,10 @@ export function FixApp({
       {/* Scanning phase */}
       {phase === "scanning" && (
         <Box flexDirection="column">
-          <Text dimColor>Scanning for fixable issues...</Text>
+          <Text dimColor>
+            Scanning for fixable issues
+            {isMonorepo ? ` across ${packagePaths?.length} packages` : ""}...
+          </Text>
           <Box marginTop={1} marginLeft={2}>
             <ProgressList items={progress} />
           </Box>
@@ -224,13 +311,18 @@ export function FixApp({
           </Text>
           <Box flexDirection="column" marginTop={1} marginLeft={2}>
             {fixableIssues.map((fix, i) => (
-              <Box key={`${fix.checkId}-${fix.issue.message}`}>
+              <Box key={`${fix.packageName}-${fix.checkId}-${fix.issue.message}`}>
                 <Text color={i === cursor ? "cyan" : undefined}>
                   {i === cursor ? "❯ " : "  "}
                 </Text>
                 <Text color={i === cursor ? "cyan" : undefined}>
                   {selected.has(i) ? "[✓] " : "[ ] "}
                 </Text>
+                {isMonorepo && (
+                  <Text color="magenta" dimColor>
+                    [{shortName(fix.packageName)}]{" "}
+                  </Text>
+                )}
                 <Text color={SEVERITY_COLOR[fix.issue.severity]}>
                   {fix.issue.fix!.description}
                 </Text>
@@ -276,6 +368,11 @@ export function FixApp({
                 <Text color={r.success ? "green" : "red"}>
                   {r.success ? "✓" : "✗"}{" "}
                 </Text>
+                {isMonorepo && (
+                  <Text color="magenta" dimColor>
+                    [{shortName((r.fixable as MonorepoFixableIssue).packageName)}]{" "}
+                  </Text>
+                )}
                 <Text>{r.fixable.issue.fix!.description}</Text>
               </Box>
             ))}
@@ -305,7 +402,11 @@ export function FixApp({
           {fixableIssues.length === 0 ? (
             <Box>
               <Text color="green">✓ </Text>
-              <Text>No fixable issues found — your project looks great!</Text>
+              <Text>
+                No fixable issues found
+                {isMonorepo ? " across any package" : ""} — your project looks
+                great!
+              </Text>
             </Box>
           ) : (
             <>
@@ -316,8 +417,15 @@ export function FixApp({
                     <Text color={r.success ? "green" : "red"}>
                       {r.success ? "✓" : "✗"}{" "}
                     </Text>
+                    {isMonorepo && (
+                      <Text color="magenta" dimColor>
+                        [{shortName((r.fixable as MonorepoFixableIssue).packageName)}]{" "}
+                      </Text>
+                    )}
                     <Text>{r.fixable.issue.fix!.description}</Text>
-                    {r.duration > 0 && <Text dimColor> ({r.duration}ms)</Text>}
+                    {r.duration > 0 && (
+                      <Text dimColor> ({r.duration}ms)</Text>
+                    )}
                   </Box>
                 ))}
               </Box>

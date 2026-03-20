@@ -30,6 +30,8 @@ program
   .name("vitals")
   .description("React project health check CLI")
   .version("0.0.1")
+  .enablePositionalOptions()
+  .passThroughOptions()
   .option("-p, --path <path>", "project path to analyze", process.cwd())
   .option("-c, --checks <checks>", "comma-separated list of checks to run")
   .option("--package <name>", "scope to a single named package (monorepo only)")
@@ -146,6 +148,7 @@ program
   .description("Interactively fix issues found by vitals scan")
   .option("-p, --path <path>", "project path to analyze", process.cwd())
   .option("-c, --checks <checks>", "comma-separated list of checks to run")
+  .option("--package <name>", "scope to a single package (monorepo only)")
   .option("--all", "apply all available fixes without prompting")
   .option("--dry-run", "show what would be fixed without executing")
   .option("--verbose", "show verbose output")
@@ -158,17 +161,28 @@ program
       }
     }
 
+    const { resolveProject } = await import("./lib/resolve-package.js");
+    const resolution = await resolveProject(options.path, options.package);
+
     const { FixApp } = await import("./components/FixApp.js");
     const checks = options.checks
       ? options.checks.split(",").map((s: string) => s.trim())
       : undefined;
+
+    const projectPath = resolution.isMonorepo
+      ? resolution.targetPath ?? options.path
+      : resolution.targetPath;
+
     render(
       React.createElement(FixApp, {
-        projectPath: options.path,
+        projectPath,
         checks,
         applyAll: options.all ?? false,
         dryRun: options.dryRun ?? false,
         verbose: options.verbose ?? false,
+        isMonorepo: resolution.isMonorepo && !resolution.targetPath,
+        packagePaths: resolution.isMonorepo ? resolution.packagePaths : undefined,
+        packageNames: resolution.isMonorepo ? resolution.packageNames : undefined,
       }),
     );
   });
@@ -179,6 +193,7 @@ program
   .description("Show score history and trends over time")
   .option("-p, --path <path>", "project path to analyze", process.cwd())
   .option("-n, --last <count>", "number of recent scans to show", "20")
+  .option("--package <name>", "scope to a single package (monorepo only)")
   .option("--json", "output trend data as JSON")
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
@@ -189,12 +204,22 @@ program
       }
     }
 
+    const { resolveProject } = await import("./lib/resolve-package.js");
+    const resolution = await resolveProject(options.path, options.package);
+
+    const projectPath = resolution.isMonorepo
+      ? resolution.targetPath ?? options.path
+      : resolution.targetPath;
+
     const { TrendApp } = await import("./components/TrendApp.js");
     render(
       React.createElement(TrendApp, {
-        projectPath: options.path,
+        projectPath,
         last: parseInt(options.last, 10),
         jsonOutput: options.json ?? false,
+        isMonorepo: resolution.isMonorepo && !resolution.targetPath,
+        packagePaths: resolution.isMonorepo ? resolution.packagePaths : undefined,
+        packageNames: resolution.isMonorepo ? resolution.packageNames : undefined,
       }),
     );
   });
@@ -204,6 +229,7 @@ program
   .command("stats")
   .description("Show a quick codebase overview and project summary")
   .option("-p, --path <path>", "project path to analyze", process.cwd())
+  .option("--package <name>", "scope to a single package (monorepo only)")
   .option("--json", "output stats as JSON")
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
@@ -214,11 +240,21 @@ program
       }
     }
 
+    const { resolveProject } = await import("./lib/resolve-package.js");
+    const resolution = await resolveProject(options.path, options.package);
+
+    const projectPath = resolution.isMonorepo
+      ? resolution.targetPath ?? options.path
+      : resolution.targetPath;
+
     const { StatsApp } = await import("./components/StatsApp.js");
     render(
       React.createElement(StatsApp, {
-        projectPath: options.path,
+        projectPath,
         jsonOutput: options.json ?? false,
+        isMonorepo: resolution.isMonorepo && !resolution.targetPath,
+        packagePaths: resolution.isMonorepo ? resolution.packagePaths : undefined,
+        packageNames: resolution.isMonorepo ? resolution.packageNames : undefined,
       }),
     );
   });
@@ -252,6 +288,7 @@ program
   .command("doctor")
   .description("Diagnose project setup and configuration issues")
   .option("-p, --path <path>", "project path to analyze", process.cwd())
+  .option("--package <name>", "scope to a single package (monorepo only)")
   .option("--fix", "auto-scaffold missing configuration files")
   .option("--json", "output diagnostic results as JSON")
   .action(async (options) => {
@@ -263,12 +300,22 @@ program
       }
     }
 
+    const { resolveProject } = await import("./lib/resolve-package.js");
+    const resolution = await resolveProject(options.path, options.package);
+
+    const projectPath = resolution.isMonorepo
+      ? resolution.targetPath ?? options.path
+      : resolution.targetPath;
+
     const { DoctorApp } = await import("./components/DoctorApp.js");
     render(
       React.createElement(DoctorApp, {
-        projectPath: options.path,
+        projectPath,
         autoFix: options.fix ?? false,
         jsonOutput: options.json ?? false,
+        isMonorepo: resolution.isMonorepo && !resolution.targetPath,
+        packagePaths: resolution.isMonorepo ? resolution.packagePaths : undefined,
+        packageNames: resolution.isMonorepo ? resolution.packageNames : undefined,
       }),
     );
   });

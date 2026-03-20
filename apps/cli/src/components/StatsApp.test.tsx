@@ -7,6 +7,11 @@ vi.mock("../commands/stats.js", () => ({
   gatherStats: vi.fn(),
 }));
 
+vi.mock("../lib/resolve-package.js", async () => {
+  const actual = await vi.importActual<typeof import("../lib/resolve-package.js")>("../lib/resolve-package.js");
+  return { ...actual };
+});
+
 vi.mock("ink", async () => {
   const actual = await vi.importActual<typeof import("ink")>("ink");
   return { ...actual, useApp: () => ({ exit: vi.fn() }) };
@@ -161,5 +166,71 @@ describe("StatsApp", () => {
     const result = await renderAndFlush(<StatsApp projectPath="/test" jsonOutput={false} />);
 
     expect(result.lastFrame()).toContain("pnpm");
+  });
+
+  describe("monorepo mode", () => {
+    const packagePaths = ["/root/packages/app-a", "/root/packages/app-b"];
+    const packageNames = new Map([
+      ["/root/packages/app-a", "@scope/app-a"],
+      ["/root/packages/app-b", "app-b"],
+    ]);
+
+    it("shows monorepo scanning message with package count", () => {
+      mockGatherStats.mockReturnValue(new Promise(() => {}));
+
+      const { lastFrame } = render(
+        <StatsApp
+          projectPath="/root"
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      expect(lastFrame()).toContain("2 packages");
+    });
+
+    it("shows Monorepo Overview with per-package table", async () => {
+      mockGatherStats
+        .mockResolvedValueOnce(makeStats({ project: { ...makeStats().project, name: "app-a", framework: "react" } }))
+        .mockResolvedValueOnce(makeStats({ project: { ...makeStats().project, name: "app-b", framework: "next" } }));
+
+      const result = await renderAndFlush(
+        <StatsApp
+          projectPath="/root"
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      const output = result.lastFrame()!;
+      expect(output).toContain("Monorepo Overview");
+      expect(output).toContain("app-a");
+      expect(output).toContain("app-b");
+      expect(output).toContain("Total");
+    });
+
+    it("shows aggregate totals row", async () => {
+      mockGatherStats
+        .mockResolvedValueOnce(makeStats({ files: { total: 10, byExtension: {} }, lines: { total: 500, avgPerFile: 50 } }))
+        .mockResolvedValueOnce(makeStats({ files: { total: 20, byExtension: {} }, lines: { total: 1000, avgPerFile: 50 } }));
+
+      const result = await renderAndFlush(
+        <StatsApp
+          projectPath="/root"
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      const output = result.lastFrame()!;
+      expect(output).toContain("30");
+      expect(output).toContain("1,500");
+    });
   });
 });

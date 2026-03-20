@@ -7,6 +7,11 @@ vi.mock("../commands/doctor.js", () => ({
   runDiagnostics: vi.fn(),
 }));
 
+vi.mock("../lib/resolve-package.js", async () => {
+  const actual = await vi.importActual<typeof import("../lib/resolve-package.js")>("../lib/resolve-package.js");
+  return { ...actual };
+});
+
 vi.mock("ink", async () => {
   const actual = await vi.importActual<typeof import("ink")>("ink");
   return { ...actual, useApp: () => ({ exit: vi.fn() }) };
@@ -158,5 +163,79 @@ describe("DoctorApp", () => {
     );
 
     expect(result.lastFrame()).toContain("Failed: Disk full");
+  });
+
+  describe("monorepo mode", () => {
+    const packagePaths = ["/root/packages/app-a", "/root/packages/app-b"];
+    const packageNames = new Map([
+      ["/root/packages/app-a", "@scope/app-a"],
+      ["/root/packages/app-b", "app-b"],
+    ]);
+
+    it("shows monorepo scanning message", () => {
+      mockRunDiagnostics.mockReturnValue(new Promise(() => {}));
+
+      const { lastFrame } = render(
+        <DoctorApp
+          projectPath="/root"
+          autoFix={false}
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      expect(lastFrame()).toContain("across 2 packages");
+    });
+
+    it("shows Monorepo Setup Diagnosis heading with per-package results", async () => {
+      mockRunDiagnostics
+        .mockResolvedValueOnce([makeResult({ id: "git-a", label: "Gitignore", status: "pass", message: "OK" })])
+        .mockResolvedValueOnce([makeResult({ id: "git-b", label: "Gitignore", status: "fail", message: "Missing" })]);
+
+      const result = await renderAndFlush(
+        <DoctorApp
+          projectPath="/root"
+          autoFix={false}
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      const output = result.lastFrame()!;
+      expect(output).toContain("Monorepo Setup Diagnosis");
+      expect(output).toContain("app-a");
+      expect(output).toContain("app-b");
+    });
+
+    it("shows aggregate summary counts across packages", async () => {
+      mockRunDiagnostics
+        .mockResolvedValueOnce([
+          makeResult({ id: "a1", status: "pass" }),
+          makeResult({ id: "a2", status: "fail", message: "x" }),
+        ])
+        .mockResolvedValueOnce([
+          makeResult({ id: "b1", status: "warn", message: "w" }),
+        ]);
+
+      const result = await renderAndFlush(
+        <DoctorApp
+          projectPath="/root"
+          autoFix={false}
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      const output = result.lastFrame()!;
+      expect(output).toContain("1 passed");
+      expect(output).toContain("1 warnings");
+      expect(output).toContain("1 failed");
+    });
   });
 });

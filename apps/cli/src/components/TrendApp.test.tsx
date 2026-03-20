@@ -8,6 +8,11 @@ vi.mock("../lib/history.js", () => ({
   detectRegressions: vi.fn(() => []),
 }));
 
+vi.mock("../lib/resolve-package.js", async () => {
+  const actual = await vi.importActual<typeof import("../lib/resolve-package.js")>("../lib/resolve-package.js");
+  return { ...actual };
+});
+
 vi.mock("ink", async () => {
   const actual = await vi.importActual<typeof import("ink")>("ink");
   return { ...actual, useApp: () => ({ exit: vi.fn() }) };
@@ -179,5 +184,73 @@ describe("TrendApp", () => {
     );
 
     expect(result.lastFrame()).toContain("1 scan recorded");
+  });
+
+  describe("monorepo mode", () => {
+    const packagePaths = ["/root/packages/app-a", "/root/packages/app-b"];
+    const packageNames = new Map([
+      ["/root/packages/app-a", "@scope/app-a"],
+      ["/root/packages/app-b", "app-b"],
+    ]);
+
+    it("shows no-history message when no packages have history", async () => {
+      mockLoadHistory.mockReturnValue(null);
+
+      const result = await renderAndFlush(
+        <TrendApp
+          projectPath="/root"
+          last={10}
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      expect(result.lastFrame()).toContain("No scan history found for any package");
+    });
+
+    it("shows Monorepo Score Trends heading with per-package sparklines", async () => {
+      mockLoadHistory
+        .mockReturnValueOnce(makeTrendHistory([makeTrendEntry(80), makeTrendEntry(85)], "app-a"))
+        .mockReturnValueOnce(makeTrendHistory([makeTrendEntry(70), makeTrendEntry(75)], "app-b"));
+
+      const result = await renderAndFlush(
+        <TrendApp
+          projectPath="/root"
+          last={10}
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      const output = result.lastFrame()!;
+      expect(output).toContain("Monorepo Score Trends");
+      expect(output).toContain("app-a");
+      expect(output).toContain("app-b");
+    });
+
+    it("shows count of packages with vs without history", async () => {
+      mockLoadHistory
+        .mockReturnValueOnce(makeTrendHistory([makeTrendEntry(80)], "app-a"))
+        .mockReturnValueOnce(null);
+
+      const result = await renderAndFlush(
+        <TrendApp
+          projectPath="/root"
+          last={10}
+          jsonOutput={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      const output = result.lastFrame()!;
+      expect(output).toContain("1 of 2 packages have history");
+      expect(output).toContain("1 package with no history yet");
+    });
   });
 });

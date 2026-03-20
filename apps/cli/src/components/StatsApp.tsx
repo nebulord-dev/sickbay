@@ -3,16 +3,20 @@ import { Box, Text, useApp } from "ink";
 import Spinner from "ink-spinner";
 import { Header } from "./Header.js";
 import { gatherStats, type ProjectStats } from "../commands/stats.js";
-
-/**
- * StatsApp component is responsible for gathering and displaying various statistics about the project.
- * It shows an overview of the codebase, including file counts, lines of code, dependencies, and git info.
- * If jsonOutput is true, it outputs the stats as JSON instead of rendering the UI.
- */
+import { shortName } from "../lib/resolve-package.js";
 
 interface StatsAppProps {
   projectPath: string;
   jsonOutput: boolean;
+  isMonorepo?: boolean;
+  packagePaths?: string[];
+  packageNames?: Map<string, string>;
+}
+
+interface PackageStats {
+  name: string;
+  path: string;
+  stats: ProjectStats;
 }
 
 const FRAMEWORK_LABELS: Record<string, string> = {
@@ -76,57 +80,7 @@ function ToolBadges({ project }: { project: ProjectStats["project"] }) {
   );
 }
 
-export function StatsApp({ projectPath, jsonOutput }: StatsAppProps) {
-  const { exit } = useApp();
-  const [stats, setStats] = useState<ProjectStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    gatherStats(projectPath)
-      .then((s) => {
-        setStats(s);
-        setLoading(false);
-
-        if (jsonOutput) {
-          process.stdout.write(JSON.stringify(s, null, 2) + "\n");
-        }
-
-        setTimeout(() => exit(), 100);
-      })
-      .catch((err) => {
-        setError(err instanceof Error ? err.message : String(err));
-        setLoading(false);
-        setTimeout(() => exit(), 100);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (loading) {
-    return (
-      <Box flexDirection="column" padding={1}>
-        <Header />
-        <Text>
-          <Text color="green">
-            <Spinner type="dots" />
-          </Text>{" "}
-          Scanning project...
-        </Text>
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box flexDirection="column" padding={1}>
-        <Header />
-        <Text color="red">✗ Error: {error}</Text>
-      </Box>
-    );
-  }
-
-  if (jsonOutput || !stats) return null;
-
+function SingleProjectStats({ stats }: { stats: ProjectStats }) {
   const {
     project,
     files,
@@ -154,11 +108,7 @@ export function StatsApp({ projectPath, jsonOutput }: StatsAppProps) {
     project.dependencies["react"] ?? project.devDependencies["react"];
 
   return (
-    <Box flexDirection="column" padding={1}>
-      <Header projectName={project.name} />
-
-      <Text bold>Codebase Overview</Text>
-
+    <Box flexDirection="column">
       <Box flexDirection="column" marginTop={1} marginLeft={2}>
         <StatRow
           label="Framework"
@@ -237,6 +187,170 @@ export function StatsApp({ projectPath, jsonOutput }: StatsAppProps) {
           </Box>
         </>
       )}
+    </Box>
+  );
+}
+
+export function StatsApp({
+  projectPath,
+  jsonOutput,
+  isMonorepo,
+  packagePaths,
+  packageNames,
+}: StatsAppProps) {
+  const { exit } = useApp();
+  const [stats, setStats] = useState<ProjectStats | null>(null);
+  const [packageStats, setPackageStats] = useState<PackageStats[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isMonorepo && packagePaths && packageNames) {
+      Promise.all(
+        packagePaths.map(async (pkgPath) => {
+          const name = packageNames.get(pkgPath) ?? pkgPath;
+          const s = await gatherStats(pkgPath);
+          return { name, path: pkgPath, stats: s };
+        }),
+      )
+        .then((all) => {
+          setPackageStats(all);
+          setLoading(false);
+
+          if (jsonOutput) {
+            const output = all.map((p) => ({
+              package: p.name,
+              path: p.path,
+              stats: p.stats,
+            }));
+            process.stdout.write(JSON.stringify(output, null, 2) + "\n");
+          }
+
+          setTimeout(() => exit(), 100);
+        })
+        .catch((err) => {
+          setError(err instanceof Error ? err.message : String(err));
+          setLoading(false);
+          setTimeout(() => exit(), 100);
+        });
+    } else {
+      gatherStats(projectPath)
+        .then((s) => {
+          setStats(s);
+          setLoading(false);
+
+          if (jsonOutput) {
+            process.stdout.write(JSON.stringify(s, null, 2) + "\n");
+          }
+
+          setTimeout(() => exit(), 100);
+        })
+        .catch((err) => {
+          setError(err instanceof Error ? err.message : String(err));
+          setLoading(false);
+          setTimeout(() => exit(), 100);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (loading) {
+    return (
+      <Box flexDirection="column" padding={1}>
+        <Header />
+        <Text>
+          <Text color="green">
+            <Spinner type="dots" />
+          </Text>{" "}
+          Scanning project
+          {isMonorepo ? ` (${packagePaths?.length} packages)` : ""}...
+        </Text>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box flexDirection="column" padding={1}>
+        <Header />
+        <Text color="red">✗ Error: {error}</Text>
+      </Box>
+    );
+  }
+
+  if (jsonOutput) return null;
+
+  // Monorepo: show per-package stats with summary table
+  if (isMonorepo && packageStats.length > 0) {
+    const totals = packageStats.reduce(
+      (acc, p) => ({
+        files: acc.files + p.stats.files.total,
+        lines: acc.lines + p.stats.lines.total,
+        deps: acc.deps + p.stats.dependencies.total,
+        tests: acc.tests + p.stats.testFiles,
+      }),
+      { files: 0, lines: 0, deps: 0, tests: 0 },
+    );
+
+    return (
+      <Box flexDirection="column" padding={1}>
+        <Header />
+        <Text bold>Monorepo Overview</Text>
+        <Text dimColor>
+          {packageStats.length} packages
+        </Text>
+
+        <Box flexDirection="column" marginTop={1} marginLeft={2}>
+          <Box>
+            <Text bold>{"Package".padEnd(24)}</Text>
+            <Text bold>{"Framework".padEnd(14)}</Text>
+            <Text bold>{"Files".padEnd(8)}</Text>
+            <Text bold>{"LOC".padEnd(10)}</Text>
+            <Text bold>{"Deps".padEnd(8)}</Text>
+            <Text bold>Tests</Text>
+          </Box>
+          <Text dimColor>{"━".repeat(72)}</Text>
+          {packageStats.map((pkg) => {
+            const fw =
+              FRAMEWORK_LABELS[pkg.stats.project.framework] ??
+              pkg.stats.project.framework;
+            return (
+              <Box key={pkg.path}>
+                <Text color="cyan">
+                  {shortName(pkg.name).padEnd(24)}
+                </Text>
+                <Text>{fw.padEnd(14)}</Text>
+                <Text>{String(pkg.stats.files.total).padEnd(8)}</Text>
+                <Text>
+                  {pkg.stats.lines.total.toLocaleString().padEnd(10)}
+                </Text>
+                <Text>{String(pkg.stats.dependencies.total).padEnd(8)}</Text>
+                <Text>{pkg.stats.testFiles}</Text>
+              </Box>
+            );
+          })}
+          <Text dimColor>{"━".repeat(72)}</Text>
+          <Box>
+            <Text bold>{"Total".padEnd(24)}</Text>
+            <Text>{"".padEnd(14)}</Text>
+            <Text bold>{String(totals.files).padEnd(8)}</Text>
+            <Text bold>{totals.lines.toLocaleString().padEnd(10)}</Text>
+            <Text bold>{String(totals.deps).padEnd(8)}</Text>
+            <Text bold>{totals.tests}</Text>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Single project
+  if (!stats) return null;
+
+  return (
+    <Box flexDirection="column" padding={1}>
+      <Header projectName={stats.project.name} />
+      <Text bold>Codebase Overview</Text>
+      <SingleProjectStats stats={stats} />
     </Box>
   );
 }

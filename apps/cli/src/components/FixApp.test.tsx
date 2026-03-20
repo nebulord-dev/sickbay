@@ -13,6 +13,11 @@ vi.mock("../commands/fix.js", () => ({
   executeFix: vi.fn(),
 }));
 
+vi.mock("../lib/resolve-package.js", async () => {
+  const actual = await vi.importActual<typeof import("../lib/resolve-package.js")>("../lib/resolve-package.js");
+  return { ...actual };
+});
+
 vi.mock("ink", async () => {
   const actual = await vi.importActual<typeof import("ink")>("ink");
   return {
@@ -343,5 +348,74 @@ describe("FixApp", () => {
     );
 
     expect(result.lastFrame()).toContain("1/1");
+  });
+
+  describe("monorepo mode", () => {
+    const packagePaths = ["/root/packages/app-a", "/root/packages/app-b"];
+    const packageNames = new Map([
+      ["/root/packages/app-a", "@scope/app-a"],
+      ["/root/packages/app-b", "app-b"],
+    ]);
+
+    it("shows monorepo scanning message with package count", () => {
+      mockRunVitals.mockReturnValue(new Promise(() => {}));
+
+      const { lastFrame } = render(
+        <FixApp
+          projectPath="/root"
+          applyAll={false}
+          dryRun={false}
+          verbose={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      expect(lastFrame()).toContain("across 2 packages");
+    });
+
+    it("shows no-fixable message for clean monorepo", async () => {
+      mockRunVitals.mockResolvedValue(makeReport() as never);
+      mockCollectFixableIssues.mockReturnValue([]);
+
+      const result = await renderAndFlush(
+        <FixApp
+          projectPath="/root"
+          applyAll={false}
+          dryRun={false}
+          verbose={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      expect(result.lastFrame()).toContain("No fixable issues found");
+      expect(result.lastFrame()).toContain("across any package");
+    });
+
+    it("shows package name labels in selection phase", async () => {
+      mockRunVitals.mockResolvedValue(makeReport() as never);
+      mockCollectFixableIssues
+        .mockReturnValueOnce([makeFixableIssue()])
+        .mockReturnValueOnce([]);
+
+      const result = await renderAndFlush(
+        <FixApp
+          projectPath="/root"
+          applyAll={false}
+          dryRun={false}
+          verbose={false}
+          isMonorepo={true}
+          packagePaths={packagePaths}
+          packageNames={packageNames}
+        />,
+      );
+
+      const output = result.lastFrame()!;
+      expect(output).toContain("Select fixes to apply");
+      expect(output).toContain("[app-a]");
+    });
   });
 });
