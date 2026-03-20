@@ -30,13 +30,9 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 
 ### General
 
-- `[Task]` Rename Vitals to `steth` — `vitals` is taken on npm; update package names, CLI command, imports, branding, README, and registry config (`@r1-development/steth`)
 - `[Task]` Scan the vitals project with the vitals CLI — run `vitals` against this monorepo and review the results; use findings to identify gaps and inform future work
 
 ### Features
-
-- `[UI/UX]` Add dependency update totals to the top of the Dependencies tab — show aggregate counts of major, minor, and patch updates available as summary stats at the top of the tab before the individual package list
-- `[Feature]` Show pnpm overrides in the Dependencies tab — detect `pnpm.overrides` (and npm `overrides` / yarn `resolutions`) in `package.json` and surface them in the web dashboard's Dependencies tab; show which packages are pinned, what version they're forced to, and why it matters (e.g. security patch, compatibility fix); helps teams track overrides that were added as temporary fixes and never cleaned up
 
 - `[Feature]` Claude Code skill for Vitals — a static, evergreen skill file covering: where the report lives (`.vitals/last-report.json`), the JSON schema shape (`VitalsReport`, `CheckResult`, `Issue`), score interpretation (0–100, 80+ green, 60–79 yellow, <60 red), severity levels (critical/warning/info), and how to act on fix suggestions (`issue.fix.command`); content is deliberately high-level so it never goes stale; ship as a doc (`docs/claude-skill.md`) and optionally as `vitals claude` command that writes it to `.claude/skills/vitals.md` in the target project
 - `[Feature]` CI/CD Integration Guide — pre-built GitHub Actions and GitLab CI templates, auto-comment PR summaries with score deltas, fail builds on critical thresholds; a basic single-project template can be built now, but monorepo support will require matrix build strategies and per-package runs — plan for a v2 of the templates once monorepo detection lands
@@ -67,8 +63,6 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Feature]` TUI resizable panels — hotkey-resize panels (e.g. `[` / `]` to shrink/grow focused panel width) and optionally persist the layout to `.vitalsrc`; unlocks the tmux/k9s feel where users configure their workspace; blocked by needing `.vitalsrc` config support
 - `[Feature]` TUI diff mode — `vitals tui --diff <branch>` runs the scan and compares results against the named branch; the Health panel shows two score columns (current vs branch) with delta indicators per check; the Score panel shows overall delta prominently; complements the existing trend view but is branch-aware rather than time-based; pairs naturally with the planned `vitals diff` command
 - `[UI/UX]` Dependency Tree Visualization — interactive graph of dependency tree highlighting vulnerabilities, outdated packages, and circular imports
-- `[UI/UX]` Light theme support — add a light theme to the web dashboard with a toggle to switch between light and dark; dark remains the default
-
 ### Testing
 
 - `[Testing]` Extract fixtures to a dedicated private `vitals-test-fixtures` repo — **primary driver is security compliance**: `node-api` contains intentional hardcoded secrets and vulnerable dependencies that will fail GitHub Enterprise security scanning and block Vitals from reaching any internal main branch or environment; a private repo is not subject to the same scanning gates; secondary benefits: (1) CI clones the fixtures repo on demand instead of bundling it; (2) fixtures can have their own permissive security policy since issues are intentional by design; (3) versioned independently — vitals CI can pin to a specific fixtures tag; migration path is clean since `fixtures/` is already a separate pnpm workspace — extract the directory, `git init`, push to new private repo, update CI workflow to clone it, remove `fixtures/` from the vitals workspace; **this should be done before Vitals is pushed to any internal infrastructure**
@@ -101,10 +95,16 @@ Phase 5 — vitals-py + Unified ░░░░░░░░░░░░░░░░
 - `[Quality]` Add quality checks to repo PRs — run vitals checks as part of PR CI; no GitHub Actions workflows exist yet
 - `[Quality]` Switch ESLint to oxc — replace the current ESLint setup with oxc (oxlint) for faster linting; oxc is written in Rust and is orders of magnitude faster than ESLint; update root lint config, remove ESLint dependencies, and update `turbo run lint` scripts across all packages
 
+## Icebox
+
+- `[Task]` Rename Vitals to `steth` — `vitals` is taken on npm; update package names, CLI command, imports, branding, README, and registry config (`@r1-development/steth`)
+- `[UI/UX]` Light theme support — add a light theme to the web dashboard with a toggle to switch between light and dark; dark remains the default
+
 ## In Progress
 
 ## Done
 
+- `[UI/UX]` Dependency update totals + package overrides in web Dependencies tab — totals banner shows major/minor/patch pill counts; collapsible overrides section shows pnpm.overrides/npm overrides/yarn resolutions; outdated runner now classifies updates as major/minor/patch; `ProjectInfo.overrides` field added to core types
 - `[Feature]` Monorepo-aware subcommands (`doctor`, `stats`, `trend`, `fix`) — added `--package` flag and auto-detection to all subcommands; shared `resolveProject` helper; per-package grouped output for doctor/stats/trend/fix; 390 tests passing
 
 - `[Feature]` Auto-save last report to `.vitals/last-report.json` — writes full JSON report after every scan (App.tsx, index.ts --json path, TuiApp.tsx); always overwrites; silent fail; discoverable by Claude Code and other tools without any flags

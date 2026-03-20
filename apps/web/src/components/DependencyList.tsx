@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { VitalsReport } from '@vitals/core';
 
 interface DependencyStatus {
@@ -7,7 +8,7 @@ interface DependencyStatus {
   unused: boolean;
   missing: boolean;
   outdatedTo?: string;
-  majorBump: boolean;
+  updateType?: 'major' | 'minor' | 'patch';
 }
 
 function buildDependencyStatuses(report: VitalsReport): DependencyStatus[] {
@@ -16,7 +17,7 @@ function buildDependencyStatuses(report: VitalsReport): DependencyStatus[] {
   // Collect flags from check issues
   const unused = new Set<string>();
   const missing = new Set<string>();
-  const outdated = new Map<string, { to: string; major: boolean }>();
+  const outdated = new Map<string, { to: string; updateType: 'major' | 'minor' | 'patch' }>();
 
   for (const check of report.checks) {
     for (const issue of check.issues) {
@@ -30,11 +31,13 @@ function buildDependencyStatuses(report: VitalsReport): DependencyStatus[] {
       const missingMatch = msg.match(/^Missing dependency:\s+(.+)/i);
       if (missingMatch) missing.add(missingMatch[1].trim());
 
-      // outdated: "react: 17.0.2 → 18.0.0"
-      const ncuMatch = msg.match(/^([^:]+):\s*([^\s]+)\s*→\s*([^\s]+)/);
+      // outdated: "react: 17.0.2 → 18.0.0 (major)" or legacy "react: 17.0.2 → 18.0.0"
+      const ncuMatch = msg.match(/^([^:]+):\s*([^\s]+)\s*→\s*([^\s]+?)(?:\s*\((major|minor|patch)\))?$/);
       if (ncuMatch) {
-        const [, pkgName, , to] = ncuMatch;
-        outdated.set(pkgName.trim(), { to: to.trim(), major: issue.severity === 'warning' });
+        const [, pkgName, , to, type] = ncuMatch;
+        const updateType = (type as 'major' | 'minor' | 'patch') ??
+          (issue.severity === 'warning' ? 'major' : 'minor');
+        outdated.set(pkgName.trim(), { to: to.trim(), updateType });
       }
     }
   }
@@ -47,7 +50,7 @@ function buildDependencyStatuses(report: VitalsReport): DependencyStatus[] {
       unused: unused.has(name),
       missing: missing.has(name),
       outdatedTo: od?.to,
-      majorBump: od?.major ?? false,
+      updateType: od?.updateType,
     });
   }
   for (const [name, version] of Object.entries(devDependencies)) {
@@ -57,7 +60,7 @@ function buildDependencyStatuses(report: VitalsReport): DependencyStatus[] {
       unused: unused.has(name),
       missing: missing.has(name),
       outdatedTo: od?.to,
-      majorBump: od?.major ?? false,
+      updateType: od?.updateType,
     });
   }
 
@@ -70,6 +73,88 @@ function buildDependencyStatuses(report: VitalsReport): DependencyStatus[] {
   });
 }
 
+function UpdateTotalsBanner({ deps }: { deps: DependencyStatus[] }) {
+  const counts = { major: 0, minor: 0, patch: 0 };
+  for (const dep of deps) {
+    if (dep.updateType) counts[dep.updateType]++;
+  }
+  const total = counts.major + counts.minor + counts.patch;
+
+  if (total === 0) {
+    return (
+      <div className="mb-4 px-4 py-3 rounded-lg bg-green-900/20 border border-green-800/50">
+        <span className="text-sm text-green-400">All dependencies up to date</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-4 flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-900/50 border border-gray-800">
+      <span className="text-sm text-gray-400">Updates available:</span>
+      {counts.major > 0 && (
+        <span className="text-xs px-2.5 py-1 rounded-full bg-orange-900/40 text-orange-400 border border-orange-800 font-medium">
+          {counts.major} major
+        </span>
+      )}
+      {counts.minor > 0 && (
+        <span className="text-xs px-2.5 py-1 rounded-full bg-blue-900/30 text-blue-400 border border-blue-800 font-medium">
+          {counts.minor} minor
+        </span>
+      )}
+      {counts.patch > 0 && (
+        <span className="text-xs px-2.5 py-1 rounded-full bg-gray-800 text-gray-400 border border-gray-700 font-medium">
+          {counts.patch} patch
+        </span>
+      )}
+    </div>
+  );
+}
+
+function OverridesSection({ overrides }: { overrides: Record<string, string> }) {
+  const entries = Object.entries(overrides);
+  const [expanded, setExpanded] = useState(entries.length <= 3);
+
+  if (entries.length === 0) return null;
+
+  const visible = expanded ? entries : entries.slice(0, 3);
+
+  return (
+    <div className="mb-4 rounded-lg border border-gray-800 bg-gray-900/30 overflow-hidden">
+      <div className="px-4 py-2.5 flex items-center gap-2 border-b border-gray-800/50">
+        <span className="text-sm font-medium text-gray-300">Package Overrides</span>
+        <span className="text-xs px-1.5 py-0.5 rounded-sm bg-gray-700 text-gray-400">
+          {entries.length}
+        </span>
+      </div>
+      <div className="px-4 py-2">
+        {visible.map(([pkg, version]) => (
+          <div key={pkg} className="flex items-center gap-2 py-1">
+            <span className="font-mono text-sm text-gray-300">{pkg}</span>
+            <span className="text-gray-600">→</span>
+            <span className="font-mono text-sm text-yellow-500">{version}</span>
+          </div>
+        ))}
+        {!expanded && entries.length > 3 && (
+          <button
+            onClick={() => setExpanded(true)}
+            className="text-xs text-blue-400 hover:text-blue-300 mt-1 cursor-pointer"
+          >
+            Show all {entries.length} overrides
+          </button>
+        )}
+        {expanded && entries.length > 3 && (
+          <button
+            onClick={() => setExpanded(false)}
+            className="text-xs text-blue-400 hover:text-blue-300 mt-1 cursor-pointer"
+          >
+            Show fewer
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   report: VitalsReport;
 }
@@ -80,6 +165,12 @@ export function DependencyList({ report }: Props) {
 
   return (
     <div>
+      <UpdateTotalsBanner deps={deps} />
+
+      {report.projectInfo.overrides && (
+        <OverridesSection overrides={report.projectInfo.overrides} />
+      )}
+
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-white">
           Dependencies
@@ -169,10 +260,22 @@ function StatusBadges({ dep }: { dep: DependencyStatus }) {
       </span>
     );
   }
-  if (dep.outdatedTo) {
+  if (dep.updateType === 'major') {
     badges.push(
-      <span key="outdated" className={`text-xs px-2 py-0.5 rounded-full border ${dep.majorBump ? 'bg-orange-900/40 text-orange-400 border-orange-800' : 'bg-blue-900/30 text-blue-400 border-blue-800'}`}>
-        {dep.majorBump ? 'major update' : 'outdated'}
+      <span key="outdated" className="text-xs px-2 py-0.5 rounded-full bg-orange-900/40 text-orange-400 border border-orange-800">
+        major update
+      </span>
+    );
+  } else if (dep.updateType === 'minor') {
+    badges.push(
+      <span key="outdated" className="text-xs px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-800">
+        minor update
+      </span>
+    );
+  } else if (dep.updateType === 'patch') {
+    badges.push(
+      <span key="outdated" className="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">
+        patch update
       </span>
     );
   }

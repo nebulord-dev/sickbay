@@ -200,6 +200,35 @@ describe('detectProject', () => {
     const info = await detectProject('/project');
     expect(info.packageManager).toBe('pnpm');
   });
+
+  it('returns pnpm overrides when pnpm.overrides is present', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ pnpm: { overrides: { minimatch: '>=10.0.0', rollup: '>=4.0.0' } } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.overrides).toEqual({ minimatch: '>=10.0.0', rollup: '>=4.0.0' });
+  });
+
+  it('returns npm overrides when overrides is present', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ overrides: { lodash: '^4.17.21' } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.overrides).toEqual({ lodash: '^4.17.21' });
+  });
+
+  it('returns yarn resolutions when resolutions is present', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ resolutions: { webpack: '5.90.0' } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.overrides).toEqual({ webpack: '5.90.0' });
+  });
+
+  it('returns undefined overrides when none are present', async () => {
+    const info = await detectProject('/project');
+    expect(info.overrides).toBeUndefined();
+  });
 });
 
 describe('detectPackageManager', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, fireEvent } from '@testing-library/react';
 import { DependencyList } from './DependencyList.js';
 import type { VitalsReport } from '@vitals/core';
 
@@ -73,23 +73,35 @@ describe('DependencyList', () => {
       checks: [{
         id: 'outdated', name: 'Outdated', category: 'dependencies', score: 70,
         status: 'warning', toolsUsed: ['ncu'], duration: 0,
-        issues: [{ severity: 'warning', message: 'lodash: 4.0.0 → 4.17.21', reportedBy: ['ncu'] }],
+        issues: [{ severity: 'info', message: 'lodash: 4.0.0 → 4.17.21 (patch)', reportedBy: ['ncu'] }],
       }],
     });
     render(<DependencyList report={report} />);
     expect(screen.getByText('→ 4.17.21')).toBeInTheDocument();
   });
 
-  it('shows "outdated" badge for a minor/patch update', () => {
+  it('shows "patch update" badge for a patch bump', () => {
     const report = makeReport({
       checks: [{
         id: 'outdated', name: 'Outdated', category: 'dependencies', score: 70,
         status: 'warning', toolsUsed: ['ncu'], duration: 0,
-        issues: [{ severity: 'warning', message: 'lodash: 4.0.0 → 4.17.21', reportedBy: ['ncu'] }],
+        issues: [{ severity: 'info', message: 'lodash: 4.0.0 → 4.0.1 (patch)', reportedBy: ['ncu'] }],
       }],
     });
     render(<DependencyList report={report} />);
-    expect(screen.getByText('outdated')).toBeInTheDocument();
+    expect(screen.getByText('patch update')).toBeInTheDocument();
+  });
+
+  it('shows "minor update" badge for a minor bump', () => {
+    const report = makeReport({
+      checks: [{
+        id: 'outdated', name: 'Outdated', category: 'dependencies', score: 70,
+        status: 'warning', toolsUsed: ['ncu'], duration: 0,
+        issues: [{ severity: 'info', message: 'lodash: 4.0.0 → 4.1.0 (minor)', reportedBy: ['ncu'] }],
+      }],
+    });
+    render(<DependencyList report={report} />);
+    expect(screen.getByText('minor update')).toBeInTheDocument();
   });
 
   it('shows "major update" badge for a major version bump', () => {
@@ -97,7 +109,18 @@ describe('DependencyList', () => {
       checks: [{
         id: 'outdated', name: 'Outdated', category: 'dependencies', score: 50,
         status: 'warning', toolsUsed: ['ncu'], duration: 0,
-        // severity warning maps to majorBump: true
+        issues: [{ severity: 'warning', message: 'react: 17.0.0 → 18.0.0 (major)', reportedBy: ['ncu'] }],
+      }],
+    });
+    render(<DependencyList report={report} />);
+    expect(screen.getByText('major update')).toBeInTheDocument();
+  });
+
+  it('falls back to severity-based detection for legacy messages without type suffix', () => {
+    const report = makeReport({
+      checks: [{
+        id: 'outdated', name: 'Outdated', category: 'dependencies', score: 50,
+        status: 'warning', toolsUsed: ['ncu'], duration: 0,
         issues: [{ severity: 'warning', message: 'react: 17.0.0 → 18.0.0', reportedBy: ['ncu'] }],
       }],
     });
@@ -140,5 +163,89 @@ describe('DependencyList', () => {
     const rows = container.querySelectorAll('tbody tr');
     // react (has issue) should come before lodash (clean)
     expect(rows[0].textContent).toContain('react');
+  });
+
+  describe('UpdateTotalsBanner', () => {
+    it('shows "All dependencies up to date" when no outdated deps', () => {
+      render(<DependencyList report={makeReport()} />);
+      expect(screen.getByText('All dependencies up to date')).toBeInTheDocument();
+    });
+
+    it('shows correct major/minor/patch counts', () => {
+      const report = makeReport({
+        checks: [{
+          id: 'outdated', name: 'Outdated', category: 'dependencies', score: 50,
+          status: 'warning', toolsUsed: ['ncu'], duration: 0,
+          issues: [
+            { severity: 'warning', message: 'react: 17.0.0 → 18.0.0 (major)', reportedBy: ['ncu'] },
+            { severity: 'info', message: 'lodash: 4.0.0 → 4.1.0 (minor)', reportedBy: ['ncu'] },
+            { severity: 'info', message: 'typescript: 5.0.0 → 5.0.1 (patch)', reportedBy: ['ncu'] },
+          ],
+        }],
+      });
+      render(<DependencyList report={report} />);
+      expect(screen.getByText('1 major')).toBeInTheDocument();
+      expect(screen.getByText('1 minor')).toBeInTheDocument();
+      expect(screen.getByText('1 patch')).toBeInTheDocument();
+    });
+
+    it('omits zero-count pills', () => {
+      const report = makeReport({
+        checks: [{
+          id: 'outdated', name: 'Outdated', category: 'dependencies', score: 70,
+          status: 'warning', toolsUsed: ['ncu'], duration: 0,
+          issues: [
+            { severity: 'info', message: 'lodash: 4.0.0 → 4.0.1 (patch)', reportedBy: ['ncu'] },
+          ],
+        }],
+      });
+      render(<DependencyList report={report} />);
+      expect(screen.queryByText(/major/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/minor/)).not.toBeInTheDocument();
+      expect(screen.getByText('1 patch')).toBeInTheDocument();
+    });
+  });
+
+  describe('OverridesSection', () => {
+    it('renders overrides when present in projectInfo', () => {
+      const report = makeReport({
+        projectInfo: {
+          ...makeReport().projectInfo,
+          overrides: { minimatch: '>=10.0.0', rollup: '>=4.0.0' },
+        },
+      });
+      render(<DependencyList report={report} />);
+      expect(screen.getByText('Package Overrides')).toBeInTheDocument();
+      expect(screen.getByText('minimatch')).toBeInTheDocument();
+      expect(screen.getByText('>=10.0.0')).toBeInTheDocument();
+      expect(screen.getByText('2')).toBeInTheDocument(); // count badge
+    });
+
+    it('does not render overrides section when no overrides', () => {
+      render(<DependencyList report={makeReport()} />);
+      expect(screen.queryByText('Package Overrides')).not.toBeInTheDocument();
+    });
+
+    it('collapses overrides when more than 3 and shows toggle', () => {
+      const report = makeReport({
+        projectInfo: {
+          ...makeReport().projectInfo,
+          overrides: { a: '1', b: '2', c: '3', d: '4', e: '5' },
+        },
+      });
+      render(<DependencyList report={report} />);
+      expect(screen.getByText(/Show all 5 overrides/)).toBeInTheDocument();
+      // Only first 3 visible initially
+      expect(screen.getByText('a')).toBeInTheDocument();
+      expect(screen.getByText('b')).toBeInTheDocument();
+      expect(screen.getByText('c')).toBeInTheDocument();
+      expect(screen.queryByText('d')).not.toBeInTheDocument();
+
+      // Expand
+      fireEvent.click(screen.getByText(/Show all 5 overrides/));
+      expect(screen.getByText('d')).toBeInTheDocument();
+      expect(screen.getByText('e')).toBeInTheDocument();
+      expect(screen.getByText('Show fewer')).toBeInTheDocument();
+    });
   });
 });

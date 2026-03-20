@@ -22,6 +22,12 @@ export async function detectProject(projectPath: string): Promise<ProjectInfo> {
   const devDeps: Record<string, string> = pkg.devDependencies ?? {};
   const allDeps = { ...deps, ...devDeps };
 
+  const rawOverrides: Record<string, string> | undefined =
+    pkg.pnpm?.overrides ?? pkg.overrides ?? pkg.resolutions ?? undefined;
+  const overrides = rawOverrides && Object.keys(rawOverrides).length > 0
+    ? rawOverrides
+    : undefined;
+
   return {
     name: pkg.name ?? "unknown",
     version: pkg.version ?? "0.0.0",
@@ -41,6 +47,7 @@ export async function detectProject(projectPath: string): Promise<ProjectInfo> {
     totalDependencies: Object.keys(allDeps).length,
     dependencies: deps,
     devDependencies: devDeps,
+    overrides,
   };
 }
 

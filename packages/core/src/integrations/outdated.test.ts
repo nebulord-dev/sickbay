@@ -77,7 +77,7 @@ describe('OutdatedRunner', () => {
     expect(result.issues[0].message).toContain('4.17.21');
   });
 
-  it('marks major version bumps as warning severity', async () => {
+  it('marks major version bumps as warning severity with (major) suffix', async () => {
     mockExeca.mockResolvedValue({
       stdout: makeOutdated({ react: { current: '17.0.2', latest: '18.0.0' } }),
     } as never);
@@ -85,9 +85,21 @@ describe('OutdatedRunner', () => {
     const result = await runner.run('/project');
 
     expect(result.issues[0].severity).toBe('warning');
+    expect(result.issues[0].message).toContain('(major)');
   });
 
-  it('marks minor/patch bumps as info severity', async () => {
+  it('marks minor bumps as info severity with (minor) suffix', async () => {
+    mockExeca.mockResolvedValue({
+      stdout: makeOutdated({ lodash: { current: '4.0.0', latest: '4.1.0' } }),
+    } as never);
+
+    const result = await runner.run('/project');
+
+    expect(result.issues[0].severity).toBe('info');
+    expect(result.issues[0].message).toContain('(minor)');
+  });
+
+  it('marks patch bumps as info severity with (patch) suffix', async () => {
     mockExeca.mockResolvedValue({
       stdout: makeOutdated({ lodash: { current: '4.17.10', latest: '4.17.21' } }),
     } as never);
@@ -95,6 +107,7 @@ describe('OutdatedRunner', () => {
     const result = await runner.run('/project');
 
     expect(result.issues[0].severity).toBe('info');
+    expect(result.issues[0].message).toContain('(patch)');
   });
 
   it('returns fail when more than 15 packages are outdated', async () => {

@@ -43,10 +43,10 @@ export class OutdatedRunner extends BaseRunner {
 
       const entries = parseOutdated(stdout);
       const issues: Issue[] = entries.map((e) => {
-        const isMajor = getMajor(e.current) < getMajor(e.latest);
+        const updateType = getUpdateType(e.current, e.latest);
         return {
-          severity: isMajor ? 'warning' : 'info',
-          message: `${e.name}: ${e.current} → ${e.latest}`,
+          severity: updateType === 'major' ? 'warning' : 'info',
+          message: `${e.name}: ${e.current} → ${e.latest} (${updateType})`,
           fix: {
             description: `Update ${e.name} to ${e.latest}`,
             command: `${pm} update ${e.name}`,
@@ -104,8 +104,25 @@ function parseOutdated(stdout: string): OutdatedEntry[] {
   }
 }
 
+function getVersionParts(version: string): [number, number, number] {
+  if (!version) return [0, 0, 0];
+  const cleaned = version.replace(/^[^0-9]*/, '');
+  const parts = cleaned.split('.');
+  return [
+    parseInt(parts[0] ?? '0', 10),
+    parseInt(parts[1] ?? '0', 10),
+    parseInt(parts[2] ?? '0', 10),
+  ];
+}
+
 function getMajor(version: string): number {
-  if (!version) return 0;
-  // Strip leading non-numeric chars (^, ~, v, etc.) only from the start
-  return parseInt(version.replace(/^[^0-9]*/, '').split('.')[0] ?? '0', 10);
+  return getVersionParts(version)[0];
+}
+
+function getUpdateType(current: string, latest: string): 'major' | 'minor' | 'patch' {
+  const [curMaj, curMin] = getVersionParts(current);
+  const [latMaj, latMin] = getVersionParts(latest);
+  if (curMaj < latMaj) return 'major';
+  if (curMin < latMin) return 'minor';
+  return 'patch';
 }

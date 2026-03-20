@@ -22,6 +22,7 @@ export interface ProjectInfo {
   totalDependencies: number;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
+  overrides?: Record<string, string>;
 }
 
 export interface CheckResult {
