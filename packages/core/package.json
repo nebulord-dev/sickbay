@@ -30,7 +30,7 @@
     "execa": "^9.5.0",
     "globby": "^16.1.1",
     "jscpd": "^4.0.8",
-    "knip": "^5.88.1",
+    "knip": "^6.0.2",
     "license-checker": "^25.0.1",
     "madge": "^8.0.0",
     "source-map-explorer": "^2.5.3"

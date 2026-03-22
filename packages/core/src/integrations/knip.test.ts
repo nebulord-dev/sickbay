@@ -48,7 +48,7 @@ describe('KnipRunner', () => {
 
   it('returns pass with score 100 when no issues are found', async () => {
     mockIsAvailable.mockResolvedValue(true);
-    mockExeca.mockResolvedValue({ stdout: JSON.stringify({ files: [], issues: [] }) } as never);
+    mockExeca.mockResolvedValue({ stdout: JSON.stringify({ issues: [] }) } as never);
 
     const result = await runner.run('/project');
 
@@ -60,7 +60,10 @@ describe('KnipRunner', () => {
   it('reports unused files as warning issues', async () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
-      stdout: JSON.stringify({ files: ['src/old.ts', 'src/dead.ts'], issues: [] }),
+      stdout: JSON.stringify({ issues: [
+        { file: 'src/old.ts', files: [{ name: 'src/old.ts' }] },
+        { file: 'src/dead.ts', files: [{ name: 'src/dead.ts' }] },
+      ] }),
     } as never);
 
     const result = await runner.run('/project');
@@ -74,7 +77,6 @@ describe('KnipRunner', () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
       stdout: JSON.stringify({
-        files: [],
         issues: [{ file: 'src/index.ts', dependencies: [{ name: 'lodash' }] }],
       }),
     } as never);
@@ -91,7 +93,6 @@ describe('KnipRunner', () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
       stdout: JSON.stringify({
-        files: [],
         issues: [{ file: 'src/index.ts', devDependencies: [{ name: 'jest' }] }],
       }),
     } as never);
@@ -107,7 +108,6 @@ describe('KnipRunner', () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
       stdout: JSON.stringify({
-        files: [],
         issues: [
           { file: 'src/a.ts', dependencies: [{ name: 'lodash' }] },
           { file: 'src/b.ts', dependencies: [{ name: 'lodash' }] },
@@ -126,7 +126,6 @@ describe('KnipRunner', () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
       stdout: JSON.stringify({
-        files: [],
         issues: [{ file: 'src/index.ts', exports }],
       }),
     } as never);
@@ -143,8 +142,12 @@ describe('KnipRunner', () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
       stdout: JSON.stringify({
-        files: ['a.ts', 'b.ts', 'c.ts', 'd.ts'],
-        issues: [],
+        issues: [
+          { file: 'a.ts', files: [{ name: 'a.ts' }] },
+          { file: 'b.ts', files: [{ name: 'b.ts' }] },
+          { file: 'c.ts', files: [{ name: 'c.ts' }] },
+          { file: 'd.ts', files: [{ name: 'd.ts' }] },
+        ],
       }),
     } as never);
 
@@ -154,10 +157,13 @@ describe('KnipRunner', () => {
   });
 
   it('does not let score drop below 0', async () => {
-    const files = Array.from({ length: 25 }, (_, i) => `src/file${i}.ts`);
+    const issues = Array.from({ length: 25 }, (_, i) => ({
+      file: `src/file${i}.ts`,
+      files: [{ name: `src/file${i}.ts` }],
+    }));
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
-      stdout: JSON.stringify({ files, issues: [] }),
+      stdout: JSON.stringify({ issues }),
     } as never);
 
     const result = await runner.run('/project');
@@ -168,7 +174,7 @@ describe('KnipRunner', () => {
   it('returns status warning when there are 1–10 issues', async () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
-      stdout: JSON.stringify({ files: ['a.ts'], issues: [] }),
+      stdout: JSON.stringify({ issues: [{ file: 'a.ts', files: [{ name: 'a.ts' }] }] }),
     } as never);
 
     const result = await runner.run('/project');
@@ -177,10 +183,13 @@ describe('KnipRunner', () => {
   });
 
   it('returns status fail when there are more than 10 issues', async () => {
-    const files = Array.from({ length: 11 }, (_, i) => `src/f${i}.ts`);
+    const issues = Array.from({ length: 11 }, (_, i) => ({
+      file: `src/f${i}.ts`,
+      files: [{ name: `src/f${i}.ts` }],
+    }));
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
-      stdout: JSON.stringify({ files, issues: [] }),
+      stdout: JSON.stringify({ issues }),
     } as never);
 
     const result = await runner.run('/project');

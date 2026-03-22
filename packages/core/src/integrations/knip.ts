@@ -22,6 +22,7 @@ interface KnipItem { name: string; }
 
 interface KnipFileIssue {
   file: string;
+  files?: KnipItem[];
   dependencies?: KnipItem[];
   devDependencies?: KnipItem[];
   exports?: KnipItem[];
@@ -29,7 +30,6 @@ interface KnipFileIssue {
 }
 
 interface KnipOutput {
-  files?: string[];
   issues?: KnipFileIssue[];
 }
 
@@ -56,18 +56,6 @@ export class KnipRunner extends BaseRunner {
       const data = parseJsonOutput(stdout, '{}') as KnipOutput;
       const issues: Issue[] = [];
 
-      // Unused files
-      (data.files ?? []).forEach((f) =>
-        issues.push({
-          severity: 'warning',
-          message: `Unused file: ${f}`,
-          file: f,
-          fix: { description: `Remove ${f}`, command: `rm ${f}` },
-          reportedBy: ['knip'],
-        })
-      );
-
-      // Per-file issues
       // Detect whether the project has a test runner — used to suppress false
       // positives for test-only devDeps that knip can't see when test files
       // are excluded from its entry points.
@@ -90,8 +78,22 @@ export class KnipRunner extends BaseRunner {
       const deps = new Set<string>();
       const devDeps = new Set<string>();
       const unusedExports: string[] = [];
+      const unusedFiles: string[] = [];
 
       for (const fileIssue of data.issues ?? []) {
+        // Unused files (knip v6: per-entry files array)
+        (fileIssue.files ?? []).forEach((f) => {
+          const filePath = f.name || fileIssue.file;
+          unusedFiles.push(filePath);
+          issues.push({
+            severity: 'warning',
+            message: `Unused file: ${filePath}`,
+            file: filePath,
+            fix: { description: `Remove ${filePath}`, command: `rm ${filePath}` },
+            reportedBy: ['knip'],
+          });
+        });
+
         (fileIssue.dependencies ?? []).forEach((d) => {
           // Filter workspace siblings — knip can't trace dynamic imports across
           // workspace packages, producing false positives
@@ -158,7 +160,7 @@ export class KnipRunner extends BaseRunner {
         toolsUsed: ['knip'],
         duration: elapsed(),
         metadata: {
-          unusedFiles: data.files?.length ?? 0,
+          unusedFiles: unusedFiles.length,
           unusedDeps: deps.size,
           unusedDevDeps: devDeps.size,
           unusedExports: unusedExports.length,
