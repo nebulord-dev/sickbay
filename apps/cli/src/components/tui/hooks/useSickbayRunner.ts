@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import type { SickbayReport, MonorepoReport, CheckResult } from "@sickbay/core";
-import { runSickbay, runSickbayMonorepo, detectMonorepo, buildSummary, calculateOverallScore } from "@sickbay/core";
+import { runSickbay, runSickbayMonorepo, detectMonorepo, buildSummary } from "@sickbay/core";
 
 interface ProgressItem {
   name: string;
@@ -124,4 +124,3 @@ export function useSickbayRunner({ projectPath, checks }: UseSickbayRunnerOption
   return { report, monorepoReport, isScanning, progress, error, scan };
 }
 
-export { calculateOverallScore };

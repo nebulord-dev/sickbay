@@ -44,8 +44,8 @@ export function ActivityPanel({ entries, availableHeight }: ActivityPanelProps) 
 
   return (
     <Box flexDirection="column">
-      {visible.map((entry, i) => (
-        <Box key={i}>
+      {visible.map((entry) => (
+        <Box key={`${entry.timestamp.getTime()}-${entry.type}`}>
           <Text dimColor>{formatTime(entry.timestamp)}{"  "}</Text>
           <Text color={TYPE_COLOR[entry.type] || "white"}>{entry.message}</Text>
         </Box>

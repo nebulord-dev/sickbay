@@ -363,8 +363,8 @@ export function FixApp({
             {fixableIssues.filter((_, i) => selected.has(i)).length})
           </Text>
           <Box flexDirection="column" marginTop={1} marginLeft={2}>
-            {results.map((r, i) => (
-              <Box key={i}>
+            {results.map((r) => (
+              <Box key={`${r.fixable.checkId}-${r.fixable.command}`}>
                 <Text color={r.success ? "green" : "red"}>
                   {r.success ? "✓" : "✗"}{" "}
                 </Text>
@@ -412,8 +412,8 @@ export function FixApp({
             <>
               <Text bold>{dryRun ? "Dry Run Results" : "Fix Results"}</Text>
               <Box flexDirection="column" marginTop={1} marginLeft={2}>
-                {results.map((r, i) => (
-                  <Box key={i}>
+                {results.map((r) => (
+                  <Box key={`${r.fixable.checkId}-${r.fixable.command}`}>
                     <Text color={r.success ? "green" : "red"}>
                       {r.success ? "✓" : "✗"}{" "}
                     </Text>

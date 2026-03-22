@@ -1,5 +1,5 @@
 import { readFileSync, existsSync, unlinkSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { tmpdir } from 'os';
 import { execa } from 'execa';
 import { BaseRunner } from './base.js';
@@ -61,10 +61,21 @@ export class CoverageRunner extends BaseRunner {
 
   private hasCoverageProvider(projectPath: string, runner: 'vitest' | 'jest'): boolean {
     if (runner === 'vitest') {
-      return (
-        existsSync(join(projectPath, 'node_modules', '@vitest', 'coverage-v8')) ||
-        existsSync(join(projectPath, 'node_modules', '@vitest', 'coverage-istanbul'))
-      );
+      // Walk up directory tree to find coverage provider — in monorepos
+      // the package may be hoisted to the root node_modules
+      let dir = projectPath;
+      while (true) {
+        if (
+          existsSync(join(dir, 'node_modules', '@vitest', 'coverage-v8')) ||
+          existsSync(join(dir, 'node_modules', '@vitest', 'coverage-istanbul'))
+        ) {
+          return true;
+        }
+        const parent = dirname(dir);
+        if (parent === dir) break;
+        dir = parent;
+      }
+      return false;
     }
     // jest has built-in coverage via babel or v8
     return true;
@@ -186,7 +197,7 @@ export class CoverageRunner extends BaseRunner {
       issues.push({
         severity: 'info',
         message: 'Coverage data unavailable — install @vitest/coverage-v8 for coverage reporting',
-        fix: { description: 'Add coverage provider', command: 'npm install -D @vitest/coverage-v8' },
+        fix: { description: 'Add coverage provider', command: `${packageManager} add -D @vitest/coverage-v8` },
         reportedBy: ['coverage'],
       });
     }

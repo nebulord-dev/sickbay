@@ -17,7 +17,6 @@ vi.mock("@sickbay/core", () => ({
     if (score >= 60) return "yellow";
     return "red";
   },
-  calculateOverallScore: vi.fn(() => 80),
   buildSummary: vi.fn(() => ({ critical: 0, warnings: 0, info: 0 })),
   detectProject: vi.fn(),
   detectPackageManager: vi.fn(),

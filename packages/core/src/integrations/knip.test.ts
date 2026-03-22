@@ -5,6 +5,10 @@ vi.mock('execa', () => ({
   execa: vi.fn(),
 }));
 
+vi.mock('../utils/detect-project.js', () => ({
+  detectPackageManager: vi.fn().mockReturnValue('npm'),
+}));
+
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
   isCommandAvailable: vi.fn(),
@@ -80,7 +84,7 @@ describe('KnipRunner', () => {
     const depIssue = result.issues.find((i) => i.message.includes('lodash'));
     expect(depIssue).toBeDefined();
     expect(depIssue?.severity).toBe('warning');
-    expect(depIssue?.fix?.command).toBe('npm uninstall lodash');
+    expect(depIssue?.fix?.command).toBe('npm remove lodash');
   });
 
   it('reports unused devDependencies as info issues', async () => {

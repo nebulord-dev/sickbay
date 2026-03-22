@@ -231,10 +231,10 @@ describe("FixApp", () => {
 
     async function renderInSelectingPhase() {
       let latestHandler: ((input: string, key: KeyEvent) => void) | undefined;
-      vi.mocked(useInput).mockImplementation((handler: (input: string, key: KeyEvent) => void) => {
+      vi.mocked(useInput).mockImplementation(((handler: (input: string, key: KeyEvent) => void) => {
         // Always update — component recreates handleInput when selected/cursor changes
         latestHandler = handler;
-      });
+      }) as typeof useInput);
 
       mockRunSickbay.mockResolvedValue(makeReport() as never);
       mockCollectFixableIssues.mockReturnValue([makeFixableIssue(), makeFixableIssue()]);

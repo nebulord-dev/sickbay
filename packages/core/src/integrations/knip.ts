@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { BaseRunner } from './base.js';
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
+import { detectPackageManager } from '../utils/detect-project.js';
 import type { CheckResult, Issue } from '../types.js';
 
 // Packages that are only ever imported in test files — knip flags them as unused
@@ -71,20 +72,34 @@ export class KnipRunner extends BaseRunner {
       // positives for test-only devDeps that knip can't see when test files
       // are excluded from its entry points.
       let hasTestRunner = false;
+      let workspaceScope: string | null = null;
       const pkgPath = join(projectPath, 'package.json');
       if (existsSync(pkgPath)) {
         const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
         const allDeps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
         hasTestRunner = TEST_RUNNER_PACKAGES.some((p) => p in allDeps);
+        // Extract workspace scope (e.g. "@sickbay" from "@sickbay/cli") to filter
+        // sibling packages that knip flags as unused due to dynamic imports
+        const scopeMatch = (pkg.name as string | undefined)?.match(/^(@[^/]+)\//);
+        if (scopeMatch) workspaceScope = scopeMatch[1];
       }
+
+      const packageManager = detectPackageManager(projectPath);
+      const removeCmd = packageManager === 'yarn' ? 'yarn remove' : `${packageManager} remove`;
 
       const deps = new Set<string>();
       const devDeps = new Set<string>();
       const unusedExports: string[] = [];
 
       for (const fileIssue of data.issues ?? []) {
-        (fileIssue.dependencies ?? []).forEach((d) => deps.add(d.name));
+        (fileIssue.dependencies ?? []).forEach((d) => {
+          // Filter workspace siblings — knip can't trace dynamic imports across
+          // workspace packages, producing false positives
+          if (workspaceScope && d.name.startsWith(`${workspaceScope}/`)) return;
+          deps.add(d.name);
+        });
         (fileIssue.devDependencies ?? []).forEach((d) => {
+          if (workspaceScope && d.name.startsWith(`${workspaceScope}/`)) return;
           // Filter test-only packages when a test runner is present — these are
           // false positives caused by test files being excluded from knip analysis.
           const isTestOnly = TEST_ONLY_PACKAGE_PREFIXES.some((prefix) =>
@@ -101,7 +116,7 @@ export class KnipRunner extends BaseRunner {
         issues.push({
           severity: 'warning',
           message: `Unused dependency: ${dep}`,
-          fix: { description: `Remove ${dep}`, command: `npm uninstall ${dep}` },
+          fix: { description: `Remove ${dep}`, command: `${removeCmd} ${dep}` },
           reportedBy: ['knip'],
         })
       );
@@ -110,7 +125,7 @@ export class KnipRunner extends BaseRunner {
         issues.push({
           severity: 'info',
           message: `Unused devDependency: ${dep}`,
-          fix: { description: `Remove ${dep}`, command: `npm uninstall -D ${dep}` },
+          fix: { description: `Remove ${dep}`, command: `${removeCmd} ${dep}` },
           reportedBy: ['knip'],
         })
       );

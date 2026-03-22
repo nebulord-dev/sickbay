@@ -1,0 +1,134 @@
+{
+  "projectPath": "/Users/tracericochet/Desktop/dev/sickbay/apps/cli",
+  "projectName": "@sickbay/cli",
+  "entries": [
+    {
+      "timestamp": "2026-03-22T02:44:33.761Z",
+      "overallScore": 97,
+      "categoryScores": {
+        "dependencies": 97,
+        "security": 100,
+        "code-quality": 96,
+        "performance": 97
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 6,
+        "info": 6
+      },
+      "checksRun": 16
+    },
+    {
+      "timestamp": "2026-03-22T02:49:59.582Z",
+      "overallScore": 98,
+      "categoryScores": {
+        "dependencies": 98,
+        "security": 100,
+        "code-quality": 97,
+        "performance": 98
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 3,
+        "info": 5
+      },
+      "checksRun": 16
+    },
+    {
+      "timestamp": "2026-03-22T02:50:45.024Z",
+      "overallScore": 98,
+      "categoryScores": {
+        "dependencies": 98,
+        "security": 100,
+        "code-quality": 97,
+        "performance": 100
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 1,
+        "info": 5
+      },
+      "checksRun": 16
+    },
+    {
+      "timestamp": "2026-03-22T02:50:56.857Z",
+      "overallScore": 98,
+      "categoryScores": {
+        "dependencies": 98,
+        "security": 100,
+        "code-quality": 97,
+        "performance": 100
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 1,
+        "info": 5
+      },
+      "checksRun": 16
+    },
+    {
+      "timestamp": "2026-03-22T03:23:43.327Z",
+      "overallScore": 98,
+      "categoryScores": {
+        "dependencies": 98,
+        "security": 100,
+        "code-quality": 97,
+        "performance": 100
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 1,
+        "info": 5
+      },
+      "checksRun": 16
+    },
+    {
+      "timestamp": "2026-03-22T03:24:07.604Z",
+      "overallScore": 98,
+      "categoryScores": {
+        "dependencies": 98,
+        "security": 100,
+        "code-quality": 97,
+        "performance": 100
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 1,
+        "info": 5
+      },
+      "checksRun": 16
+    },
+    {
+      "timestamp": "2026-03-22T03:24:54.927Z",
+      "overallScore": 98,
+      "categoryScores": {
+        "dependencies": 98,
+        "security": 100,
+        "code-quality": 97,
+        "performance": 100
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 1,
+        "info": 5
+      },
+      "checksRun": 16
+    },
+    {
+      "timestamp": "2026-03-22T03:25:25.123Z",
+      "overallScore": 98,
+      "categoryScores": {
+        "dependencies": 100,
+        "security": 100,
+        "code-quality": 95,
+        "performance": 100
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 2,
+        "info": 4
+      },
+      "checksRun": 16
+    }
+  ]
+}

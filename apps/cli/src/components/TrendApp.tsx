@@ -102,8 +102,8 @@ function SingleTrendView({
           <Text bold color="red">
             Regressions Detected:
           </Text>
-          {regressions.map((r, i) => (
-            <Box key={i} marginLeft={2}>
+          {regressions.map((r) => (
+            <Box key={r.category} marginLeft={2}>
               <Text color="red">
                 ↓ {CATEGORY_LABELS[r.category] ?? r.category}: {r.from} →{" "}
                 {r.to} (-{r.drop} pts)
