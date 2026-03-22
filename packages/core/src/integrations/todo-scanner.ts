@@ -103,11 +103,15 @@ export class TodoScannerRunner extends BaseRunner {
   }
 }
 
+/** Files that reference TODO/FIXME/HACK as part of their implementation, not as tech debt */
+const SELF_REFERENCING_FILES = new Set(["todo-scanner.ts", "todo-scanner.test.ts"]);
+
 function scanDirectory(dir: string, projectRoot: string): TodoItem[] {
   const todos: TodoItem[] = [];
   try {
     for (const entry of readdirSync(dir)) {
       if (entry.startsWith(".") || entry === "node_modules") continue;
+      if (SELF_REFERENCING_FILES.has(entry)) continue;
       const fullPath = join(dir, entry);
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
