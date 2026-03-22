@@ -53,11 +53,11 @@ describe('NodeAsyncErrorsRunner', () => {
     expect(result.status).toBe('pass');
   });
 
-  it('scores 90 when no async route handlers are found in source files', async () => {
+  it('scores 100 when no async route handlers are found in source files', async () => {
     mockReadFileSync.mockReturnValue(makePkg({ express: '^4.0.0' }) as never);
     // No source files — mockReaddirSync returns []
     const result = await runner.run('/project');
-    expect(result.score).toBe(90);
+    expect(result.score).toBe(100);
     expect(result.status).toBe('pass');
   });
 

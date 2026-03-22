@@ -103,7 +103,7 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
         id: 'node-async-errors',
         category: this.category,
         name: 'Async Error Handling',
-        score: 90,
+        score: 100,
         status: 'pass',
         issues,
         toolsUsed: ['node-async-errors'],
