@@ -28,7 +28,7 @@
     "@sickbay/constants": "workspace:*",
     "depcheck": "^1.4.7",
     "execa": "^9.5.0",
-    "globby": "^14.0.2",
+    "globby": "^16.1.1",
     "jscpd": "^4.0.8",
     "knip": "^5.88.1",
     "license-checker": "^25.0.1",
