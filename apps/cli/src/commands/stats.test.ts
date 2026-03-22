@@ -11,13 +11,13 @@ vi.mock('child_process', () => ({
   execSync: vi.fn(),
 }));
 
-vi.mock('@vitals/core', () => ({
+vi.mock('@sickbay/core', () => ({
   detectProject: vi.fn(),
 }));
 
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
-import { detectProject } from '@vitals/core';
+import { detectProject } from '@sickbay/core';
 import { gatherStats } from './stats.js';
 
 const mockReadFileSync = vi.mocked(readFileSync);

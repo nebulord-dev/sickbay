@@ -84,7 +84,7 @@ export class CoverageRunner extends BaseRunner {
 
       // Write JSON results to a temp file — avoids stdout-parsing fragility
       // (console.log noise from vite.config.ts, coverage text output, etc.)
-      const tmpFile = join(tmpdir(), `vitals-test-${Date.now()}.json`);
+      const tmpFile = join(tmpdir(), `sickbay-test-${Date.now()}.json`);
       const args = runner === 'vitest'
         ? ['run', '--reporter=json', `--outputFile=${tmpFile}`, ...(hasCoverage ? ['--coverage', '--coverage.reporter=json-summary'] : [])]
         : ['--json', `--outputFile=${tmpFile}`, ...(hasCoverage ? ['--coverage'] : [])];
@@ -92,7 +92,7 @@ export class CoverageRunner extends BaseRunner {
       await execa(runner, args, {
         cwd: projectPath,
         reject: false,
-        // localDir ensures we use the project's own vitest, not vitals' hoisted binary
+        // localDir ensures we use the project's own vitest, not sickbay' hoisted binary
         localDir: projectPath,
         preferLocal: true,
         timeout: 120_000,

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Text } from "ink";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 interface ScorePanelProps {
-  report: VitalsReport | null;
+  report: SickbayReport | null;
   previousScore: number | null;
   animate?: boolean;
 }

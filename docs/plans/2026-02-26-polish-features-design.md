@@ -7,7 +7,7 @@
 
 Three self-contained polish features that improve discoverability and UX:
 
-1. Auto-save last report to `.vitals/last-report.json`
+1. Auto-save last report to `.sickbay/last-report.json`
 2. TUI score reveal animation
 3. TUI panel entrance animations
 
@@ -17,21 +17,21 @@ Three self-contained polish features that improve discoverability and UX:
 
 ### Goal
 
-After every scan, write the full JSON report to `.vitals/last-report.json` in the scanned project's directory. Always overwrite — no history accumulation. Makes the report immediately discoverable by Claude Code and other tools without any flags.
+After every scan, write the full JSON report to `.sickbay/last-report.json` in the scanned project's directory. Always overwrite — no history accumulation. Makes the report immediately discoverable by Claude Code and other tools without any flags.
 
 ### Implementation
 
 Add `saveLastReport(report, projectPath)` to `apps/cli/src/lib/history.ts`:
-- Ensures `.vitals/` directory exists (same guard as `saveEntry`)
-- Writes `JSON.stringify(report, null, 2)` to `<projectPath>/.vitals/last-report.json`
+- Ensures `.sickbay/` directory exists (same guard as `saveEntry`)
+- Writes `JSON.stringify(report, null, 2)` to `<projectPath>/.sickbay/last-report.json`
 - Silent fail — non-critical, same pattern as history saves
 
 Hook it in three places:
-- `App.tsx` — after the `saveEntry` call in the `runVitals` `.then()` block
+- `App.tsx` — after the `saveEntry` call in the `runSickbay` `.then()` block
 - `index.ts` — in the `--json` path after `saveEntry`
 - `TuiApp.tsx` — in `handleScanComplete` alongside history regression detection
 
-Monorepo scans (`runVitalsMonorepo`) are excluded for now — the report shape differs and the use case is less clear.
+Monorepo scans (`runSickbayMonorepo`) are excluded for now — the report shape differs and the use case is less clear.
 
 ---
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 // We need to mock 'fs' before the module loads so that findWebDist() can be
 // controlled. The module calls existsSync at call time (not import time), so a
@@ -15,8 +15,8 @@ import { serveWeb } from "./web.js";
 const mockExistsSync = vi.mocked(existsSync);
 const mockReadFileSync = vi.mocked(readFileSync);
 
-// Minimal stub that satisfies the VitalsReport type
-function makeReport(overrides: Partial<VitalsReport> = {}): VitalsReport {
+// Minimal stub that satisfies the SickbayReport type
+function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {
     timestamp: "2024-01-01T00:00:00.000Z",
     projectPath: "/test/project",
@@ -84,20 +84,20 @@ describe("serveWeb", () => {
       expect(url).toMatch(/^http:\/\/localhost:\d+$/);
     });
 
-    it("/vitals-report.json returns the report as JSON", async () => {
+    it("/sickbay-report.json returns the report as JSON", async () => {
       const report = makeReport({ overallScore: 72 });
       const url = await serveWeb(report, 0);
 
-      const res = await fetch(`${url}/vitals-report.json`);
+      const res = await fetch(`${url}/sickbay-report.json`);
       expect(res.status).toBe(200);
       expect(res.headers.get("content-type")).toContain("application/json");
 
-      const data = (await res.json()) as VitalsReport;
+      const data = (await res.json()) as SickbayReport;
       expect(data.overallScore).toBe(72);
       expect(data.projectPath).toBe("/test/project");
     });
 
-    it("/vitals-report.json returns all check data", async () => {
+    it("/sickbay-report.json returns all check data", async () => {
       const report = makeReport({
         checks: [
           {
@@ -114,8 +114,8 @@ describe("serveWeb", () => {
       });
       const url = await serveWeb(report, 0);
 
-      const res = await fetch(`${url}/vitals-report.json`);
-      const data = (await res.json()) as VitalsReport;
+      const res = await fetch(`${url}/sickbay-report.json`);
+      const data = (await res.json()) as SickbayReport;
       expect(data.checks).toHaveLength(1);
       expect(data.checks[0].id).toBe("eslint");
     });

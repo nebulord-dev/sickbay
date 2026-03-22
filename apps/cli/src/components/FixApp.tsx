@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Box, Text, useApp, useInput } from "ink";
 import Spinner from "ink-spinner";
-import { runVitals } from "@vitals/core";
+import { runSickbay } from "@sickbay/core";
 import { Header } from "./Header.js";
 import { ProgressList } from "./ProgressList.js";
 import {
@@ -88,7 +88,7 @@ export function FixApp({
               ),
             );
 
-            const report = await runVitals({
+            const report = await runSickbay({
               projectPath: pkgPath,
               checks,
               verbose,
@@ -152,7 +152,7 @@ export function FixApp({
       ).map((name) => ({ name, status: "pending" as const }));
       setProgress(initial);
 
-      runVitals({
+      runSickbay({
         projectPath,
         checks,
         verbose,
@@ -302,7 +302,7 @@ export function FixApp({
           <Box marginBottom={1}>
             <Text color="yellow">⚠ </Text>
             <Text dimColor>
-              Vitals can make mistakes. Review each fix before applying —
+              Sickbay can make mistakes. Review each fix before applying —
               false positives exist and some commands modify your project.
             </Text>
           </Box>
@@ -351,7 +351,7 @@ export function FixApp({
         <Box marginBottom={1}>
           <Text color="yellow">⚠ </Text>
           <Text dimColor>
-            Vitals can make mistakes — verify results afterwards and revert
+            Sickbay can make mistakes — verify results afterwards and revert
             anything that looks wrong.
           </Text>
         </Box>
@@ -441,7 +441,7 @@ export function FixApp({
               {!dryRun && results.some((r) => r.success) && (
                 <Box marginTop={1}>
                   <Text dimColor>Run </Text>
-                  <Text color="cyan">vitals</Text>
+                  <Text color="cyan">sickbay</Text>
                   <Text dimColor> to see your updated score</Text>
                 </Box>
               )}

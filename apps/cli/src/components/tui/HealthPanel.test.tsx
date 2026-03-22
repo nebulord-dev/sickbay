@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
 import { HealthPanel } from "./HealthPanel.js";
-import type { CheckResult } from "@vitals/core";
+import type { CheckResult } from "@sickbay/core";
 
 const createCheck = (
   overrides: Partial<CheckResult> & { id: string; name: string }

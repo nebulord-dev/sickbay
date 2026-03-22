@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React, { useEffect, useRef } from 'react';
 import { render } from 'ink-testing-library';
 import { Text } from 'ink';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
-vi.mock('@vitals/core', () => ({
-  runVitals: vi.fn(),
-  runVitalsMonorepo: vi.fn(),
+vi.mock('@sickbay/core', () => ({
+  runSickbay: vi.fn(),
+  runSickbayMonorepo: vi.fn(),
   detectMonorepo: vi.fn().mockResolvedValue({ isMonorepo: false }),
   buildSummary: vi.fn().mockReturnValue({ critical: 0, warnings: 0, info: 0 }),
   calculateOverallScore: vi.fn().mockReturnValue(0),
@@ -16,14 +16,14 @@ vi.mock('../../../lib/history.js', () => ({
   saveEntry: vi.fn(),
 }));
 
-import { runVitals } from '@vitals/core';
+import { runSickbay } from '@sickbay/core';
 import { saveEntry } from '../../../lib/history.js';
-import { useVitalsRunner } from './useVitalsRunner.js';
+import { useSickbayRunner } from './useSickbayRunner.js';
 
-const mockRunVitals = vi.mocked(runVitals);
+const mockRunSickbay = vi.mocked(runSickbay);
 const mockSaveEntry = vi.mocked(saveEntry);
 
-function makeReport(overrides: Partial<VitalsReport> = {}): VitalsReport {
+function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test/project',
@@ -58,10 +58,10 @@ function RunnerDisplay({
 }: {
   projectPath: string;
   checks?: string[];
-  scanRef?: React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
-  onScanComplete?: (result: VitalsReport | null) => void;
+  scanRef?: React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
+  onScanComplete?: (result: SickbayReport | null) => void;
 }) {
-  const { report, isScanning, progress, error, scan } = useVitalsRunner({ projectPath, checks });
+  const { report, isScanning, progress, error, scan } = useSickbayRunner({ projectPath, checks });
 
   // Expose scan function via ref
   useEffect(() => {
@@ -79,10 +79,10 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe('useVitalsRunner', () => {
+describe('useSickbayRunner', () => {
   it('initial state: not scanning, no report, no error, empty progress', () => {
-    // runVitals will never resolve so state stays initial
-    mockRunVitals.mockReturnValue(new Promise(() => {}) as any);
+    // runSickbay will never resolve so state stays initial
+    mockRunSickbay.mockReturnValue(new Promise(() => {}) as any);
 
     const { lastFrame } = render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project' }),
@@ -95,12 +95,12 @@ describe('useVitalsRunner', () => {
   });
 
   it('sets isScanning to true while scan is running', async () => {
-    let resolveVitals!: (r: VitalsReport) => void;
-    mockRunVitals.mockReturnValue(
-      new Promise<VitalsReport>((res) => { resolveVitals = res; }) as any,
+    let resolveSickbay!: (r: SickbayReport) => void;
+    mockRunSickbay.mockReturnValue(
+      new Promise<SickbayReport>((res) => { resolveSickbay = res; }) as any,
     );
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     const { lastFrame } = render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project', scanRef }),
@@ -118,15 +118,15 @@ describe('useVitalsRunner', () => {
     expect(lastFrame()).toContain('scanning:true');
 
     // Clean up — resolve so the hook doesn't leak
-    resolveVitals(makeReport());
+    resolveSickbay(makeReport());
     await new Promise((r) => setImmediate(r));
   });
 
   it('sets report after successful scan', async () => {
     const report = makeReport({ overallScore: 72 });
-    mockRunVitals.mockResolvedValue(report as any);
+    mockRunSickbay.mockResolvedValue(report as any);
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     const { lastFrame } = render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project', scanRef }),
@@ -140,10 +140,10 @@ describe('useVitalsRunner', () => {
     expect(lastFrame()).toContain('scanning:false');
   });
 
-  it('sets error message when runVitals throws', async () => {
-    mockRunVitals.mockRejectedValue(new Error('Analysis failed'));
+  it('sets error message when runSickbay throws', async () => {
+    mockRunSickbay.mockRejectedValue(new Error('Analysis failed'));
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     const { lastFrame } = render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project', scanRef }),
@@ -159,11 +159,11 @@ describe('useVitalsRunner', () => {
   });
 
   it('clears error on subsequent successful scan', async () => {
-    mockRunVitals
+    mockRunSickbay
       .mockRejectedValueOnce(new Error('First failure'))
       .mockResolvedValueOnce(makeReport({ overallScore: 90 }) as any);
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     const { lastFrame } = render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project', scanRef }),
@@ -187,13 +187,13 @@ describe('useVitalsRunner', () => {
     // Use a pending promise so we can observe the mid-scan state.
     // mockResolvedValue completes synchronously in microtasks before the Ink
     // renderer flushes, so lastFrame() would still show the pre-render state.
-    let resolveVitals!: (r: VitalsReport) => void;
-    mockRunVitals.mockImplementation((options: Parameters<typeof runVitals>[0]) => {
+    let resolveSickbay!: (r: SickbayReport) => void;
+    mockRunSickbay.mockImplementation((options: Parameters<typeof runSickbay>[0]) => {
       options?.onRunnersReady?.(options.checks ?? ['eslint', 'knip', 'typescript']);
-      return new Promise<VitalsReport>((res) => { resolveVitals = res; }) as any;
+      return new Promise<SickbayReport>((res) => { resolveSickbay = res; }) as any;
     });
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     const { lastFrame } = render(
       React.createElement(RunnerDisplay, {
@@ -208,7 +208,7 @@ describe('useVitalsRunner', () => {
 
     // Start scan but don't await so we can observe mid-scan state
     const scanPromise = scanRef.current?.();
-    // First flush: lets detectMonorepo microtask resolve → runVitals called → onRunnersReady fires → setProgress queued
+    // First flush: lets detectMonorepo microtask resolve → runSickbay called → onRunnersReady fires → setProgress queued
     // Second flush: lets React process the batched state update and re-render
     await new Promise((r) => setTimeout(r, 0));
     await new Promise((r) => setTimeout(r, 0));
@@ -217,15 +217,15 @@ describe('useVitalsRunner', () => {
     expect(lastFrame()).toContain('progress:3');
 
     // Cleanup — resolve so the hook doesn't leak
-    resolveVitals(makeReport());
+    resolveSickbay(makeReport());
     await scanPromise;
   });
 
   it('calls saveEntry with the report after a successful scan', async () => {
     const report = makeReport({ overallScore: 80 });
-    mockRunVitals.mockResolvedValue(report as any);
+    mockRunSickbay.mockResolvedValue(report as any);
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project', scanRef }),
@@ -238,13 +238,13 @@ describe('useVitalsRunner', () => {
     expect(mockSaveEntry).toHaveBeenCalledWith(report);
   });
 
-  it('does not call runVitals a second time while first scan is in progress', async () => {
-    let resolveFirst!: (r: VitalsReport) => void;
-    mockRunVitals.mockReturnValue(
-      new Promise<VitalsReport>((res) => { resolveFirst = res; }) as any,
+  it('does not call runSickbay a second time while first scan is in progress', async () => {
+    let resolveFirst!: (r: SickbayReport) => void;
+    mockRunSickbay.mockReturnValue(
+      new Promise<SickbayReport>((res) => { resolveFirst = res; }) as any,
     );
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project', scanRef }),
@@ -257,8 +257,8 @@ describe('useVitalsRunner', () => {
     scanRef.current?.();
     await new Promise((r) => setImmediate(r));
 
-    // Only one call to runVitals
-    expect(mockRunVitals).toHaveBeenCalledTimes(1);
+    // Only one call to runSickbay
+    expect(mockRunSickbay).toHaveBeenCalledTimes(1);
 
     // Cleanup
     resolveFirst(makeReport());
@@ -266,9 +266,9 @@ describe('useVitalsRunner', () => {
   });
 
   it('handles non-Error thrown values (string errors)', async () => {
-    mockRunVitals.mockRejectedValue('plain string error');
+    mockRunSickbay.mockRejectedValue('plain string error');
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     const { lastFrame } = render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project', scanRef }),
@@ -283,10 +283,10 @@ describe('useVitalsRunner', () => {
 
   it('returns the report from scan()', async () => {
     const report = makeReport({ overallScore: 99 });
-    mockRunVitals.mockResolvedValue(report as any);
+    mockRunSickbay.mockResolvedValue(report as any);
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
-    let returnedReport: VitalsReport | null | undefined = undefined;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
+    let returnedReport: SickbayReport | null | undefined = undefined;
 
     render(
       React.createElement(RunnerDisplay, {
@@ -303,10 +303,10 @@ describe('useVitalsRunner', () => {
     expect(returnedReport).toMatchObject({ overallScore: 99 });
   });
 
-  it('returns null from scan() when runVitals throws', async () => {
-    mockRunVitals.mockRejectedValue(new Error('boom'));
+  it('returns null from scan() when runSickbay throws', async () => {
+    mockRunSickbay.mockRejectedValue(new Error('boom'));
 
-    const scanRef = React.createRef<(() => Promise<VitalsReport | null>) | null>() as React.MutableRefObject<(() => Promise<VitalsReport | null>) | null>;
+    const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
 
     render(
       React.createElement(RunnerDisplay, { projectPath: '/test/project', scanRef }),

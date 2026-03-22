@@ -1,8 +1,8 @@
-import type { VitalsReport } from "@vitals/core";
-import { SCORE_GOOD, SCORE_FAIR } from "@vitals/constants";
+import type { SickbayReport } from "@sickbay/core";
+import { SCORE_GOOD, SCORE_FAIR } from "@sickbay/constants";
 
 interface AboutProps {
-  report: VitalsReport;
+  report: SickbayReport;
 }
 
 const CATEGORY_WEIGHTS: Record<string, number> = {
@@ -93,10 +93,10 @@ export function About({ report }: AboutProps) {
       {/* Intro */}
       <section>
         <h1 className="text-2xl font-bold text-green-400 tracking-wider mb-2">
-          VITALS
+          SICKBAY
         </h1>
         <p className="text-gray-400 leading-relaxed">
-          Vitals is a zero-config project health dashboard. It runs a suite of
+          Sickbay is a zero-config project health dashboard. It runs a suite of
           checks across your codebase — dependencies, security, code quality,
           performance, and git hygiene — and produces a single weighted score so
           you can see the overall health of your project at a glance.

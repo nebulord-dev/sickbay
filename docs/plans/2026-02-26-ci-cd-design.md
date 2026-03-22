@@ -5,7 +5,7 @@
 
 ## Overview
 
-Add a GitHub Actions CI pipeline to the vitals monorepo. No workflows exist today. Goal is to catch lint errors, test failures, and broken builds on every push and PR to `main`.
+Add a GitHub Actions CI pipeline to the sickbay monorepo. No workflows exist today. Goal is to catch lint errors, test failures, and broken builds on every push and PR to `main`.
 
 ## Triggers
 
@@ -40,7 +40,7 @@ test ──┘
 
 ### `test`
 
-- Runs `pnpm -r test:coverage` across all three packages (`@vitals/core`, `@vitals/cli`, `@vitals/web`)
+- Runs `pnpm -r test:coverage` across all three packages (`@sickbay/core`, `@sickbay/cli`, `@sickbay/web`)
 - Uploads per-package coverage reports as artifacts (downloadable from Actions UI)
 - No hard coverage threshold gate — report only for now
 - Runs in parallel with `lint`

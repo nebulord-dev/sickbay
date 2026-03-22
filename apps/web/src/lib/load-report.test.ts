@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { loadReport } from './load-report.js';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
-const mockReport: VitalsReport = {
+const mockReport: SickbayReport = {
   timestamp: '2024-01-01T00:00:00.000Z',
   projectPath: '/test/project',
   projectInfo: {
@@ -70,7 +70,7 @@ describe('loadReport', () => {
   });
 
   describe('server fetch (second priority)', () => {
-    it('returns report from /vitals-report.json', async () => {
+    it('returns report from /sickbay-report.json', async () => {
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
         headers: { get: () => 'application/json' },
@@ -80,7 +80,7 @@ describe('loadReport', () => {
       const result = await loadReport();
 
       expect(result).toEqual(mockReport);
-      expect(fetch).toHaveBeenCalledWith('/vitals-report.json');
+      expect(fetch).toHaveBeenCalledWith('/sickbay-report.json');
     });
 
     it('falls through when the response status is not ok', async () => {
@@ -88,7 +88,7 @@ describe('loadReport', () => {
         ok: false,
         headers: { get: () => 'application/json' },
       } as unknown as Response);
-      localStorage.setItem('vitals-report', JSON.stringify(mockReport));
+      localStorage.setItem('sickbay-report', JSON.stringify(mockReport));
 
       const result = await loadReport();
 
@@ -100,7 +100,7 @@ describe('loadReport', () => {
         ok: true,
         headers: { get: () => 'text/html' },
       } as unknown as Response);
-      localStorage.setItem('vitals-report', JSON.stringify(mockReport));
+      localStorage.setItem('sickbay-report', JSON.stringify(mockReport));
 
       const result = await loadReport();
 
@@ -109,7 +109,7 @@ describe('loadReport', () => {
 
     it('falls through when fetch throws a network error', async () => {
       vi.mocked(fetch).mockRejectedValue(new Error('Network error'));
-      localStorage.setItem('vitals-report', JSON.stringify(mockReport));
+      localStorage.setItem('sickbay-report', JSON.stringify(mockReport));
 
       const result = await loadReport();
 
@@ -120,7 +120,7 @@ describe('loadReport', () => {
   describe('localStorage fallback (lowest priority)', () => {
     it('returns report from localStorage when other sources are unavailable', async () => {
       vi.mocked(fetch).mockRejectedValue(new Error('offline'));
-      localStorage.setItem('vitals-report', JSON.stringify(mockReport));
+      localStorage.setItem('sickbay-report', JSON.stringify(mockReport));
 
       const result = await loadReport();
 
@@ -129,7 +129,7 @@ describe('loadReport', () => {
 
     it('returns null when localStorage contains corrupted JSON', async () => {
       vi.mocked(fetch).mockRejectedValue(new Error('offline'));
-      localStorage.setItem('vitals-report', '{not valid json{{');
+      localStorage.setItem('sickbay-report', '{not valid json{{');
 
       const result = await loadReport();
 
@@ -161,7 +161,7 @@ describe('loadReport', () => {
     });
 
     it('prefers fetch over localStorage', async () => {
-      localStorage.setItem('vitals-report', JSON.stringify({ ...mockReport, overallScore: 1 }));
+      localStorage.setItem('sickbay-report', JSON.stringify({ ...mockReport, overallScore: 1 }));
       const fetchReport = { ...mockReport, overallScore: 99 };
       vi.mocked(fetch).mockResolvedValue({
         ok: true,

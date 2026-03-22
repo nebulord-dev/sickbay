@@ -1,15 +1,15 @@
 import React, { lazy, Suspense, useState } from 'react';
-import type { VitalsReport } from '@vitals/core';
-import { WARN_LINES, CRITICAL_LINES } from '@vitals/constants';
+import type { SickbayReport } from '@sickbay/core';
+import { WARN_LINES, CRITICAL_LINES } from '@sickbay/constants';
 
 // Lazy load heavy graph visualization
 const DependencyGraph = lazy(() => import('./DependencyGraph.js').then((m) => ({ default: m.DependencyGraph })));
 
 interface CodebaseStatsProps {
-  report: VitalsReport;
+  report: SickbayReport;
 }
 
-function getMeta(report: VitalsReport, id: string): Record<string, unknown> {
+function getMeta(report: SickbayReport, id: string): Record<string, unknown> {
   return (report.checks.find((c) => c.id === id)?.metadata ?? {}) as Record<string, unknown>;
 }
 

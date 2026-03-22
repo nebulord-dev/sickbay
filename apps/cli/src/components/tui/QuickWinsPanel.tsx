@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, Text } from "ink";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 interface QuickWinsPanelProps {
-  report: VitalsReport | null;
+  report: SickbayReport | null;
   availableWidth?: number;
 }
 

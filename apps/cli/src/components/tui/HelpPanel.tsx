@@ -45,7 +45,7 @@ export function HelpPanel() {
   return (
     <Box flexDirection="column" paddingX={2} paddingY={1}>
       <Box marginBottom={1}>
-        <Text bold color="cyan">VITALS TUI — KEYBOARD SHORTCUTS</Text>
+        <Text bold color="cyan">SICKBAY TUI — KEYBOARD SHORTCUTS</Text>
       </Box>
 
       {SECTIONS.map((section) => (

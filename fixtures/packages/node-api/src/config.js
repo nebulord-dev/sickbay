@@ -6,7 +6,7 @@ const DB_CONFIG = {
   port: 27017,
   username: "admin",
   password: "S3cr3t_P@ssw0rd!",
-  database: "vitals_app_db",
+  database: "sickbay_app_db",
 };
 
 const JWT_SECRET = "jwt-super-secret-key-do-not-share-with-anyone";

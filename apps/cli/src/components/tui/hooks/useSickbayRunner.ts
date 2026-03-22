@@ -1,23 +1,23 @@
 import { useState, useCallback, useRef } from "react";
-import type { VitalsReport, MonorepoReport, CheckResult } from "@vitals/core";
-import { runVitals, runVitalsMonorepo, detectMonorepo, buildSummary, calculateOverallScore } from "@vitals/core";
+import type { SickbayReport, MonorepoReport, CheckResult } from "@sickbay/core";
+import { runSickbay, runSickbayMonorepo, detectMonorepo, buildSummary, calculateOverallScore } from "@sickbay/core";
 
 interface ProgressItem {
   name: string;
   status: "pending" | "running" | "done";
 }
 
-interface UseVitalsRunnerOptions {
+interface UseSickbayRunnerOptions {
   projectPath: string;
   checks?: string[];
 }
 
 /**
- * Synthesize a rolled-up VitalsReport from a MonorepoReport for use in
+ * Synthesize a rolled-up SickbayReport from a MonorepoReport for use in
  * TUI panels that only understand single-project reports. Strategy: merge
  * all checks from all packages, keeping the worst score per check name.
  */
-function rollUpMonorepoReport(monorepo: MonorepoReport): VitalsReport {
+function rollUpMonorepoReport(monorepo: MonorepoReport): SickbayReport {
   const byId = new Map<string, CheckResult>();
   for (const pkg of monorepo.packages) {
     for (const check of pkg.checks) {
@@ -49,8 +49,8 @@ function rollUpMonorepoReport(monorepo: MonorepoReport): VitalsReport {
   };
 }
 
-export function useVitalsRunner({ projectPath, checks }: UseVitalsRunnerOptions) {
-  const [report, setReport] = useState<VitalsReport | null>(null);
+export function useSickbayRunner({ projectPath, checks }: UseSickbayRunnerOptions) {
+  const [report, setReport] = useState<SickbayReport | null>(null);
   const [monorepoReport, setMonorepoReport] = useState<MonorepoReport | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [progress, setProgress] = useState<ProgressItem[]>([]);
@@ -67,7 +67,7 @@ export function useVitalsRunner({ projectPath, checks }: UseVitalsRunnerOptions)
       const monorepoInfo = await detectMonorepo(projectPath);
 
       if (monorepoInfo.isMonorepo) {
-        const result = await runVitalsMonorepo({
+        const result = await runSickbayMonorepo({
           projectPath,
           checks,
         });
@@ -81,7 +81,7 @@ export function useVitalsRunner({ projectPath, checks }: UseVitalsRunnerOptions)
         return rolledUp;
       }
 
-      const result = await runVitals({
+      const result = await runSickbay({
         projectPath,
         checks,
         onRunnersReady: (names) => {

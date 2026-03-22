@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from "fs";
 import { join, extname } from "path";
 import { BaseRunner } from "./base.js";
 import { timer, WARN_LINES } from "../utils/file-helpers.js";
-import { CRITICAL_LINES } from "@vitals/constants";
+import { CRITICAL_LINES } from "@sickbay/constants";
 import type { CheckResult, Issue } from "../types.js";
 
 /**

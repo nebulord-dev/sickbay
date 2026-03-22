@@ -1,4 +1,4 @@
-# Vitals — Monorepo Support Design Notes
+# Sickbay — Monorepo Support Design Notes
 
 ## Detection
 
@@ -75,7 +75,7 @@ Checks that only make sense at the root level:
 
 ## Invocation Context
 
-Vitals should detect where it's being run from and behave accordingly:
+Sickbay should detect where it's being run from and behave accordingly:
 
 - **At monorepo root** → walk all workspace packages, show summary + per-package results
 - **Inside a workspace package** → treat as single-package mode, run normally
@@ -85,7 +85,7 @@ Vitals should detect where it's being run from and behave accordingly:
 
 ## Terminal TUI Behaviour
 
-The TUI (`vitals tui`) is space-constrained. When a monorepo is detected, show a persistent
+The TUI (`sickbay tui`) is space-constrained. When a monorepo is detected, show a persistent
 banner in one panel rather than trying to cram per-package detail in:
 
 ```
@@ -93,7 +93,7 @@ banner in one panel rather than trying to cram per-package detail in:
 │ 📦 4 packages found (pnpm workspaces)            │
 │                                                   │
 │ Showing aggregated summary. For per-package       │
-│ details run:  vitals --web                        │
+│ details run:  sickbay --web                        │
 └───────────────────────────────────────────────────┘
 ```
 
@@ -165,7 +165,7 @@ the infrastructure for per-package runs will already be in place.
 
 The current single-project CI/CD template works as-is. Monorepo support will require:
 
-- **Matrix builds** — run `vitals --package=<name>` per package in parallel
+- **Matrix builds** — run `sickbay --package=<name>` per package in parallel
 - **Per-package thresholds** — different packages may have different acceptable score floors
 - **Root-level summary step** — aggregate per-package results into a PR comment rollup
 
@@ -181,7 +181,7 @@ until this work is done):
 
 - Custom check API / plugin system
 - VS Code extension (needs to know which package is active)
-- `.vitalsrc` config file (per-package overrides require monorepo awareness)
+- `.sickbayrc` config file (per-package overrides require monorepo awareness)
 - Multi-repo team dashboard (per-package drill-down depends on this)
 - Context-aware tips in quick wins (requires reliable framework detection per-package)
 - CI/CD template v2 (matrix builds)
@@ -189,11 +189,11 @@ until this work is done):
 
 ---
 
-## Future: `vitals-py`
+## Future: `sickbay-py`
 
 Python projects don't fit the TS/Node model cleanly — different project roots
 (`pyproject.toml`, `requirements.txt`), different tooling (`ruff`, `mypy`), no
-`package.json`. Rather than bolt Python support onto Vitals, treat it as a
+`package.json`. Rather than bolt Python support onto Sickbay, treat it as a
 sibling CLI:
 
 - Same philosophy and TUI
@@ -202,6 +202,6 @@ sibling CLI:
 - Polyglot monorepo view spanning both CLIs is a natural phase 3
 
 **Phase order:**
-1. Vitals — TS/React/Angular/Node checks, framework detection, monorepo support ← current
-2. Vitals-py — Python/Django/FastAPI/Flask checks
+1. Sickbay — TS/React/Angular/Node checks, framework detection, monorepo support ← current
+2. Sickbay-py — Python/Django/FastAPI/Flask checks
 3. Unified dashboard — polyglot monorepo view across both CLIs

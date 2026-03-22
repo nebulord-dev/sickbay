@@ -196,7 +196,7 @@ export function TrendApp({
           </Text>
           <Box marginTop={1}>
             <Text dimColor>Run </Text>
-            <Text color="cyan">vitals --package &lt;name&gt;</Text>
+            <Text color="cyan">sickbay --package &lt;name&gt;</Text>
             <Text dimColor> first to start tracking scores.</Text>
           </Box>
         </Box>
@@ -263,7 +263,7 @@ export function TrendApp({
         <Text color="yellow">No scan history found for this project.</Text>
         <Box marginTop={1}>
           <Text dimColor>Run </Text>
-          <Text color="cyan">vitals</Text>
+          <Text color="cyan">sickbay</Text>
           <Text dimColor> first to start tracking scores.</Text>
         </Box>
       </Box>

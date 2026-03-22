@@ -1,6 +1,6 @@
 ---
 name: review-project
-description: Review the Vitals application for issues
+description: Review the Sickbay application for issues
 ---
 
 Review ${0:-all packages} for bugs, security issues, and code quality problems. Focus on practical issues, not style nitpicks

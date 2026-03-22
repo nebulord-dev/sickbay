@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { About } from './About.js';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
-function makeReport(checks: VitalsReport['checks'] = []): VitalsReport {
+function makeReport(checks: SickbayReport['checks'] = []): SickbayReport {
   return {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test',
@@ -20,9 +20,9 @@ function makeReport(checks: VitalsReport['checks'] = []): VitalsReport {
 }
 
 describe('About', () => {
-  it('renders the VITALS heading', () => {
+  it('renders the SICKBAY heading', () => {
     render(<About report={makeReport()} />);
-    expect(screen.getByText('VITALS')).toBeInTheDocument();
+    expect(screen.getByText('SICKBAY')).toBeInTheDocument();
   });
 
   it('renders the "How Scoring Works" section', () => {

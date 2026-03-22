@@ -1,21 +1,21 @@
 # Feature: Monorepo-Aware Subcommands
 
 > **Roadmap Phase**: Phase 3 — Monorepo Support (completing the last gap)
-> **Blocked by**: nothing — monorepo detection, `runVitalsMonorepo`, and `--package` on the main scan are all shipped
+> **Blocked by**: nothing — monorepo detection, `runSickbayMonorepo`, and `--package` on the main scan are all shipped
 
 Validate patterns and imports against the codebase before implementing. Pay close attention
 to existing type names, util locations, and runner registration patterns.
 
 ## Feature Description
 
-The subcommands `doctor`, `stats`, `trend`, and `fix` currently accept `--path` but ignore monorepo structure entirely. When pointed at a monorepo root they scan only the root `package.json` and produce misleading results (e.g. `vitals doctor` against the fixtures monorepo checks for React/browser configs that are irrelevant to the Node API package inside it).
+The subcommands `doctor`, `stats`, `trend`, and `fix` currently accept `--path` but ignore monorepo structure entirely. When pointed at a monorepo root they scan only the root `package.json` and produce misleading results (e.g. `sickbay doctor` against the fixtures monorepo checks for React/browser configs that are irrelevant to the Node API package inside it).
 
 This feature threads monorepo awareness through all four subcommands using the same `detectMonorepo` + `--package` pattern already proven on the main scan command.
 
 ## User Story
 
 As a developer working in a monorepo
-I want `vitals doctor`, `vitals stats`, `vitals trend`, and `vitals fix` to understand my workspace structure
+I want `sickbay doctor`, `sickbay stats`, `sickbay trend`, and `sickbay fix` to understand my workspace structure
 So that I get accurate per-package results instead of misleading root-level output
 
 ## Problem Statement
@@ -23,7 +23,7 @@ So that I get accurate per-package results instead of misleading root-level outp
 All four subcommands blindly use `options.path` (defaulting to cwd) as a single project path. In a monorepo this means:
 - `doctor` checks root-level configs that may not exist (browserslist, React versions) and misses package-level issues
 - `stats` counts root files and misses per-package breakdowns
-- `trend` looks for `.vitals/history.json` at the root which may not exist per-package
+- `trend` looks for `.sickbay/history.json` at the root which may not exist per-package
 - `fix` scans the root and finds issues that belong to specific packages, then runs fix commands in the wrong directory
 
 ## Solution Statement
@@ -54,7 +54,7 @@ This mirrors how the main scan already handles `--package` in `index.ts` lines 5
 - `apps/cli/src/commands/stats.ts` — `gatherStats(projectPath)` function signature
 - `apps/cli/src/commands/fix.ts` — `collectFixableIssues(report)` and `executeFix(fix, projectPath)` signatures
 - `apps/cli/src/commands/trend.ts` — pure utility (sparkline/trendArrow), no changes needed
-- `apps/cli/src/lib/history.ts` — `loadHistory(projectPath)` reads from `<projectPath>/.vitals/history.json`
+- `apps/cli/src/lib/history.ts` — `loadHistory(projectPath)` reads from `<projectPath>/.sickbay/history.json`
 - `apps/cli/src/components/DoctorApp.tsx` — current props: `{ projectPath, autoFix, jsonOutput }`
 - `apps/cli/src/components/StatsApp.tsx` — current props: `{ projectPath, jsonOutput }`
 - `apps/cli/src/components/TrendApp.tsx` — current props: `{ projectPath, last, jsonOutput }`
@@ -69,7 +69,7 @@ None — all changes are to existing files.
 
 **Package resolution pattern** (from `index.ts`):
 ```typescript
-const { detectMonorepo } = await import("@vitals/core");
+const { detectMonorepo } = await import("@sickbay/core");
 const monorepoInfo = await detectMonorepo(options.path);
 
 if (options.package && monorepoInfo.isMonorepo) {
@@ -133,8 +133,8 @@ Extract the package resolution logic into a reusable helper:
 ```typescript
 import { readFileSync } from "fs";
 import { join } from "path";
-import { detectMonorepo } from "@vitals/core";
-import type { MonorepoInfo } from "@vitals/core";
+import { detectMonorepo } from "@sickbay/core";
+import type { MonorepoInfo } from "@sickbay/core";
 
 export interface MonorepoResolution {
   isMonorepo: true;
@@ -205,7 +205,7 @@ export async function resolveProject(
 }
 ```
 
-- **VALIDATE**: `pnpm --filter @vitals/cli build`
+- **VALIDATE**: `pnpm --filter @sickbay/cli build`
 
 ### 2. UPDATE `apps/cli/src/index.ts` — Add `--package` to all four subcommands
 
@@ -230,7 +230,7 @@ Then in each action handler, call `resolveProject()` and pass the resolution to 
 **fix handler changes:**
 - Same pattern as doctor
 
-- **VALIDATE**: `pnpm --filter @vitals/cli build`
+- **VALIDATE**: `pnpm --filter @sickbay/cli build`
 
 ### 3. UPDATE `apps/cli/src/components/DoctorApp.tsx` — Multi-package support
 
@@ -252,7 +252,7 @@ interface DoctorAppProps {
 - If single project: unchanged behavior
 - JSON output: array of `{ package: string, results: DiagnosticResult[] }` for monorepo
 
-- **VALIDATE**: `pnpm --filter @vitals/cli build && pnpm --filter @vitals/cli test`
+- **VALIDATE**: `pnpm --filter @sickbay/cli build && pnpm --filter @sickbay/cli test`
 
 ### 4. UPDATE `apps/cli/src/components/StatsApp.tsx` — Multi-package support
 
@@ -272,7 +272,7 @@ interface StatsAppProps {
 - If monorepo: run `gatherStats` per package, show a compact summary table (package name, files, LOC, deps, framework)
 - If single project: unchanged behavior
 
-- **VALIDATE**: `pnpm --filter @vitals/cli build && pnpm --filter @vitals/cli test`
+- **VALIDATE**: `pnpm --filter @sickbay/cli build && pnpm --filter @sickbay/cli test`
 
 ### 5. UPDATE `apps/cli/src/components/TrendApp.tsx` — Multi-package support
 
@@ -293,7 +293,7 @@ interface TrendAppProps {
 - If monorepo: load history for each package, show a per-package sparkline + score summary
 - If single project: unchanged behavior
 
-- **VALIDATE**: `pnpm --filter @vitals/cli build && pnpm --filter @vitals/cli test`
+- **VALIDATE**: `pnpm --filter @sickbay/cli build && pnpm --filter @sickbay/cli test`
 
 ### 6. UPDATE `apps/cli/src/components/FixApp.tsx` — Multi-package support
 
@@ -313,16 +313,16 @@ interface FixAppProps {
 ```
 
 **Behavior:**
-- If monorepo: scan each package via `runVitals`, collect fixable issues with package labels, present grouped selection UI, execute fixes in the correct package directory
+- If monorepo: scan each package via `runSickbay`, collect fixable issues with package labels, present grouped selection UI, execute fixes in the correct package directory
 - If single project: unchanged behavior
 
-- **VALIDATE**: `pnpm --filter @vitals/cli build && pnpm --filter @vitals/cli test`
+- **VALIDATE**: `pnpm --filter @sickbay/cli build && pnpm --filter @sickbay/cli test`
 
 ### 7. UPDATE `apps/cli/src/index.ts` — Refactor main scan to use `resolveProject`
 
 Optionally refactor the main scan's inline package resolution to use the new shared helper. This deduplicates ~25 lines.
 
-- **VALIDATE**: `pnpm --filter @vitals/cli build`
+- **VALIDATE**: `pnpm --filter @sickbay/cli build`
 
 ### 8. ADD tests
 
@@ -332,7 +332,7 @@ Optionally refactor the main scan's inline package resolution to use the new sha
 - Update `apps/cli/src/components/TrendApp.test.tsx` — add monorepo test case
 - Update `apps/cli/src/components/FixApp.test.tsx` — add monorepo test case
 
-- **VALIDATE**: `pnpm --filter @vitals/cli test`
+- **VALIDATE**: `pnpm --filter @sickbay/cli test`
 
 ---
 
@@ -340,14 +340,14 @@ Optionally refactor the main scan's inline package resolution to use the new sha
 
 ### Level 1: Type checking and linting
 ```bash
-pnpm --filter @vitals/cli build    # catches type errors
+pnpm --filter @sickbay/cli build    # catches type errors
 pnpm lint                           # ESLint across all packages
 ```
 
 ### Level 2: Unit tests
 ```bash
-pnpm --filter @vitals/cli test     # cli unit tests
-pnpm --filter @vitals/core test    # core tests (should be unaffected)
+pnpm --filter @sickbay/cli test     # cli unit tests
+pnpm --filter @sickbay/core test    # core tests (should be unaffected)
 ```
 
 ### Level 3: Full build and manual validation
@@ -394,7 +394,7 @@ node apps/cli/dist/index.js trend --path fixtures --package react-app
 
 ## NOTES
 
-- The `trend` command is the trickiest for monorepo since history is stored per-project in `.vitals/history.json`. Packages within a monorepo may or may not have history depending on whether they've been scanned individually before. The component should handle missing history gracefully (already does for single projects).
+- The `trend` command is the trickiest for monorepo since history is stored per-project in `.sickbay/history.json`. Packages within a monorepo may or may not have history depending on whether they've been scanned individually before. The component should handle missing history gracefully (already does for single projects).
 - `FixApp` is the most complex component (multi-phase with keyboard input). For the monorepo case, the simplest approach is to scan all packages, collect all fixable issues with package name labels, and present them in one unified selection UI. Each fix already carries its `projectPath` context via the report.
 - The `resolveProject` helper should also be usable by the main scan action handler to reduce duplication, but this refactor is optional and lower priority than getting the subcommands working.
 - Consider using `basename` or the short package name (after `/`) for display labels to keep terminal output compact.

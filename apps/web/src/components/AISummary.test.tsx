@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AISummary } from './AISummary.js';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
-const mockReport: VitalsReport = {
+const mockReport: SickbayReport = {
   timestamp: '2024-01-01T00:00:00.000Z',
   projectPath: '/test',
   projectInfo: {
@@ -71,7 +71,7 @@ describe('AISummary', () => {
   });
 
   it('uses cached summary from localStorage without fetching', async () => {
-    const cacheKey = `vitals-ai-summary-${mockReport.timestamp}`;
+    const cacheKey = `sickbay-ai-summary-${mockReport.timestamp}`;
     const cached = '**Health Assessment**\nCached response.';
     localStorage.setItem(cacheKey, cached);
 

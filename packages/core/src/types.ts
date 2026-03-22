@@ -1,4 +1,4 @@
-export interface VitalsReport {
+export interface SickbayReport {
   timestamp: string;
   projectPath: string;
   projectInfo: ProjectInfo;

@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 import type { FixableIssue } from "../commands/fix.js";
 
-vi.mock("@vitals/core", () => ({
-  runVitals: vi.fn(),
+vi.mock("@sickbay/core", () => ({
+  runSickbay: vi.fn(),
 }));
 
 vi.mock("../commands/fix.js", () => ({
@@ -28,16 +28,16 @@ vi.mock("ink", async () => {
 });
 
 import { FixApp } from "./FixApp.js";
-import { runVitals } from "@vitals/core";
+import { runSickbay } from "@sickbay/core";
 import { collectFixableIssues, executeFix } from "../commands/fix.js";
 import { useInput } from "ink";
 
-const mockRunVitals = vi.mocked(runVitals);
+const mockRunSickbay = vi.mocked(runSickbay);
 const mockCollectFixableIssues = vi.mocked(collectFixableIssues);
 const mockExecuteFix = vi.mocked(executeFix);
 const { act } = React;
 
-function makeReport(overrides: Partial<VitalsReport> = {}): VitalsReport {
+function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {
     timestamp: "2024-01-01T00:00:00.000Z",
     projectPath: "/test/project",
@@ -99,7 +99,7 @@ describe("FixApp", () => {
   });
 
   it("shows scanning spinner while running", () => {
-    mockRunVitals.mockReturnValue(new Promise(() => {}));
+    mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
     const { lastFrame } = render(
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
@@ -109,7 +109,7 @@ describe("FixApp", () => {
   });
 
   it("shows no-fixable-issues message when done with empty list", async () => {
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([]);
 
     const result = await renderAndFlush(
@@ -120,7 +120,7 @@ describe("FixApp", () => {
   });
 
   it("shows selection phase heading when issues exist and applyAll is false", async () => {
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue()]);
 
     const result = await renderAndFlush(
@@ -131,7 +131,7 @@ describe("FixApp", () => {
   });
 
   it("shows fix description in selection list", async () => {
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([
       makeFixableIssue({
         issue: {
@@ -151,7 +151,7 @@ describe("FixApp", () => {
   });
 
   it("shows count of available issues in selection heading", async () => {
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue(), makeFixableIssue()]);
 
     const result = await renderAndFlush(
@@ -162,7 +162,7 @@ describe("FixApp", () => {
   });
 
   it("shows dry run warning in selection phase when dryRun is true", async () => {
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue()]);
 
     const result = await renderAndFlush(
@@ -172,8 +172,8 @@ describe("FixApp", () => {
     expect(result.lastFrame()).toContain("Dry run mode");
   });
 
-  it("shows error message when runVitals rejects", async () => {
-    mockRunVitals.mockRejectedValue(new Error("Scan failed"));
+  it("shows error message when runSickbay rejects", async () => {
+    mockRunSickbay.mockRejectedValue(new Error("Scan failed"));
 
     const result = await renderAndFlush(
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
@@ -182,8 +182,8 @@ describe("FixApp", () => {
     expect(result.lastFrame()).toContain("Scan failed");
   });
 
-  it("passes projectPath and checks to runVitals", async () => {
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+  it("passes projectPath and checks to runSickbay", async () => {
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([]);
 
     await renderAndFlush(
@@ -196,14 +196,14 @@ describe("FixApp", () => {
       />,
     );
 
-    expect(mockRunVitals).toHaveBeenCalledWith(
+    expect(mockRunSickbay).toHaveBeenCalledWith(
       expect.objectContaining({ projectPath: "/my/project", checks: ["eslint", "knip"] }),
     );
   });
 
   it("shows Fix Results heading in done phase after applyAll", async () => {
     const fix = makeFixableIssue();
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([fix]);
 
     const result = await renderAndFlush(
@@ -215,7 +215,7 @@ describe("FixApp", () => {
 
   it("shows Dry Run Results heading in done phase when dryRun is true and applyAll", async () => {
     const fix = makeFixableIssue();
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([fix]);
 
     const result = await renderAndFlush(
@@ -236,7 +236,7 @@ describe("FixApp", () => {
         latestHandler = handler;
       });
 
-      mockRunVitals.mockResolvedValue(makeReport() as never);
+      mockRunSickbay.mockResolvedValue(makeReport() as never);
       mockCollectFixableIssues.mockReturnValue([makeFixableIssue(), makeFixableIssue()]);
 
       const result = await renderAndFlush(
@@ -340,7 +340,7 @@ describe("FixApp", () => {
 
   it("shows fix count summary in done phase", async () => {
     const fix = makeFixableIssue();
-    mockRunVitals.mockResolvedValue(makeReport() as never);
+    mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([fix]);
 
     const result = await renderAndFlush(
@@ -358,7 +358,7 @@ describe("FixApp", () => {
     ]);
 
     it("shows monorepo scanning message with package count", () => {
-      mockRunVitals.mockReturnValue(new Promise(() => {}));
+      mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
       const { lastFrame } = render(
         <FixApp
@@ -376,7 +376,7 @@ describe("FixApp", () => {
     });
 
     it("shows no-fixable message for clean monorepo", async () => {
-      mockRunVitals.mockResolvedValue(makeReport() as never);
+      mockRunSickbay.mockResolvedValue(makeReport() as never);
       mockCollectFixableIssues.mockReturnValue([]);
 
       const result = await renderAndFlush(
@@ -396,7 +396,7 @@ describe("FixApp", () => {
     });
 
     it("shows package name labels in selection phase", async () => {
-      mockRunVitals.mockResolvedValue(makeReport() as never);
+      mockRunSickbay.mockResolvedValue(makeReport() as never);
       mockCollectFixableIssues
         .mockReturnValueOnce([makeFixableIssue()])
         .mockReturnValueOnce([]);

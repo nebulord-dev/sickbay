@@ -1,5 +1,5 @@
 import { relative } from 'path';
-import type { VitalsReport, CheckResult, ToolRunner, MonorepoReport, PackageReport } from './types.js';
+import type { SickbayReport, CheckResult, ToolRunner, MonorepoReport, PackageReport } from './types.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
 import { detectMonorepo } from './utils/detect-monorepo.js';
 import { calculateOverallScore, buildSummary } from './scoring.js';
@@ -60,7 +60,7 @@ const ALL_RUNNERS: ToolRunner[] = [
   new NodeAsyncErrorsRunner(),
 ];
 
-export async function runVitals(options: RunnerOptions = {}): Promise<VitalsReport> {
+export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayReport> {
   const projectPath = options.projectPath ?? process.cwd();
   const projectInfo = await detectProject(projectPath);
   const context = await detectContext(projectPath);
@@ -107,7 +107,7 @@ export async function runVitals(options: RunnerOptions = {}): Promise<VitalsRepo
   };
 }
 
-export async function runVitalsMonorepo(options: RunnerOptions = {}): Promise<MonorepoReport> {
+export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<MonorepoReport> {
   const rootPath = options.projectPath ?? process.cwd();
   const monorepoInfo = await detectMonorepo(rootPath);
 
@@ -117,7 +117,7 @@ export async function runVitalsMonorepo(options: RunnerOptions = {}): Promise<Mo
 
   const packageReports = await Promise.all(
     monorepoInfo.packagePaths.map(async (pkgPath): Promise<PackageReport> => {
-      const report = await runVitals({ ...options, projectPath: pkgPath });
+      const report = await runSickbay({ ...options, projectPath: pkgPath });
       const context = await detectContext(pkgPath);
 
       options.onPackageStart?.(report.projectInfo.name);

@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Text } from "ink";
-import type { MonorepoReport, PackageReport } from "@vitals/core";
+import type { MonorepoReport, PackageReport } from "@sickbay/core";
 
 interface MonorepoPanelProps {
   report: MonorepoReport | null;

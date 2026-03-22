@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
 import { Summary } from "./Summary.js";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
-const createMockReport = (overrides?: Partial<VitalsReport>): VitalsReport => ({
+const createMockReport = (overrides?: Partial<SickbayReport>): SickbayReport => ({
   timestamp: new Date().toISOString(),
   projectPath: "/test/project",
   projectInfo: {

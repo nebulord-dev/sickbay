@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 export interface TrendEntry {
   timestamp: string;
@@ -17,7 +17,7 @@ export interface TrendHistory {
 }
 
 function historyFilePath(projectPath: string): string {
-  return join(projectPath, ".vitals", "history.json");
+  return join(projectPath, ".sickbay", "history.json");
 }
 
 export function loadHistory(projectPath: string): TrendHistory | null {
@@ -30,8 +30,8 @@ export function loadHistory(projectPath: string): TrendHistory | null {
   }
 }
 
-export function saveEntry(report: VitalsReport): void {
-  mkdirSync(join(report.projectPath, ".vitals"), { recursive: true });
+export function saveEntry(report: SickbayReport): void {
+  mkdirSync(join(report.projectPath, ".sickbay"), { recursive: true });
 
   const filePath = historyFilePath(report.projectPath);
   const existing = loadHistory(report.projectPath) ?? {
@@ -68,10 +68,10 @@ export function saveEntry(report: VitalsReport): void {
   writeFileSync(filePath, JSON.stringify(existing, null, 2));
 }
 
-export function saveLastReport(report: VitalsReport): void {
-  mkdirSync(join(report.projectPath, ".vitals"), { recursive: true });
+export function saveLastReport(report: SickbayReport): void {
+  mkdirSync(join(report.projectPath, ".sickbay"), { recursive: true });
   writeFileSync(
-    join(report.projectPath, ".vitals", "last-report.json"),
+    join(report.projectPath, ".sickbay", "last-report.json"),
     JSON.stringify(report, null, 2),
   );
 }

@@ -2,14 +2,14 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CodebaseStats } from './CodebaseStats.js';
-import type { VitalsReport, CheckResult } from '@vitals/core';
+import type { SickbayReport, CheckResult } from '@sickbay/core';
 
 // Mock DependencyGraph to avoid ReactFlow in tests
 vi.mock('./DependencyGraph.js', () => ({
   DependencyGraph: () => <div data-testid="dependency-graph" />,
 }));
 
-function makeReport(checks: CheckResult[] = []): VitalsReport {
+function makeReport(checks: CheckResult[] = []): SickbayReport {
   return {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test',

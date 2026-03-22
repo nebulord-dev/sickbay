@@ -1,13 +1,13 @@
-# @vitals/web
+# @sickbay/web
 
-The web dashboard for Vitals. Built with Vite + React + TailwindCSS.
+The web dashboard for Sickbay. Built with Vite + React + TailwindCSS.
 
 ## Usage
 
-The web dashboard is typically launched automatically via `vitals --web`, which:
+The web dashboard is typically launched automatically via `sickbay --web`, which:
 - Builds the web app (requires `pnpm build` first)
 - Starts a local HTTP server serving `dist/`
-- Injects the scan report via `/vitals-report.json`
+- Injects the scan report via `/sickbay-report.json`
 - Opens the browser automatically
 
 ### Manual development
@@ -18,7 +18,7 @@ pnpm dev
 
 # The dashboard will show a welcome screen until a report is loaded.
 # To feed it a real report, generate one and place it in public/:
-node ../../packages/cli/dist/index.js --path ~/Desktop/vitals-test-app --json > public/vitals-report.json
+node ../../packages/cli/dist/index.js --path ~/Desktop/sickbay-test-app --json > public/sickbay-report.json
 # Then refresh the browser
 ```
 
@@ -26,9 +26,9 @@ node ../../packages/cli/dist/index.js --path ~/Desktop/vitals-test-app --json > 
 
 The dashboard tries to load a report from these sources in order:
 
-1. **`/vitals-report.json`** — served by the CLI's HTTP server when using `vitals --web`
+1. **`/sickbay-report.json`** — served by the CLI's HTTP server when using `sickbay --web`
 2. **`?report=<base64>`** — URL query parameter (for sharing reports)
-3. **LocalStorage** — key `vitals-report` (for persistence across refreshes)
+3. **LocalStorage** — key `sickbay-report` (for persistence across refreshes)
 
 ## Architecture
 
@@ -53,9 +53,9 @@ pnpm preview   # Preview the production build locally
 pnpm clean     # rm -rf dist/
 ```
 
-The `dist/` output is what the CLI's HTTP server serves when running `vitals --web`.
+The `dist/` output is what the CLI's HTTP server serves when running `sickbay --web`.
 
 ## Notes
 
-- **No runtime imports from `@vitals/core`** — only `import type` to avoid bundling Node.js modules (execa, fs, etc.) into the browser build
+- **No runtime imports from `@sickbay/core`** — only `import type` to avoid bundling Node.js modules (execa, fs, etc.) into the browser build
 - Color/score utilities that are shared are inlined directly to keep the browser bundle clean

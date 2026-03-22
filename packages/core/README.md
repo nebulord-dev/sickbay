@@ -1,24 +1,24 @@
-# @vitals/core
+# @sickbay/core
 
-The analysis engine for Vitals. Orchestrates all health checks in parallel and returns a structured `VitalsReport`.
+The analysis engine for Sickbay. Orchestrates all health checks in parallel and returns a structured `SickbayReport`.
 
 ## Overview
 
-`@vitals/core` exposes a single `runVitals()` function that:
+`@sickbay/core` exposes a single `runSickbay()` function that:
 
 1. Detects project metadata (framework, package manager, tooling)
 2. Runs all enabled checks concurrently via `Promise.allSettled`
 3. Calculates weighted scores per category
-4. Returns a `VitalsReport` with issues and fix suggestions
+4. Returns a `SickbayReport` with issues and fix suggestions
 
 ## API
 
-### `runVitals(options)`
+### `runSickbay(options)`
 
 ```typescript
-import { runVitals } from '@vitals/core';
+import { runSickbay } from '@sickbay/core';
 
-const report = await runVitals({
+const report = await runSickbay({
   projectPath: '/path/to/project',
   checks: ['knip', 'npm-audit'],   // optional — runs all if omitted
   verbose: false,
@@ -40,7 +40,7 @@ const report = await runVitals({
 ### Key Types
 
 ```typescript
-interface VitalsReport {
+interface SickbayReport {
   timestamp: string;
   projectPath: string;
   projectInfo: ProjectInfo;

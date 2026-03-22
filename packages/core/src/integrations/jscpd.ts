@@ -47,7 +47,7 @@ export class JscpdRunner extends BaseRunner {
           "--reporters",
           "json",
           "--output",
-          "/tmp/jscpd-vitals",
+          "/tmp/jscpd-sickbay",
           "--silent",
         ],
         {

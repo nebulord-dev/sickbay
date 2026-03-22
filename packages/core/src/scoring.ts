@@ -1,5 +1,5 @@
-import type { CheckResult, VitalsReport } from './types.js';
-import { SCORE_EXCELLENT, SCORE_GOOD, SCORE_FAIR } from '@vitals/constants';
+import type { CheckResult, SickbayReport } from './types.js';
+import { SCORE_EXCELLENT, SCORE_GOOD, SCORE_FAIR } from '@sickbay/constants';
 
 /**
  * This module provides functions to calculate the overall health score of a project based on various checks,
@@ -33,7 +33,7 @@ export function calculateOverallScore(checks: CheckResult[]): number {
   return totalWeight > 0 ? Math.round(weightedScore / totalWeight) : 0;
 }
 
-export function buildSummary(checks: CheckResult[]): VitalsReport['summary'] {
+export function buildSummary(checks: CheckResult[]): SickbayReport['summary'] {
   const summary = { critical: 0, warnings: 0, info: 0 };
   for (const check of checks) {
     for (const issue of check.issues) {

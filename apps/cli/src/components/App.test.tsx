@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
-import type { VitalsReport, CheckResult } from "@vitals/core";
+import type { SickbayReport, CheckResult } from "@sickbay/core";
 
-// Mock @vitals/core before importing App — must include all exports used by sub-components
-vi.mock("@vitals/core", () => ({
-  runVitals: vi.fn(),
+// Mock @sickbay/core before importing App — must include all exports used by sub-components
+vi.mock("@sickbay/core", () => ({
+  runSickbay: vi.fn(),
   getScoreEmoji: (score: number) => {
     if (score >= 90) return "Good";
     if (score >= 80) return "Fair";
@@ -43,10 +43,10 @@ vi.mock("ink", async () => {
 });
 
 import { App } from "./App.js";
-import { runVitals } from "@vitals/core";
+import { runSickbay } from "@sickbay/core";
 import { serveWeb } from "../commands/web.js";
 
-const mockRunVitals = vi.mocked(runVitals);
+const mockRunSickbay = vi.mocked(runSickbay);
 const mockServeWeb = vi.mocked(serveWeb);
 
 const { act } = React;
@@ -62,7 +62,7 @@ const makeCheckResult = (id: string, name: string): CheckResult => ({
   duration: 100,
 });
 
-const createMockReport = (overrides?: Partial<VitalsReport>): VitalsReport => ({
+const createMockReport = (overrides?: Partial<SickbayReport>): SickbayReport => ({
   timestamp: new Date().toISOString(),
   projectPath: "/test/project",
   projectInfo: {
@@ -90,16 +90,16 @@ describe("App", () => {
 
   it("shows loading message immediately on render", () => {
     // Never resolves — keep app in loading phase
-    mockRunVitals.mockReturnValue(new Promise(() => {}));
+    mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
     const { lastFrame } = render(<App projectPath="/test/project" />);
 
     expect(lastFrame()).toContain("Running health checks...");
   });
 
-  it("shows error message when runVitals rejects", async () => {
+  it("shows error message when runSickbay rejects", async () => {
     const error = new Error("Analysis failed: no package.json");
-    mockRunVitals.mockRejectedValue(error);
+    mockRunSickbay.mockRejectedValue(error);
 
     let result!: ReturnType<typeof render>;
     await act(async () => {
@@ -114,12 +114,12 @@ describe("App", () => {
     expect(output).toContain("Analysis failed: no package.json");
   });
 
-  it("shows check results after runVitals resolves", async () => {
+  it("shows check results after runSickbay resolves", async () => {
     const report = createMockReport();
-    mockRunVitals.mockResolvedValue(report);
+    mockRunSickbay.mockResolvedValue(report);
 
     const result = render(<App projectPath="/test/project" />);
-    // The component's useEffect calls runVitals → .then() does a dynamic import
+    // The component's useEffect calls runSickbay → .then() does a dynamic import
     // (await import("../lib/history.js")) before setting phase to "results".
     // setTimeout lets microtasks, the dynamic import, and React's render all flush.
     await new Promise((r) => setTimeout(r, 50));
@@ -129,19 +129,19 @@ describe("App", () => {
     expect(output).toContain("Knip");
   });
 
-  it("shows vitals --web hint after results phase", async () => {
+  it("shows sickbay --web hint after results phase", async () => {
     const report = createMockReport();
-    mockRunVitals.mockResolvedValue(report);
+    mockRunSickbay.mockResolvedValue(report);
 
     const result = render(<App projectPath="/test/project" />);
     await new Promise((r) => setTimeout(r, 50));
 
-    expect(result.lastFrame()).toContain("vitals --web");
+    expect(result.lastFrame()).toContain("sickbay --web");
   });
 
   it("displays the overall score in results", async () => {
     const report = createMockReport({ overallScore: 91 });
-    mockRunVitals.mockResolvedValue(report);
+    mockRunSickbay.mockResolvedValue(report);
 
     const result = render(<App projectPath="/test/project" />);
     await new Promise((r) => setTimeout(r, 50));
@@ -149,28 +149,28 @@ describe("App", () => {
     expect(result.lastFrame()).toContain("91");
   });
 
-  it("passes checks filter to runVitals", () => {
-    mockRunVitals.mockReturnValue(new Promise(() => {}));
+  it("passes checks filter to runSickbay", () => {
+    mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
     render(<App projectPath="/test/project" checks={["eslint", "knip"]} />);
 
-    expect(mockRunVitals).toHaveBeenCalledWith(
+    expect(mockRunSickbay).toHaveBeenCalledWith(
       expect.objectContaining({ checks: ["eslint", "knip"] }),
     );
   });
 
-  it("calls runVitals with the correct projectPath", () => {
-    mockRunVitals.mockReturnValue(new Promise(() => {}));
+  it("calls runSickbay with the correct projectPath", () => {
+    mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
     render(<App projectPath="/my/special/path" />);
 
-    expect(mockRunVitals).toHaveBeenCalledWith(
+    expect(mockRunSickbay).toHaveBeenCalledWith(
       expect.objectContaining({ projectPath: "/my/special/path" }),
     );
   });
 
   it("shows progress items for each check in loading phase", async () => {
-    mockRunVitals.mockImplementation((options: Parameters<typeof runVitals>[0]) => {
+    mockRunSickbay.mockImplementation((options: Parameters<typeof runSickbay>[0]) => {
       options?.onRunnersReady?.(["eslint", "knip"]);
       return new Promise(() => {});
     });
@@ -192,20 +192,20 @@ describe("App", () => {
     expect(output).toContain("knip");
   });
 
-  it("calls runVitals exactly once even in strict mode", () => {
-    mockRunVitals.mockReturnValue(new Promise(() => {}));
+  it("calls runSickbay exactly once even in strict mode", () => {
+    mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
     render(<App projectPath="/test/project" />);
 
     // hasRun ref prevents double execution
-    expect(mockRunVitals).toHaveBeenCalledTimes(1);
+    expect(mockRunSickbay).toHaveBeenCalledTimes(1);
   });
 
   it("invokes onCheckStart and onCheckComplete callbacks without crashing", async () => {
     let capturedOnCheckStart: ((name: string) => void) | undefined;
     let capturedOnCheckComplete: ((result: ReturnType<typeof makeCheckResult>) => void) | undefined;
 
-    mockRunVitals.mockImplementation((options: Parameters<typeof runVitals>[0]) => {
+    mockRunSickbay.mockImplementation((options: Parameters<typeof runSickbay>[0]) => {
       capturedOnCheckStart = options?.onCheckStart;
       capturedOnCheckComplete = options?.onCheckComplete;
       return new Promise(() => {}); // never resolves — stay in loading phase
@@ -229,13 +229,13 @@ describe("App", () => {
 
   it("enters opening-web phase and shows dashboard URL when openWeb is true", async () => {
     const report = createMockReport();
-    mockRunVitals.mockResolvedValue(report);
+    mockRunSickbay.mockResolvedValue(report);
     mockServeWeb.mockResolvedValue("http://localhost:3030");
 
     let result!: ReturnType<typeof render>;
     await act(async () => {
       result = render(<App projectPath="/test" openWeb={true} />);
-      // Flush: effect → runVitals resolves → saveEntry import → web.js import →
+      // Flush: effect → runSickbay resolves → saveEntry import → web.js import →
       // serveWeb resolves → open import → openBrowser → state settle
       for (let i = 0; i < 10; i++) await Promise.resolve();
     });
@@ -245,7 +245,7 @@ describe("App", () => {
 
   it("shows error phase when web server fails to start", async () => {
     const report = createMockReport();
-    mockRunVitals.mockResolvedValue(report);
+    mockRunSickbay.mockResolvedValue(report);
     mockServeWeb.mockRejectedValue(new Error("Port already in use"));
 
     let result!: ReturnType<typeof render>;
@@ -262,7 +262,7 @@ describe("App", () => {
       overallScore: 75,
       summary: { critical: 1, warnings: 3, info: 5 },
     });
-    mockRunVitals.mockResolvedValue(report);
+    mockRunSickbay.mockResolvedValue(report);
 
     const result = render(<App projectPath="/test/project" />);
     await new Promise((r) => setTimeout(r, 50));

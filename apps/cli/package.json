@@ -1,9 +1,9 @@
 {
-  "name": "@vitals/cli",
+  "name": "@sickbay/cli",
   "version": "0.0.1",
   "type": "module",
   "bin": {
-    "vitals": "./dist/index.js"
+    "sickbay": "./dist/index.js"
   },
   "files": [
     "dist"
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
-    "@vitals/core": "workspace:*",
+    "@sickbay/core": "workspace:*",
     "chokidar": "^5.0.0",
     "commander": "^14.0.0",
     "dotenv": "^17.3.1",

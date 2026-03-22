@@ -6,7 +6,7 @@ description: Prime agent with codebase understanding
 
 ## Objective
 
-Build comprehensive understanding of the Vitals monorepo before starting work. This is a pnpm workspace with three packages (`core`, `cli`, `web`) and strict build dependency order.
+Build comprehensive understanding of the Sickbay monorepo before starting work. This is a pnpm workspace with three packages (`core`, `cli`, `web`) and strict build dependency order.
 
 ## Process
 
@@ -24,7 +24,7 @@ Read in this order — each builds on the previous:
 
 - `CLAUDE.md` — project rules, architecture overview, file navigation guide
 - `.claude/kanban.md` — current task board and **roadmap** (phases, what's blocked, what's next)
-- `docs/vitals-monorepo-design.md` — architecture decisions for Phase 3 work
+- `docs/sickbay-monorepo-design.md` — architecture decisions for Phase 3 work
 - `packages/core/README.md`, `packages/cli/README.md`, `packages/web/README.md` — per-package implementation details
 
 List available design docs:
@@ -37,7 +37,7 @@ Read any plan docs relevant to the current task or phase. At minimum, read any d
 Read based on the task at hand:
 
 **If working on checks/scoring:**
-- `packages/core/src/types.ts` — core interfaces (`VitalsReport`, `CheckResult`, `Issue`)
+- `packages/core/src/types.ts` — core interfaces (`SickbayReport`, `CheckResult`, `Issue`)
 - `packages/core/src/runner.ts` — main orchestrator
 - `packages/core/src/scoring.ts` — weighted scoring logic
 - `packages/core/src/integrations/` — individual check runners
@@ -62,8 +62,8 @@ Read based on the task at hand:
 - `fixtures/README.md` — fixture structure, intentional issues per package, how to add new fixtures
 - `fixtures/packages/react-app/` — moderately healthy React + Vite + TypeScript app
 - `fixtures/packages/node-api/` — intentionally broken Node API (secrets, circular deps, outdated deps, no tests, duplicate code)
-- Run `vitals --path fixtures/packages/node-api` to verify checks catch real issues
-- Run `vitals --path fixtures/` to test monorepo detection (Phase 3)
+- Run `sickbay --path fixtures/packages/node-api` to verify checks catch real issues
+- Run `sickbay --path fixtures/` to test monorepo detection (Phase 3)
 
 ### 4. Understand Current State
 

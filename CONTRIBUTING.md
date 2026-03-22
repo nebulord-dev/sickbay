@@ -1,4 +1,4 @@
-# Contributing to Vitals
+# Contributing to Sickbay
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@
 
 ```bash
 git clone <repo-url>
-cd vitals
+cd sickbay
 
 # Install all workspace dependencies
 pnpm install
@@ -20,7 +20,7 @@ pnpm install
 # Build everything (core → cli → web, in dependency order)
 pnpm build
 
-# Link the CLI globally so you can run `vitals` anywhere
+# Link the CLI globally so you can run `sickbay` anywhere
 cd packages/cli && pnpm link --global
 ```
 
@@ -31,11 +31,11 @@ cd packages/cli && pnpm link --global
 This is a pnpm workspace monorepo with three packages that have a strict build order:
 
 ```
-@vitals/core   — analysis engine (all check runners, scoring, types)
+@sickbay/core   — analysis engine (all check runners, scoring, types)
      ↓
-@vitals/cli    — terminal UI (Ink + Commander), depends on core
+@sickbay/cli    — terminal UI (Ink + Commander), depends on core
      ↓
-@vitals/web    — web dashboard (Vite + React), served by cli
+@sickbay/web    — web dashboard (Vite + React), served by cli
 ```
 
 Always build `core` before `cli`. `turbo build` handles this automatically.
@@ -46,7 +46,7 @@ The `fixtures/` directory is a separate pnpm workspace used for testing — it i
 
 | File | What it does |
 |------|-------------|
-| `packages/core/src/types.ts` | All shared TypeScript interfaces (`VitalsReport`, `CheckResult`, `Issue`) |
+| `packages/core/src/types.ts` | All shared TypeScript interfaces (`SickbayReport`, `CheckResult`, `Issue`) |
 | `packages/core/src/runner.ts` | Orchestrates checks — register new runners here |
 | `packages/core/src/scoring.ts` | Weighted category scoring |
 | `packages/core/src/integrations/` | One file per check runner |
@@ -63,15 +63,15 @@ The `fixtures/` directory is a separate pnpm workspace used for testing — it i
 pnpm test
 
 # Per package
-pnpm --filter @vitals/core test
-pnpm --filter @vitals/cli test
-pnpm --filter @vitals/web test
+pnpm --filter @sickbay/core test
+pnpm --filter @sickbay/cli test
+pnpm --filter @sickbay/web test
 
 # Watch mode
-pnpm --filter @vitals/core test -- --watch
+pnpm --filter @sickbay/core test -- --watch
 
 # With coverage
-pnpm --filter @vitals/core test -- --coverage
+pnpm --filter @sickbay/core test -- --coverage
 ```
 
 Tests are colocated with source files — `git.test.ts` lives next to `git.ts`. See `packages/core/src/integrations/git.test.ts` for the pattern.
@@ -197,7 +197,7 @@ Use `fixtures/packages/react-app` or `fixtures/packages/node-api` as real test t
 ### 5. Rebuild core
 
 ```bash
-pnpm --filter @vitals/core build
+pnpm --filter @sickbay/core build
 ```
 
 ### Notes
@@ -205,13 +205,13 @@ pnpm --filter @vitals/core build
 - If your check requires an external tool, add it as a **dependency in `packages/core/package.json`** — all tools must be bundled, not installed globally by the user
 - Use `this.skipped('reason')` from `BaseRunner` to return a clean skip result rather than throwing
 - Score thresholds: **80+** = pass, **60–79** = warning, **< 60** = fail
-- All new `ProjectContext` types (`Framework`, `Runtime`, `BuildTool`, `TestFramework`) and `detectContext` are exported from `@vitals/core` public API
+- All new `ProjectContext` types (`Framework`, `Runtime`, `BuildTool`, `TestFramework`) and `detectContext` are exported from `@sickbay/core` public API
 
 ---
 
 ## How to Add a New Test Fixture
 
-Test fixtures live in `fixtures/packages/`. They are intentionally flawed projects that verify Vitals catches real issues.
+Test fixtures live in `fixtures/packages/`. They are intentionally flawed projects that verify Sickbay catches real issues.
 
 ### Steps
 
@@ -224,7 +224,7 @@ Test fixtures live in `fixtures/packages/`. They are intentionally flawed projec
 
 2. **Add a `package.json`** with a unique `name` field and the dependencies you want to test against. Use outdated or problematic versions intentionally.
 
-3. **Write source files** with real issues baked in — the goal is to give Vitals something to find:
+3. **Write source files** with real issues baked in — the goal is to give Sickbay something to find:
    - Hardcoded secrets (fake values — use patterns like `sk_live_...` or `AKIA...`)
    - Circular imports
    - Duplicate code blocks (jscpd needs ~5+ duplicated lines to flag)
@@ -238,11 +238,11 @@ Test fixtures live in `fixtures/packages/`. They are intentionally flawed projec
    cd fixtures && pnpm install
    ```
 
-5. **Verify Vitals catches what you intended:**
+5. **Verify Sickbay catches what you intended:**
 
    ```bash
-   vitals --path fixtures/packages/my-fixture
-   vitals --path fixtures/packages/my-fixture --web
+   sickbay --path fixtures/packages/my-fixture
+   sickbay --path fixtures/packages/my-fixture --web
    ```
 
 6. **Document the fixture** in `fixtures/README.md` — add a section with the framework/runtime, what issues are intentional, and what score range to expect.
@@ -275,10 +275,10 @@ Do not start language work until framework detection from the monorepo phase is 
 
 ```bash
 # Terminal 1 — rebuild core on changes
-pnpm --filter @vitals/core dev
+pnpm --filter @sickbay/core dev
 
 # Terminal 2 — rebuild cli on changes
-pnpm --filter @vitals/cli dev
+pnpm --filter @sickbay/cli dev
 
 # Terminal 3 — test against a fixture
 node packages/cli/dist/index.js --path fixtures/packages/node-api
@@ -288,7 +288,7 @@ node packages/cli/dist/index.js --path fixtures/packages/react-app --web
 ### Iterating on the terminal UI
 
 ```bash
-pnpm --filter @vitals/cli dev
+pnpm --filter @sickbay/cli dev
 node packages/cli/dist/index.js --path fixtures/packages/react-app
 ```
 
@@ -296,8 +296,8 @@ node packages/cli/dist/index.js --path fixtures/packages/react-app
 
 ```bash
 # Generate a report from a fixture and start the dev server
-node packages/cli/dist/index.js --path fixtures/packages/react-app --json > packages/web/public/vitals-report.json
-pnpm --filter @vitals/web dev
+node packages/cli/dist/index.js --path fixtures/packages/react-app --json > packages/web/public/sickbay-report.json
+pnpm --filter @sickbay/web dev
 ```
 
 ---

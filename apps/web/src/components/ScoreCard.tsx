@@ -1,5 +1,5 @@
-import type { CheckResult } from '@vitals/core';
-import { SCORE_GOOD, SCORE_FAIR } from '@vitals/constants';
+import type { CheckResult } from '@sickbay/core';
+import { SCORE_GOOD, SCORE_FAIR } from '@sickbay/constants';
 
 const CATEGORY_ICONS: Record<string, string> = {
   dependencies: '📦',

@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add a GitHub Actions CI workflow that lints, tests, and builds the vitals monorepo on every push and PR to `main`.
+**Goal:** Add a GitHub Actions CI workflow that lints, tests, and builds the sickbay monorepo on every push and PR to `main`.
 
 **Architecture:** Single workflow file with three jobs — `lint` and `test` run in parallel, `build` runs after `test` passes. Turbo handles monorepo build order (`core → cli`). Coverage reports uploaded as artifacts for inspection.
 
@@ -75,7 +75,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build core (required before testing cli)
-        run: pnpm --filter @vitals/core build
+        run: pnpm --filter @sickbay/core build
 
       - name: Test with coverage
         run: pnpm -r test:coverage
@@ -134,13 +134,13 @@ git commit -m "ci: add GitHub Actions workflow for lint, test, and build"
 git push origin main
 ```
 
-Then open `https://github.com/DTeel_r1github/vitals/actions` and confirm all three jobs appear and turn green.
+Then open `https://github.com/DTeel_r1github/sickbay/actions` and confirm all three jobs appear and turn green.
 
 ---
 
 ## Notes
 
-- The `test` job builds `@vitals/core` before running tests because `@vitals/cli` imports from it. `pnpm -r test:coverage` does not build first.
+- The `test` job builds `@sickbay/core` before running tests because `@sickbay/cli` imports from it. `pnpm -r test:coverage` does not build first.
 - `if: always()` on the artifact upload ensures coverage is uploaded even if some tests fail — useful for debugging.
 - The `lint` job runs `turbo run lint` which hits all three packages via Turbo's task graph.
 - Coverage artifacts are retained for 7 days, visible in the Actions run summary.

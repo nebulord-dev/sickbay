@@ -2,13 +2,13 @@ import http from "http";
 import { readFileSync, existsSync } from "fs";
 import { join, extname } from "path";
 import { fileURLToPath } from "url";
-import type { VitalsReport, MonorepoReport } from "@vitals/core";
+import type { SickbayReport, MonorepoReport } from "@sickbay/core";
 import type { AIService } from "../services/ai.js";
 
 /**
- * This module implements a simple HTTP server to serve a web dashboard for visualizing Vitals reports.
+ * This module implements a simple HTTP server to serve a web dashboard for visualizing Sickbay reports.
  * It dynamically serves the report data as JSON and provides endpoints for AI-generated summaries and chat interactions if an AI service is available.
- * The server also serves static files from the built dashboard located in the @vitals/web package. This allows users to interact with their health reports in a user-friendly web interface.
+ * The server also serves static files from the built dashboard located in the @sickbay/web package. This allows users to interact with their health reports in a user-friendly web interface.
  */
 
 const MIME_TYPES: Record<string, string> = {
@@ -46,10 +46,10 @@ async function getFreePort(preferred: number): Promise<number> {
   });
 }
 
-function packageReportToVitalsReport(
-  pkg: import("@vitals/core").PackageReport,
+function packageReportToSickbayReport(
+  pkg: import("@sickbay/core").PackageReport,
   parent: MonorepoReport,
-): VitalsReport {
+): SickbayReport {
   return {
     timestamp: parent.timestamp,
     projectPath: pkg.path,
@@ -74,14 +74,14 @@ function packageReportToVitalsReport(
 }
 
 export async function serveWeb(
-  report: VitalsReport | MonorepoReport,
+  report: SickbayReport | MonorepoReport,
   preferredPort = 3030,
   aiService?: AIService,
 ): Promise<string> {
   const distDir = findWebDist();
   if (!distDir) {
     throw new Error(
-      "Web dashboard not built. Run: pnpm --filter @vitals/web build",
+      "Web dashboard not built. Run: pnpm --filter @sickbay/web build",
     );
   }
 
@@ -102,16 +102,16 @@ export async function serveWeb(
     const url = req.url ?? "/";
 
     // Serve the report JSON directly from memory
-    if (url === "/vitals-report.json") {
+    if (url === "/sickbay-report.json") {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(reportJson);
       return;
     }
 
     // Serve project-local history
-    if (url === "/vitals-history.json") {
+    if (url === "/sickbay-history.json") {
       const basePath = "isMonorepo" in report ? report.rootPath : report.projectPath;
-      const historyPath = join(basePath, ".vitals", "history.json");
+      const historyPath = join(basePath, ".sickbay", "history.json");
       if (existsSync(historyPath)) {
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(readFileSync(historyPath, "utf-8"));
@@ -146,7 +146,7 @@ export async function serveWeb(
           return;
         }
         try {
-          const pkgReport = packageReportToVitalsReport(pkg, report);
+          const pkgReport = packageReportToSickbayReport(pkg, report);
           const summary = await aiService.generateSummary(pkgReport);
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ summary }));
@@ -173,7 +173,7 @@ export async function serveWeb(
       req.on("end", async () => {
         try {
           const { message, history } = JSON.parse(body);
-          let chatReport: VitalsReport;
+          let chatReport: SickbayReport;
           if (packageName && "isMonorepo" in report) {
             const pkg = report.packages.find((p) => p.name === packageName);
             if (!pkg) {
@@ -181,7 +181,7 @@ export async function serveWeb(
               res.end(JSON.stringify({ error: "Package not found" }));
               return;
             }
-            chatReport = packageReportToVitalsReport(pkg, report);
+            chatReport = packageReportToSickbayReport(pkg, report);
           } else if (!("isMonorepo" in report)) {
             chatReport = report;
           } else {

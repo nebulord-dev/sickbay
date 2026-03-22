@@ -9,14 +9,14 @@ import React from "react";
 import { App } from "./components/App.js";
 
 /**
- * Entry point for the Vitals CLI application.
+ * Entry point for the Sickbay CLI application.
  * This script sets up the command-line interface using Commander, loads environment variables, and renders the appropriate Ink components based on user commands.
  * It supports multiple commands including the default scan, trend analysis, stats overview, and a doctor command for diagnosing project issues.
  * Each command can output results in JSON format or render an interactive UI in the terminal.
  */
 
-// Load .env from global config first (~/.vitals/.env)
-const globalConfigPath = join(homedir(), ".vitals", ".env");
+// Load .env from global config first (~/.sickbay/.env)
+const globalConfigPath = join(homedir(), ".sickbay", ".env");
 if (existsSync(globalConfigPath)) {
   config({ path: globalConfigPath, debug: false, quiet: true });
 }
@@ -27,7 +27,7 @@ config({ debug: false, quiet: true });
 const program = new Command();
 
 program
-  .name("vitals")
+  .name("sickbay")
   .description("React project health check CLI")
   .version("0.0.1")
   .enablePositionalOptions()
@@ -52,7 +52,7 @@ program
       ? options.checks.split(",").map((s: string) => s.trim())
       : undefined;
 
-    const { detectMonorepo, runVitals, runVitalsMonorepo } = await import("@vitals/core");
+    const { detectMonorepo, runSickbay, runSickbayMonorepo } = await import("@sickbay/core");
     const monorepoInfo = await detectMonorepo(options.path);
 
     // --package flag: scope to a single named package within a monorepo
@@ -73,7 +73,7 @@ program
       }
 
       if (options.json) {
-        const report = await runVitals({ projectPath: targetPath, checks, verbose: options.verbose });
+        const report = await runSickbay({ projectPath: targetPath, checks, verbose: options.verbose });
         process.stdout.write(JSON.stringify(report, null, 2) + "\n");
         process.exit(0);
       }
@@ -92,7 +92,7 @@ program
 
     if (options.json) {
       if (monorepoInfo.isMonorepo) {
-        const report = await runVitalsMonorepo({
+        const report = await runSickbayMonorepo({
           projectPath: options.path,
           checks,
           verbose: options.verbose,
@@ -101,7 +101,7 @@ program
         process.exit(0);
       }
 
-      const report = await runVitals({
+      const report = await runSickbay({
         projectPath: options.path,
         checks,
         verbose: options.verbose,
@@ -132,20 +132,20 @@ program
     );
   });
 
-// --- vitals init ---
+// --- sickbay init ---
 program
   .command("init")
-  .description("Initialize .vitals/ folder and run an initial baseline scan")
+  .description("Initialize .sickbay/ folder and run an initial baseline scan")
   .option("-p, --path <path>", "project path to initialize", process.cwd())
   .action(async (options) => {
-    const { initVitals } = await import("./commands/init.js");
-    await initVitals(options.path);
+    const { initSickbay } = await import("./commands/init.js");
+    await initSickbay(options.path);
   });
 
-// --- vitals fix ---
+// --- sickbay fix ---
 program
   .command("fix")
-  .description("Interactively fix issues found by vitals scan")
+  .description("Interactively fix issues found by sickbay scan")
   .option("-p, --path <path>", "project path to analyze", process.cwd())
   .option("-c, --checks <checks>", "comma-separated list of checks to run")
   .option("--package <name>", "scope to a single package (monorepo only)")
@@ -187,7 +187,7 @@ program
     );
   });
 
-// --- vitals trend ---
+// --- sickbay trend ---
 program
   .command("trend")
   .description("Show score history and trends over time")
@@ -224,7 +224,7 @@ program
     );
   });
 
-// --- vitals stats ---
+// --- sickbay stats ---
 program
   .command("stats")
   .description("Show a quick codebase overview and project summary")
@@ -259,7 +259,7 @@ program
     );
   });
 
-// --- vitals tui ---
+// --- sickbay tui ---
 program
   .command("tui")
   .description("Launch the persistent developer dashboard")
@@ -283,7 +283,7 @@ program
     );
   });
 
-// --- vitals doctor ---
+// --- sickbay doctor ---
 program
   .command("doctor")
   .description("Diagnose project setup and configuration issues")

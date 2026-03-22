@@ -92,10 +92,10 @@ vi.mock('./scoring.js', () => ({
   buildSummary: vi.fn().mockReturnValue({ critical: 0, warnings: 0, info: 0 }),
 }));
 
-import { runVitals } from './runner.js';
+import { runSickbay } from './runner.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
 
-describe('runVitals', () => {
+describe('runSickbay', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Re-apply detectProject/detectContext mocks (clearAllMocks clears call history but not
@@ -120,17 +120,17 @@ describe('runVitals', () => {
   });
 
   it('uses process.cwd() as default project path', async () => {
-    await runVitals();
+    await runSickbay();
     expect(detectProject).toHaveBeenCalledWith(process.cwd());
   });
 
   it('uses provided projectPath', async () => {
-    await runVitals({ projectPath: '/my/project' });
+    await runSickbay({ projectPath: '/my/project' });
     expect(detectProject).toHaveBeenCalledWith('/my/project');
   });
 
   it('returns a report with the correct shape', async () => {
-    const report = await runVitals({ projectPath: '/my/project' });
+    const report = await runSickbay({ projectPath: '/my/project' });
 
     expect(report).toMatchObject({
       projectPath: '/my/project',
@@ -143,7 +143,7 @@ describe('runVitals', () => {
   });
 
   it('filters runners when checks option is provided', async () => {
-    const report = await runVitals({ projectPath: '/p', checks: ['knip', 'git'] });
+    const report = await runSickbay({ projectPath: '/p', checks: ['knip', 'git'] });
 
     const ids = report.checks.map((c) => c.id);
     expect(ids).toContain('knip');
@@ -155,7 +155,7 @@ describe('runVitals', () => {
   it('excludes non-applicable runners from results', async () => {
     allMockRunners.eslint.isApplicable.mockResolvedValue(false);
 
-    const report = await runVitals({ projectPath: '/p' });
+    const report = await runSickbay({ projectPath: '/p' });
 
     expect(report.checks.map((c) => c.id)).not.toContain('eslint');
     expect(allMockRunners.eslint.run).not.toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe('runVitals', () => {
   it('excludes runner and skips isApplicable/run when isApplicableToContext returns false', async () => {
     allMockRunners.jscpd.isApplicableToContext.mockReturnValue(false);
 
-    const report = await runVitals({ projectPath: '/p' });
+    const report = await runSickbay({ projectPath: '/p' });
 
     expect(report.checks.map((c) => c.id)).not.toContain('jscpd');
     expect(allMockRunners.jscpd.isApplicable).not.toHaveBeenCalled();
@@ -173,14 +173,14 @@ describe('runVitals', () => {
 
   it('calls onCheckStart before running each check', async () => {
     const onCheckStart = vi.fn();
-    await runVitals({ projectPath: '/p', checks: ['knip'], onCheckStart });
+    await runSickbay({ projectPath: '/p', checks: ['knip'], onCheckStart });
 
     expect(onCheckStart).toHaveBeenCalledWith('knip');
   });
 
   it('calls onCheckComplete after each check with the result', async () => {
     const onCheckComplete = vi.fn();
-    await runVitals({ projectPath: '/p', checks: ['knip'], onCheckComplete });
+    await runSickbay({ projectPath: '/p', checks: ['knip'], onCheckComplete });
 
     expect(onCheckComplete).toHaveBeenCalledTimes(1);
     expect(onCheckComplete).toHaveBeenCalledWith(expect.objectContaining({ id: 'knip' }));
@@ -189,7 +189,7 @@ describe('runVitals', () => {
   it('excludes a rejected runner without crashing', async () => {
     allMockRunners.eslint.run.mockRejectedValue(new Error('runner exploded'));
 
-    const report = await runVitals({ projectPath: '/p' });
+    const report = await runSickbay({ projectPath: '/p' });
 
     expect(report.checks.map((c) => c.id)).not.toContain('eslint');
   });
@@ -197,7 +197,7 @@ describe('runVitals', () => {
   it('includes results from all remaining runners when one fails', async () => {
     allMockRunners.eslint.run.mockRejectedValue(new Error('boom'));
 
-    const report = await runVitals({ projectPath: '/p', checks: ['knip', 'eslint', 'git'] });
+    const report = await runSickbay({ projectPath: '/p', checks: ['knip', 'eslint', 'git'] });
 
     const ids = report.checks.map((c) => c.id);
     expect(ids).toContain('knip');
@@ -206,7 +206,7 @@ describe('runVitals', () => {
   });
 
   it('passes verbose option to runner.run', async () => {
-    await runVitals({ projectPath: '/p', checks: ['knip'], verbose: true });
+    await runSickbay({ projectPath: '/p', checks: ['knip'], verbose: true });
 
     expect(allMockRunners.knip.run).toHaveBeenCalledWith('/p', { verbose: true });
   });

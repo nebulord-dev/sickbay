@@ -1,9 +1,9 @@
-export { runVitals, runVitalsMonorepo } from './runner.js';
+export { runSickbay, runSickbayMonorepo } from './runner.js';
 export { calculateOverallScore, buildSummary, getScoreColor, getScoreEmoji } from './scoring.js';
 export { detectProject, detectPackageManager, detectContext } from './utils/detect-project.js';
 export { detectMonorepo } from './utils/detect-monorepo.js';
 export type {
-  VitalsReport,
+  SickbayReport,
   ProjectInfo,
   CheckResult,
   Issue,

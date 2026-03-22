@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, within, fireEvent } from '@testing-library/react';
 import { DependencyList } from './DependencyList.js';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
-function makeReport(overrides: Partial<VitalsReport> = {}): VitalsReport {
+function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test',

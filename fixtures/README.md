@@ -1,6 +1,6 @@
-# Vitals Test Fixtures
+# Sickbay Test Fixtures
 
-A pnpm monorepo of intentionally flawed projects for testing Vitals against real-world scenarios. Running Vitals against this workspace tests both monorepo detection and per-package analysis.
+A pnpm monorepo of intentionally flawed projects for testing Sickbay against real-world scenarios. Running Sickbay against this workspace tests both monorepo detection and per-package analysis.
 
 ## Structure
 
@@ -13,20 +13,20 @@ fixtures/
     └── node-api/      — Express REST API (intentionally broken)
 ```
 
-## Running Vitals Against the Fixtures
+## Running Sickbay Against the Fixtures
 
 ```bash
 # Full monorepo (tests monorepo detection — Phase 3)
-vitals --path fixtures/
+sickbay --path fixtures/
 
 # Standalone React app
-vitals --path fixtures/packages/react-app
+sickbay --path fixtures/packages/react-app
 
 # Standalone Node API (expect a low score)
-vitals --path fixtures/packages/node-api
+sickbay --path fixtures/packages/node-api
 
 # With web dashboard
-vitals --path fixtures/packages/node-api --web
+sickbay --path fixtures/packages/node-api --web
 ```
 
 ---
@@ -41,7 +41,7 @@ A moderately healthy React app. Has tests, ESLint, and TypeScript configured. In
 
 ### `node-api` — Express REST API
 
-A deliberately broken Node.js REST API. Used to verify that Vitals catches a broad range of real issues and that Node-appropriate checks run instead of React-specific ones.
+A deliberately broken Node.js REST API. Used to verify that Sickbay catches a broad range of real issues and that Node-appropriate checks run instead of React-specific ones.
 
 **Intentional issues baked in:**
 
@@ -70,5 +70,5 @@ A deliberately broken Node.js REST API. Used to verify that Vitals catches a bro
 4. Add intentional issues relevant to the framework/runtime you're testing
 5. Document what the fixture tests and what score range to expect in this README
 
-Each fixture should test a specific scenario — avoid making a fixture that's just a clean healthy project (the react-app already covers that baseline). The goal is to verify Vitals catches real problems, not to show off a green dashboard.
+Each fixture should test a specific scenario — avoid making a fixture that's just a clean healthy project (the react-app already covers that baseline). The goal is to verify Sickbay catches real problems, not to show off a green dashboard.
 

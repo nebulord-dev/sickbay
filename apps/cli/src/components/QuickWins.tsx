@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Text } from "ink";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 /**
  * Component to display quick wins based on the report's issues that have fixes available.
@@ -8,7 +8,7 @@ import type { VitalsReport } from "@vitals/core";
  */
 
 interface QuickWinsProps {
-  report: VitalsReport;
+  report: SickbayReport;
 }
 
 function replacePackageManager(cmd: string, pm: string): string {

@@ -9,9 +9,9 @@
       "entry": ["src/index.ts", "src/index.tsx"],
       "project": ["src/**/*.ts", "src/**/*.tsx"],
       "ignoreDependencies": [
-        "@vitals/core",
-        "@vitals/cli",
-        "@vitals/web",
+        "@sickbay/core",
+        "@sickbay/cli",
+        "@sickbay/web",
         "tsup",
         "eslint-config-prettier",
         "@testing-library/jest-dom",
@@ -25,9 +25,9 @@
     "**/dist/**"
   ],
   "ignoreDependencies": [
-    "@vitals/core",
-    "@vitals/cli",
-    "@vitals/web",
+    "@sickbay/core",
+    "@sickbay/cli",
+    "@sickbay/web",
     "tsup",
     "eslint-config-prettier",
     "@testing-library/jest-dom",

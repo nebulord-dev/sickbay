@@ -5,5 +5,5 @@ export default defineConfig({
   format: ['esm'],
   dts: true,
   clean: true,
-  noExternal: ['@vitals/constants'],
+  noExternal: ['@sickbay/constants'],
 });

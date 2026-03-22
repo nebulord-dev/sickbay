@@ -1,5 +1,5 @@
 ---
-description: "Create a comprehensive implementation plan for a Vitals feature before writing any code"
+description: "Create a comprehensive implementation plan for a Sickbay feature before writing any code"
 ---
 
 # Plan a Feature
@@ -33,7 +33,7 @@ Before anything else:
 **Deep Feature Analysis:**
 
 - Extract the core problem being solved
-- Identify user value and impact on the Vitals workflow
+- Identify user value and impact on the Sickbay workflow
 - Determine feature type: New Capability / Enhancement / Refactor / Bug Fix
 - Assess complexity: Low / Medium / High
 - Identify which packages are affected: `core`, `cli`, `web` (or multiple)
@@ -55,7 +55,7 @@ So that <benefit/value>
 
 **1. Package Impact Analysis**
 
-Vitals has strict build order: `core` → `cli` → `web`. For each affected package:
+Sickbay has strict build order: `core` → `cli` → `web`. For each affected package:
 
 - What files need to change?
 - Does `packages/core/src/types.ts` need updating? (If yes, all packages are affected)
@@ -74,7 +74,7 @@ Vitals has strict build order: `core` → `cli` → `web`. For each affected pac
 **3. Dependency Analysis**
 
 - Catalog any new npm packages needed (prefer existing deps — check `package.json` first)
-- Confirm web-safe imports: `packages/web` must only use `import type` from `@vitals/core`
+- Confirm web-safe imports: `packages/web` must only use `import type` from `@sickbay/core`
 - Note any tools that need to be bundled as dependencies in `core` (not global installs)
 
 **4. Testing Patterns**
@@ -189,7 +189,7 @@ export class MyCheckRunner extends BaseRunner {
 **Web-safe imports:**
 \`\`\`typescript
 // In packages/web — always import type, never value imports from core
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 \`\`\`
 
 **Naming conventions:** <observed from codebase>
@@ -233,7 +233,7 @@ import type { VitalsReport } from '@vitals/core';
 **Tasks:**
 - Add/update component in `packages/web/src/components/`
 - Update `packages/web/src/components/Dashboard.tsx` if layout changes
-- Only use `import type` from `@vitals/core`
+- Only use `import type` from `@sickbay/core`
 
 ### Phase 5: Tests
 
@@ -275,17 +275,17 @@ Run all of these before considering the feature complete.
 
 ### Level 1: Type checking and linting
 \`\`\`bash
-pnpm --filter @vitals/core build          # catches type errors in core
-pnpm --filter @vitals/cli build           # catches type errors in cli
-pnpm --filter @vitals/web build           # catches type errors in web
+pnpm --filter @sickbay/core build          # catches type errors in core
+pnpm --filter @sickbay/cli build           # catches type errors in cli
+pnpm --filter @sickbay/web build           # catches type errors in web
 pnpm lint                                  # ESLint across all packages
 \`\`\`
 
 ### Level 2: Unit tests
 \`\`\`bash
-pnpm --filter @vitals/core test           # core unit tests
-pnpm --filter @vitals/cli test            # cli unit tests
-pnpm --filter @vitals/web test            # web unit tests
+pnpm --filter @sickbay/core test           # core unit tests
+pnpm --filter @sickbay/cli test            # cli unit tests
+pnpm --filter @sickbay/web test            # web unit tests
 \`\`\`
 
 ### Level 3: Full build and manual validation

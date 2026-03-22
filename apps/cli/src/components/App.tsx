@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Box, Text, useApp } from "ink";
 import Spinner from "ink-spinner";
 import Gradient from "ink-gradient";
-import type { VitalsReport, MonorepoReport, PackageReport } from "@vitals/core";
-import { runVitals, runVitalsMonorepo } from "@vitals/core";
+import type { SickbayReport, MonorepoReport, PackageReport } from "@sickbay/core";
+import { runSickbay, runSickbayMonorepo } from "@sickbay/core";
 import { Header } from "./Header.js";
 import { ProgressList } from "./ProgressList.js";
 import { CheckResultRow } from "./CheckResult.js";
@@ -43,7 +43,7 @@ export function App({
 }: AppProps) {
   const { exit } = useApp();
   const [phase, setPhase] = useState<Phase>("loading");
-  const [report, setReport] = useState<VitalsReport | null>(null);
+  const [report, setReport] = useState<SickbayReport | null>(null);
   const [monorepoReport, setMonorepoReport] = useState<MonorepoReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<ProgressItem[]>([]);
@@ -67,7 +67,7 @@ export function App({
     hasRun.current = true;
 
     if (isMonorepo) {
-      runVitalsMonorepo({
+      runSickbayMonorepo({
         projectPath,
         checks,
         verbose,
@@ -111,7 +111,7 @@ export function App({
       return;
     }
 
-    runVitals({
+    runSickbay({
       projectPath,
       checks,
       verbose,
@@ -233,7 +233,7 @@ export function App({
           <QuickWins report={report} />
           <Box marginTop={1}>
             <Text dimColor>View detailed report: </Text>
-            <Text color="cyan">vitals --web</Text>
+            <Text color="cyan">sickbay --web</Text>
           </Box>
         </Box>
       )}
@@ -306,7 +306,7 @@ function MonorepoSummaryTable({ report }: { report: MonorepoReport }) {
       </Box>
       <Box marginTop={1}>
         <Text dimColor>Per-package details: </Text>
-        <Text color="cyan">vitals --web</Text>
+        <Text color="cyan">sickbay --web</Text>
       </Box>
     </Box>
   );

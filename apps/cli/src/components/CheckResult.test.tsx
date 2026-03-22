@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { render } from 'ink-testing-library';
 import { CheckResultRow } from './CheckResult.js';
-import type { CheckResult } from '@vitals/core';
+import type { CheckResult } from '@sickbay/core';
 
 function makeResult(overrides: Partial<CheckResult> = {}): CheckResult {
   return {

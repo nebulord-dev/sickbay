@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ReactMarkdown, { Components } from "react-markdown";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 interface AISummaryProps {
-  report: VitalsReport;
+  report: SickbayReport;
   isOpen: boolean;
   onToggle: (open: boolean) => void;
   packageName?: string;
@@ -93,7 +93,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
   const cacheKeySuffix = packageName ? `${report.timestamp}-${packageName}` : report.timestamp;
 
   const fetchSummary = useCallback(async () => {
-    const cacheKey = `vitals-ai-summary-${cacheKeySuffix}`;
+    const cacheKey = `sickbay-ai-summary-${cacheKeySuffix}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached && !regenerating) {
       setSummary(cached);
@@ -106,7 +106,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
       if (response.ok) {
         const data = await response.json();
         setSummary(data.summary);
-        localStorage.setItem(`vitals-ai-summary-${cacheKeySuffix}`, data.summary);
+        localStorage.setItem(`sickbay-ai-summary-${cacheKeySuffix}`, data.summary);
       } else {
         setSummary(null);
       }
@@ -125,7 +125,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
   const handleRegenerate = () => {
     setRegenerating(true);
     setLoading(true);
-    localStorage.removeItem(`vitals-ai-summary-${cacheKeySuffix}`);
+    localStorage.removeItem(`sickbay-ai-summary-${cacheKeySuffix}`);
     fetchSummary();
   };
 
@@ -196,7 +196,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
                     To enable AI features:
                   </div>
                   <div>export ANTHROPIC_API_KEY=sk-ant-...</div>
-                  <div>vitals --path ~/project --web</div>
+                  <div>sickbay --path ~/project --web</div>
                 </div>
               </div>
             ) : (

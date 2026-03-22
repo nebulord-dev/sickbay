@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Text } from "ink";
 import { LOADING_MESSAGES } from "../../lib/messages.js";
-import type { CheckResult } from "@vitals/core";
+import type { CheckResult } from "@sickbay/core";
 
 interface HealthPanelProps {
   checks: CheckResult[];

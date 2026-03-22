@@ -1,7 +1,7 @@
 {
-  "name": "vitals-fixture-node-api",
+  "name": "sickbay-fixture-node-api",
   "version": "1.0.0",
-  "description": "Node.js REST API fixture — intentionally full of issues for Vitals testing",
+  "description": "Node.js REST API fixture — intentionally full of issues for Sickbay testing",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

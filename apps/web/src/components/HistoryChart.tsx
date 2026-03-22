@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SCORE_GOOD, SCORE_FAIR } from "@vitals/constants";
+import { SCORE_GOOD, SCORE_FAIR } from "@sickbay/constants";
 
 export interface TrendEntry {
   timestamp: string;
@@ -67,7 +67,7 @@ export function HistoryChart({ history }: HistoryChartProps) {
   if (entries.length === 0) {
     return (
       <div className="flex items-center justify-center h-48 text-gray-500 text-sm font-mono">
-        No history yet — run <code className="mx-1 px-1 bg-card rounded-sm">vitals</code> to start tracking
+        No history yet — run <code className="mx-1 px-1 bg-card rounded-sm">sickbay</code> to start tracking
       </div>
     );
   }

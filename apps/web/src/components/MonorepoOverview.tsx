@@ -1,5 +1,5 @@
-import type { MonorepoReport, PackageReport } from "@vitals/core";
-import { SCORE_GOOD, SCORE_FAIR } from "@vitals/constants";
+import type { MonorepoReport, PackageReport } from "@sickbay/core";
+import { SCORE_GOOD, SCORE_FAIR } from "@sickbay/constants";
 
 interface MonorepoOverviewProps {
   report: MonorepoReport;

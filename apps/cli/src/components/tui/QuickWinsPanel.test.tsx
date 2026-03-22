@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
 import { QuickWinsPanel } from "./QuickWinsPanel.js";
-import type { VitalsReport, CheckResult, Issue } from "@vitals/core";
+import type { SickbayReport, CheckResult, Issue } from "@sickbay/core";
 
-const createMockReport = (checks: CheckResult[]): VitalsReport => ({
+const createMockReport = (checks: CheckResult[]): SickbayReport => ({
   timestamp: new Date().toISOString(),
   projectPath: "/test/project",
   projectInfo: {

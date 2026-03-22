@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { IssuesList } from './IssuesList.js';
-import type { CheckResult } from '@vitals/core';
+import type { CheckResult } from '@sickbay/core';
 
 function makeCheck(overrides: Partial<CheckResult> = {}): CheckResult {
   return {

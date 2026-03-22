@@ -1,5 +1,5 @@
 {
-  "name": "@vitals/web",
+  "name": "@sickbay/web",
   "version": "0.0.1",
   "type": "module",
   "scripts": {
@@ -15,8 +15,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vitals/constants": "workspace:*",
-    "@vitals/core": "workspace:*",
+    "@sickbay/constants": "workspace:*",
+    "@sickbay/core": "workspace:*",
     "@xyflow/react": "^12.10.1",
     "dagre": "^0.8.5",
     "react": "^19.0.0",

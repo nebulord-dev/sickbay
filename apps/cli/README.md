@@ -1,19 +1,19 @@
-# @vitals/cli
+# @sickbay/cli
 
-The terminal interface for Vitals. Built with [Ink](https://github.com/vadimdemedes/ink) (React for terminals) and [Commander](https://github.com/tj/commander.js).
+The terminal interface for Sickbay. Built with [Ink](https://github.com/vadimdemedes/ink) (React for terminals) and [Commander](https://github.com/tj/commander.js).
 
 ## Usage
 
 ```bash
-vitals [options]
+sickbay [options]
 ```
 
 ### Commands
 
 | Command            | Description                                                        |
 | ------------------ | ------------------------------------------------------------------ |
-| `init [options]`   | Scaffold `.vitals/`, run baseline scan, seed history               |
-| `fix [options]`    | Interactively fix issues found by vitals scan                      |
+| `init [options]`   | Scaffold `.sickbay/`, run baseline scan, seed history               |
+| `fix [options]`    | Interactively fix issues found by sickbay scan                      |
 | `trend [options]`  | Show score history and trends over time                            |
 | `stats [options]`  | Show a quick codebase overview and project summary                 |
 | `doctor [options]` | Diagnose project setup and configuration issues                    |
@@ -35,80 +35,80 @@ vitals [options]
 
 ```bash
 # Analyze current directory
-vitals
+sickbay
 
 # Analyze another project
-vitals -p ~/projects/my-app
+sickbay -p ~/projects/my-app
 
 # Run specific checks only
-vitals --checks knip,npm-audit,depcheck
+sickbay --checks knip,npm-audit,depcheck
 
 # JSON output for CI
-vitals --json | jq '.overallScore'
+sickbay --json | jq '.overallScore'
 
 # Get just the summary
-vitals --json | jq '.summary'
+sickbay --json | jq '.summary'
 
 # List all check names and their scores
-vitals --json | jq '.checks[] | {name, score}'
+sickbay --json | jq '.checks[] | {name, score}'
 
 # Get only failing checks
-vitals --json | jq '.checks[] | select(.status == "fail")'
+sickbay --json | jq '.checks[] | select(.status == "fail")'
 
 # Open web dashboard
-vitals --web
+sickbay --web
 
-# Initialize .vitals/ folder with baseline scan
-vitals init
+# Initialize .sickbay/ folder with baseline scan
+sickbay init
 
 # Initialize for a specific project
-vitals init --path ~/projects/my-app
+sickbay init --path ~/projects/my-app
 
 # Interactively fix issues
-vitals fix
+sickbay fix
 
 # View score history and trends
-vitals trend
+sickbay trend
 
 # Get quick project stats
-vitals stats
+sickbay stats
 
 # Diagnose project setup
-vitals doctor
+sickbay doctor
 
 # Launch tui dashboard (current directory, file watching enabled)
-vitals tui
+sickbay tui
 
 # TUI for a specific project, disable file watching
-vitals tui --path ~/projects/my-app --no-watch
+sickbay tui --path ~/projects/my-app --no-watch
 
 # TUI with faster auto-refresh (60 seconds) and specific checks only
-vitals tui --path ~/projects/my-app --refresh 60 --checks knip,npm-audit,eslint
+sickbay tui --path ~/projects/my-app --refresh 60 --checks knip,npm-audit,eslint
 ```
 
-## `vitals init` vs `vitals`
+## `sickbay init` vs `sickbay`
 
-**Run `vitals init` once when setting up a project for the first time.**
+**Run `sickbay init` once when setting up a project for the first time.**
 
-It scaffolds the `.vitals/` data folder, saves a `baseline.json` snapshot of the project's current health, and wires up `.gitignore` entries so `history.json` doesn't pollute your repo. Think of it as "onboarding" Vitals to a project.
+It scaffolds the `.sickbay/` data folder, saves a `baseline.json` snapshot of the project's current health, and wires up `.gitignore` entries so `history.json` doesn't pollute your repo. Think of it as "onboarding" Sickbay to a project.
 
-**Run `vitals` for every subsequent scan.**
+**Run `sickbay` for every subsequent scan.**
 
-Each scan automatically appends an entry to `.vitals/history.json`, so your score trend builds up over time without any extra steps. The History tab in the web dashboard (`vitals --web`) reads from this file.
+Each scan automatically appends an entry to `.sickbay/history.json`, so your score trend builds up over time without any extra steps. The History tab in the web dashboard (`sickbay --web`) reads from this file.
 
 |                           | First time    | Ongoing        |
 | ------------------------- | ------------- | -------------- |
-| Command                   | `vitals init` | `vitals`       |
-| Creates `.vitals/`        | ✓             | ✓ (if missing) |
+| Command                   | `sickbay init` | `sickbay`       |
+| Creates `.sickbay/`        | ✓             | ✓ (if missing) |
 | Saves `baseline.json`     | ✓             | ✗              |
 | Updates root `.gitignore` | ✓             | ✗              |
 | Appends to `history.json` | ✓             | ✓              |
 
-> If you skip `vitals init` and go straight to `vitals`, history will still accumulate — you just won't have a baseline snapshot or gitignore entries for `.vitals/`. But you can always ignore it manually.
+> If you skip `sickbay init` and go straight to `sickbay`, history will still accumulate — you just won't have a baseline snapshot or gitignore entries for `.sickbay/`. But you can always ignore it manually.
 
 ## TUI Dashboard
 
-`vitals tui` opens a persistent split-pane TUI that continuously monitors your project. Unlike a one-shot scan, it stays running, watches for file changes, and lets you interact with results in real time.
+`sickbay tui` opens a persistent split-pane TUI that continuously monitors your project. Unlike a one-shot scan, it stays running, watches for file changes, and lets you interact with results in real time.
 
 ### TUI Flags
 
@@ -181,7 +181,7 @@ src/
         ├── HotkeyBar.tsx          # Fixed footer with keyboard shortcut reference
         ├── PanelBorder.tsx        # Focused/unfocused border styling
         └── hooks/
-            ├── useVitalsRunner.ts  # Manages check execution and scan state
+            ├── useSickbayRunner.ts  # Manages check execution and scan state
             ├── useFileWatcher.ts   # chokidar file watcher with debounce
             ├── useGitStatus.ts     # Polls git status every 10 seconds
             └── useTerminalSize.ts  # Tracks terminal dimensions for responsive layout
@@ -203,7 +203,7 @@ When `--web` is passed:
 1. Scan completes normally
 2. `serveWeb(report)` starts an HTTP server on port 3030 (or next free port)
 3. Server serves `packages/web/dist/` as static files
-4. Server responds to `GET /vitals-report.json` with the in-memory report
+4. Server responds to `GET /sickbay-report.json` with the in-memory report
 5. `open` package opens the browser
 6. Process stays alive until Ctrl+C
 
@@ -218,9 +218,9 @@ Skips the Ink UI entirely, writes `JSON.stringify(report, null, 2)` to stdout, t
 pnpm dev
 
 # Test against a project
-node dist/index.js --path ~/Desktop/vitals-test-app
-node dist/index.js --path ~/Desktop/vitals-test-app --web
-node dist/index.js --path ~/Desktop/vitals-test-app --json
+node dist/index.js --path ~/Desktop/sickbay-test-app
+node dist/index.js --path ~/Desktop/sickbay-test-app --web
+node dist/index.js --path ~/Desktop/sickbay-test-app --json
 ```
 
 ## Build

@@ -16,7 +16,7 @@ vi.mock('../utils/file-helpers.js', () => ({
 
 import { readFileSync } from 'fs';
 import { fileExists } from '../utils/file-helpers.js';
-import { WARN_LINES } from '@vitals/constants';
+import { WARN_LINES } from '@sickbay/constants';
 
 const mockReadFileSync = vi.mocked(readFileSync);
 const mockFileExists = vi.mocked(fileExists);

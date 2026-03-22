@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CriticalIssues } from './CriticalIssues.js';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
-function makeReport(checks: VitalsReport['checks'] = []): VitalsReport {
+function makeReport(checks: SickbayReport['checks'] = []): SickbayReport {
   return {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test',
@@ -86,7 +86,7 @@ describe('CriticalIssues', () => {
   });
 
   it('starts expanded when localStorage has "false" stored', () => {
-    localStorage.setItem('vitals-critical-issues-collapsed', 'false');
+    localStorage.setItem('sickbay-critical-issues-collapsed', 'false');
     const report = makeReport([{
       id: 'sec', name: 'Security', category: 'security', score: 0,
       status: 'fail', toolsUsed: [], duration: 0,
@@ -104,7 +104,7 @@ describe('CriticalIssues', () => {
     }]);
     render(<CriticalIssues report={report} onCheckClick={vi.fn()} />);
     fireEvent.click(screen.getByText('Critical Issues')); // expand
-    expect(localStorage.getItem('vitals-critical-issues-collapsed')).toBe('false');
+    expect(localStorage.getItem('sickbay-critical-issues-collapsed')).toBe('false');
   });
 
   it('truncates issues at 3 per check and shows overflow count', () => {
@@ -119,7 +119,7 @@ describe('CriticalIssues', () => {
         { severity: 'critical', message: 'Issue 5', reportedBy: ['test'] },
       ],
     }]);
-    localStorage.setItem('vitals-critical-issues-collapsed', 'false');
+    localStorage.setItem('sickbay-critical-issues-collapsed', 'false');
     render(<CriticalIssues report={report} onCheckClick={vi.fn()} />);
     expect(screen.queryByText('Issue 4')).not.toBeInTheDocument();
     expect(screen.getByText(/\+2 more critical issues/)).toBeInTheDocument();
@@ -132,7 +132,7 @@ describe('CriticalIssues', () => {
       status: 'fail', toolsUsed: [], duration: 0,
       issues: [{ severity: 'critical', message: 'Issue', reportedBy: ['test'] }],
     }]);
-    localStorage.setItem('vitals-critical-issues-collapsed', 'false');
+    localStorage.setItem('sickbay-critical-issues-collapsed', 'false');
     render(<CriticalIssues report={report} onCheckClick={onCheckClick} />);
     fireEvent.click(screen.getByText('My Check'));
     expect(onCheckClick).toHaveBeenCalledWith('my-check');

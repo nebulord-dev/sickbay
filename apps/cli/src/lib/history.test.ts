@@ -9,7 +9,7 @@ vi.mock('fs', () => ({
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { loadHistory, saveEntry, detectRegressions, saveLastReport } from './history.js';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 import type { TrendEntry } from './history.js';
 
 const mockExistsSync = vi.mocked(existsSync);
@@ -17,7 +17,7 @@ const mockReadFileSync = vi.mocked(readFileSync);
 const mockWriteFileSync = vi.mocked(writeFileSync);
 const mockMkdirSync = vi.mocked(mkdirSync);
 
-function makeReport(overrides: Partial<VitalsReport> = {}): VitalsReport {
+function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test/project',
@@ -87,7 +87,7 @@ describe('saveEntry', () => {
     saveEntry(makeReport());
 
     expect(mockMkdirSync).toHaveBeenCalledWith(
-      expect.stringContaining('.vitals'),
+      expect.stringContaining('.sickbay'),
       { recursive: true },
     );
   });
@@ -245,11 +245,11 @@ describe('detectRegressions', () => {
 describe('saveLastReport', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('creates the .vitals directory', () => {
+  it('creates the .sickbay directory', () => {
     saveLastReport(makeReport());
 
     expect(mockMkdirSync).toHaveBeenCalledWith(
-      expect.stringContaining('.vitals'),
+      expect.stringContaining('.sickbay'),
       { recursive: true },
     );
   });
@@ -274,13 +274,13 @@ describe('saveLastReport', () => {
     expect(mockWriteFileSync).toHaveBeenCalledTimes(2);
   });
 
-  it('writes to projectPath/.vitals/last-report.json', () => {
+  it('writes to projectPath/.sickbay/last-report.json', () => {
     const report = makeReport({ projectPath: '/my/project' });
 
     saveLastReport(report);
 
     expect(mockWriteFileSync).toHaveBeenCalledWith(
-      '/my/project/.vitals/last-report.json',
+      '/my/project/.sickbay/last-report.json',
       expect.any(String),
     );
   });

@@ -61,13 +61,13 @@ New `OverridesSection` component rendered between the totals banner and the depe
 
 ## Packages Affected
 
-1. **`@vitals/core`** — `outdated.ts` (update type classification), `types.ts` (overrides field on ProjectInfo), `detect-project.ts` (read overrides from package.json)
-2. **`@vitals/web`** — `DependencyList.tsx` (totals banner, overrides section, updated badges)
+1. **`@sickbay/core`** — `outdated.ts` (update type classification), `types.ts` (overrides field on ProjectInfo), `detect-project.ts` (read overrides from package.json)
+2. **`@sickbay/web`** — `DependencyList.tsx` (totals banner, overrides section, updated badges)
 
 ## Data Flow
 
 ```
-package.json → detectProject() → ProjectInfo.overrides → VitalsReport → DependencyList → OverridesSection
+package.json → detectProject() → ProjectInfo.overrides → SickbayReport → DependencyList → OverridesSection
 outdated runner → Issue.message "(major|minor|patch)" → DependencyList → UpdateTotalsBanner + updated badges
 ```
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@vitals/core", () => ({
+vi.mock("@sickbay/core", () => ({
   detectMonorepo: vi.fn(),
 }));
 
@@ -10,7 +10,7 @@ vi.mock("fs", async () => {
 });
 
 import { resolveProject, shortName } from "./resolve-package.js";
-import { detectMonorepo } from "@vitals/core";
+import { detectMonorepo } from "@sickbay/core";
 import { readFileSync } from "fs";
 
 const mockDetectMonorepo = vi.mocked(detectMonorepo);

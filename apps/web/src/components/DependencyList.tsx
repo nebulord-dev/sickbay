@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
 interface DependencyStatus {
   name: string;
@@ -11,7 +11,7 @@ interface DependencyStatus {
   updateType?: 'major' | 'minor' | 'patch';
 }
 
-function buildDependencyStatuses(report: VitalsReport): DependencyStatus[] {
+function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
   const { dependencies, devDependencies } = report.projectInfo;
 
   // Collect flags from check issues
@@ -156,7 +156,7 @@ function OverridesSection({ overrides }: { overrides: Record<string, string> }) 
 }
 
 interface Props {
-  report: VitalsReport;
+  report: SickbayReport;
 }
 
 export function DependencyList({ report }: Props) {

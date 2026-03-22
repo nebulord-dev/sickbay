@@ -1,6 +1,6 @@
-# Vitals Scoring Reference
+# Sickbay Scoring Reference
 
-This document explains how every score in Vitals is calculated — from individual check scores up to the overall project health score. Audience: developers integrating with the JSON output, building config overrides, or debugging why a project scored the way it did.
+This document explains how every score in Sickbay is calculated — from individual check scores up to the overall project health score. Audience: developers integrating with the JSON output, building config overrides, or debugging why a project scored the way it did.
 
 ---
 
@@ -283,7 +283,7 @@ Runs [jscpd](https://github.com/kucherenko/jscpd) on `src/` and reads the duplic
 
 Scans `src/` for source files (`.ts`, `.tsx`, `.js`, `.jsx`, `.mts`, `.cts`), counts non-blank lines, and flags files that exceed line thresholds.
 
-**Thresholds** (from `@vitals/constants`):
+**Thresholds** (from `@sickbay/constants`):
 | Lines       | Issue severity |
 | ----------- | -------------- |
 | ≥ 400 lines | info           |
@@ -507,7 +507,7 @@ Runners that need file-system checks before deciding whether to run:
 ## JSON output structure
 
 ```typescript
-interface VitalsReport {
+interface SickbayReport {
   timestamp: string;
   projectPath: string;
   projectInfo: ProjectInfo;

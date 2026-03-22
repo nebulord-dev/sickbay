@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 interface CriticalIssuesProps {
-  report: VitalsReport;
+  report: SickbayReport;
   onCheckClick: (checkId: string) => void;
 }
 
 export function CriticalIssues({ report, onCheckClick }: CriticalIssuesProps) {
   // Collapse state with localStorage persistence - must be at top level
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    const stored = localStorage.getItem("vitals-critical-issues-collapsed");
+    const stored = localStorage.getItem("sickbay-critical-issues-collapsed");
     return stored !== "false";
   });
 
   useEffect(() => {
     localStorage.setItem(
-      "vitals-critical-issues-collapsed",
+      "sickbay-critical-issues-collapsed",
       String(isCollapsed),
     );
   }, [isCollapsed]);

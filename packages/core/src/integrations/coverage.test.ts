@@ -111,12 +111,12 @@ describe('CoverageRunner', () => {
     mockReadPackageJson.mockReturnValue({ devDependencies: { vitest: '^1.0.0' } });
     mockExistsSync.mockImplementation((p) =>
       String(p).includes('@vitest/coverage-v8') ||
-      String(p).includes('vitals-test-') ||
+      String(p).includes('sickbay-test-') ||
       String(p).endsWith('coverage-summary.json'),
     );
     mockExeca.mockResolvedValue({} as never);
     mockReadFileSync.mockImplementation((p) => {
-      if (String(p).includes('vitals-test-'))
+      if (String(p).includes('sickbay-test-'))
         return JSON.stringify({ numTotalTests: 10, numPassedTests: 10, numFailedTests: 0 }) as never;
       return JSON.stringify(goodCoverage) as never;
     });
@@ -129,7 +129,7 @@ describe('CoverageRunner', () => {
 
   it('returns fail and critical issue when tests fail', async () => {
     mockReadPackageJson.mockReturnValue({ devDependencies: { vitest: '^1.0.0' } });
-    mockExistsSync.mockImplementation((p) => String(p).includes('vitals-test-'));
+    mockExistsSync.mockImplementation((p) => String(p).includes('sickbay-test-'));
     mockExeca.mockResolvedValue({} as never);
     mockReadFileSync.mockReturnValue(
       JSON.stringify({ numTotalTests: 5, numPassedTests: 3, numFailedTests: 2 }) as never,
@@ -148,12 +148,12 @@ describe('CoverageRunner', () => {
     mockReadPackageJson.mockReturnValue({ devDependencies: { vitest: '^1.0.0' } });
     mockExistsSync.mockImplementation((p) =>
       String(p).includes('@vitest/coverage-v8') ||
-      String(p).includes('vitals-test-') ||
+      String(p).includes('sickbay-test-') ||
       String(p).endsWith('coverage-summary.json'),
     );
     mockExeca.mockResolvedValue({} as never);
     mockReadFileSync.mockImplementation((p) => {
-      if (String(p).includes('vitals-test-'))
+      if (String(p).includes('sickbay-test-'))
         return JSON.stringify({ numTotalTests: 5, numPassedTests: 5, numFailedTests: 0 }) as never;
       return JSON.stringify(lowCoverage) as never;
     });
@@ -167,7 +167,7 @@ describe('CoverageRunner', () => {
   it('adds info issue when coverage provider is missing', async () => {
     mockReadPackageJson.mockReturnValue({ devDependencies: { vitest: '^1.0.0' } });
     // No coverage-v8, no coverage-summary — only the temp output file
-    mockExistsSync.mockImplementation((p) => String(p).includes('vitals-test-'));
+    mockExistsSync.mockImplementation((p) => String(p).includes('sickbay-test-'));
     mockExeca.mockResolvedValue({} as never);
     mockReadFileSync.mockReturnValue(
       JSON.stringify({ numTotalTests: 3, numPassedTests: 3, numFailedTests: 0 }) as never,

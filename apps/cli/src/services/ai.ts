@@ -1,16 +1,16 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 /**
- * AIService provides methods to generate a natural language summary of the Vitals report and to engage in a chat conversation about the report.
+ * AIService provides methods to generate a natural language summary of the Sickbay report and to engage in a chat conversation about the report.
  * It uses the Anthropic API to process the report data and user messages, returning insightful and actionable responses.
  */
 
 export interface AIService {
-  generateSummary(report: VitalsReport): Promise<string>;
+  generateSummary(report: SickbayReport): Promise<string>;
   chat(
     message: string,
-    report: VitalsReport,
+    report: SickbayReport,
     history: Array<{ role: "user" | "assistant"; content: string }>,
   ): Promise<string>;
 }
@@ -18,7 +18,7 @@ export interface AIService {
 export function createAIService(apiKey: string): AIService {
   const client = new Anthropic({ apiKey });
 
-  async function generateSummary(report: VitalsReport): Promise<string> {
+  async function generateSummary(report: SickbayReport): Promise<string> {
     const prompt = `You are a code health analyst. Analyze this project health report and provide a structured summary with the following sections:
 
 **Health Assessment**
@@ -52,10 +52,10 @@ ${JSON.stringify(report, null, 2)}`;
 
   async function chat(
     message: string,
-    report: VitalsReport,
+    report: SickbayReport,
     history: Array<{ role: "user" | "assistant"; content: string }>,
   ): Promise<string> {
-    const systemPrompt = `You are an expert code health assistant analyzing a project's Vitals report.
+    const systemPrompt = `You are an expert code health assistant analyzing a project's Sickbay report.
 
 The report contains:
 - Overall score: ${report.overallScore}/100

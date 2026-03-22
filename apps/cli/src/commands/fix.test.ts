@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { VitalsReport, CheckResult, Issue } from '@vitals/core';
+import type { SickbayReport, CheckResult, Issue } from '@sickbay/core';
 
 // We mock 'util' so that promisify returns our controlled async function.
 // fix.ts calls `promisify(execFile)` at module-load time, so mockExecFileAsync
@@ -50,7 +50,7 @@ function makeCheck(
   };
 }
 
-function makeReport(checks: CheckResult[]): VitalsReport {
+function makeReport(checks: CheckResult[]): SickbayReport {
   return {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test/project',

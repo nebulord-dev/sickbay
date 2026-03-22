@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
-import type { VitalsReport, CheckResult } from "@vitals/core";
+import type { SickbayReport, CheckResult } from "@sickbay/core";
 
 // Mock all hooks that TuiApp depends on
-vi.mock("./hooks/useVitalsRunner.js", () => ({
-  useVitalsRunner: vi.fn(),
+vi.mock("./hooks/useSickbayRunner.js", () => ({
+  useSickbayRunner: vi.fn(),
 }));
 
 vi.mock("./hooks/useFileWatcher.js", () => ({
@@ -33,10 +33,10 @@ vi.mock("ink", async () => {
 });
 
 import { TuiApp } from "./TuiApp.js";
-import { useVitalsRunner } from "./hooks/useVitalsRunner.js";
+import { useSickbayRunner } from "./hooks/useSickbayRunner.js";
 import { useTerminalSize } from "./hooks/useTerminalSize.js";
 
-const mockUseVitalsRunner = vi.mocked(useVitalsRunner);
+const mockUseSickbayRunner = vi.mocked(useSickbayRunner);
 const mockUseTerminalSize = vi.mocked(useTerminalSize);
 
 const makeCheckResult = (id: string, score = 80): CheckResult => ({
@@ -50,7 +50,7 @@ const makeCheckResult = (id: string, score = 80): CheckResult => ({
   duration: 100,
 });
 
-const createMockReport = (overrides?: Partial<VitalsReport>): VitalsReport => ({
+const createMockReport = (overrides?: Partial<SickbayReport>): SickbayReport => ({
   timestamp: new Date().toISOString(),
   projectPath: "/test/project",
   projectInfo: {
@@ -71,7 +71,7 @@ const createMockReport = (overrides?: Partial<VitalsReport>): VitalsReport => ({
   ...overrides,
 });
 
-const makeDefaultRunnerResult = (report: VitalsReport | null = null) => ({
+const makeDefaultRunnerResult = (report: SickbayReport | null = null) => ({
   report,
   monorepoReport: null,
   isScanning: false,
@@ -85,7 +85,7 @@ describe("TuiApp", () => {
     vi.clearAllMocks();
 
     mockUseTerminalSize.mockReturnValue({ rows: 40, columns: 120 });
-    mockUseVitalsRunner.mockReturnValue(makeDefaultRunnerResult());
+    mockUseSickbayRunner.mockReturnValue(makeDefaultRunnerResult());
   });
 
   afterEach(() => {
@@ -194,7 +194,7 @@ describe("TuiApp", () => {
 
   it("shows check names when a report is available", async () => {
     const report = createMockReport();
-    mockUseVitalsRunner.mockReturnValue(makeDefaultRunnerResult(report));
+    mockUseSickbayRunner.mockReturnValue(makeDefaultRunnerResult(report));
 
     const { frames, lastFrame } = render(
       <TuiApp
@@ -213,7 +213,7 @@ describe("TuiApp", () => {
 
   it("shows overall score when report is available", async () => {
     const report = createMockReport({ overallScore: 78 });
-    mockUseVitalsRunner.mockReturnValue(makeDefaultRunnerResult(report));
+    mockUseSickbayRunner.mockReturnValue(makeDefaultRunnerResult(report));
 
     const { lastFrame } = render(
       <TuiApp
@@ -231,7 +231,7 @@ describe("TuiApp", () => {
     expect(lastFrame()).toContain("78");
   });
 
-  it("calls useVitalsRunner with the provided projectPath", () => {
+  it("calls useSickbayRunner with the provided projectPath", () => {
     render(
       <TuiApp
         projectPath="/special/path"
@@ -240,12 +240,12 @@ describe("TuiApp", () => {
       />,
     );
 
-    expect(mockUseVitalsRunner).toHaveBeenCalledWith(
+    expect(mockUseSickbayRunner).toHaveBeenCalledWith(
       expect.objectContaining({ projectPath: "/special/path" }),
     );
   });
 
-  it("passes checks filter to useVitalsRunner", () => {
+  it("passes checks filter to useSickbayRunner", () => {
     render(
       <TuiApp
         projectPath="/test/project"
@@ -255,13 +255,13 @@ describe("TuiApp", () => {
       />,
     );
 
-    expect(mockUseVitalsRunner).toHaveBeenCalledWith(
+    expect(mockUseSickbayRunner).toHaveBeenCalledWith(
       expect.objectContaining({ checks: ["eslint", "knip"] }),
     );
   });
 
   it("shows scanning indicator when isScanning is true", () => {
-    mockUseVitalsRunner.mockReturnValue({
+    mockUseSickbayRunner.mockReturnValue({
       ...makeDefaultRunnerResult(),
       isScanning: true,
       progress: [{ name: "eslint", status: "running" }],
@@ -280,7 +280,7 @@ describe("TuiApp", () => {
   });
 
   it("renders all panel titles even with no report", () => {
-    mockUseVitalsRunner.mockReturnValue(makeDefaultRunnerResult(null));
+    mockUseSickbayRunner.mockReturnValue(makeDefaultRunnerResult(null));
 
     const { lastFrame } = render(
       <TuiApp

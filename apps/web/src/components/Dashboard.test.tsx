@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Dashboard } from './Dashboard.js';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
 // Mock side-effectful components
 vi.mock('./AISummary.js', () => ({ AISummary: () => null }));
@@ -12,7 +12,7 @@ beforeEach(() => {
   Element.prototype.scrollTo = vi.fn();
 });
 
-function makeReport(overrides: Partial<VitalsReport> = {}): VitalsReport {
+function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {
     timestamp: new Date().toISOString(),
     projectPath: '/test/project',

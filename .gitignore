@@ -7,7 +7,7 @@ coverage/
 .env
 *.local
 .worktrees/
-.vitals/history.json
-.vitals/cache/
+.sickbay/history.json
+.sickbay/cache/
 
 wallaby.cjs

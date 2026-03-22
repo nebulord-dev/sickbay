@@ -59,7 +59,7 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.80.0
         version: 0.80.0(zod@4.3.6)
-      '@vitals/core':
+      '@sickbay/core':
         specifier: workspace:*
         version: link:../../packages/core
       chokidar:
@@ -111,10 +111,10 @@ importers:
 
   apps/web:
     dependencies:
-      '@vitals/constants':
+      '@sickbay/constants':
         specifier: workspace:*
         version: link:../../packages/constants
-      '@vitals/core':
+      '@sickbay/core':
         specifier: workspace:*
         version: link:../../packages/core
       '@xyflow/react':
@@ -192,7 +192,7 @@ importers:
 
   packages/core:
     dependencies:
-      '@vitals/constants':
+      '@sickbay/constants':
         specifier: workspace:*
         version: link:../constants
       depcheck:

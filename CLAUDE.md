@@ -1,4 +1,4 @@
-# Vitals Monorepo - Claude Code Guide
+# Sickbay Monorepo - Claude Code Guide
 
 ## Kanban Board
 
@@ -6,11 +6,11 @@ Project tasks are tracked in `.claude/kanban.md`. When the user mentions tasks, 
 
 When a task is completed, move it from In Progress to Done immediately — do not wait to be asked. If work was done that matches a backlog task (even one not explicitly pulled into In Progress), move it to Done.
 
-This document helps Claude Code understand the Vitals codebase structure and where to look when making updates.
+This document helps Claude Code understand the Sickbay codebase structure and where to look when making updates.
 
 ## Project Overview
 
-**Vitals** is a zero-config health check CLI for React projects that provides:
+**Sickbay** is a zero-config health check CLI for React projects that provides:
 
 - 15 integrated checks across 5 categories (dependencies, security, code quality, performance, git)
 - Animated terminal UI built with Ink (React for terminals)
@@ -22,14 +22,14 @@ This document helps Claude Code understand the Vitals codebase structure and whe
 This is a **pnpm workspace** monorepo managed with **Turbo**. The packages have strict dependency order:
 
 ```
-@vitals/core (foundation)
+@sickbay/core (foundation)
     ↓
-@vitals/cli (depends on core)
+@sickbay/cli (depends on core)
     ↓
-@vitals/web (independent, but served by CLI)
+@sickbay/web (independent, but served by CLI)
 ```
 
-The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turbo build pipeline) used for testing Vitals against real project types. It contains two packages: `fixtures/packages/react-app` (moderately healthy React app) and `fixtures/packages/node-api` (intentionally broken Node API with hardcoded secrets, circular deps, outdated packages, duplicate code, no tests, etc.). See `fixtures/README.md` for the full breakdown of intentional issues and how to add new fixtures.
+The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turbo build pipeline) used for testing Sickbay against real project types. It contains two packages: `fixtures/packages/react-app` (moderately healthy React app) and `fixtures/packages/node-api` (intentionally broken Node API with hardcoded secrets, circular deps, outdated packages, duplicate code, no tests, etc.). See `fixtures/README.md` for the full breakdown of intentional issues and how to add new fixtures.
 
 ### Build System
 
@@ -55,7 +55,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 **Key Files**:
 
 - `src/runner.ts` - Main orchestrator, runs checks in parallel via `Promise.allSettled`
-- `src/types.ts` - Core TypeScript interfaces (`VitalsReport`, `CheckResult`, `Issue`)
+- `src/types.ts` - Core TypeScript interfaces (`Sickbay`, `CheckResult`, `Issue`)
 - `src/scoring.ts` - Weighted scoring logic (security 30%, dependencies 25%, etc.)
 - `src/integrations/` - Individual check runners (15 total)
   - Each extends `BaseRunner` and implements `run()` method
@@ -121,9 +121,9 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 **Report Loading Priority**:
 
-1. `/vitals-report.json` (served by CLI HTTP server)
+1. `/sickbay-report.json` (served by CLI HTTP server)
 2. `?report=<base64>` (URL query param for sharing)
-3. LocalStorage key `vitals-report`
+3. LocalStorage key `sickbay-report`
 
 **When to modify**:
 
@@ -132,7 +132,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 - Modifying report loading → Edit `src/lib/load-report.ts`
 - Styling changes → Edit `src/index.css` or Tailwind config
 
-**Important**: Only use `import type` from `@vitals/core` to avoid bundling Node.js modules into browser build.
+**Important**: Only use `import type` from `@sickbay/core` to avoid bundling Node.js modules into browser build.
 
 ---
 
@@ -184,31 +184,31 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 3. **Register** in `packages/core/src/runner.ts` → `ALL_RUNNERS` array
 
-4. **Rebuild**: `pnpm build` (or `pnpm --filter @vitals/core build`)
+4. **Rebuild**: `pnpm build` (or `pnpm --filter @sickbay/core build`)
 
 ### Modifying the Terminal UI
 
 1. Edit components in `apps/cli/src/components/`
 2. Use Ink hooks (`useEffect`, `useState`) and components (`<Box>`, `<Text>`)
-3. Test with: `pnpm --filter @vitals/cli dev` + `node apps/cli/dist/index.js --path <test-project>`
+3. Test with: `pnpm --filter @sickbay/cli dev` + `node apps/cli/dist/index.js --path <test-project>`
 
 ### Updating the Web Dashboard
 
 1. Edit components in `apps/web/src/components/`
 2. Use TailwindCSS for styling
-3. Test with: `pnpm --filter @vitals/web dev`
-4. Generate test report: `node apps/cli/dist/index.js --path <project> --json > apps/web/public/vitals-report.json`
+3. Test with: `pnpm --filter @sickbay/web dev`
+4. Generate test report: `node apps/cli/dist/index.js --path <project> --json > apps/web/public/sickbay-report.json`
 
 ### Changing Scoring Logic
 
 1. Edit `packages/core/src/scoring.ts`
 2. Adjust `CATEGORY_WEIGHTS` or scoring formulas
-3. Rebuild core: `pnpm --filter @vitals/core build`
+3. Rebuild core: `pnpm --filter @sickbay/core build`
 
 ### Adding CLI Flags
 
 1. Edit `apps/cli/src/index.ts` (Commander config)
-2. Pass new options to `runVitals()` or UI components
+2. Pass new options to `runSickbay()` or UI components
 3. Update help text and README
 
 ---
@@ -272,7 +272,7 @@ apps/web/src/
 
 ### Check Result Flow
 
-1. **Core** runs checks → produces `VitalsReport`
+1. **Core** runs checks → produces `SickbayReport`
 2. **CLI** receives report → renders Ink UI or outputs JSON
 3. **Web** loads report → displays interactive dashboard
 
@@ -324,14 +324,14 @@ pnpm dev          # Watch all packages
 pnpm clean        # Remove dist/ and node_modules
 
 # Per-package
-pnpm --filter @vitals/core build
-pnpm --filter @vitals/cli build
-pnpm --filter @vitals/web build
+pnpm --filter @sickbay/core build
+pnpm --filter @sickbay/cli build
+pnpm --filter @sickbay/web build
 
 # Development
-pnpm --filter @vitals/core dev      # Watch mode
-pnpm --filter @vitals/cli dev       # Watch mode
-pnpm --filter @vitals/web dev       # Vite dev server :3030
+pnpm --filter @sickbay/core dev      # Watch mode
+pnpm --filter @sickbay/cli dev       # Watch mode
+pnpm --filter @sickbay/web dev       # Vite dev server :3030
 ```
 
 ---
@@ -343,9 +343,9 @@ pnpm --filter @vitals/web dev       # Vite dev server :3030
 cd apps/cli && pnpm link --global
 
 # Run against a test project
-vitals --path ~/Desktop/test-app
-vitals --path ~/Desktop/test-app --web
-vitals --path ~/Desktop/test-app --json
+sickbay --path ~/Desktop/test-app
+sickbay --path ~/Desktop/test-app --web
+sickbay --path ~/Desktop/test-app --json
 
 # Or use node directly (during development)
 node apps/cli/dist/index.js --path ~/Desktop/test-app

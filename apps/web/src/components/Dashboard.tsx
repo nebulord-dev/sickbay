@@ -1,6 +1,6 @@
 import { useState, lazy, Suspense, useEffect, useRef, useCallback } from "react";
-import type { VitalsReport, MonorepoReport, PackageReport } from "@vitals/core";
-import { SCORE_GOOD, SCORE_FAIR } from "@vitals/constants";
+import type { SickbayReport, MonorepoReport, PackageReport } from "@sickbay/core";
+import { SCORE_GOOD, SCORE_FAIR } from "@sickbay/constants";
 
 function getScoreColor(score: number) {
   if (score >= SCORE_GOOD) return "green";
@@ -8,7 +8,7 @@ function getScoreColor(score: number) {
   return "red";
 }
 
-function getMeta(report: VitalsReport, id: string): Record<string, unknown> {
+function getMeta(report: SickbayReport, id: string): Record<string, unknown> {
   return (report.checks.find((c) => c.id === id)?.metadata ?? {}) as Record<
     string,
     unknown
@@ -36,17 +36,17 @@ const ChatDrawer = lazy(() =>
 );
 
 interface DashboardProps {
-  report: VitalsReport | MonorepoReport;
+  report: SickbayReport | MonorepoReport;
 }
 
 type View = "overview" | "issues" | "dependencies" | "codebase" | "history" | "about";
 
-function isMonorepoReport(r: VitalsReport | MonorepoReport): r is MonorepoReport {
+function isMonorepoReport(r: SickbayReport | MonorepoReport): r is MonorepoReport {
   return "isMonorepo" in r;
 }
 
-/** Build a minimal VitalsReport from a PackageReport for use in existing Dashboard components */
-function packageReportToVitalsReport(pkg: PackageReport, parentReport: MonorepoReport): VitalsReport {
+/** Build a minimal SickbayReport from a PackageReport for use in existing Dashboard components */
+function packageReportToSickbayReport(pkg: PackageReport, parentReport: MonorepoReport): SickbayReport {
   return {
     timestamp: parentReport.timestamp,
     projectPath: pkg.path,
@@ -74,11 +74,11 @@ export function Dashboard({ report }: DashboardProps) {
   const [selectedPackageIdx, setSelectedPackageIdx] = useState(-1);
 
   // Resolve the active single-project report: from monorepo package or direct
-  const activeReport: VitalsReport | null = monorepo
+  const activeReport: SickbayReport | null = monorepo
     ? selectedPackageIdx >= 0
-      ? packageReportToVitalsReport(monorepo.packages[selectedPackageIdx], monorepo)
+      ? packageReportToSickbayReport(monorepo.packages[selectedPackageIdx], monorepo)
       : null
-    : (report as VitalsReport);
+    : (report as SickbayReport);
   const [view, setView] = useState<View>("overview");
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
   const [isAIDrawerOpen, setIsAIDrawerOpen] = useState(false);
@@ -103,7 +103,7 @@ export function Dashboard({ report }: DashboardProps) {
   const fetchHistory = useCallback(() => {
     if (historyFetched.current) return;
     historyFetched.current = true;
-    fetch("/vitals-history.json")
+    fetch("/sickbay-history.json")
       .then((r) => (r.ok ? r.json() : null))
       .then((data: TrendHistory | null) => {
         if (data && Array.isArray(data.entries) && data.entries.length > 0) {
@@ -136,7 +136,7 @@ export function Dashboard({ report }: DashboardProps) {
       <aside className="w-72 border-r border-border flex flex-col shrink-0 bg-surface">
         <div className="p-4 border-b border-border">
           <div className="text-green-400 font-bold text-xl tracking-wider">
-            VITALS
+            SICKBAY
           </div>
           <div className="text-gray-400 text-xs mt-0.5">
             {monorepo ? "Monorepo Health Dashboard" : "Project Health Dashboard"}
@@ -427,7 +427,7 @@ export function Dashboard({ report }: DashboardProps) {
                   ? <HistoryChart history={history} />
                   : (
                     <div className="flex items-center justify-center h-48 text-gray-500 text-sm font-mono">
-                      No history found — run <code className="mx-1 px-1 bg-card rounded-sm">vitals init</code> then scan at least once
+                      No history found — run <code className="mx-1 px-1 bg-card rounded-sm">sickbay init</code> then scan at least once
                     </div>
                   )
               )}

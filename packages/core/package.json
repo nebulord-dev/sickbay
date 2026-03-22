@@ -1,5 +1,5 @@
 {
-  "name": "@vitals/core",
+  "name": "@sickbay/core",
   "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.js",
@@ -25,7 +25,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vitals/constants": "workspace:*",
+    "@sickbay/constants": "workspace:*",
     "depcheck": "^1.4.7",
     "execa": "^9.5.0",
     "globby": "^14.0.2",

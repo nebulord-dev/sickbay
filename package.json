@@ -1,5 +1,5 @@
 {
-  "name": "vitals-monorepo",
+  "name": "sickbay-monorepo",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -9,18 +9,18 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "cli": "pnpm --filter @vitals/cli dev",
-    "web": "pnpm --filter @vitals/web dev",
+    "cli": "pnpm --filter @sickbay/cli dev",
+    "web": "pnpm --filter @sickbay/web dev",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "test": "pnpm -r test",
     "test:coverage": "pnpm -r test:coverage",
-    "test:web": "pnpm --filter @vitals/web test",
-    "test:web:ui": "pnpm --filter @vitals/web test:ui",
-    "test:cli": "pnpm --filter @vitals/cli test",
-    "test:cli:ui": "pnpm --filter @vitals/cli test:ui",
-    "test:core": "pnpm --filter @vitals/core",
-    "test:core:ui": "pnpm --filter @vitals/core test:ui",
+    "test:web": "pnpm --filter @sickbay/web test",
+    "test:web:ui": "pnpm --filter @sickbay/web test:ui",
+    "test:cli": "pnpm --filter @sickbay/cli test",
+    "test:cli:ui": "pnpm --filter @sickbay/cli test:ui",
+    "test:core": "pnpm --filter @sickbay/core",
+    "test:core:ui": "pnpm --filter @sickbay/core test:ui",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {

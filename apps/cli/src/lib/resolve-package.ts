@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { detectMonorepo } from "@vitals/core";
-import type { MonorepoInfo } from "@vitals/core";
+import { detectMonorepo } from "@sickbay/core";
+import type { MonorepoInfo } from "@sickbay/core";
 
 export interface MonorepoResolution {
   isMonorepo: true;

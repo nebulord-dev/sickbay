@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text } from "ink";
-import type { VitalsReport } from "@vitals/core";
-import { getScoreEmoji } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
+import { getScoreEmoji } from "@sickbay/core";
 import { ScoreBar } from "./ScoreBar.js";
 
 /**
@@ -10,7 +10,7 @@ import { ScoreBar } from "./ScoreBar.js";
  */
 
 interface SummaryProps {
-  report: VitalsReport;
+  report: SickbayReport;
 }
 
 export function Summary({ report }: SummaryProps) {

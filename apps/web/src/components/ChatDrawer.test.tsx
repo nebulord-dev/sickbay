@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ChatDrawer } from './ChatDrawer.js';
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 
-const mockReport: VitalsReport = {
+const mockReport: SickbayReport = {
   timestamp: '2024-01-01T00:00:00.000Z',
   projectPath: '/test',
   projectInfo: {

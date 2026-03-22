@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface ChatDrawerProps {
-  report: VitalsReport;
+  report: SickbayReport;
   packageName?: string;
 }
 

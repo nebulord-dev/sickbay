@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Ship three polish features: auto-save last report to `.vitals/last-report.json`, TUI score reveal animation, and TUI panel entrance animations.
+**Goal:** Ship three polish features: auto-save last report to `.sickbay/last-report.json`, TUI score reveal animation, and TUI panel entrance animations.
 
 **Architecture:** Auto-save adds one function to `history.ts` and hooks it into three call sites. Score animation adds `displayScore` state to `ScorePanel.tsx` driven by a self-clearing `setInterval`. Panel entrance adds `visiblePanels` state to `TuiApp.tsx` with staggered `setTimeout` calls and a `visible` prop on `PanelBorder`.
 
@@ -24,11 +24,11 @@ Add to the `describe('saveLastReport')` block in `apps/cli/src/lib/history.test.
 describe('saveLastReport', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('creates the .vitals directory', () => {
+  it('creates the .sickbay directory', () => {
     saveLastReport(makeReport());
 
     expect(mockMkdirSync).toHaveBeenCalledWith(
-      expect.stringContaining('.vitals'),
+      expect.stringContaining('.sickbay'),
       { recursive: true },
     );
   });
@@ -54,13 +54,13 @@ describe('saveLastReport', () => {
     expect(mockWriteFileSync).toHaveBeenCalledTimes(2);
   });
 
-  it('writes to projectPath/.vitals/last-report.json', () => {
+  it('writes to projectPath/.sickbay/last-report.json', () => {
     const report = makeReport({ projectPath: '/my/project' });
 
     saveLastReport(report);
 
     expect(mockWriteFileSync).toHaveBeenCalledWith(
-      '/my/project/.vitals/last-report.json',
+      '/my/project/.sickbay/last-report.json',
       expect.any(String),
     );
   });
@@ -75,7 +75,7 @@ import { loadHistory, saveEntry, detectRegressions, saveLastReport } from './his
 ### Step 2: Run to verify failure
 
 ```bash
-cd /Users/chmc-gd9nn2t4fv/Documents/code/vitals && pnpm --filter @vitals/cli test -- --reporter=verbose history
+cd /Users/chmc-gd9nn2t4fv/Documents/code/sickbay && pnpm --filter @sickbay/cli test -- --reporter=verbose history
 ```
 
 Expected: FAIL — `saveLastReport is not a function`
@@ -85,10 +85,10 @@ Expected: FAIL — `saveLastReport is not a function`
 Add after the `saveEntry` function (around line 68):
 
 ```typescript
-export function saveLastReport(report: VitalsReport): void {
-  mkdirSync(join(report.projectPath, ".vitals"), { recursive: true });
+export function saveLastReport(report: SickbayReport): void {
+  mkdirSync(join(report.projectPath, ".sickbay"), { recursive: true });
   writeFileSync(
-    join(report.projectPath, ".vitals", "last-report.json"),
+    join(report.projectPath, ".sickbay", "last-report.json"),
     JSON.stringify(report, null, 2),
   );
 }
@@ -97,7 +97,7 @@ export function saveLastReport(report: VitalsReport): void {
 ### Step 4: Run tests to verify they pass
 
 ```bash
-pnpm --filter @vitals/cli test -- --reporter=verbose history
+pnpm --filter @sickbay/cli test -- --reporter=verbose history
 ```
 
 Expected: all `saveLastReport` tests PASS
@@ -106,7 +106,7 @@ Expected: all `saveLastReport` tests PASS
 
 ```bash
 git add apps/cli/src/lib/history.ts apps/cli/src/lib/history.test.ts
-git commit -m "feat: add saveLastReport to write .vitals/last-report.json"
+git commit -m "feat: add saveLastReport to write .sickbay/last-report.json"
 ```
 
 ---
@@ -192,7 +192,7 @@ The full updated block looks like:
 
 ```typescript
 const handleScanComplete = useCallback(
-  async (result: VitalsReport) => {
+  async (result: SickbayReport) => {
     const prevScore = reportRef.current?.overallScore ?? null;
     if (prevScore !== null) setPreviousScore(prevScore);
     setLastScanTime(new Date());
@@ -217,7 +217,7 @@ const handleScanComplete = useCallback(
 ### Step 4: Run the full CLI test suite
 
 ```bash
-pnpm --filter @vitals/cli test
+pnpm --filter @sickbay/cli test
 ```
 
 Expected: all existing tests still pass
@@ -226,7 +226,7 @@ Expected: all existing tests still pass
 
 ```bash
 git add apps/cli/src/components/App.tsx apps/cli/src/index.ts apps/cli/src/components/tui/TuiApp.tsx
-git commit -m "feat: auto-save last report to .vitals/last-report.json on every scan"
+git commit -m "feat: auto-save last report to .sickbay/last-report.json on every scan"
 ```
 
 ---
@@ -347,7 +347,7 @@ The remaining tests (delta display, critical/warnings/info counts, waiting state
 ### Step 2: Run to verify failures
 
 ```bash
-pnpm --filter @vitals/cli test -- --reporter=verbose ScorePanel
+pnpm --filter @sickbay/cli test -- --reporter=verbose ScorePanel
 ```
 
 Expected: several tests FAIL because animation not implemented yet
@@ -359,10 +359,10 @@ Replace the entire file contents:
 ```typescript
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Text } from "ink";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 interface ScorePanelProps {
-  report: VitalsReport | null;
+  report: SickbayReport | null;
   previousScore: number | null;
 }
 
@@ -449,7 +449,7 @@ Note: delta still uses `report.overallScore` (the real score), not `displayScore
 ### Step 4: Run tests to verify they pass
 
 ```bash
-pnpm --filter @vitals/cli test -- --reporter=verbose ScorePanel
+pnpm --filter @sickbay/cli test -- --reporter=verbose ScorePanel
 ```
 
 Expected: all ScorePanel tests PASS
@@ -507,7 +507,7 @@ it("renders children when visible is omitted (defaults to true)", () => {
 ### Step 2: Run to verify failure
 
 ```bash
-pnpm --filter @vitals/cli test -- --reporter=verbose PanelBorder
+pnpm --filter @sickbay/cli test -- --reporter=verbose PanelBorder
 ```
 
 Expected: the new `visible` tests FAIL
@@ -547,7 +547,7 @@ export function PanelBorder({ title, color, focused, visible = true, children }:
 ### Step 4: Run tests to verify they pass
 
 ```bash
-pnpm --filter @vitals/cli test -- --reporter=verbose PanelBorder
+pnpm --filter @sickbay/cli test -- --reporter=verbose PanelBorder
 ```
 
 Expected: all PanelBorder tests PASS
@@ -566,7 +566,7 @@ git commit -m "feat: add visible prop to PanelBorder for entrance animation supp
 **Files:**
 - Modify: `apps/cli/src/components/tui/TuiApp.tsx`
 
-No separate unit test for the stagger logic — it depends on Ink layout and multiple mocked hooks; behavioural correctness is visible immediately on `vitals tui`. The `PanelBorder` `visible` prop is already tested.
+No separate unit test for the stagger logic — it depends on Ink layout and multiple mocked hooks; behavioural correctness is visible immediately on `sickbay tui`. The `PanelBorder` `visible` prop is already tested.
 
 ### Step 1: Add `visiblePanels` state and stagger effect to `TuiApp.tsx`
 
@@ -664,7 +664,7 @@ The expanded panel section does **not** need `visible` — if a user explicitly 
 ### Step 3: Run the full CLI test suite
 
 ```bash
-pnpm --filter @vitals/cli test
+pnpm --filter @sickbay/cli test
 ```
 
 Expected: all tests pass
@@ -678,7 +678,7 @@ node apps/cli/dist/index.js tui --path fixtures/packages/react-app
 Watch for: panels appearing one by one over ~600ms on startup. Rebuild first if needed:
 
 ```bash
-pnpm --filter @vitals/cli build && node apps/cli/dist/index.js tui --path fixtures/packages/react-app
+pnpm --filter @sickbay/cli build && node apps/cli/dist/index.js tui --path fixtures/packages/react-app
 ```
 
 ### Step 5: Commit
@@ -693,7 +693,7 @@ git commit -m "feat: stagger TUI panel entrance animations on startup"
 ## Task 6: Move kanban tasks to Done
 
 Update `.claude/kanban.md` — move these three items from Backlog to Done:
-- Auto-save last report to `.vitals/last-report.json`
+- Auto-save last report to `.sickbay/last-report.json`
 - TUI score reveal animation
 - TUI panel entrance animations
 

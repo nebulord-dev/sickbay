@@ -1,6 +1,6 @@
-# Vitals
+# Sickbay
 
-A zero-config health check CLI for React projects. Run `vitals` in any project to get an instant report on dependencies, security, code quality, performance, and git health — with a web dashboard for deep dives.
+A zero-config health check CLI for React projects. Run `sickbay` in any project to get an instant report on dependencies, security, code quality, performance, and git health — with a web dashboard for deep dives.
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -29,7 +29,7 @@ A zero-config health check CLI for React projects. Run `vitals` in any project t
 ## Monorepo Structure
 
 ```
-vitals/
+sickbay/
 ├── packages/
 │   ├── core/        # Analysis engine — all check runners & scoring
 │   ├── cli/         # Terminal UI (Ink + Commander)
@@ -54,7 +54,7 @@ vitals/
 
 ```bash
 git clone <repo-url>
-cd vitals
+cd sickbay
 
 # Install all workspace dependencies
 pnpm install
@@ -70,11 +70,11 @@ cd packages/cli
 pnpm link --global
 ```
 
-Now you can run `vitals` from anywhere:
+Now you can run `sickbay` from anywhere:
 
 ```bash
-vitals --path ~/my-react-app
-vitals --path ~/my-react-app --web
+sickbay --path ~/my-react-app
+sickbay --path ~/my-react-app --web
 ```
 
 All check tools (knip, depcheck, madge, etc.) are bundled as dependencies — no separate global installs needed.
@@ -84,7 +84,7 @@ All check tools (knip, depcheck, madge, etc.) are bundled as dependencies — no
 ## CLI Usage
 
 ```
-vitals [options]
+sickbay [options]
 
 Options:
   -p, --path <path>     Path to the project to analyze (default: current directory)
@@ -97,7 +97,7 @@ Options:
   -h, --help            Show help
 
 Commands:
-  fix [options]          Interactively fix issues found by vitals scan
+  fix [options]          Interactively fix issues found by sickbay scan
   trend [options]        Show score history and trends over time
   stats [options]        Show a quick codebase overview and project summary
   doctor [options]       Diagnose project setup and configuration issues
@@ -108,30 +108,30 @@ Commands:
 
 ```bash
 # Analyze current directory
-vitals
+sickbay
 
 # Analyze a specific project
-vitals --path ~/projects/my-app
+sickbay --path ~/projects/my-app
 
 # Run only security and dependency checks
-vitals --path ~/projects/my-app --checks npm-audit,knip,depcheck
+sickbay --path ~/projects/my-app --checks npm-audit,knip,depcheck
 
 # Output JSON for CI/CD
-vitals --path ~/projects/my-app --json > vitals-report.json
+sickbay --path ~/projects/my-app --json > sickbay-report.json
 
 # Open interactive web dashboard
-vitals --path ~/projects/my-app --web
+sickbay --path ~/projects/my-app --web
 
 # Enable AI features (requires ANTHROPIC_API_KEY)
 export ANTHROPIC_API_KEY=sk-ant-...
-vitals --path ~/projects/my-app --web
+sickbay --path ~/projects/my-app --web
 
 # Launch persistent tui dashboard (watches for file changes, auto-rescans)
-vitals tui --path ~/projects/my-app
+sickbay tui --path ~/projects/my-app
 
 # TUI with AI web dashboard on demand (press W inside tui)
 export ANTHROPIC_API_KEY=sk-ant-...
-vitals tui --path ~/projects/my-app
+sickbay tui --path ~/projects/my-app
 ```
 
 > **Note:** See [packages/cli/README.md](packages/cli/README.md) for detailed documentation on the `fix`, `trend`, `stats`, `doctor`, and `tui` commands.
@@ -152,7 +152,7 @@ Set the `ANTHROPIC_API_KEY` environment variable:
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-vitals --path ~/projects/my-app --web
+sickbay --path ~/projects/my-app --web
 ```
 
 Without the API key, the dashboard still works — you just won't see the AI insights drawer or chat bot.
@@ -235,36 +235,36 @@ pnpm clean        # Remove all dist/ directories and node_modules
 
 ```bash
 # Core
-pnpm --filter @vitals/core build
-pnpm --filter @vitals/core dev     # Watch mode
+pnpm --filter @sickbay/core build
+pnpm --filter @sickbay/core dev     # Watch mode
 
 # CLI
-pnpm --filter @vitals/cli build
-pnpm --filter @vitals/cli dev      # Watch mode
+pnpm --filter @sickbay/cli build
+pnpm --filter @sickbay/cli dev      # Watch mode
 
 # Web
-pnpm --filter @vitals/web build
-pnpm --filter @vitals/web dev      # Vite dev server on :3030
+pnpm --filter @sickbay/web build
+pnpm --filter @sickbay/web dev      # Vite dev server on :3030
 ```
 
 ### Iterating on the CLI
 
 ```bash
 # Terminal 1 — watch rebuild
-pnpm --filter @vitals/cli dev
+pnpm --filter @sickbay/cli dev
 
 # Terminal 2 — test against a project
-node packages/cli/dist/index.js --path ~/Desktop/vitals-test-app
+node packages/cli/dist/index.js --path ~/Desktop/sickbay-test-app
 ```
 
 ### Test Fixtures
 
-The `fixtures/` directory is a pnpm monorepo with two intentionally broken packages for testing Vitals locally:
+The `fixtures/` directory is a pnpm monorepo with two intentionally broken packages for testing Sickbay locally:
 
 ```bash
-vitals --path fixtures/packages/react-app   # moderately healthy React app
-vitals --path fixtures/packages/node-api    # deliberately broken Node API
-vitals --path fixtures/                     # full monorepo (tests monorepo detection)
+sickbay --path fixtures/packages/react-app   # moderately healthy React app
+sickbay --path fixtures/packages/node-api    # deliberately broken Node API
+sickbay --path fixtures/                     # full monorepo (tests monorepo detection)
 ```
 
 See [`fixtures/README.md`](fixtures/README.md) for the full list of intentional issues and how to add new fixtures.
@@ -273,10 +273,10 @@ See [`fixtures/README.md`](fixtures/README.md) for the full list of intentional 
 
 ```bash
 # Start Vite dev server (auto-opens browser)
-pnpm --filter @vitals/web dev
+pnpm --filter @sickbay/web dev
 
 # Generate a sample report for the dashboard to load
-node packages/cli/dist/index.js --path ~/Desktop/vitals-test-app --json > packages/web/public/vitals-report.json
+node packages/cli/dist/index.js --path ~/Desktop/sickbay-test-app --json > packages/web/public/sickbay-report.json
 ```
 
 ---
@@ -285,10 +285,10 @@ node packages/cli/dist/index.js --path ~/Desktop/vitals-test-app --json > packag
 
 ```
                   ┌─────────────┐
-                  │   vitals    │  ← CLI entry (Commander)
+                  │   sickbay    │  ← CLI entry (Commander)
                   │  (CLI pkg)  │
                   └──────┬──────┘
-                         │ runVitals()
+                         │ runSickbay()
                   ┌──────▼──────┐
                   │    core     │  ← Orchestrates all runners in parallel
                   │   runner    │
@@ -298,7 +298,7 @@ node packages/cli/dist/index.js --path ~/Desktop/vitals-test-app --json > packag
      KnipRunner    AuditRunner    GitRunner ...  (17 total)
           │              │              │
           └──────────────┼──────────────┘
-                         │ VitalsReport JSON
+                         │ SickbayReport JSON
                   ┌──────▼──────┐
                   │  Terminal   │  ← Ink UI with scores + quick wins
                   │    UI       │

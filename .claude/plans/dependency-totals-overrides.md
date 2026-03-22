@@ -61,7 +61,7 @@ None — all changes are to existing files.
 
 **Web-safe imports** (DependencyList.tsx):
 ```typescript
-import type { VitalsReport } from '@vitals/core';
+import type { SickbayReport } from '@sickbay/core';
 ```
 
 **Test mocking pattern** (detect-project.test.ts):
@@ -101,7 +101,7 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
 
 - **IMPLEMENT**: Add `overrides?: Record<string, string>` to `ProjectInfo` interface after `devDependencies`
 - **GOTCHA**: This is a type-only change but affects all consumers. The field is optional so nothing breaks.
-- **VALIDATE**: `pnpm --filter @vitals/core build`
+- **VALIDATE**: `pnpm --filter @sickbay/core build`
 
 ### 2. UPDATE `packages/core/src/integrations/outdated.ts`
 
@@ -117,7 +117,7 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
     ```
   - Update issue message format: `"${e.name}: ${e.current} → ${e.latest} (${updateType})"`
   - Keep `severity` mapping as-is (major = warning, minor/patch = info) to preserve scoring
-- **VALIDATE**: `pnpm --filter @vitals/core build && pnpm --filter @vitals/core test`
+- **VALIDATE**: `pnpm --filter @sickbay/core build && pnpm --filter @sickbay/core test`
 
 ### 3. UPDATE `packages/core/src/utils/detect-project.ts`
 
@@ -127,7 +127,7 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
     pkg.pnpm?.overrides ?? pkg.overrides ?? pkg.resolutions ?? {};
   ```
   Add `overrides: Object.keys(overrides).length > 0 ? overrides : undefined` to the return object.
-- **VALIDATE**: `pnpm --filter @vitals/core build && pnpm --filter @vitals/core test`
+- **VALIDATE**: `pnpm --filter @sickbay/core build && pnpm --filter @sickbay/core test`
 
 ### 4. UPDATE `apps/web/src/components/DependencyList.tsx`
 
@@ -144,7 +144,7 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
   - Update `StatusBadges`: use `updateType` for three-way badge (`major update` orange, `minor update` blue, `patch update` gray)
   - Render order: `<UpdateTotalsBanner>` → `<OverridesSection>` → existing header → existing table
 
-- **VALIDATE**: `pnpm --filter @vitals/web build && pnpm --filter @vitals/web test`
+- **VALIDATE**: `pnpm --filter @sickbay/web build && pnpm --filter @sickbay/web test`
 
 ### 5. UPDATE `packages/core/src/integrations/outdated.test.ts`
 
@@ -153,7 +153,7 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
   - Update existing `marks minor/patch bumps` test to check message contains `(patch)` for same-minor bump
   - Add new test: minor version bump (e.g., `4.0.0 → 4.1.0`) produces `(minor)` in message
   - Add new test: patch-only bump (e.g., `4.0.0 → 4.0.1`) produces `(patch)` in message
-- **VALIDATE**: `pnpm --filter @vitals/core test`
+- **VALIDATE**: `pnpm --filter @sickbay/core test`
 
 ### 6. UPDATE `packages/core/src/utils/detect-project.test.ts`
 
@@ -162,7 +162,7 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
   - Add test: `detectProject` returns `overrides` when npm `overrides` is present
   - Add test: `detectProject` returns `overrides` when yarn `resolutions` is present
   - Add test: `detectProject` returns `undefined` overrides when none present
-- **VALIDATE**: `pnpm --filter @vitals/core test`
+- **VALIDATE**: `pnpm --filter @sickbay/core test`
 
 ### 7. UPDATE `apps/web/src/components/DependencyList.test.tsx`
 
@@ -173,7 +173,7 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
   - Add test: overrides section is hidden when no overrides
   - Update existing `"major update"` badge test to use new message format with `(major)` suffix
   - Update existing `"outdated"` badge test — will now show `minor update` or `patch update`
-- **VALIDATE**: `pnpm --filter @vitals/web test`
+- **VALIDATE**: `pnpm --filter @sickbay/web test`
 
 ---
 
@@ -181,15 +181,15 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
 
 ### Level 1: Type checking and linting
 ```bash
-pnpm --filter @vitals/core build
-pnpm --filter @vitals/web build
+pnpm --filter @sickbay/core build
+pnpm --filter @sickbay/web build
 pnpm lint
 ```
 
 ### Level 2: Unit tests
 ```bash
-pnpm --filter @vitals/core test
-pnpm --filter @vitals/web test
+pnpm --filter @sickbay/core test
+pnpm --filter @sickbay/web test
 ```
 
 ### Level 3: Full build

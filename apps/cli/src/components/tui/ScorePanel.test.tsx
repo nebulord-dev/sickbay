@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
 import { ScorePanel } from "./ScorePanel.js";
-import type { VitalsReport } from "@vitals/core";
+import type { SickbayReport } from "@sickbay/core";
 
 const createMockReport = (
   overallScore: number,
@@ -11,7 +11,7 @@ const createMockReport = (
     warnings: 0,
     info: 0,
   }
-): VitalsReport => ({
+): SickbayReport => ({
   timestamp: new Date().toISOString(),
   projectPath: "/test/project",
   projectInfo: {

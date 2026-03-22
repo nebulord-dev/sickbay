@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Text, useInput } from "ink";
-import type { VitalsReport, MonorepoReport } from "@vitals/core";
+import type { SickbayReport, MonorepoReport } from "@sickbay/core";
 import { PanelBorder } from "./PanelBorder.js";
 import { HotkeyBar, type PanelId } from "./HotkeyBar.js";
 import { HealthPanel } from "./HealthPanel.js";
@@ -11,7 +11,7 @@ import { QuickWinsPanel } from "./QuickWinsPanel.js";
 import { MonorepoPanel } from "./MonorepoPanel.js";
 import { ActivityPanel, type ActivityEntry } from "./ActivityPanel.js";
 import { HelpPanel } from "./HelpPanel.js";
-import { useVitalsRunner } from "./hooks/useVitalsRunner.js";
+import { useSickbayRunner } from "./hooks/useSickbayRunner.js";
 import { useFileWatcher } from "./hooks/useFileWatcher.js";
 import { useTerminalSize } from "./hooks/useTerminalSize.js";
 
@@ -31,7 +31,7 @@ export function TuiApp({
   animateOnMount = true,
 }: TuiAppProps) {
   const { rows, columns } = useTerminalSize();
-  const { report, monorepoReport, isScanning, progress, scan } = useVitalsRunner({
+  const { report, monorepoReport, isScanning, progress, scan } = useSickbayRunner({
     projectPath,
     checks,
   });
@@ -68,7 +68,7 @@ export function TuiApp({
     return () => timers.forEach(clearTimeout);
   }, []);
 
-  const reportRef = useRef<VitalsReport | null>(null);
+  const reportRef = useRef<SickbayReport | null>(null);
   const monorepoReportRef = useRef<MonorepoReport | null>(null);
 
   // Keep refs in sync
@@ -91,7 +91,7 @@ export function TuiApp({
   );
 
   const handleScanComplete = useCallback(
-    async (result: VitalsReport) => {
+    async (result: SickbayReport) => {
       const prevScore = reportRef.current?.overallScore ?? null;
       if (prevScore !== null) setPreviousScore(prevScore);
       setLastScanTime(new Date());
@@ -354,7 +354,7 @@ export function TuiApp({
       {/* Project header */}
       <Box paddingX={1} justifyContent="space-between">
         <Box gap={1}>
-          <Text bold color="cyan">VITALS</Text>
+          <Text bold color="cyan">SICKBAY</Text>
           <Text bold>{projectName}</Text>
           {projectVersion && <Text dimColor>v{projectVersion}</Text>}
         </Box>
