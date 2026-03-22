@@ -60,18 +60,18 @@ function DiffTable({ diff }: { diff: DiffResult }) {
 
       <Box flexDirection="column" marginTop={1} marginLeft={2}>
         <Box>
-          <Text bold>{"  Check".padEnd(26)}</Text>
+          <Text bold>{"  Check".padEnd(30)}</Text>
           <Text bold>{"Current".padEnd(10)}</Text>
           <Text bold>{"Base".padEnd(10)}</Text>
           <Text bold>Delta</Text>
         </Box>
-        <Text dimColor>{"━".repeat(52)}</Text>
+        <Text dimColor>{"━".repeat(56)}</Text>
         {diff.checks.map((check) => (
           <Box key={check.id}>
             <Text color={STATUS_COLORS[check.status]}>
               {STATUS_ICONS[check.status]}{" "}
             </Text>
-            <Text>{check.name.padEnd(24)}</Text>
+            <Text>{check.name.padEnd(28)}</Text>
             <Text>{String(check.currentScore || "—").padEnd(10)}</Text>
             <Text>{String(check.baseScore || "—").padEnd(10)}</Text>
             <Text color={STATUS_COLORS[check.status]} bold>

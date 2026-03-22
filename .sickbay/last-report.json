@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-22T03:33:45.341Z",
+  "timestamp": "2026-03-22T03:40:01.500Z",
   "projectPath": "/Users/tracericochet/Desktop/dev/sickbay",
   "projectInfo": {
     "name": "sickbay-monorepo",
@@ -44,7 +44,7 @@
       "toolsUsed": [
         "knip"
       ],
-      "duration": 2189,
+      "duration": 2142,
       "metadata": {
         "unusedFiles": 0,
         "unusedDeps": 0,
@@ -62,7 +62,7 @@
       "toolsUsed": [
         "depcheck"
       ],
-      "duration": 313,
+      "duration": 310,
       "metadata": {
         "unused": 0,
         "missing": 0
@@ -78,7 +78,7 @@
       "toolsUsed": [
         "pnpm"
       ],
-      "duration": 990,
+      "duration": 996,
       "metadata": {
         "outdatedCount": 0
       }
@@ -93,7 +93,7 @@
       "toolsUsed": [
         "npm-audit"
       ],
-      "duration": 171,
+      "duration": 169,
       "metadata": {}
     },
     {
@@ -106,7 +106,7 @@
       "toolsUsed": [
         "madge"
       ],
-      "duration": 266,
+      "duration": 284,
       "metadata": {
         "circularCount": 0,
         "graph": {}
@@ -131,7 +131,7 @@
         },
         {
           "severity": "warning",
-          "message": "Function coverage: 64.4% (target: 80%)",
+          "message": "Function coverage: 64.3% (target: 80%)",
           "fix": {
             "description": "Add tests for uncovered functions"
           },
@@ -143,7 +143,7 @@
       "toolsUsed": [
         "vitest"
       ],
-      "duration": 3290,
+      "duration": 3252,
       "metadata": {
         "testRunner": "vitest",
         "totalTests": 949,
@@ -151,8 +151,8 @@
         "failed": 0,
         "skipped": 0,
         "lines": 66.31,
-        "statements": 64.56,
-        "functions": 64.43,
+        "statements": 64.54,
+        "functions": 64.31,
         "branches": 55.35
       }
     },
@@ -166,7 +166,7 @@
       "toolsUsed": [
         "license-checker"
       ],
-      "duration": 105,
+      "duration": 106,
       "metadata": {
         "totalPackages": 1,
         "flagged": 0
@@ -182,7 +182,7 @@
       "toolsUsed": [
         "jscpd"
       ],
-      "duration": 202,
+      "duration": 204,
       "metadata": {
         "percentage": 0,
         "clones": 0
@@ -200,8 +200,8 @@
       ],
       "duration": 52,
       "metadata": {
-        "lastCommit": "6 minutes ago",
-        "commitCount": 167,
+        "lastCommit": "4 minutes ago",
+        "commitCount": 168,
         "contributorCount": 2,
         "remoteBranches": 4
       }
@@ -263,7 +263,7 @@
       "toolsUsed": [
         "node-async-errors"
       ],
-      "duration": 7
+      "duration": 8
     }
   ],
   "overallScore": 99,
