@@ -152,8 +152,8 @@ export function MonorepoOverview({ report, onSelectPackage }: MonorepoOverviewPr
             cross-package quick wins
           </h2>
           <div className="space-y-2">
-            {quickWins.map((win, i) => (
-              <div key={i} className="flex flex-col gap-0.5 p-3 rounded-sm border border-border bg-surface">
+            {quickWins.map((win) => (
+              <div key={`${win.pkg}-${win.message}`} className="flex flex-col gap-0.5 p-3 rounded-sm border border-border bg-surface">
                 <div className="flex items-start gap-2">
                   <span className="text-red-400 text-xs font-mono shrink-0">●</span>
                   <div>
