@@ -375,4 +375,37 @@ program
     process.exit(0);
   });
 
+// --- sickbay diff ---
+program
+  .command("diff <branch>")
+  .description("Compare health score against another branch")
+  .option("-p, --path <path>", "project path to analyze", process.cwd())
+  .option("-c, --checks <checks>", "comma-separated list of checks to run")
+  .option("--json", "output diff as JSON")
+  .option("--verbose", "show verbose output")
+  .action(async (branch, options) => {
+    // Load .env from project path if it differs from cwd
+    if (options.path && options.path !== process.cwd()) {
+      const projectEnvPath = join(options.path, ".env");
+      if (existsSync(projectEnvPath)) {
+        config({ path: projectEnvPath, override: true });
+      }
+    }
+
+    const checks = options.checks
+      ? options.checks.split(",").map((s: string) => s.trim())
+      : undefined;
+
+    const { DiffApp } = await import("./components/DiffApp.js");
+    render(
+      React.createElement(DiffApp, {
+        projectPath: options.path,
+        branch,
+        jsonOutput: options.json ?? false,
+        checks,
+        verbose: options.verbose,
+      }),
+    );
+  });
+
 program.parse();

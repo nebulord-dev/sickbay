@@ -1,0 +1,275 @@
+{
+  "timestamp": "2026-03-22T03:33:45.341Z",
+  "projectPath": "/Users/tracericochet/Desktop/dev/sickbay",
+  "projectInfo": {
+    "name": "sickbay-monorepo",
+    "version": "0.0.1",
+    "hasTypeScript": true,
+    "hasESLint": true,
+    "hasPrettier": false,
+    "framework": "node",
+    "packageManager": "pnpm",
+    "totalDependencies": 13,
+    "dependencies": {},
+    "devDependencies": {
+      "@eslint/js": "^10.0.1",
+      "@types/node": "^25.5.0",
+      "@typescript-eslint/eslint-plugin": "^8.57.1",
+      "@typescript-eslint/parser": "^8.57.1",
+      "@vitest/coverage-v8": "^4.1.0",
+      "eslint": "^10.1.0",
+      "eslint-config-prettier": "^10.1.8",
+      "eslint-plugin-react": "^7.37.5",
+      "eslint-plugin-react-hooks": "^7.0.1",
+      "tsup": "^8.5.1",
+      "turbo": "^2.8.20",
+      "typescript": "^5.9.3",
+      "vitest": "^4.1.0"
+    },
+    "overrides": {
+      "minimatch": ">=10.2.3",
+      "@types/minimatch": ">=3.0.5",
+      "rollup": ">=4.59.0",
+      "prismjs": ">=1.30.0"
+    }
+  },
+  "checks": [
+    {
+      "id": "knip",
+      "category": "dependencies",
+      "name": "Unused Code",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "knip"
+      ],
+      "duration": 2189,
+      "metadata": {
+        "unusedFiles": 0,
+        "unusedDeps": 0,
+        "unusedDevDeps": 0,
+        "unusedExports": 0
+      }
+    },
+    {
+      "id": "depcheck",
+      "category": "dependencies",
+      "name": "Dependency Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "depcheck"
+      ],
+      "duration": 313,
+      "metadata": {
+        "unused": 0,
+        "missing": 0
+      }
+    },
+    {
+      "id": "outdated",
+      "category": "dependencies",
+      "name": "Outdated Packages",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "pnpm"
+      ],
+      "duration": 990,
+      "metadata": {
+        "outdatedCount": 0
+      }
+    },
+    {
+      "id": "npm-audit",
+      "category": "security",
+      "name": "Security Vulnerabilities",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "npm-audit"
+      ],
+      "duration": 171,
+      "metadata": {}
+    },
+    {
+      "id": "madge",
+      "category": "code-quality",
+      "name": "Circular Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "madge"
+      ],
+      "duration": 266,
+      "metadata": {
+        "circularCount": 0,
+        "graph": {}
+      }
+    },
+    {
+      "id": "coverage",
+      "category": "code-quality",
+      "name": "Tests & Coverage",
+      "score": 85,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Line coverage: 66.3% (target: 80%)",
+          "fix": {
+            "description": "Add tests to improve coverage"
+          },
+          "reportedBy": [
+            "coverage"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Function coverage: 64.4% (target: 80%)",
+          "fix": {
+            "description": "Add tests for uncovered functions"
+          },
+          "reportedBy": [
+            "coverage"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "vitest"
+      ],
+      "duration": 3290,
+      "metadata": {
+        "testRunner": "vitest",
+        "totalTests": 949,
+        "passed": 949,
+        "failed": 0,
+        "skipped": 0,
+        "lines": 66.31,
+        "statements": 64.56,
+        "functions": 64.43,
+        "branches": 55.35
+      }
+    },
+    {
+      "id": "license-checker",
+      "category": "security",
+      "name": "License Compliance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "license-checker"
+      ],
+      "duration": 105,
+      "metadata": {
+        "totalPackages": 1,
+        "flagged": 0
+      }
+    },
+    {
+      "id": "jscpd",
+      "category": "code-quality",
+      "name": "Code Duplication",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "jscpd"
+      ],
+      "duration": 202,
+      "metadata": {
+        "percentage": 0,
+        "clones": 0
+      }
+    },
+    {
+      "id": "git",
+      "category": "git",
+      "name": "Git Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "git"
+      ],
+      "duration": 52,
+      "metadata": {
+        "lastCommit": "6 minutes ago",
+        "commitCount": 167,
+        "contributorCount": 2,
+        "remoteBranches": 4
+      }
+    },
+    {
+      "id": "eslint",
+      "category": "code-quality",
+      "name": "eslint",
+      "score": 100,
+      "status": "skipped",
+      "issues": [],
+      "toolsUsed": [
+        "eslint"
+      ],
+      "duration": 0,
+      "metadata": {
+        "reason": "No source directory found (looked for src, lib, app)"
+      }
+    },
+    {
+      "id": "secrets",
+      "category": "security",
+      "name": "Secrets Detection",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "secrets"
+      ],
+      "duration": 0,
+      "metadata": {
+        "findings": 0
+      }
+    },
+    {
+      "id": "heavy-deps",
+      "category": "performance",
+      "name": "Heavy Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "heavy-deps"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalDeps": 13,
+        "heavyDepsFound": 0,
+        "heavyDeps": []
+      }
+    },
+    {
+      "id": "node-async-errors",
+      "category": "code-quality",
+      "name": "Async Error Handling",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "node-async-errors"
+      ],
+      "duration": 7
+    }
+  ],
+  "overallScore": 99,
+  "summary": {
+    "critical": 0,
+    "warnings": 2,
+    "info": 0
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "projectPath": "/Users/tracericochet/Desktop/dev/sickbay/packages/core",
+  "projectName": "@sickbay/core",
+  "entries": [
+    {
+      "timestamp": "2026-03-22T03:28:34.411Z",
+      "overallScore": 97,
+      "categoryScores": {
+        "dependencies": 98,
+        "security": 100,
+        "code-quality": 95,
+        "performance": 100
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 8,
+        "info": 5
+      },
+      "checksRun": 14
+    }
+  ]
+}
