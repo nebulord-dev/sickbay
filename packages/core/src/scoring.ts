@@ -1,5 +1,5 @@
 import type { CheckResult, SickbayReport } from './types.js';
-import { SCORE_EXCELLENT, SCORE_GOOD, SCORE_FAIR } from '@sickbay/constants';
+import { SCORE_EXCELLENT, SCORE_GOOD, SCORE_FAIR } from './constants.js';
 
 /**
  * This module provides functions to calculate the overall health score of a project based on various checks,

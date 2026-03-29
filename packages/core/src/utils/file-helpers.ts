@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execa } from "execa";
-import { WARN_LINES } from "@sickbay/constants";
+import { WARN_LINES } from "../constants.js";
 
 /**
  * This module provides utility functions for file operations, command availability checks, timing, and robust JSON parsing.

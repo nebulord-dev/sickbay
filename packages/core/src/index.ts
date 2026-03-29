@@ -23,3 +23,4 @@ export type {
   PackageReport,
   MonorepoReport,
 } from './types.js';
+export { WARN_LINES, CRITICAL_LINES, SCORE_EXCELLENT, SCORE_GOOD, SCORE_FAIR } from './constants.js';
