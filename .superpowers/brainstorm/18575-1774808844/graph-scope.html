@@ -1,0 +1,81 @@
+<h2>What should the dependency graph show?</h2>
+<p class="subtitle">The graph needs a tree structure. Two very different data sources are possible.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>npm Package Tree</h3>
+      <p>Your project's npm dependencies and their transitive deps. Data from <code>pnpm ls --json --depth 1</code>.</p>
+      <div style="margin-top: 12px; padding: 16px; background: #1a1a2e; border-radius: 8px; font-family: monospace; font-size: 13px; line-height: 1.8;">
+        <div style="color: #10b981;">my-app</div>
+        <div style="padding-left: 20px;">
+          <span style="color: #ef4444;">lodash@4.17.20</span> <span style="color: #ef4444; font-size: 11px;">(vulnerable)</span><br/>
+          <span style="color: #f59e0b;">react@18.2.0</span> <span style="color: #f59e0b; font-size: 11px;">(outdated)</span><br/>
+          <span style="color: #6b7280;">express@4.18.2</span>
+        </div>
+        <div style="padding-left: 40px; color: #6b7280; font-size: 11px;">
+          ├── loose-envify@1.4.0<br/>
+          ├── body-parser@1.20.1<br/>
+          └── qs@6.11.0
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Shows what you actually <em>install</em></li>
+          <li>Highlights transitive vulnerability chains</li>
+          <li>Cross-references with outdated + npm-audit data</li>
+          <li>New data — complements the existing module graph</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Needs new data source in core (<code>pnpm ls</code>)</li>
+          <li>Can be large even at depth 1</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Enhanced Module Import Graph</h3>
+      <p>The existing madge graph (file imports), but with dependency status overlaid on nodes. Already available in the report.</p>
+      <div style="margin-top: 12px; padding: 16px; background: #1a1a2e; border-radius: 8px; font-family: monospace; font-size: 13px; line-height: 1.8;">
+        <div style="color: #3b82f6;">src/App.tsx</div>
+        <div style="padding-left: 20px;">
+          <span style="color: #a855f7;">src/utils/api.ts</span><br/>
+          <span style="color: #10b981;">src/hooks/useData.ts</span><br/>
+          <span style="color: #ef4444;">src/services/auth.ts</span> <span style="color: #ef4444; font-size: 11px;">(circular)</span>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Data already exists in the report (madge metadata)</li>
+          <li>No new runner or core changes needed</li>
+          <li>Shows your code structure</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Very similar to existing Codebase tab graph</li>
+          <li>Doesn't show npm packages at all</li>
+          <li>Can't highlight vulnerable/outdated deps</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hybrid: npm Package Tree (recommended)</h3>
+      <p>Option A, but smart about it. Top-level deps only by default, with expand-on-click for transitive. Filter toggles to focus on problems. This gives the Dependencies tab something the Codebase tab doesn't have.</p>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros"><h4>Why this one</h4><ul>
+          <li>Fills a real gap — no existing way to see the package tree</li>
+          <li>Annotations from existing runners make it immediately useful</li>
+          <li>Expand-on-click keeps it manageable</li>
+          <li>Distinct from the module graph on the Codebase tab</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div>

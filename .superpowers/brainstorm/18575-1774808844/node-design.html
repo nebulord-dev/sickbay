@@ -1,0 +1,80 @@
+<h2>Node Design</h2>
+<p class="subtitle">How should individual packages look in the graph?</p>
+
+<div class="cards">
+  <div class="card" data-choice="minimal" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; align-items: center;">
+      <!-- Healthy node -->
+      <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap; justify-content: center;">
+        <div style="background: #1a1a2e; border: 2px solid #374151; border-radius: 6px; padding: 8px 16px; font-family: monospace; font-size: 12px; color: #e2e8f0; min-width: 120px; text-align: center;">
+          express <span style="color: #6b7280; font-size: 10px;">4.18.2</span>
+        </div>
+        <!-- Outdated node -->
+        <div style="background: #1a1a2e; border: 2px solid #f59e0b; border-radius: 6px; padding: 8px 16px; font-family: monospace; font-size: 12px; color: #f59e0b; min-width: 120px; text-align: center;">
+          react <span style="color: #f59e0b80; font-size: 10px;">18.2.0</span>
+        </div>
+        <!-- Vulnerable node -->
+        <div style="background: #1a1a2e; border: 2px solid #ef4444; border-radius: 6px; padding: 8px 16px; font-family: monospace; font-size: 12px; color: #ef4444; min-width: 120px; text-align: center;">
+          lodash <span style="color: #ef444480; font-size: 10px;">4.17.20</span>
+        </div>
+        <!-- Unused node -->
+        <div style="background: #1a1a2e; border: 2px dashed #6b7280; border-radius: 6px; padding: 8px 16px; font-family: monospace; font-size: 12px; color: #6b7280; min-width: 120px; text-align: center;">
+          moment <span style="font-size: 10px;">2.29.4</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Minimal — Border Only</h3>
+      <p>Color-coded border indicates status. Name + version inside. Consistent with the existing module graph style. Clean and scannable.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="badged" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; align-items: center;">
+      <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap; justify-content: center;">
+        <!-- Healthy -->
+        <div style="background: #1a1a2e; border: 1.5px solid #374151; border-radius: 6px; padding: 8px 12px; font-family: monospace; font-size: 12px; color: #e2e8f0; min-width: 130px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>express</span>
+            <span style="color: #6b7280; font-size: 10px;">4.18.2</span>
+          </div>
+        </div>
+        <!-- Outdated -->
+        <div style="background: #1a1a2e; border: 1.5px solid #f59e0b; border-radius: 6px; padding: 8px 12px; font-family: monospace; font-size: 12px; color: #e2e8f0; min-width: 130px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>react</span>
+            <span style="color: #6b7280; font-size: 10px;">18.2.0</span>
+          </div>
+          <div style="margin-top: 4px;">
+            <span style="background: #f59e0b30; color: #f59e0b; padding: 1px 6px; border-radius: 3px; font-size: 9px;">outdated</span>
+          </div>
+        </div>
+        <!-- Vulnerable -->
+        <div style="background: #1a1a2e; border: 1.5px solid #ef4444; border-radius: 6px; padding: 8px 12px; font-family: monospace; font-size: 12px; color: #e2e8f0; min-width: 130px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>lodash</span>
+            <span style="color: #6b7280; font-size: 10px;">4.17.20</span>
+          </div>
+          <div style="margin-top: 4px;">
+            <span style="background: #ef444430; color: #ef4444; padding: 1px 6px; border-radius: 3px; font-size: 9px;">1 vuln</span>
+            <span style="background: #f59e0b30; color: #f59e0b; padding: 1px 6px; border-radius: 3px; font-size: 9px; margin-left: 4px;">outdated</span>
+          </div>
+        </div>
+        <!-- Unused -->
+        <div style="background: #1a1a2e; border: 1.5px dashed #6b7280; border-radius: 6px; padding: 8px 12px; font-family: monospace; font-size: 12px; color: #6b7280; min-width: 130px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>moment</span>
+            <span style="font-size: 10px;">2.29.4</span>
+          </div>
+          <div style="margin-top: 4px;">
+            <span style="background: #6b728030; color: #6b7280; padding: 1px 6px; border-radius: 3px; font-size: 9px;">unused</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Badged — Status Pills (recommended)</h3>
+      <p>Border color for quick scanning + small badge pills showing specific status. Handles multi-status (e.g. both vulnerable AND outdated). Slightly larger nodes but much more informative at a glance.</p>
+    </div>
+  </div>
+</div>

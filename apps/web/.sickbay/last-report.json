@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-29T05:44:44.236Z",
+  "timestamp": "2026-03-29T19:55:22.344Z",
   "projectPath": "/Users/tracericochet/Desktop/nebulord/sickbay/apps/web",
   "projectInfo": {
     "name": "@sickbay/web",
@@ -23,21 +23,21 @@
     "devDependencies": {
       "@rolldown/plugin-babel": "^0.2.2",
       "@tailwindcss/vite": "^4.2.2",
-      "@testing-library/jest-dom": "catalog:",
-      "@testing-library/react": "catalog:",
+      "@testing-library/jest-dom": "^6.9.1",
+      "@testing-library/react": "^16.3.2",
       "@types/dagre": "^0.7.54",
-      "@types/react": "catalog:",
+      "@types/react": "^19.2.14",
       "@types/react-dom": "^19.2.3",
       "@types/react-syntax-highlighter": "^15.5.13",
       "@vitejs/plugin-react": "^6.0.1",
-      "@vitest/coverage-v8": "catalog:",
+      "@vitest/coverage-v8": "^4.1.2",
       "@vitest/ui": "^4.1.2",
       "babel-plugin-react-compiler": "^1.0.0",
       "jsdom": "^29.0.1",
       "tailwindcss": "^4.2.2",
-      "typescript": "catalog:",
+      "typescript": "^5.9.3",
       "vite": "^8.0.3",
-      "vitest": "catalog:"
+      "vitest": "^4.1.2"
     }
   },
   "checks": [
@@ -51,7 +51,7 @@
       "toolsUsed": [
         "knip"
       ],
-      "duration": 988,
+      "duration": 856,
       "metadata": {
         "unusedFiles": 0,
         "unusedDeps": 0,
@@ -69,7 +69,7 @@
       "toolsUsed": [
         "depcheck"
       ],
-      "duration": 477,
+      "duration": 443,
       "metadata": {
         "unused": 0,
         "missing": 0
@@ -86,9 +86,7 @@
           "severity": "warning",
           "message": "typescript: 5.9.3 → 6.0.2 (major)",
           "fix": {
-            "description": "Update typescript to 6.0.2",
-            "command": "pnpm update typescript",
-            "nextSteps": "Run tests to verify nothing broke"
+            "description": "Update typescript to 6.0.2 (major — review changelog before upgrading)"
           },
           "reportedBy": [
             "outdated"
@@ -98,7 +96,7 @@
       "toolsUsed": [
         "pnpm"
       ],
-      "duration": 1268,
+      "duration": 2269,
       "metadata": {
         "outdatedCount": 1
       }
@@ -113,8 +111,10 @@
       "toolsUsed": [
         "npm-audit"
       ],
-      "duration": 307,
-      "metadata": {}
+      "duration": 308,
+      "metadata": {
+        "vulnerablePackages": {}
+      }
     },
     {
       "id": "madge",
@@ -126,7 +126,7 @@
       "toolsUsed": [
         "madge"
       ],
-      "duration": 869,
+      "duration": 848,
       "metadata": {
         "circularCount": 0,
         "graph": {
@@ -247,16 +247,16 @@
       "toolsUsed": [
         "file-size-analysis"
       ],
-      "duration": 249,
+      "duration": 247,
       "metadata": {
-        "initialBytes": 59181,
-        "initialKB": 58,
-        "totalBytes": 1254479,
-        "totalKB": 1225,
+        "initialBytes": 59912,
+        "initialKB": 59,
+        "totalBytes": 1255210,
+        "totalKB": 1226,
         "fileCount": 8,
         "entryChunks": 1,
         "method": "file-size-analysis",
-        "note": "Total bundle: 1225KB across 8 chunks"
+        "note": "Total bundle: 1226KB across 8 chunks"
       }
     },
     {
@@ -280,11 +280,11 @@
       "toolsUsed": [
         "vitest"
       ],
-      "duration": 1946,
+      "duration": 1996,
       "metadata": {
         "testRunner": "vitest",
-        "totalTests": 128,
-        "passed": 128,
+        "totalTests": 129,
+        "passed": 129,
         "failed": 0,
         "skipped": 0,
         "lines": 89.47,
@@ -303,7 +303,7 @@
       "toolsUsed": [
         "license-checker"
       ],
-      "duration": 267,
+      "duration": 270,
       "metadata": {
         "totalPackages": 17,
         "flagged": 0
@@ -319,7 +319,7 @@
       "toolsUsed": [
         "jscpd"
       ],
-      "duration": 835,
+      "duration": 841,
       "metadata": {
         "percentage": 0,
         "clones": 0
@@ -335,7 +335,7 @@
       "toolsUsed": [
         "tsc"
       ],
-      "duration": 1486,
+      "duration": 1502,
       "metadata": {
         "errors": 0
       }
@@ -350,7 +350,7 @@
       "toolsUsed": [
         "todo-scanner"
       ],
-      "duration": 4,
+      "duration": 2,
       "metadata": {
         "total": 0,
         "todo": 0,
@@ -382,8 +382,8 @@
       "duration": 1,
       "metadata": {
         "totalFiles": 15,
-        "totalLines": 2543,
-        "avgLines": 170,
+        "totalLines": 2560,
+        "avgLines": 171,
         "oversizedCount": 1,
         "topFiles": [
           {
@@ -391,12 +391,12 @@
             "lines": 456
           },
           {
-            "path": "src/components/ChatDrawer.tsx",
-            "lines": 271
+            "path": "src/components/DependencyList.tsx",
+            "lines": 281
           },
           {
-            "path": "src/components/DependencyList.tsx",
-            "lines": 264
+            "path": "src/components/ChatDrawer.tsx",
+            "lines": 271
           },
           {
             "path": "src/components/HistoryChart.tsx",
@@ -521,8 +521,8 @@
     "info": 2
   },
   "quote": {
-    "text": "Optimism, Captain! It's what keeps me going.",
-    "source": "Dr. Phlox",
+    "text": "I'm not sure what you did, but keep doing it.",
+    "source": "T'Ana",
     "severity": "allClear"
   }
 }

@@ -1,0 +1,215 @@
+{
+  "name": "@sickbay/web",
+  "version": "0.0.1",
+  "packageManager": "pnpm",
+  "dependencies": {
+    "@sickbay/constants": {
+      "name": "@sickbay/constants",
+      "version": "link:../../packages/constants"
+    },
+    "react": {
+      "name": "react",
+      "version": "19.2.4"
+    },
+    "@sickbay/core": {
+      "name": "@sickbay/core",
+      "version": "link:../../packages/core",
+      "dependencies": {
+        "@sickbay/constants": {
+          "name": "@sickbay/constants",
+          "version": "link:../../packages/constants"
+        },
+        "depcheck": {
+          "name": "depcheck",
+          "version": "1.4.7"
+        },
+        "execa": {
+          "name": "execa",
+          "version": "9.6.1"
+        },
+        "globby": {
+          "name": "globby",
+          "version": "16.2.0"
+        },
+        "jscpd": {
+          "name": "jscpd",
+          "version": "4.0.8"
+        },
+        "knip": {
+          "name": "knip",
+          "version": "6.1.0"
+        },
+        "license-checker": {
+          "name": "license-checker",
+          "version": "25.0.1"
+        },
+        "madge": {
+          "name": "madge",
+          "version": "8.0.0"
+        },
+        "source-map-explorer": {
+          "name": "source-map-explorer",
+          "version": "2.5.3"
+        },
+        "tsup": {
+          "name": "tsup",
+          "version": "8.5.1"
+        },
+        "typescript": {
+          "name": "typescript",
+          "version": "5.9.3"
+        },
+        "vitest": {
+          "name": "vitest",
+          "version": "4.1.2"
+        }
+      }
+    },
+    "@xyflow/react": {
+      "name": "@xyflow/react",
+      "version": "12.10.2",
+      "dependencies": {
+        "@xyflow/system": {
+          "name": "@xyflow/system",
+          "version": "0.0.76"
+        },
+        "classcat": {
+          "name": "classcat",
+          "version": "5.0.5"
+        },
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        },
+        "react-dom": {
+          "name": "react-dom",
+          "version": "19.2.4"
+        },
+        "zustand": {
+          "name": "zustand",
+          "version": "4.5.7"
+        }
+      }
+    },
+    "dagre": {
+      "name": "dagre",
+      "version": "0.8.5",
+      "dependencies": {
+        "graphlib": {
+          "name": "graphlib",
+          "version": "2.1.8"
+        },
+        "lodash": {
+          "name": "lodash",
+          "version": "4.17.23"
+        }
+      }
+    },
+    "react-dom": {
+      "name": "react-dom",
+      "version": "19.2.4",
+      "dependencies": {
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        },
+        "scheduler": {
+          "name": "scheduler",
+          "version": "0.27.0"
+        }
+      }
+    },
+    "react-markdown": {
+      "name": "react-markdown",
+      "version": "10.1.0",
+      "dependencies": {
+        "@types/hast": {
+          "name": "@types/hast",
+          "version": "3.0.4"
+        },
+        "@types/mdast": {
+          "name": "@types/mdast",
+          "version": "4.0.4"
+        },
+        "@types/react": {
+          "name": "@types/react",
+          "version": "19.2.14"
+        },
+        "devlop": {
+          "name": "devlop",
+          "version": "1.1.0"
+        },
+        "hast-util-to-jsx-runtime": {
+          "name": "hast-util-to-jsx-runtime",
+          "version": "2.3.6"
+        },
+        "html-url-attributes": {
+          "name": "html-url-attributes",
+          "version": "3.0.1"
+        },
+        "mdast-util-to-hast": {
+          "name": "mdast-util-to-hast",
+          "version": "13.2.1"
+        },
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        },
+        "remark-parse": {
+          "name": "remark-parse",
+          "version": "11.0.0"
+        },
+        "remark-rehype": {
+          "name": "remark-rehype",
+          "version": "11.1.2"
+        },
+        "unified": {
+          "name": "unified",
+          "version": "11.0.5"
+        },
+        "unist-util-visit": {
+          "name": "unist-util-visit",
+          "version": "5.1.0"
+        },
+        "vfile": {
+          "name": "vfile",
+          "version": "6.0.3"
+        }
+      }
+    },
+    "react-syntax-highlighter": {
+      "name": "react-syntax-highlighter",
+      "version": "16.1.1",
+      "dependencies": {
+        "@babel/runtime": {
+          "name": "@babel/runtime",
+          "version": "7.29.2"
+        },
+        "highlight.js": {
+          "name": "highlight.js",
+          "version": "10.7.3"
+        },
+        "highlightjs-vue": {
+          "name": "highlightjs-vue",
+          "version": "1.0.0"
+        },
+        "lowlight": {
+          "name": "lowlight",
+          "version": "1.20.0"
+        },
+        "prismjs": {
+          "name": "prismjs",
+          "version": "1.30.0"
+        },
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        },
+        "refractor": {
+          "name": "refractor",
+          "version": "5.0.0"
+        }
+      }
+    }
+  }
+}

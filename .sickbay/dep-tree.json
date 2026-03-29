@@ -1,0 +1,969 @@
+{
+  "packages": {
+    "@sickbay/cli": {
+      "name": "@sickbay/cli",
+      "version": "0.0.1",
+      "packageManager": "pnpm",
+      "dependencies": {
+        "commander": {
+          "name": "commander",
+          "version": "14.0.3"
+        },
+        "dotenv": {
+          "name": "dotenv",
+          "version": "17.3.1"
+        },
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        },
+        "@anthropic-ai/sdk": {
+          "name": "@anthropic-ai/sdk",
+          "version": "0.80.0",
+          "dependencies": {
+            "json-schema-to-ts": {
+              "name": "json-schema-to-ts",
+              "version": "3.1.1"
+            },
+            "zod": {
+              "name": "zod",
+              "version": "4.3.6"
+            }
+          }
+        },
+        "@sickbay/core": {
+          "name": "@sickbay/core",
+          "version": "link:../../packages/core",
+          "dependencies": {
+            "@sickbay/constants": {
+              "name": "@sickbay/constants",
+              "version": "link:../../packages/constants"
+            },
+            "depcheck": {
+              "name": "depcheck",
+              "version": "1.4.7"
+            },
+            "execa": {
+              "name": "execa",
+              "version": "9.6.1"
+            },
+            "globby": {
+              "name": "globby",
+              "version": "16.2.0"
+            },
+            "jscpd": {
+              "name": "jscpd",
+              "version": "4.0.8"
+            },
+            "knip": {
+              "name": "knip",
+              "version": "6.1.0"
+            },
+            "license-checker": {
+              "name": "license-checker",
+              "version": "25.0.1"
+            },
+            "madge": {
+              "name": "madge",
+              "version": "8.0.0"
+            },
+            "source-map-explorer": {
+              "name": "source-map-explorer",
+              "version": "2.5.3"
+            },
+            "tsup": {
+              "name": "tsup",
+              "version": "8.5.1"
+            },
+            "typescript": {
+              "name": "typescript",
+              "version": "5.9.3"
+            },
+            "vitest": {
+              "name": "vitest",
+              "version": "4.1.2"
+            }
+          }
+        },
+        "chokidar": {
+          "name": "chokidar",
+          "version": "5.0.0",
+          "dependencies": {
+            "readdirp": {
+              "name": "readdirp",
+              "version": "5.0.0"
+            }
+          }
+        },
+        "ink": {
+          "name": "ink",
+          "version": "6.8.0",
+          "dependencies": {
+            "@alcalzone/ansi-tokenize": {
+              "name": "@alcalzone/ansi-tokenize",
+              "version": "0.2.5"
+            },
+            "@types/react": {
+              "name": "@types/react",
+              "version": "19.2.14"
+            },
+            "ansi-escapes": {
+              "name": "ansi-escapes",
+              "version": "7.3.0"
+            },
+            "ansi-styles": {
+              "name": "ansi-styles",
+              "version": "6.2.3"
+            },
+            "auto-bind": {
+              "name": "auto-bind",
+              "version": "5.0.1"
+            },
+            "chalk": {
+              "name": "chalk",
+              "version": "5.6.2"
+            },
+            "cli-boxes": {
+              "name": "cli-boxes",
+              "version": "3.0.0"
+            },
+            "cli-cursor": {
+              "name": "cli-cursor",
+              "version": "4.0.0"
+            },
+            "cli-truncate": {
+              "name": "cli-truncate",
+              "version": "5.2.0"
+            },
+            "code-excerpt": {
+              "name": "code-excerpt",
+              "version": "4.0.0"
+            },
+            "es-toolkit": {
+              "name": "es-toolkit",
+              "version": "1.45.1"
+            },
+            "indent-string": {
+              "name": "indent-string",
+              "version": "5.0.0"
+            },
+            "is-in-ci": {
+              "name": "is-in-ci",
+              "version": "2.0.0"
+            },
+            "patch-console": {
+              "name": "patch-console",
+              "version": "2.0.0"
+            },
+            "react": {
+              "name": "react",
+              "version": "19.2.4"
+            },
+            "react-reconciler": {
+              "name": "react-reconciler",
+              "version": "0.33.0"
+            },
+            "scheduler": {
+              "name": "scheduler",
+              "version": "0.27.0"
+            },
+            "signal-exit": {
+              "name": "signal-exit",
+              "version": "3.0.7"
+            },
+            "slice-ansi": {
+              "name": "slice-ansi",
+              "version": "8.0.0"
+            },
+            "stack-utils": {
+              "name": "stack-utils",
+              "version": "2.0.6"
+            },
+            "string-width": {
+              "name": "string-width",
+              "version": "8.2.0"
+            },
+            "terminal-size": {
+              "name": "terminal-size",
+              "version": "4.0.1"
+            },
+            "type-fest": {
+              "name": "type-fest",
+              "version": "5.5.0"
+            },
+            "widest-line": {
+              "name": "widest-line",
+              "version": "6.0.0"
+            },
+            "wrap-ansi": {
+              "name": "wrap-ansi",
+              "version": "9.0.2"
+            },
+            "ws": {
+              "name": "ws",
+              "version": "8.20.0"
+            },
+            "yoga-layout": {
+              "name": "yoga-layout",
+              "version": "3.2.1"
+            }
+          }
+        },
+        "ink-gradient": {
+          "name": "ink-gradient",
+          "version": "4.0.0",
+          "dependencies": {
+            "@types/gradient-string": {
+              "name": "@types/gradient-string",
+              "version": "1.1.6"
+            },
+            "gradient-string": {
+              "name": "gradient-string",
+              "version": "3.0.0"
+            },
+            "ink": {
+              "name": "ink",
+              "version": "6.8.0"
+            },
+            "strip-ansi": {
+              "name": "strip-ansi",
+              "version": "7.2.0"
+            }
+          }
+        },
+        "ink-spinner": {
+          "name": "ink-spinner",
+          "version": "5.0.0",
+          "dependencies": {
+            "cli-spinners": {
+              "name": "cli-spinners",
+              "version": "2.9.2"
+            },
+            "ink": {
+              "name": "ink",
+              "version": "6.8.0"
+            },
+            "react": {
+              "name": "react",
+              "version": "19.2.4"
+            }
+          }
+        },
+        "open": {
+          "name": "open",
+          "version": "11.0.0",
+          "dependencies": {
+            "default-browser": {
+              "name": "default-browser",
+              "version": "5.5.0"
+            },
+            "define-lazy-prop": {
+              "name": "define-lazy-prop",
+              "version": "3.0.0"
+            },
+            "is-in-ssh": {
+              "name": "is-in-ssh",
+              "version": "1.0.0"
+            },
+            "is-inside-container": {
+              "name": "is-inside-container",
+              "version": "1.0.0"
+            },
+            "powershell-utils": {
+              "name": "powershell-utils",
+              "version": "0.1.0"
+            },
+            "wsl-utils": {
+              "name": "wsl-utils",
+              "version": "0.3.1"
+            }
+          }
+        }
+      }
+    },
+    "@sickbay/web": {
+      "name": "@sickbay/web",
+      "version": "0.0.1",
+      "packageManager": "pnpm",
+      "dependencies": {
+        "@sickbay/constants": {
+          "name": "@sickbay/constants",
+          "version": "link:../../packages/constants"
+        },
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        },
+        "@sickbay/core": {
+          "name": "@sickbay/core",
+          "version": "link:../../packages/core",
+          "dependencies": {
+            "@sickbay/constants": {
+              "name": "@sickbay/constants",
+              "version": "link:../../packages/constants"
+            },
+            "depcheck": {
+              "name": "depcheck",
+              "version": "1.4.7"
+            },
+            "execa": {
+              "name": "execa",
+              "version": "9.6.1"
+            },
+            "globby": {
+              "name": "globby",
+              "version": "16.2.0"
+            },
+            "jscpd": {
+              "name": "jscpd",
+              "version": "4.0.8"
+            },
+            "knip": {
+              "name": "knip",
+              "version": "6.1.0"
+            },
+            "license-checker": {
+              "name": "license-checker",
+              "version": "25.0.1"
+            },
+            "madge": {
+              "name": "madge",
+              "version": "8.0.0"
+            },
+            "source-map-explorer": {
+              "name": "source-map-explorer",
+              "version": "2.5.3"
+            },
+            "tsup": {
+              "name": "tsup",
+              "version": "8.5.1"
+            },
+            "typescript": {
+              "name": "typescript",
+              "version": "5.9.3"
+            },
+            "vitest": {
+              "name": "vitest",
+              "version": "4.1.2"
+            }
+          }
+        },
+        "@xyflow/react": {
+          "name": "@xyflow/react",
+          "version": "12.10.2",
+          "dependencies": {
+            "@xyflow/system": {
+              "name": "@xyflow/system",
+              "version": "0.0.76"
+            },
+            "classcat": {
+              "name": "classcat",
+              "version": "5.0.5"
+            },
+            "react": {
+              "name": "react",
+              "version": "19.2.4"
+            },
+            "react-dom": {
+              "name": "react-dom",
+              "version": "19.2.4"
+            },
+            "zustand": {
+              "name": "zustand",
+              "version": "4.5.7"
+            }
+          }
+        },
+        "dagre": {
+          "name": "dagre",
+          "version": "0.8.5",
+          "dependencies": {
+            "graphlib": {
+              "name": "graphlib",
+              "version": "2.1.8"
+            },
+            "lodash": {
+              "name": "lodash",
+              "version": "4.17.23"
+            }
+          }
+        },
+        "react-dom": {
+          "name": "react-dom",
+          "version": "19.2.4",
+          "dependencies": {
+            "react": {
+              "name": "react",
+              "version": "19.2.4"
+            },
+            "scheduler": {
+              "name": "scheduler",
+              "version": "0.27.0"
+            }
+          }
+        },
+        "react-markdown": {
+          "name": "react-markdown",
+          "version": "10.1.0",
+          "dependencies": {
+            "@types/hast": {
+              "name": "@types/hast",
+              "version": "3.0.4"
+            },
+            "@types/mdast": {
+              "name": "@types/mdast",
+              "version": "4.0.4"
+            },
+            "@types/react": {
+              "name": "@types/react",
+              "version": "19.2.14"
+            },
+            "devlop": {
+              "name": "devlop",
+              "version": "1.1.0"
+            },
+            "hast-util-to-jsx-runtime": {
+              "name": "hast-util-to-jsx-runtime",
+              "version": "2.3.6"
+            },
+            "html-url-attributes": {
+              "name": "html-url-attributes",
+              "version": "3.0.1"
+            },
+            "mdast-util-to-hast": {
+              "name": "mdast-util-to-hast",
+              "version": "13.2.1"
+            },
+            "react": {
+              "name": "react",
+              "version": "19.2.4"
+            },
+            "remark-parse": {
+              "name": "remark-parse",
+              "version": "11.0.0"
+            },
+            "remark-rehype": {
+              "name": "remark-rehype",
+              "version": "11.1.2"
+            },
+            "unified": {
+              "name": "unified",
+              "version": "11.0.5"
+            },
+            "unist-util-visit": {
+              "name": "unist-util-visit",
+              "version": "5.1.0"
+            },
+            "vfile": {
+              "name": "vfile",
+              "version": "6.0.3"
+            }
+          }
+        },
+        "react-syntax-highlighter": {
+          "name": "react-syntax-highlighter",
+          "version": "16.1.1",
+          "dependencies": {
+            "@babel/runtime": {
+              "name": "@babel/runtime",
+              "version": "7.29.2"
+            },
+            "highlight.js": {
+              "name": "highlight.js",
+              "version": "10.7.3"
+            },
+            "highlightjs-vue": {
+              "name": "highlightjs-vue",
+              "version": "1.0.0"
+            },
+            "lowlight": {
+              "name": "lowlight",
+              "version": "1.20.0"
+            },
+            "prismjs": {
+              "name": "prismjs",
+              "version": "1.30.0"
+            },
+            "react": {
+              "name": "react",
+              "version": "19.2.4"
+            },
+            "refractor": {
+              "name": "refractor",
+              "version": "5.0.0"
+            }
+          }
+        }
+      }
+    },
+    "@sickbay/constants": {
+      "name": "@sickbay/constants",
+      "version": "0.0.1",
+      "packageManager": "pnpm",
+      "dependencies": {}
+    },
+    "@sickbay/core": {
+      "name": "@sickbay/core",
+      "version": "0.0.1",
+      "packageManager": "pnpm",
+      "dependencies": {
+        "@sickbay/constants": {
+          "name": "@sickbay/constants",
+          "version": "link:../constants"
+        },
+        "depcheck": {
+          "name": "depcheck",
+          "version": "1.4.7",
+          "dependencies": {
+            "@babel/parser": {
+              "name": "@babel/parser",
+              "version": "7.29.2"
+            },
+            "@babel/traverse": {
+              "name": "@babel/traverse",
+              "version": "7.29.0"
+            },
+            "@vue/compiler-sfc": {
+              "name": "@vue/compiler-sfc",
+              "version": "3.5.31"
+            },
+            "callsite": {
+              "name": "callsite",
+              "version": "1.0.0"
+            },
+            "camelcase": {
+              "name": "camelcase",
+              "version": "6.3.0"
+            },
+            "cosmiconfig": {
+              "name": "cosmiconfig",
+              "version": "7.1.0"
+            },
+            "debug": {
+              "name": "debug",
+              "version": "4.4.3"
+            },
+            "deps-regex": {
+              "name": "deps-regex",
+              "version": "0.2.0"
+            },
+            "findup-sync": {
+              "name": "findup-sync",
+              "version": "5.0.0"
+            },
+            "ignore": {
+              "name": "ignore",
+              "version": "5.3.2"
+            },
+            "is-core-module": {
+              "name": "is-core-module",
+              "version": "2.16.1"
+            },
+            "js-yaml": {
+              "name": "js-yaml",
+              "version": "3.14.2"
+            },
+            "json5": {
+              "name": "json5",
+              "version": "2.2.3"
+            },
+            "lodash": {
+              "name": "lodash",
+              "version": "4.17.23"
+            },
+            "minimatch": {
+              "name": "minimatch",
+              "version": "10.2.4"
+            },
+            "multimatch": {
+              "name": "multimatch",
+              "version": "5.0.0"
+            },
+            "please-upgrade-node": {
+              "name": "please-upgrade-node",
+              "version": "3.2.0"
+            },
+            "readdirp": {
+              "name": "readdirp",
+              "version": "3.6.0"
+            },
+            "require-package-name": {
+              "name": "require-package-name",
+              "version": "2.0.1"
+            },
+            "resolve": {
+              "name": "resolve",
+              "version": "1.22.11"
+            },
+            "resolve-from": {
+              "name": "resolve-from",
+              "version": "5.0.0"
+            },
+            "semver": {
+              "name": "semver",
+              "version": "7.7.4"
+            },
+            "yargs": {
+              "name": "yargs",
+              "version": "16.2.0"
+            }
+          }
+        },
+        "execa": {
+          "name": "execa",
+          "version": "9.6.1",
+          "dependencies": {
+            "@sindresorhus/merge-streams": {
+              "name": "@sindresorhus/merge-streams",
+              "version": "4.0.0"
+            },
+            "cross-spawn": {
+              "name": "cross-spawn",
+              "version": "7.0.6"
+            },
+            "figures": {
+              "name": "figures",
+              "version": "6.1.0"
+            },
+            "get-stream": {
+              "name": "get-stream",
+              "version": "9.0.1"
+            },
+            "human-signals": {
+              "name": "human-signals",
+              "version": "8.0.1"
+            },
+            "is-plain-obj": {
+              "name": "is-plain-obj",
+              "version": "4.1.0"
+            },
+            "is-stream": {
+              "name": "is-stream",
+              "version": "4.0.1"
+            },
+            "npm-run-path": {
+              "name": "npm-run-path",
+              "version": "6.0.0"
+            },
+            "pretty-ms": {
+              "name": "pretty-ms",
+              "version": "9.3.0"
+            },
+            "signal-exit": {
+              "name": "signal-exit",
+              "version": "4.1.0"
+            },
+            "strip-final-newline": {
+              "name": "strip-final-newline",
+              "version": "4.0.0"
+            },
+            "yoctocolors": {
+              "name": "yoctocolors",
+              "version": "2.1.2"
+            }
+          }
+        },
+        "globby": {
+          "name": "globby",
+          "version": "16.2.0",
+          "dependencies": {
+            "@sindresorhus/merge-streams": {
+              "name": "@sindresorhus/merge-streams",
+              "version": "4.0.0"
+            },
+            "fast-glob": {
+              "name": "fast-glob",
+              "version": "3.3.3"
+            },
+            "ignore": {
+              "name": "ignore",
+              "version": "7.0.5"
+            },
+            "is-path-inside": {
+              "name": "is-path-inside",
+              "version": "4.0.0"
+            },
+            "slash": {
+              "name": "slash",
+              "version": "5.1.0"
+            },
+            "unicorn-magic": {
+              "name": "unicorn-magic",
+              "version": "0.4.0"
+            }
+          }
+        },
+        "jscpd": {
+          "name": "jscpd",
+          "version": "4.0.8",
+          "dependencies": {
+            "@jscpd/badge-reporter": {
+              "name": "@jscpd/badge-reporter",
+              "version": "4.0.4"
+            },
+            "@jscpd/core": {
+              "name": "@jscpd/core",
+              "version": "4.0.4"
+            },
+            "@jscpd/finder": {
+              "name": "@jscpd/finder",
+              "version": "4.0.4"
+            },
+            "@jscpd/html-reporter": {
+              "name": "@jscpd/html-reporter",
+              "version": "4.0.4"
+            },
+            "@jscpd/tokenizer": {
+              "name": "@jscpd/tokenizer",
+              "version": "4.0.4"
+            },
+            "colors": {
+              "name": "colors",
+              "version": "1.4.0"
+            },
+            "commander": {
+              "name": "commander",
+              "version": "5.1.0"
+            },
+            "fs-extra": {
+              "name": "fs-extra",
+              "version": "11.3.4"
+            },
+            "gitignore-to-glob": {
+              "name": "gitignore-to-glob",
+              "version": "0.3.0"
+            },
+            "jscpd-sarif-reporter": {
+              "name": "jscpd-sarif-reporter",
+              "version": "4.0.6"
+            }
+          }
+        },
+        "knip": {
+          "name": "knip",
+          "version": "6.1.0",
+          "dependencies": {
+            "@nodelib/fs.walk": {
+              "name": "@nodelib/fs.walk",
+              "version": "1.2.8"
+            },
+            "fast-glob": {
+              "name": "fast-glob",
+              "version": "3.3.3"
+            },
+            "formatly": {
+              "name": "formatly",
+              "version": "0.3.0"
+            },
+            "get-tsconfig": {
+              "name": "get-tsconfig",
+              "version": "4.13.7"
+            },
+            "jiti": {
+              "name": "jiti",
+              "version": "2.6.1"
+            },
+            "minimist": {
+              "name": "minimist",
+              "version": "1.2.8"
+            },
+            "oxc-parser": {
+              "name": "oxc-parser",
+              "version": "0.121.0"
+            },
+            "oxc-resolver": {
+              "name": "oxc-resolver",
+              "version": "11.19.1"
+            },
+            "picocolors": {
+              "name": "picocolors",
+              "version": "1.1.1"
+            },
+            "picomatch": {
+              "name": "picomatch",
+              "version": "4.0.4"
+            },
+            "smol-toml": {
+              "name": "smol-toml",
+              "version": "1.6.1"
+            },
+            "strip-json-comments": {
+              "name": "strip-json-comments",
+              "version": "5.0.3"
+            },
+            "unbash": {
+              "name": "unbash",
+              "version": "2.2.0"
+            },
+            "yaml": {
+              "name": "yaml",
+              "version": "2.8.3"
+            },
+            "zod": {
+              "name": "zod",
+              "version": "4.3.6"
+            }
+          }
+        },
+        "license-checker": {
+          "name": "license-checker",
+          "version": "25.0.1",
+          "dependencies": {
+            "chalk": {
+              "name": "chalk",
+              "version": "2.4.2"
+            },
+            "debug": {
+              "name": "debug",
+              "version": "3.2.7"
+            },
+            "mkdirp": {
+              "name": "mkdirp",
+              "version": "0.5.6"
+            },
+            "nopt": {
+              "name": "nopt",
+              "version": "4.0.3"
+            },
+            "read-installed": {
+              "name": "read-installed",
+              "version": "4.0.3"
+            },
+            "semver": {
+              "name": "semver",
+              "version": "5.7.2"
+            },
+            "spdx-correct": {
+              "name": "spdx-correct",
+              "version": "3.2.0"
+            },
+            "spdx-expression-parse": {
+              "name": "spdx-expression-parse",
+              "version": "3.0.1"
+            },
+            "spdx-satisfies": {
+              "name": "spdx-satisfies",
+              "version": "4.0.1"
+            },
+            "treeify": {
+              "name": "treeify",
+              "version": "1.1.0"
+            }
+          }
+        },
+        "madge": {
+          "name": "madge",
+          "version": "8.0.0",
+          "dependencies": {
+            "chalk": {
+              "name": "chalk",
+              "version": "4.1.2"
+            },
+            "commander": {
+              "name": "commander",
+              "version": "7.2.0"
+            },
+            "commondir": {
+              "name": "commondir",
+              "version": "1.0.1"
+            },
+            "debug": {
+              "name": "debug",
+              "version": "4.4.3"
+            },
+            "dependency-tree": {
+              "name": "dependency-tree",
+              "version": "11.4.0"
+            },
+            "ora": {
+              "name": "ora",
+              "version": "5.4.1"
+            },
+            "pluralize": {
+              "name": "pluralize",
+              "version": "8.0.0"
+            },
+            "pretty-ms": {
+              "name": "pretty-ms",
+              "version": "7.0.1"
+            },
+            "rc": {
+              "name": "rc",
+              "version": "1.2.8"
+            },
+            "stream-to-array": {
+              "name": "stream-to-array",
+              "version": "2.3.0"
+            },
+            "ts-graphviz": {
+              "name": "ts-graphviz",
+              "version": "2.1.6"
+            },
+            "typescript": {
+              "name": "typescript",
+              "version": "5.9.3"
+            },
+            "walkdir": {
+              "name": "walkdir",
+              "version": "0.4.1"
+            }
+          }
+        },
+        "source-map-explorer": {
+          "name": "source-map-explorer",
+          "version": "2.5.3",
+          "dependencies": {
+            "btoa": {
+              "name": "btoa",
+              "version": "1.2.1"
+            },
+            "chalk": {
+              "name": "chalk",
+              "version": "4.1.2"
+            },
+            "convert-source-map": {
+              "name": "convert-source-map",
+              "version": "1.9.0"
+            },
+            "ejs": {
+              "name": "ejs",
+              "version": "3.1.10"
+            },
+            "escape-html": {
+              "name": "escape-html",
+              "version": "1.0.3"
+            },
+            "glob": {
+              "name": "glob",
+              "version": "7.2.3"
+            },
+            "gzip-size": {
+              "name": "gzip-size",
+              "version": "6.0.0"
+            },
+            "lodash": {
+              "name": "lodash",
+              "version": "4.17.23"
+            },
+            "open": {
+              "name": "open",
+              "version": "7.4.2"
+            },
+            "source-map": {
+              "name": "source-map",
+              "version": "0.7.6"
+            },
+            "temp": {
+              "name": "temp",
+              "version": "0.9.4"
+            },
+            "yargs": {
+              "name": "yargs",
+              "version": "16.2.0"
+            }
+          }
+        }
+      }
+    }
+  }
+}
