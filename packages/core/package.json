@@ -1,6 +1,6 @@
 {
   "name": "@nebulord/sickbay-core",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "description": "Analysis engine for the Sickbay health check CLI",
   "license": "MIT",
   "repository": {
