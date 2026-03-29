@@ -1,4 +1,4 @@
-# @sickbay/cli
+# @nebulord/sickbay
 
 The terminal interface for Sickbay. Built with [Ink](https://github.com/vadimdemedes/ink) (React for terminals) and [Commander](https://github.com/tj/commander.js).
 
