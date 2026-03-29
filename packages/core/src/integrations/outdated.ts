@@ -44,14 +44,19 @@ export class OutdatedRunner extends BaseRunner {
       const entries = parseOutdated(stdout);
       const issues: Issue[] = entries.map((e) => {
         const updateType = getUpdateType(e.current, e.latest);
+        const isMajor = updateType === 'major';
         return {
-          severity: updateType === 'major' ? 'warning' : 'info',
+          severity: isMajor ? 'warning' : 'info',
           message: `${e.name}: ${e.current} → ${e.latest} (${updateType})`,
-          fix: {
-            description: `Update ${e.name} to ${e.latest}`,
-            command: `${pm} update ${e.name}`,
-            nextSteps: 'Run tests to verify nothing broke',
-          },
+          fix: isMajor
+            ? {
+                description: `Update ${e.name} to ${e.latest} (major — review changelog before upgrading)`,
+              }
+            : {
+                description: `Update ${e.name} to ${e.latest}`,
+                command: `${pm} update ${e.name}`,
+                nextSteps: 'Run tests to verify nothing broke',
+              },
           reportedBy: ['outdated'],
         };
       });

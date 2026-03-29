@@ -117,7 +117,8 @@ export function FixApp({
 
           setFixableIssues(allFixable);
 
-          if (allFixable.length === 0) {
+          const hasActionable = allFixable.some((f) => f.command);
+          if (!hasActionable) {
             setPhase("done");
           } else if (applyAll) {
             setSelected(new Set(allFixable.map((_, i) => i)));
@@ -186,7 +187,8 @@ export function FixApp({
           }));
           setFixableIssues(tagged);
 
-          if (fixable.length === 0) {
+          const hasActionable = tagged.some((f) => f.command);
+          if (!hasActionable) {
             setPhase("done");
           } else if (applyAll) {
             setSelected(new Set(fixable.map((_, i) => i)));
@@ -283,32 +285,31 @@ export function FixApp({
       key: { upArrow: boolean; downArrow: boolean; return: boolean },
     ) => {
       if (phase === "selecting") {
-        const isGuidanceOnly = (i: number) => !fixableIssues[i]?.command;
+        const actionable = fixableIssues.filter((f) => f.command);
 
         if (key.upArrow) {
           setCursor((c) => Math.max(0, c - 1));
         } else if (key.downArrow) {
-          setCursor((c) => Math.min(fixableIssues.length - 1, c + 1));
+          setCursor((c) => Math.min(actionable.length - 1, c + 1));
         } else if (input === " ") {
-          if (!isGuidanceOnly(cursor)) {
-            setSelected((prev) => {
-              const next = new Set(prev);
-              if (next.has(cursor)) {
-                next.delete(cursor);
-              } else {
-                next.add(cursor);
-              }
-              return next;
-            });
-          }
+          setSelected((prev) => {
+            const next = new Set(prev);
+            if (next.has(cursor)) {
+              next.delete(cursor);
+            } else {
+              next.add(cursor);
+            }
+            return next;
+          });
         } else if (input === "a") {
-          // Select all actionable items only
-          setSelected(new Set(fixableIssues.map((f, i) => f.command ? i : -1).filter((i) => i >= 0)));
+          setSelected(new Set(actionable.map((_, i) => i)));
         } else if (input === "n") {
           setSelected(new Set());
         } else if (key.return) {
           if (selected.size > 0) {
-            startConfirmation(fixableIssues, selected, false);
+            // Map selected indices back to the actionable items
+            const selectedIssues = actionable.filter((_, i) => selected.has(i));
+            startConfirmation(selectedIssues, new Set(selectedIssues.map((_, i) => i)), false);
           }
         }
       } else if (phase === "confirming") {
@@ -365,71 +366,57 @@ export function FixApp({
       )}
 
       {/* Selection phase */}
-      {phase === "selecting" && (
-        <Box flexDirection="column">
-          <Box marginBottom={1}>
-            <Text color="yellow">⚠ </Text>
-            <Text dimColor>
-              Sickbay can make mistakes. Review each fix before applying —
-              false positives exist and some commands modify your project.
-            </Text>
-          </Box>
-          <Text bold>
-            Select fixes to apply ({fixableIssues.length} available)
-          </Text>
-          <Box flexDirection="column" marginTop={1} marginLeft={2}>
-            {fixableIssues.map((fix, i) => {
-              const isGuidance = !fix.command;
-              return (
-                <Box key={`${fix.packageName}-${fix.checkId}-${fix.command ?? fix.issue.fix?.description}`}>
-                  {isGuidance ? (
-                    <>
-                      <Text dimColor>  ℹ  </Text>
-                      {isMonorepo && (
-                        <Text color="magenta" dimColor>
-                          [{shortName(fix.packageName)}]{" "}
-                        </Text>
-                      )}
-                      <Text dimColor>{fix.issue.fix!.description}</Text>
-                    </>
-                  ) : (
-                    <>
-                      <Text color={i === cursor ? "cyan" : undefined}>
-                        {i === cursor ? "❯ " : "  "}
-                      </Text>
-                      <Text color={i === cursor ? "cyan" : undefined}>
-                        {selected.has(i) ? "[✓] " : "[ ] "}
-                      </Text>
-                      {isMonorepo && (
-                        <Text color="magenta" dimColor>
-                          [{shortName(fix.packageName)}]{" "}
-                        </Text>
-                      )}
-                      <Text color={SEVERITY_COLOR[fix.issue.severity]}>
-                        {fix.issue.fix!.description}
-                      </Text>
-                      <Text dimColor> ({fix.command})</Text>
-                    </>
-                  )}
-                </Box>
-              );
-            })}
-          </Box>
-          <Box marginTop={1} marginLeft={2}>
-            <Text dimColor>
-              ↑↓ navigate · space toggle · a all · n none · enter confirm
-              {selected.size > 0 && ` (${selected.size} selected)`}
-            </Text>
-          </Box>
-          {dryRun && (
-            <Box marginLeft={2}>
-              <Text color="yellow">
-                ⚠ Dry run mode — no changes will be made
+      {phase === "selecting" && (() => {
+        const actionable = fixableIssues.filter((f) => f.command);
+        return (
+          <Box flexDirection="column">
+            <Box marginBottom={1}>
+              <Text color="yellow">⚠ </Text>
+              <Text dimColor>
+                Sickbay can make mistakes. Review each fix before applying —
+                false positives exist and some commands modify your project.
               </Text>
             </Box>
-          )}
-        </Box>
-      )}
+            <Text bold>
+              Select fixes to apply ({actionable.length} available)
+            </Text>
+            <Box flexDirection="column" marginTop={1} marginLeft={2}>
+              {actionable.map((fix, i) => (
+                <Box key={`${fix.packageName}-${fix.checkId}-${fix.command}`}>
+                  <Text color={i === cursor ? "cyan" : undefined}>
+                    {i === cursor ? "❯ " : "  "}
+                  </Text>
+                  <Text color={i === cursor ? "cyan" : undefined}>
+                    {selected.has(i) ? "[✓] " : "[ ] "}
+                  </Text>
+                  {isMonorepo && (
+                    <Text color="magenta" dimColor>
+                      [{shortName(fix.packageName)}]{" "}
+                    </Text>
+                  )}
+                  <Text color={SEVERITY_COLOR[fix.issue.severity]}>
+                    {fix.issue.fix!.description}
+                  </Text>
+                  <Text dimColor> ({fix.command})</Text>
+                </Box>
+              ))}
+            </Box>
+            <Box marginTop={1} marginLeft={2}>
+              <Text dimColor>
+                ↑↓ navigate · space toggle · a all · n none · enter confirm
+                {selected.size > 0 && ` (${selected.size} selected)`}
+              </Text>
+            </Box>
+            {dryRun && (
+              <Box marginLeft={2}>
+                <Text color="yellow">
+                  ⚠ Dry run mode — no changes will be made
+                </Text>
+              </Box>
+            )}
+          </Box>
+        );
+      })()}
 
       {/* Confirmation phase */}
       {phase === "confirming" && currentConfirmFix && (
@@ -505,14 +492,20 @@ export function FixApp({
       {/* Done phase */}
       {phase === "done" && (
         <Box flexDirection="column">
-          {fixableIssues.length === 0 ? (
-            <Box>
-              <Text color="green">✓ </Text>
-              <Text>
-                No fixable issues found
-                {isMonorepo ? " across any package" : ""} — your project looks
-                great!
-              </Text>
+          {results.length === 0 ? (
+            <Box flexDirection="column">
+              <Box>
+                <Text color="green">✓ </Text>
+                <Text>
+                  No auto-fixable issues found
+                  {isMonorepo ? " across any package" : ""}
+                </Text>
+              </Box>
+              <Box marginTop={1}>
+                <Text dimColor>
+                  Run <Text color="cyan">sickbay</Text> to see the full report — there may be issues that require manual attention.
+                </Text>
+              </Box>
             </Box>
           ) : (
             <>
