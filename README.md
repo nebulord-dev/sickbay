@@ -47,8 +47,7 @@ npm install -g @nebulord/sickbay
 ```
 sickbay/
 ├── packages/
-│   ├── core/           # Analysis engine — all check runners & scoring
-│   └── constants/      # Shared constants
+│   └── core/           # Analysis engine — all check runners & scoring
 ├── apps/
 │   ├── cli/            # Terminal UI (Ink + Commander)
 │   └── web/            # Web dashboard (Vite + React + Tailwind)
