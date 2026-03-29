@@ -6,6 +6,29 @@ Project tasks are tracked in `.claude/kanban.md`. When the user mentions tasks, 
 
 When a task is completed, move it from In Progress to Done immediately — do not wait to be asked. If work was done that matches a backlog task (even one not explicitly pulled into In Progress), move it to Done.
 
+## Headless Execution Workflow
+
+Tasks are executed via a two-phase workflow:
+
+1. **Planning** — collaborative session produces one plan file per task in `.claude/plans/`
+2. **Execution** — approved plans are moved to `.claude/plans/ready/` and executed headlessly via a shell script that spawns one `claude` session per plan
+
+**Conventions:**
+- One task = one plan file = one session = one commit
+- Drafts live in `.claude/plans/`, approved plans in `.claude/plans/ready/`
+- The `ready/` subfolder is the approval gate — only plans there get picked up by the script
+- Never combine multiple tasks into a single plan
+
+### Kanban Automation Tags
+
+Each backlog task is tagged with one of:
+
+| Tag | Meaning |
+|-----|---------|
+| `[Auto]` | Can be executed headless from a written plan — no mid-task judgment needed |
+| `[Plan→Auto]` | Needs a collaborative planning session, then execution can be headless |
+| `[Collab]` | Needs the user in the loop throughout for design/UX/product decisions |
+
 This document helps Claude Code understand the Sickbay codebase structure and where to look when making updates.
 
 ## Project Overview
