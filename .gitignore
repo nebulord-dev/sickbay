@@ -8,7 +8,6 @@ coverage/
 *.local
 .worktrees/
 .superpowers/
-.sickbay/history.json
-.sickbay/cache/
+.sickbay/
 
 wallaby.cjs
