@@ -1,6 +1,6 @@
 # Sickbay
 
-A zero-config health check CLI for React projects. Run `sickbay` in any project to get an instant report on dependencies, security, code quality, performance, and git health — with a web dashboard for deep dives.
+A zero-config health check CLI for JavaScript and TypeScript projects. Run `sickbay` in any project to get an instant report on dependencies, security, code quality, performance, and git health — with a web dashboard for deep dives.
 
 ```
 ┌──────────────────────────────────────────────────────┐
@@ -14,13 +14,16 @@ A zero-config health check CLI for React projects. Run `sickbay` in any project 
 
 ## Features
 
-- **17 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
+- **21 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
+- **Framework-aware** — automatically detects React, Next, Express, Fastify, Koa, Hapi, and more; runs only relevant checks
+- **Monorepo support** — auto-detects pnpm/npm/yarn/turbo/nx/lerna workspaces; per-package scoring and reporting
 - **Animated terminal UI** built with Ink (React for terminals)
-- **TUI dashboard** — persistent live TUI with real-time file watching, git status, trends, and activity log
+- **TUI dashboard** — persistent live dashboard with real-time file watching, git status, trends, and activity log
 - **Web dashboard** served locally — opens automatically with `--web`
 - **AI-powered insights** with Claude — automated analysis and interactive chat (requires `ANTHROPIC_API_KEY`)
 - **Zero config** — all tools are bundled; no global installs required
 - **Structured JSON output** for CI/CD integration
+- **Star Trek doctor quotes** — severity-based personality quotes from Trek's finest medical officers
 
 ---
 
@@ -29,13 +32,16 @@ A zero-config health check CLI for React projects. Run `sickbay` in any project 
 ```
 sickbay/
 ├── packages/
-│   ├── core/        # Analysis engine — all check runners & scoring
-│   ├── cli/         # Terminal UI (Ink + Commander)
-│   └── web/         # Web dashboard (Vite + React)
-├── fixtures/        # Test fixtures (pnpm monorepo with react-app + node-api)
-├── package.json     # Root workspace config
+│   ├── core/           # Analysis engine — all check runners & scoring
+│   └── constants/      # Shared constants
+├── apps/
+│   ├── cli/            # Terminal UI (Ink + Commander)
+│   └── web/            # Web dashboard (Vite + React + Tailwind)
+├── fixtures/           # Test fixtures (separate pnpm workspace with react-app + node-api)
+├── tests/snapshots/    # Snapshot regression tests against fixtures
+├── package.json        # Root workspace config
 ├── pnpm-workspace.yaml
-├── turbo.json       # Build pipeline
+├── turbo.json          # Build pipeline
 └── tsconfig.base.json
 ```
 
@@ -64,15 +70,15 @@ pnpm build
 ### Link CLI globally
 
 ```bash
-cd packages/cli
+cd apps/cli
 pnpm link --global
 ```
 
 Now you can run `sickbay` from anywhere:
 
 ```bash
-sickbay --path ~/my-react-app
-sickbay --path ~/my-react-app --web
+sickbay --path ~/my-project
+sickbay --path ~/my-project --web
 ```
 
 All check tools (knip, depcheck, madge, etc.) are bundled as dependencies — no separate global installs needed.
@@ -85,21 +91,26 @@ All check tools (knip, depcheck, madge, etc.) are bundled as dependencies — no
 sickbay [options]
 
 Options:
-  -p, --path <path>     Path to the project to analyze (default: current directory)
-  -c, --checks <names>  Comma-separated list of checks to run (default: all)
-  --json                Output raw JSON report to stdout
-  --web                 Open web dashboard after scan completes
-  --no-ai               Disable AI features (even if ANTHROPIC_API_KEY is set)
-  --verbose             Show verbose output during checks
-  -V, --version         Show version
-  -h, --help            Show help
+  -p, --path <path>       Path to the project to analyze (default: current directory)
+  -c, --checks <names>    Comma-separated list of checks to run (default: all)
+  --package <name>        Scope to a single named package (monorepo only)
+  --json                  Output raw JSON report to stdout
+  --web                   Open web dashboard after scan completes
+  --no-ai                 Disable AI features (even if ANTHROPIC_API_KEY is set)
+  --no-quotes             Suppress personality quotes in output
+  --verbose               Show verbose output during checks
+  -V, --version           Show version
+  -h, --help              Show help
 
 Commands:
-  fix [options]          Interactively fix issues found by sickbay scan
-  trend [options]        Show score history and trends over time
-  stats [options]        Show a quick codebase overview and project summary
-  doctor [options]       Diagnose project setup and configuration issues
-  tui [options]      Persistent live dashboard with file watching and activity tracking
+  init                    Initialize .sickbay/ folder and run an initial baseline scan
+  fix [options]           Interactively fix issues found by sickbay scan
+  trend [options]         Show score history and trends over time
+  stats [options]         Show a quick codebase overview and project summary
+  doctor [options]        Diagnose project setup and configuration issues
+  tui [options]           Persistent live dashboard with file watching and activity tracking
+  badge [options]         Generate a health score badge for your README
+  diff <branch>           Compare health score against another branch
 ```
 
 ### Examples
@@ -112,27 +123,43 @@ sickbay
 sickbay --path ~/projects/my-app
 
 # Run only security and dependency checks
-sickbay --path ~/projects/my-app --checks npm-audit,knip,depcheck
+sickbay --checks npm-audit,knip,depcheck
 
 # Output JSON for CI/CD
-sickbay --path ~/projects/my-app --json > sickbay-report.json
+sickbay --json > sickbay-report.json
 
 # Open interactive web dashboard
-sickbay --path ~/projects/my-app --web
+sickbay --web
 
-# Enable AI features (requires ANTHROPIC_API_KEY)
-export ANTHROPIC_API_KEY=sk-ant-...
-sickbay --path ~/projects/my-app --web
+# Scan a monorepo (auto-detected)
+sickbay --path ~/projects/my-monorepo
 
-# Launch persistent tui dashboard (watches for file changes, auto-rescans)
-sickbay tui --path ~/projects/my-app
+# Scope to a single package in a monorepo
+sickbay --package my-app
 
-# TUI with AI web dashboard on demand (press W inside tui)
-export ANTHROPIC_API_KEY=sk-ant-...
-sickbay tui --path ~/projects/my-app
+# Compare health against another branch
+sickbay diff main
+
+# Generate a README badge from last scan
+sickbay badge
+
+# Run a fresh scan and generate badge
+sickbay badge --scan
+
+# Launch persistent TUI dashboard (watches for file changes, auto-rescans)
+sickbay tui
+
+# Fix issues interactively
+sickbay fix
+
+# Preview fixes without applying
+sickbay fix --dry-run
+
+# Apply all auto-fixable issues at once
+sickbay fix --all
 ```
 
-> **Note:** See [packages/cli/README.md](packages/cli/README.md) for detailed documentation on the `fix`, `trend`, `stats`, `doctor`, and `tui` commands.
+> **Note:** See [apps/cli/README.md](apps/cli/README.md) for detailed documentation on each command.
 
 ---
 
@@ -150,8 +177,10 @@ Set the `ANTHROPIC_API_KEY` environment variable:
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-sickbay --path ~/projects/my-app --web
+sickbay --web
 ```
+
+You can also place it in `~/.sickbay/.env` or the project's `.env` file — both are loaded automatically.
 
 Without the API key, the dashboard still works — you just won't see the AI insights drawer or chat bot.
 
@@ -159,47 +188,52 @@ Without the API key, the dashboard still works — you just won't see the AI ins
 
 ## Available Checks
 
-### Dependencies (3 checks)
+Sickbay automatically detects your project type and runs only applicable checks. React-specific checks won't run on a Node API, and vice versa.
 
-| Check      | What it does                                           |
-| ---------- | ------------------------------------------------------ |
-| `knip`     | Unused files, dependencies, and exports                |
-| `depcheck` | Missing dependencies (cross-refs with knip for unused) |
-| `outdated` | Outdated package versions (uses pnpm/npm/yarn)         |
+### Dependencies (4 checks)
 
-### Security (3 checks)
+| Check       | What it does                                           | Scope |
+| ----------- | ------------------------------------------------------ | ----- |
+| `knip`      | Unused files, dependencies, and exports                | All   |
+| `depcheck`  | Missing dependencies (cross-refs with knip for unused) | All   |
+| `outdated`  | Outdated package versions (uses pnpm/npm/yarn)         | All   |
+| `heavy-deps`| Detects heavy dependencies (moment, lodash, etc.)      | All   |
 
-| Check             | What it does                                      |
-| ----------------- | ------------------------------------------------- |
-| `npm-audit`       | Known vulnerability scan                          |
-| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.)      |
-| `secrets`         | Detects exposed API keys, tokens, and credentials |
+### Security (4 checks)
 
-### Code Quality (7 checks)
+| Check                    | What it does                                      | Scope         |
+| ------------------------ | ------------------------------------------------- | ------------- |
+| `npm-audit`              | Known vulnerability scan                          | All           |
+| `license-checker`        | Flags problematic licenses (GPL, AGPL, etc.)      | All           |
+| `secrets`                | Detects exposed API keys, tokens, and credentials | All           |
+| `node-security`          | Helmet, CORS, rate limiting checks                | Node (server) |
 
-| Check          | What it does                                  |
-| -------------- | --------------------------------------------- |
-| `eslint`       | Linting errors and warnings                   |
-| `typescript`   | Type errors and issues                        |
-| `madge`        | Circular module dependencies                  |
-| `jscpd`        | Copy-paste duplication detection              |
-| `coverage`     | Test coverage % and test counts (vitest/jest) |
-| `todo-scanner` | TODO/FIXME comments (technical debt tracker)  |
-| `complexity`   | High cyclomatic complexity files              |
+### Code Quality (8 checks)
+
+| Check                    | What it does                                         | Scope         |
+| ------------------------ | ---------------------------------------------------- | ------------- |
+| `eslint`                 | Linting errors and warnings                          | All           |
+| `typescript`             | Type errors and issues                               | All           |
+| `madge`                  | Circular module dependencies                         | All           |
+| `jscpd`                  | Copy-paste duplication detection                     | All           |
+| `coverage`               | Test coverage % and test counts (vitest/jest)        | All           |
+| `todo-scanner`           | TODO/FIXME comments (technical debt tracker)         | All           |
+| `complexity`             | High cyclomatic complexity files                     | All           |
+| `node-input-validation`  | Input validation library usage (zod, joi, etc.)      | Node (server) |
 
 ### Performance (3 checks)
 
-| Check        | What it does                                      |
-| ------------ | ------------------------------------------------- |
-| `heavy-deps` | Detects heavy dependencies (moment, lodash, etc.) |
-| `react-perf` | React performance anti-patterns                   |
-| `asset-size` | Oversized images, fonts, and static assets        |
+| Check            | What it does                                 | Scope  |
+| ---------------- | -------------------------------------------- | ------ |
+| `react-perf`     | React performance anti-patterns              | React  |
+| `asset-size`     | Oversized images, fonts, and static assets   | React  |
+| `node-async-errors` | Async error handling in route handlers    | Node (server) |
 
 ### Git (1 check)
 
-| Check | What it does                                 |
-| ----- | -------------------------------------------- |
-| `git` | Commit history, staleness, contributor count |
+| Check | What it does                                 | Scope |
+| ----- | -------------------------------------------- | ----- |
+| `git` | Commit history, staleness, contributor count | All   |
 
 ---
 
@@ -217,6 +251,31 @@ Each check produces a score from 0–100. The overall score is a weighted averag
 
 Score thresholds: **80+** = green, **60–79** = yellow, **< 60** = red.
 
+See [docs/scoring.md](docs/scoring.md) for the full scoring breakdown including per-check formulas.
+
+---
+
+## Monorepo Support
+
+Sickbay auto-detects monorepo setups (pnpm, npm, yarn workspaces, Turborepo, Nx, Lerna) and runs checks per-package in parallel.
+
+```bash
+# Scan entire monorepo
+sickbay --path ~/my-monorepo
+
+# Scope to one package
+sickbay --package @myorg/api
+
+# Monorepo-aware subcommands
+sickbay fix --package @myorg/api
+sickbay trend --package @myorg/api
+sickbay stats --package @myorg/api
+sickbay doctor --package @myorg/api
+sickbay badge --package @myorg/api
+```
+
+The web dashboard shows a package sidebar with per-package drill-in, cross-package quick wins, and an aggregate overview.
+
 ---
 
 ## Development
@@ -226,6 +285,9 @@ Score thresholds: **80+** = green, **60–79** = yellow, **< 60** = red.
 ```bash
 pnpm build        # Build all packages (turbo, respects dependency order)
 pnpm dev          # Watch mode for all packages in parallel
+pnpm test         # Run all tests across all packages
+pnpm test:snapshots  # Run snapshot regression tests against fixtures
+pnpm lint         # Lint all packages
 pnpm clean        # Remove all dist/ directories and node_modules
 ```
 
@@ -245,19 +307,9 @@ pnpm --filter @sickbay/web build
 pnpm --filter @sickbay/web dev      # Vite dev server on :3030
 ```
 
-### Iterating on the CLI
-
-```bash
-# Terminal 1 — watch rebuild
-pnpm --filter @sickbay/cli dev
-
-# Terminal 2 — test against a project
-node packages/cli/dist/index.js --path ~/Desktop/sickbay-test-app
-```
-
 ### Test Fixtures
 
-The `fixtures/` directory is a pnpm monorepo with two intentionally broken packages for testing Sickbay locally:
+The `fixtures/` directory is a separate pnpm workspace with two packages for testing Sickbay locally:
 
 ```bash
 sickbay --path fixtures/packages/react-app   # moderately healthy React app
@@ -267,16 +319,6 @@ sickbay --path fixtures/                     # full monorepo (tests monorepo det
 
 See [`fixtures/README.md`](fixtures/README.md) for the full list of intentional issues and how to add new fixtures.
 
-### Iterating on the Web Dashboard
-
-```bash
-# Start Vite dev server (auto-opens browser)
-pnpm --filter @sickbay/web dev
-
-# Generate a sample report for the dashboard to load
-node packages/cli/dist/index.js --path ~/Desktop/sickbay-test-app --json > packages/web/public/sickbay-report.json
-```
-
 ---
 
 ## Architecture
@@ -284,21 +326,21 @@ node packages/cli/dist/index.js --path ~/Desktop/sickbay-test-app --json > packa
 ```
                   ┌─────────────┐
                   │   sickbay    │  ← CLI entry (Commander)
-                  │  (CLI pkg)  │
+                  │   (CLI)     │
                   └──────┬──────┘
-                         │ runSickbay()
+                         │ runSickbay() / runSickbayMonorepo()
                   ┌──────▼──────┐
-                  │    core     │  ← Orchestrates all runners in parallel
-                  │   runner    │
+                  │    core     │  ← Orchestrates runners in parallel
+                  │   runner    │     Filters by ProjectContext first
                   └──────┬──────┘
           ┌──────────────┼──────────────┐
           ▼              ▼              ▼
-     KnipRunner    AuditRunner    GitRunner ...  (17 total)
+     KnipRunner    AuditRunner    GitRunner ...  (21 total)
           │              │              │
           └──────────────┼──────────────┘
-                         │ SickbayReport JSON
+                         │ SickbayReport / MonorepoReport JSON
                   ┌──────▼──────┐
-                  │  Terminal   │  ← Ink UI with scores + quick wins
+                  │  Terminal   │  ← Ink UI with scores, quick wins, quotes
                   │    UI       │
                   └─────────────┘
                          │ --web flag
@@ -313,5 +355,5 @@ node packages/cli/dist/index.js --path ~/Desktop/sickbay-test-app --json > packa
 ## Packages
 
 - [`packages/core`](packages/core/README.md) — Analysis engine
-- [`packages/cli`](packages/cli/README.md) — Terminal interface
-- [`packages/web`](packages/web/README.md) — Web dashboard
+- [`apps/cli`](apps/cli/README.md) — Terminal interface
+- [`apps/web`](apps/web/README.md) — Web dashboard
