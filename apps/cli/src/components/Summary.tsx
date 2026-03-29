@@ -11,9 +11,19 @@ import { ScoreBar } from "./ScoreBar.js";
 
 interface SummaryProps {
   report: SickbayReport;
+  scanDuration?: number | null;
 }
 
-export function Summary({ report }: SummaryProps) {
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  const seconds = ms / 1000;
+  if (seconds < 60) return `${seconds.toFixed(1)}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.round(seconds % 60);
+  return `${minutes}m ${remainingSeconds}s`;
+}
+
+export function Summary({ report, scanDuration }: SummaryProps) {
   return (
     <Box flexDirection="column">
       <Text dimColor>{"━".repeat(52)}</Text>
@@ -21,6 +31,9 @@ export function Summary({ report }: SummaryProps) {
         <Text bold>Overall Health Score: </Text>
         <ScoreBar score={report.overallScore} width={12} />
         <Text> {getScoreEmoji(report.overallScore)}</Text>
+        {scanDuration != null && (
+          <Text dimColor>  {formatDuration(scanDuration)}</Text>
+        )}
       </Box>
       <Box marginTop={1}>
         <Text color="red"> ✗ {report.summary.critical} critical</Text>

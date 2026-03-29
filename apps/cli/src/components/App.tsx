@@ -34,6 +34,15 @@ function scoreBar(score: number, width = 10): string {
   return "█".repeat(filled) + "░".repeat(width - filled);
 }
 
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  const seconds = ms / 1000;
+  if (seconds < 60) return `${seconds.toFixed(1)}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.round(seconds % 60);
+  return `${minutes}m ${remainingSeconds}s`;
+}
+
 export function App({
   projectPath,
   checks,
@@ -53,7 +62,9 @@ export function App({
   const [projectName, setProjectName] = useState<string | undefined>();
   const [scanningPackage, setScanningPackage] = useState<string | undefined>();
   const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
+  const [scanDuration, setScanDuration] = useState<number | null>(null);
   const hasRun = useRef(false);
+  const scanStartTime = useRef<number>(0);
 
   useEffect(() => {
     if (!isMonorepo) return;
@@ -68,6 +79,8 @@ export function App({
     if (hasRun.current) return;
     hasRun.current = true;
 
+    scanStartTime.current = Date.now();
+
     if (isMonorepo) {
       runSickbayMonorepo({
         projectPath,
@@ -78,6 +91,7 @@ export function App({
         onPackageComplete: () => setScanningPackage(undefined),
       })
         .then(async (r) => {
+          setScanDuration(Date.now() - scanStartTime.current);
           setMonorepoReport(r);
           setProjectName(`monorepo (${r.packages.length} packages)`);
 
@@ -140,6 +154,7 @@ export function App({
       },
     })
       .then(async (r) => {
+        setScanDuration(Date.now() - scanStartTime.current);
         setProjectName(r.projectInfo.name);
         setReport(r);
 
@@ -225,7 +240,7 @@ export function App({
       )}
 
       {phase === "results" && monorepoReport && (
-        <MonorepoSummaryTable report={monorepoReport} />
+        <MonorepoSummaryTable report={monorepoReport} scanDuration={scanDuration} />
       )}
 
       {phase === "results" && report && (
@@ -233,7 +248,7 @@ export function App({
           {report.checks.filter((c) => c.status !== "skipped").map((check) => (
             <CheckResultRow key={check.id} result={check} />
           ))}
-          <Summary report={report} />
+          <Summary report={report} scanDuration={scanDuration} />
           <QuickWins report={report} />
           <Box marginTop={1}>
             <Text dimColor>View detailed report: </Text>
@@ -245,13 +260,13 @@ export function App({
       {phase === "opening-web" && (monorepoReport ?? report) && (
         <Box flexDirection="column">
           {monorepoReport ? (
-            <MonorepoSummaryTable report={monorepoReport} />
+            <MonorepoSummaryTable report={monorepoReport} scanDuration={scanDuration} />
           ) : report ? (
             <>
               {report.checks.filter((c) => c.status !== "skipped").map((check) => (
                 <CheckResultRow key={check.id} result={check} />
               ))}
-              <Summary report={report} />
+              <Summary report={report} scanDuration={scanDuration} />
             </>
           ) : null}
           <Box marginTop={1}>
@@ -278,7 +293,7 @@ export function App({
   );
 }
 
-function MonorepoSummaryTable({ report }: { report: MonorepoReport }) {
+function MonorepoSummaryTable({ report, scanDuration }: { report: MonorepoReport; scanDuration: number | null }) {
   const scoreColor = (score: number) =>
     score >= 80 ? "green" : score >= 60 ? "yellow" : "red";
 
@@ -307,7 +322,19 @@ function MonorepoSummaryTable({ report }: { report: MonorepoReport }) {
         <Text color="red">{report.summary.critical} critical</Text>
         <Text dimColor>· </Text>
         <Text color="yellow">{report.summary.warnings} warnings</Text>
+        {scanDuration !== null && (
+          <>
+            <Text dimColor>· </Text>
+            <Text dimColor>{formatDuration(scanDuration)}</Text>
+          </>
+        )}
       </Box>
+      {report.quote && (
+        <Box marginTop={1}>
+          <Text italic dimColor>"{report.quote.text}"</Text>
+          <Text dimColor> — {report.quote.source}</Text>
+        </Box>
+      )}
       <Box marginTop={1}>
         <Text dimColor>Per-package details: </Text>
         <Text color="cyan">sickbay --web</Text>
