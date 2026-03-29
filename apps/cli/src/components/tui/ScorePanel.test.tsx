@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
 import { ScorePanel } from "./ScorePanel.js";
-import type { SickbayReport } from "@sickbay/core";
+import type { SickbayReport } from "@nebulord/sickbay-core";
 
 const createMockReport = (
   overallScore: number,

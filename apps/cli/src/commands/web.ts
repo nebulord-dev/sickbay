@@ -2,7 +2,7 @@ import http from "http";
 import { readFileSync, existsSync } from "fs";
 import { join, extname } from "path";
 import { fileURLToPath } from "url";
-import type { SickbayReport, MonorepoReport } from "@sickbay/core";
+import type { SickbayReport, MonorepoReport } from "@nebulord/sickbay-core";
 import type { AIService } from "../services/ai.js";
 
 /**
@@ -47,7 +47,7 @@ async function getFreePort(preferred: number): Promise<number> {
 }
 
 function packageReportToSickbayReport(
-  pkg: import("@sickbay/core").PackageReport,
+  pkg: import("@nebulord/sickbay-core").PackageReport,
   parent: MonorepoReport,
 ): SickbayReport {
   return {

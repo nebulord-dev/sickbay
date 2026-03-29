@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React, { useEffect, useRef } from 'react';
 import { render } from 'ink-testing-library';
 import { Text } from 'ink';
-import type { SickbayReport } from '@sickbay/core';
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
-vi.mock('@sickbay/core', () => ({
+vi.mock('@nebulord/sickbay-core', () => ({
   runSickbay: vi.fn(),
   runSickbayMonorepo: vi.fn(),
   detectMonorepo: vi.fn().mockResolvedValue({ isMonorepo: false }),
@@ -15,7 +15,7 @@ vi.mock('../../../lib/history.js', () => ({
   saveEntry: vi.fn(),
 }));
 
-import { runSickbay } from '@sickbay/core';
+import { runSickbay } from '@nebulord/sickbay-core';
 import { saveEntry } from '../../../lib/history.js';
 import { useSickbayRunner } from './useSickbayRunner.js';
 

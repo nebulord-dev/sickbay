@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Text } from "ink";
-import type { SickbayReport } from "@sickbay/core";
+import type { SickbayReport } from "@nebulord/sickbay-core";
 
 interface ScorePanelProps {
   report: SickbayReport | null;

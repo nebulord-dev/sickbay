@@ -53,7 +53,7 @@ program
       ? options.checks.split(",").map((s: string) => s.trim())
       : undefined;
 
-    const { detectMonorepo, runSickbay, runSickbayMonorepo } = await import("@sickbay/core");
+    const { detectMonorepo, runSickbay, runSickbayMonorepo } = await import("@nebulord/sickbay-core");
     const monorepoInfo = await detectMonorepo(options.path);
 
     // --package flag: scope to a single named package within a monorepo
@@ -122,7 +122,7 @@ program
 
       // Cache dependency tree
       try {
-        const { getDependencyTree } = await import("@sickbay/core");
+        const { getDependencyTree } = await import("@nebulord/sickbay-core");
         const { saveDepTree } = await import("./lib/history.js");
         const tree = await getDependencyTree(options.path, report.projectInfo.packageManager);
         saveDepTree(options.path, tree);
@@ -363,7 +363,7 @@ program
     let score = options.scan ? null : loadScoreFromLastReport(projectPath);
 
     if (score === null) {
-      const { runSickbay } = await import("@sickbay/core");
+      const { runSickbay } = await import("@nebulord/sickbay-core");
       const report = await runSickbay({ projectPath, quotes: false });
 
       try {

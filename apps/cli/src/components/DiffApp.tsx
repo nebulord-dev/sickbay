@@ -131,7 +131,7 @@ export function DiffApp({
     (async () => {
       try {
         // Run fresh scan on current branch
-        const { runSickbay } = await import("@sickbay/core");
+        const { runSickbay } = await import("@nebulord/sickbay-core");
         const currentReport = await runSickbay({
           projectPath,
           checks,

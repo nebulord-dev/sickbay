@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Text } from "ink";
-import type { CheckResult as CheckResultType } from "@sickbay/core";
+import type { CheckResult as CheckResultType } from "@nebulord/sickbay-core";
 import { ScoreBar } from "./ScoreBar.js";
 
 const STATUS_ICONS = {
