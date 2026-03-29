@@ -27,13 +27,27 @@ A zero-config health check CLI for JavaScript and TypeScript projects. Run `sick
 
 ---
 
+## Installation
+
+```bash
+# Run without installing
+npx sickbay --path ~/my-project
+
+# Install globally
+npm install -g sickbay
+
+# Or install the scoped package directly
+npm install -g @nebulord/sickbay
+```
+
+---
+
 ## Monorepo Structure
 
 ```
 sickbay/
 ├── packages/
-│   ├── core/           # Analysis engine — all check runners & scoring
-│   └── constants/      # Shared constants
+│   └── core/           # Analysis engine — all check runners & scoring
 ├── apps/
 │   ├── cli/            # Terminal UI (Ink + Commander)
 │   └── web/            # Web dashboard (Vite + React + Tailwind)
@@ -57,7 +71,7 @@ sickbay/
 ### Install & Build
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/nebulord-dev/sickbay.git
 cd sickbay
 
 # Install all workspace dependencies
@@ -295,16 +309,16 @@ pnpm clean        # Remove all dist/ directories and node_modules
 
 ```bash
 # Core
-pnpm --filter @sickbay/core build
-pnpm --filter @sickbay/core dev     # Watch mode
+pnpm --filter @nebulord/sickbay-core build
+pnpm --filter @nebulord/sickbay-core dev     # Watch mode
 
 # CLI
-pnpm --filter @sickbay/cli build
-pnpm --filter @sickbay/cli dev      # Watch mode
+pnpm --filter @nebulord/sickbay build
+pnpm --filter @nebulord/sickbay dev      # Watch mode
 
 # Web
-pnpm --filter @sickbay/web build
-pnpm --filter @sickbay/web dev      # Vite dev server on :3030
+pnpm --filter @nebulord/sickbay-web build
+pnpm --filter @nebulord/sickbay-web dev      # Vite dev server on :3030
 ```
 
 ### Test Fixtures

@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Text } from "ink";
-import type { SickbayReport } from "@sickbay/core";
+import type { SickbayReport } from "@nebulord/sickbay-core";
 
 /**
  * Component to display quick wins based on the report's issues that have fixes available.

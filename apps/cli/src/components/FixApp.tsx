@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Box, Text, useApp, useInput } from "ink";
 import Spinner from "ink-spinner";
-import { runSickbay } from "@sickbay/core";
+import { runSickbay } from "@nebulord/sickbay-core";
 import { Header } from "./Header.js";
 import { ProgressList } from "./ProgressList.js";
 import {

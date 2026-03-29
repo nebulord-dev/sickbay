@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      '@sickbay/core': resolve(__dirname, '../../packages/core/dist/index.js'),
+      '@nebulord/sickbay-core': resolve(__dirname, '../../packages/core/dist/index.js'),
     },
   },
   test: {

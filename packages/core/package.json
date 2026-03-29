@@ -1,6 +1,15 @@
 {
-  "name": "@sickbay/core",
-  "version": "0.0.1",
+  "name": "@nebulord/sickbay-core",
+  "version": "0.1.0",
+  "description": "Analysis engine for the Sickbay health check CLI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nebulord-dev/sickbay"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +34,6 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@sickbay/constants": "workspace:*",
     "depcheck": "^1.4.7",
     "execa": "^9.6.1",
     "globby": "^16.2.0",

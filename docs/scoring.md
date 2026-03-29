@@ -13,7 +13,7 @@ This document explains how every score in Sickbay is calculated — from individ
 | 60–79  | Fair      | yellow | Notable problems worth addressing  |
 | 0–59   | Poor/Bad  | red    | Serious issues requiring attention |
 
-Thresholds live in `packages/constants/src/index.ts` as `SCORE_EXCELLENT = 90`, `SCORE_GOOD = 80`, `SCORE_FAIR = 60`.
+Thresholds (`SCORE_EXCELLENT = 90`, `SCORE_GOOD = 80`, `SCORE_FAIR = 60`) are defined in `@nebulord/sickbay-core`.
 
 ---
 
@@ -283,7 +283,7 @@ Runs [jscpd](https://github.com/kucherenko/jscpd) on `src/` and reads the duplic
 
 Scans `src/` for source files (`.ts`, `.tsx`, `.js`, `.jsx`, `.mts`, `.cts`), counts non-blank lines, and flags files that exceed line thresholds.
 
-**Thresholds** (from `@sickbay/constants`):
+**Thresholds** (from `@nebulord/sickbay-core`):
 | Lines       | Issue severity |
 | ----------- | -------------- |
 | ≥ 400 lines | info           |

@@ -263,7 +263,7 @@ exports[`node-api > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove axios",
+        "command": undefined,
         "description": "Remove axios",
       },
       "message": "Unused dependency: axios",
@@ -275,7 +275,7 @@ exports[`node-api > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove bcrypt",
+        "command": undefined,
         "description": "Remove bcrypt",
       },
       "message": "Unused dependency: bcrypt",
@@ -287,7 +287,7 @@ exports[`node-api > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove colors",
+        "command": undefined,
         "description": "Remove colors",
       },
       "message": "Unused dependency: colors",
@@ -299,7 +299,7 @@ exports[`node-api > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove left-pad",
+        "command": undefined,
         "description": "Remove left-pad",
       },
       "message": "Unused dependency: left-pad",
@@ -311,7 +311,7 @@ exports[`node-api > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove request",
+        "command": undefined,
         "description": "Remove request",
       },
       "message": "Unused dependency: request",
@@ -323,7 +323,7 @@ exports[`node-api > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove uuid",
+        "command": undefined,
         "description": "Remove uuid",
       },
       "message": "Unused dependency: uuid",
@@ -980,7 +980,7 @@ exports[`react-app > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove faker",
+        "command": undefined,
         "description": "Remove faker",
       },
       "message": "Unused dependency: faker",
@@ -992,7 +992,7 @@ exports[`react-app > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove jquery",
+        "command": undefined,
         "description": "Remove jquery",
       },
       "message": "Unused dependency: jquery",
@@ -1004,7 +1004,7 @@ exports[`react-app > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove underscore",
+        "command": undefined,
         "description": "Remove underscore",
       },
       "message": "Unused dependency: underscore",
@@ -1016,7 +1016,7 @@ exports[`react-app > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove @types/jquery",
+        "command": undefined,
         "description": "Remove @types/jquery",
       },
       "message": "Unused devDependency: @types/jquery",
@@ -1028,7 +1028,7 @@ exports[`react-app > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove @vitest/coverage-v8",
+        "command": undefined,
         "description": "Remove @vitest/coverage-v8",
       },
       "message": "Unused devDependency: @vitest/coverage-v8",
@@ -1040,7 +1040,7 @@ exports[`react-app > knip 1`] = `
     {
       "file": undefined,
       "fix": {
-        "command": "pnpm remove prettier",
+        "command": undefined,
         "description": "Remove prettier",
       },
       "message": "Unused devDependency: prettier",

@@ -15,7 +15,7 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 import { existsSync, readdirSync, statSync, readFileSync } from 'fs';
-import { WARN_LINES } from '@sickbay/constants';
+import { WARN_LINES } from '../constants.js';
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReaddirSync = vi.mocked(readdirSync);

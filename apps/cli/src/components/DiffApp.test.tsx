@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
 import { render } from 'ink-testing-library';
-import type { SickbayReport } from '@sickbay/core';
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
-vi.mock('@sickbay/core', () => ({
+vi.mock('@nebulord/sickbay-core', () => ({
   runSickbay: vi.fn(),
 }));
 
@@ -18,7 +18,7 @@ vi.mock('../lib/history.js', () => ({
 }));
 
 import { DiffApp } from './DiffApp.js';
-import { runSickbay } from '@sickbay/core';
+import { runSickbay } from '@nebulord/sickbay-core';
 import { loadBaseReport, compareReports } from '../commands/diff.js';
 import type { DiffResult } from '../commands/diff.js';
 

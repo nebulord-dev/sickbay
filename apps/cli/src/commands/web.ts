@@ -2,13 +2,13 @@ import http from "http";
 import { readFileSync, existsSync } from "fs";
 import { join, extname } from "path";
 import { fileURLToPath } from "url";
-import type { SickbayReport, MonorepoReport } from "@sickbay/core";
+import type { SickbayReport, MonorepoReport } from "@nebulord/sickbay-core";
 import type { AIService } from "../services/ai.js";
 
 /**
  * This module implements a simple HTTP server to serve a web dashboard for visualizing Sickbay reports.
  * It dynamically serves the report data as JSON and provides endpoints for AI-generated summaries and chat interactions if an AI service is available.
- * The server also serves static files from the built dashboard located in the @sickbay/web package. This allows users to interact with their health reports in a user-friendly web interface.
+ * The server also serves static files from the built dashboard located in the @nebulord/sickbay-web package. This allows users to interact with their health reports in a user-friendly web interface.
  */
 
 const MIME_TYPES: Record<string, string> = {
@@ -47,7 +47,7 @@ async function getFreePort(preferred: number): Promise<number> {
 }
 
 function packageReportToSickbayReport(
-  pkg: import("@sickbay/core").PackageReport,
+  pkg: import("@nebulord/sickbay-core").PackageReport,
   parent: MonorepoReport,
 ): SickbayReport {
   return {
@@ -81,7 +81,7 @@ export async function serveWeb(
   const distDir = findWebDist();
   if (!distDir) {
     throw new Error(
-      "Web dashboard not built. Run: pnpm --filter @sickbay/web build",
+      "Web dashboard not built. Run: pnpm --filter @nebulord/sickbay-web build",
     );
   }
 

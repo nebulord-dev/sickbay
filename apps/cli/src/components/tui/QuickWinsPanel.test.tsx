@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
 import { QuickWinsPanel } from "./QuickWinsPanel.js";
-import type { SickbayReport, CheckResult, Issue } from "@sickbay/core";
+import type { SickbayReport, CheckResult, Issue } from "@nebulord/sickbay-core";
 
 const createMockReport = (checks: CheckResult[]): SickbayReport => ({
   timestamp: new Date().toISOString(),

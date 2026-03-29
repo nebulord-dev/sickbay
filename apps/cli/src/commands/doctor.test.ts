@@ -5,13 +5,13 @@ vi.mock('fs', () => ({
   readFileSync: vi.fn(),
 }));
 
-vi.mock('@sickbay/core', () => ({
+vi.mock('@nebulord/sickbay-core', () => ({
   detectProject: vi.fn(),
   detectPackageManager: vi.fn().mockReturnValue('npm'),
 }));
 
 import { existsSync, readFileSync } from 'fs';
-import { detectProject, detectPackageManager } from '@sickbay/core';
+import { detectProject, detectPackageManager } from '@nebulord/sickbay-core';
 import { runDiagnostics } from './doctor.js';
 
 const mockExistsSync = vi.mocked(existsSync);

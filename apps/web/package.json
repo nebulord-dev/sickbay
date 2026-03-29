@@ -1,6 +1,7 @@
 {
-  "name": "@sickbay/web",
-  "version": "0.0.1",
+  "name": "@nebulord/sickbay-web",
+  "version": "0.1.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,8 +16,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@sickbay/constants": "workspace:*",
-    "@sickbay/core": "workspace:*",
+    "@nebulord/sickbay-core": "workspace:*",
     "@xyflow/react": "^12.10.2",
     "dagre": "^0.8.5",
     "react": "^19.2.4",

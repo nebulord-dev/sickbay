@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Text, useInput } from "ink";
-import type { SickbayReport, MonorepoReport } from "@sickbay/core";
+import type { SickbayReport, MonorepoReport } from "@nebulord/sickbay-core";
 import { PanelBorder } from "./PanelBorder.js";
 import { HotkeyBar, type PanelId } from "./HotkeyBar.js";
 import { HealthPanel } from "./HealthPanel.js";
@@ -109,7 +109,7 @@ export function TuiApp({
 
       // Cache dependency tree for web dashboard
       try {
-        const { getDependencyTree } = await import("@sickbay/core");
+        const { getDependencyTree } = await import("@nebulord/sickbay-core");
         const { saveDepTree } = await import("../../lib/history.js");
         const tree = await getDependencyTree(projectPath, result.projectInfo.packageManager);
         saveDepTree(projectPath, tree);

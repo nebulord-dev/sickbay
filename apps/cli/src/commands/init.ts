@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync, existsSync, readFileSync, appendFileSync } from "fs";
 import { join } from "path";
-import { runSickbay } from "@sickbay/core";
+import { runSickbay } from "@nebulord/sickbay-core";
 import { saveEntry } from "../lib/history.js";
 
 export async function initSickbay(projectPath: string): Promise<void> {

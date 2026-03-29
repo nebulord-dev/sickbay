@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CriticalIssues } from './CriticalIssues.js';
-import type { SickbayReport } from '@sickbay/core';
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 function makeReport(checks: SickbayReport['checks'] = []): SickbayReport {
   return {

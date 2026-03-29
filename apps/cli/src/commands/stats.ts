@@ -1,8 +1,8 @@
 import { readFileSync, readdirSync, statSync, existsSync } from "fs";
 import { join, extname } from "path";
 import { execSync } from "child_process";
-import { detectProject } from "@sickbay/core";
-import type { ProjectInfo } from "@sickbay/core";
+import { detectProject } from "@nebulord/sickbay-core";
+import type { ProjectInfo } from "@nebulord/sickbay-core";
 
 /**
  * This module provides a function to gather various statistics about a project, including file counts, line counts, component types, dependencies, and git information.

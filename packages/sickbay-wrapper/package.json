@@ -1,0 +1,32 @@
+{
+  "name": "sickbay",
+  "version": "1.2.0",
+  "description": "Zero-config health check CLI for JavaScript and TypeScript projects",
+  "bin": {
+    "sickbay": "./bin.mjs"
+  },
+  "files": [
+    "bin.mjs"
+  ],
+  "dependencies": {
+    "@nebulord/sickbay": "0.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nebulord-dev/sickbay"
+  },
+  "keywords": [
+    "health-check",
+    "code-quality",
+    "security",
+    "dependencies",
+    "cli",
+    "react",
+    "node",
+    "typescript"
+  ]
+}

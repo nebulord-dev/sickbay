@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Text } from "ink";
-import type { SickbayReport } from "@sickbay/core";
-import { getScoreEmoji } from "@sickbay/core";
+import type { SickbayReport } from "@nebulord/sickbay-core";
+import { getScoreEmoji } from "@nebulord/sickbay-core";
 import { ScoreBar } from "./ScoreBar.js";
 
 /**

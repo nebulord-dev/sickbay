@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ScoreCard } from "./ScoreCard";
-import type { CheckResult } from "@sickbay/core";
+import type { CheckResult } from "@nebulord/sickbay-core";
 
 const createMockCheck = (overrides?: Partial<CheckResult>): CheckResult => ({
   id: "test-check",

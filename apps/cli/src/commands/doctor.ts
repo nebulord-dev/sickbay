@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { detectProject, detectPackageManager } from "@sickbay/core";
+import { detectProject, detectPackageManager } from "@nebulord/sickbay-core";
 
 /**
  * This module defines a set of diagnostic checks that can be run against a JavaScript/TypeScript project to identify common issues and best practice violations. Each check returns a DiagnosticResult indicating whether the check passed, failed, or has warnings, along with messages and potential fixes. The runDiagnostics function executes all checks and aggregates their results for reporting.

@@ -45,11 +45,11 @@ This document helps Claude Code understand the Sickbay codebase structure and wh
 This is a **pnpm workspace** monorepo managed with **Turbo**. The packages have strict dependency order:
 
 ```
-@sickbay/core (foundation)
+@nebulord/sickbay-core (foundation)
     ↓
-@sickbay/cli (depends on core)
+@nebulord/sickbay (depends on core)
     ↓
-@sickbay/web (independent, but served by CLI)
+@nebulord/sickbay-web (independent, but served by CLI)
 ```
 
 The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turbo build pipeline) used for testing Sickbay against real project types. It contains two packages: `fixtures/packages/react-app` (moderately healthy React app) and `fixtures/packages/node-api` (intentionally broken Node API with hardcoded secrets, circular deps, outdated packages, duplicate code, no tests, etc.). See `fixtures/README.md` for the full breakdown of intentional issues and how to add new fixtures.
@@ -155,7 +155,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 - Modifying report loading → Edit `src/lib/load-report.ts`
 - Styling changes → Edit `src/index.css` or Tailwind config
 
-**Important**: Only use `import type` from `@sickbay/core` to avoid bundling Node.js modules into browser build.
+**Important**: Only use `import type` from `@nebulord/sickbay-core` to avoid bundling Node.js modules into browser build.
 
 ---
 
@@ -207,26 +207,26 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 3. **Register** in `packages/core/src/runner.ts` → `ALL_RUNNERS` array
 
-4. **Rebuild**: `pnpm build` (or `pnpm --filter @sickbay/core build`)
+4. **Rebuild**: `pnpm build` (or `pnpm --filter @nebulord/sickbay-core build`)
 
 ### Modifying the Terminal UI
 
 1. Edit components in `apps/cli/src/components/`
 2. Use Ink hooks (`useEffect`, `useState`) and components (`<Box>`, `<Text>`)
-3. Test with: `pnpm --filter @sickbay/cli dev` + `node apps/cli/dist/index.js --path <test-project>`
+3. Test with: `pnpm --filter @nebulord/sickbay dev` + `node apps/cli/dist/index.js --path <test-project>`
 
 ### Updating the Web Dashboard
 
 1. Edit components in `apps/web/src/components/`
 2. Use TailwindCSS for styling
-3. Test with: `pnpm --filter @sickbay/web dev`
+3. Test with: `pnpm --filter @nebulord/sickbay-web dev`
 4. Generate test report: `node apps/cli/dist/index.js --path <project> --json > apps/web/public/sickbay-report.json`
 
 ### Changing Scoring Logic
 
 1. Edit `packages/core/src/scoring.ts`
 2. Adjust `CATEGORY_WEIGHTS` or scoring formulas
-3. Rebuild core: `pnpm --filter @sickbay/core build`
+3. Rebuild core: `pnpm --filter @nebulord/sickbay-core build`
 
 ### Adding CLI Flags
 
@@ -347,14 +347,14 @@ pnpm dev          # Watch all packages
 pnpm clean        # Remove dist/ and node_modules
 
 # Per-package
-pnpm --filter @sickbay/core build
-pnpm --filter @sickbay/cli build
-pnpm --filter @sickbay/web build
+pnpm --filter @nebulord/sickbay-core build
+pnpm --filter @nebulord/sickbay build
+pnpm --filter @nebulord/sickbay-web build
 
 # Development
-pnpm --filter @sickbay/core dev      # Watch mode
-pnpm --filter @sickbay/cli dev       # Watch mode
-pnpm --filter @sickbay/web dev       # Vite dev server :3030
+pnpm --filter @nebulord/sickbay-core dev      # Watch mode
+pnpm --filter @nebulord/sickbay dev           # Watch mode
+pnpm --filter @nebulord/sickbay-web dev       # Vite dev server :3030
 ```
 
 ---

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Box, Text, useApp } from "ink";
 import Spinner from "ink-spinner";
 import Gradient from "ink-gradient";
-import type { SickbayReport, MonorepoReport, PackageReport } from "@sickbay/core";
-import { runSickbay, runSickbayMonorepo } from "@sickbay/core";
+import type { SickbayReport, MonorepoReport, PackageReport } from "@nebulord/sickbay-core";
+import { runSickbay, runSickbayMonorepo } from "@nebulord/sickbay-core";
 import { Header } from "./Header.js";
 import { ProgressList } from "./ProgressList.js";
 import { CheckResultRow } from "./CheckResult.js";
@@ -97,7 +97,7 @@ export function App({
 
           // Cache dependency tree for web dashboard
           try {
-            const { getDependencyTree } = await import("@sickbay/core");
+            const { getDependencyTree } = await import("@nebulord/sickbay-core");
             const { saveDepTree } = await import("../lib/history.js");
             const packages: Record<string, unknown> = {};
             for (const pkg of r.packages) {
@@ -180,7 +180,7 @@ export function App({
 
         // Cache dependency tree for web dashboard
         try {
-          const { getDependencyTree } = await import("@sickbay/core");
+          const { getDependencyTree } = await import("@nebulord/sickbay-core");
           const { saveDepTree } = await import("../lib/history.js");
           const tree = await getDependencyTree(projectPath, r.projectInfo.packageManager);
           saveDepTree(projectPath, tree);

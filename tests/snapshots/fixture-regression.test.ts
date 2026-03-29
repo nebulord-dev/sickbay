@@ -1,7 +1,7 @@
 import { resolve, relative } from 'path';
 import { fileURLToPath } from 'url';
-import { runSickbay } from '@sickbay/core';
-import type { SickbayReport, CheckResult } from '@sickbay/core';
+import { runSickbay } from '@nebulord/sickbay-core';
+import type { SickbayReport, CheckResult } from '@nebulord/sickbay-core';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const FIXTURES_DIR = resolve(__dirname, '../../fixtures/packages');

@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
-import type { SickbayReport, MonorepoReport, CheckResult } from "@sickbay/core";
-import { runSickbay, runSickbayMonorepo, detectMonorepo, buildSummary } from "@sickbay/core";
+import type { SickbayReport, MonorepoReport, CheckResult } from "@nebulord/sickbay-core";
+import { runSickbay, runSickbayMonorepo, detectMonorepo, buildSummary } from "@nebulord/sickbay-core";
 
 interface ProgressItem {
   name: string;

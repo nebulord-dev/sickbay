@@ -1,9 +1,24 @@
 {
-  "name": "@sickbay/cli",
-  "version": "0.0.1",
+  "name": "@nebulord/sickbay",
+  "version": "0.1.0",
+  "description": "Zero-config health check CLI for JavaScript and TypeScript projects",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nebulord-dev/sickbay"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
     "sickbay": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "files": [
     "dist"
@@ -21,7 +36,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
-    "@sickbay/core": "workspace:*",
+    "@nebulord/sickbay-core": "workspace:*",
     "chokidar": "^5.0.0",
     "commander": "^14.0.3",
     "dotenv": "^17.3.1",

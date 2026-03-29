@@ -9,7 +9,7 @@ vi.mock('fs', () => ({
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { loadHistory, saveEntry, detectRegressions, saveLastReport, saveDepTree } from './history.js';
-import type { SickbayReport } from '@sickbay/core';
+import type { SickbayReport } from '@nebulord/sickbay-core';
 import type { TrendEntry } from './history.js';
 
 const mockExistsSync = vi.mocked(existsSync);

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
 import { Summary } from "./Summary.js";
-import type { SickbayReport } from "@sickbay/core";
+import type { SickbayReport } from "@nebulord/sickbay-core";
 
 const createMockReport = (overrides?: Partial<SickbayReport>): SickbayReport => ({
   timestamp: new Date().toISOString(),

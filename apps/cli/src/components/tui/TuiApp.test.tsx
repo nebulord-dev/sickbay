@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
 import { render } from "ink-testing-library";
-import type { SickbayReport, CheckResult } from "@sickbay/core";
+import type { SickbayReport, CheckResult } from "@nebulord/sickbay-core";
 
 // Mock all hooks that TuiApp depends on
 vi.mock("./hooks/useSickbayRunner.js", () => ({

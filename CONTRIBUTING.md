@@ -11,7 +11,7 @@
 ## Local Setup
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/nebulord-dev/sickbay.git
 cd sickbay
 
 # Install all workspace dependencies
@@ -31,11 +31,11 @@ cd packages/cli && pnpm link --global
 This is a pnpm workspace monorepo with three packages that have a strict build order:
 
 ```
-@sickbay/core   — analysis engine (all check runners, scoring, types)
+@nebulord/sickbay-core   — analysis engine (all check runners, scoring, types)
      ↓
-@sickbay/cli    — terminal UI (Ink + Commander), depends on core
+@nebulord/sickbay        — terminal UI (Ink + Commander), depends on core
      ↓
-@sickbay/web    — web dashboard (Vite + React), served by cli
+@nebulord/sickbay-web    — web dashboard (Vite + React), served by cli
 ```
 
 Always build `core` before `cli`. `turbo build` handles this automatically.
@@ -63,15 +63,15 @@ The `fixtures/` directory is a separate pnpm workspace used for testing — it i
 pnpm test
 
 # Per package
-pnpm --filter @sickbay/core test
-pnpm --filter @sickbay/cli test
-pnpm --filter @sickbay/web test
+pnpm --filter @nebulord/sickbay-core test
+pnpm --filter @nebulord/sickbay test
+pnpm --filter @nebulord/sickbay-web test
 
 # Watch mode
-pnpm --filter @sickbay/core test -- --watch
+pnpm --filter @nebulord/sickbay-core test -- --watch
 
 # With coverage
-pnpm --filter @sickbay/core test -- --coverage
+pnpm --filter @nebulord/sickbay-core test -- --coverage
 ```
 
 Tests are colocated with source files — `git.test.ts` lives next to `git.ts`. See `packages/core/src/integrations/git.test.ts` for the pattern.
@@ -197,7 +197,7 @@ Use `fixtures/packages/react-app` or `fixtures/packages/node-api` as real test t
 ### 5. Rebuild core
 
 ```bash
-pnpm --filter @sickbay/core build
+pnpm --filter @nebulord/sickbay-core build
 ```
 
 ### Notes
@@ -205,7 +205,7 @@ pnpm --filter @sickbay/core build
 - If your check requires an external tool, add it as a **dependency in `packages/core/package.json`** — all tools must be bundled, not installed globally by the user
 - Use `this.skipped('reason')` from `BaseRunner` to return a clean skip result rather than throwing
 - Score thresholds: **80+** = pass, **60–79** = warning, **< 60** = fail
-- All new `ProjectContext` types (`Framework`, `Runtime`, `BuildTool`, `TestFramework`) and `detectContext` are exported from `@sickbay/core` public API
+- All new `ProjectContext` types (`Framework`, `Runtime`, `BuildTool`, `TestFramework`) and `detectContext` are exported from `@nebulord/sickbay-core` public API
 
 ---
 
@@ -275,10 +275,10 @@ Do not start language work until framework detection from the monorepo phase is 
 
 ```bash
 # Terminal 1 — rebuild core on changes
-pnpm --filter @sickbay/core dev
+pnpm --filter @nebulord/sickbay-core dev
 
 # Terminal 2 — rebuild cli on changes
-pnpm --filter @sickbay/cli dev
+pnpm --filter @nebulord/sickbay dev
 
 # Terminal 3 — test against a fixture
 node packages/cli/dist/index.js --path fixtures/packages/node-api
@@ -288,7 +288,7 @@ node packages/cli/dist/index.js --path fixtures/packages/react-app --web
 ### Iterating on the terminal UI
 
 ```bash
-pnpm --filter @sickbay/cli dev
+pnpm --filter @nebulord/sickbay dev
 node packages/cli/dist/index.js --path fixtures/packages/react-app
 ```
 
@@ -297,7 +297,7 @@ node packages/cli/dist/index.js --path fixtures/packages/react-app
 ```bash
 # Generate a report from a fixture and start the dev server
 node packages/cli/dist/index.js --path fixtures/packages/react-app --json > packages/web/public/sickbay-report.json
-pnpm --filter @sickbay/web dev
+pnpm --filter @nebulord/sickbay-web dev
 ```
 
 ---
