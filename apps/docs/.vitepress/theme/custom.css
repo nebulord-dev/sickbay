@@ -1,0 +1,35 @@
+/* Teal/cyan brand — matches Sickbay dashboard score rings */
+:root {
+  --vp-c-brand-1: #00e5a0;
+  --vp-c-brand-2: #00cc8e;
+  --vp-c-brand-3: #00b37d;
+  --vp-c-brand-soft: rgba(0, 229, 160, 0.14);
+}
+
+.dark {
+  --vp-c-brand-1: #00e5a0;
+  --vp-c-brand-2: #33eab3;
+  --vp-c-brand-3: #66f0c6;
+  --vp-c-brand-soft: rgba(0, 229, 160, 0.16);
+}
+
+/* Monospace headings — terminal/hacker aesthetic */
+h1, h2, h3, h4, h5, h6,
+.VPHero .name,
+.VPHero .text,
+.VPHero .tagline {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', ui-monospace, monospace !important;
+}
+
+/* Hero name gradient — teal to match brand */
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #00e5a0 0%, #00b37d 100%);
+}
+
+/* Hero image glow — scoped to hero only */
+.VPHero .image-bg {
+  background-image: linear-gradient(-45deg, #00e5a0 50%, #00b37d 50%);
+  filter: blur(44px);
+  opacity: 0.8;
+}

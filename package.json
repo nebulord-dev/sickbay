@@ -19,6 +19,8 @@
     "test:core": "pnpm --filter @nebulord/sickbay-core test",
     "test:core:ui": "pnpm --filter @nebulord/sickbay-core test:ui",
     "test:snapshots": "vitest run --config tests/snapshots/vitest.config.ts",
+    "docs:dev": "pnpm --filter @nebulord/sickbay-docs docs:dev",
+    "docs:build": "pnpm --filter @nebulord/sickbay-docs docs:build",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {

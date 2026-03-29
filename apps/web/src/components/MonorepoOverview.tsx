@@ -1,5 +1,5 @@
 import type { MonorepoReport, PackageReport } from "@nebulord/sickbay-core";
-import { SCORE_GOOD, SCORE_FAIR } from "@nebulord/sickbay-core";
+import { SCORE_GOOD, SCORE_FAIR } from "../lib/constants.js";
 
 interface MonorepoOverviewProps {
   report: MonorepoReport;
