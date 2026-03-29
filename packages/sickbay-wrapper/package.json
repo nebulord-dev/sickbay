@@ -1,12 +1,12 @@
 {
   "name": "sickbay",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "description": "Zero-config health check CLI for JavaScript and TypeScript projects",
   "bin": {
-    "sickbay": "./bin.js"
+    "sickbay": "./bin.mjs"
   },
   "files": [
-    "bin.js"
+    "bin.mjs"
   ],
   "dependencies": {
     "@nebulord/sickbay": "0.1.0"
