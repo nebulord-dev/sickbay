@@ -21,6 +21,7 @@
     "test:cli:ui": "pnpm --filter @sickbay/cli test:ui",
     "test:core": "pnpm --filter @sickbay/core",
     "test:core:ui": "pnpm --filter @sickbay/core test:ui",
+    "test:snapshots": "vitest run --config tests/snapshots/vitest.config.ts",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {

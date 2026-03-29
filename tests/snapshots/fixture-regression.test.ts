@@ -1,0 +1,196 @@
+import { resolve, relative } from 'path';
+import { fileURLToPath } from 'url';
+import { runSickbay } from '@sickbay/core';
+import type { SickbayReport, CheckResult } from '@sickbay/core';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const FIXTURES_DIR = resolve(__dirname, '../../fixtures/packages');
+
+// --- Helpers ---
+
+function relativize(filePath: string): string {
+  return relative(FIXTURES_DIR, filePath);
+}
+
+function normalizeCheck(check: CheckResult): Record<string, unknown> {
+  return {
+    id: check.id,
+    category: check.category,
+    name: check.name,
+    score: check.score,
+    status: check.status,
+    issues: check.issues.map((issue) => ({
+      severity: issue.severity,
+      message: issue.message,
+      file: issue.file ? relativize(issue.file) : undefined,
+      fix: issue.fix
+        ? {
+            description: issue.fix.description,
+            command: issue.fix.command,
+          }
+        : undefined,
+      reportedBy: issue.reportedBy,
+    })),
+    toolsUsed: check.toolsUsed,
+  };
+}
+
+function normalizeProjectInfo(
+  info: Record<string, unknown>,
+): Record<string, unknown> {
+  const { dependencies, devDependencies, totalDependencies, ...stable } =
+    info as any;
+  return stable;
+}
+
+function snapshotCheck(report: SickbayReport, id: string) {
+  const check = report.checks.find((c) => c.id === id);
+  if (!check) {
+    expect(check).toBeUndefined();
+    return;
+  }
+  expect(normalizeCheck(check)).toMatchSnapshot();
+}
+
+function assertUnstableCheck(
+  report: SickbayReport,
+  id: string,
+  expectedCategory: string,
+) {
+  const check = report.checks.find((c) => c.id === id);
+  if (!check) return;
+  expect(check).toMatchObject({
+    id,
+    category: expectedCategory,
+    score: expect.any(Number),
+    status: expect.stringMatching(/^(pass|warning|fail|skipped)$/),
+  });
+  expect(check.score).toBeGreaterThanOrEqual(0);
+  expect(check.score).toBeLessThanOrEqual(100);
+}
+
+// --- Stable checks to snapshot ---
+
+const STABLE_CHECKS = [
+  'knip',
+  'depcheck',
+  'madge',
+  'jscpd',
+  'complexity',
+  'eslint',
+  'coverage',
+  'secrets',
+  'todo-scanner',
+  'heavy-deps',
+  'react-perf',
+  'node-security',
+  'node-input-validation',
+  'node-async-errors',
+  'license-checker',
+  'git',
+  'typescript',
+];
+
+// --- react-app fixture ---
+
+describe('react-app', () => {
+  let report: SickbayReport;
+
+  beforeAll(async () => {
+    report = await runSickbay({
+      projectPath: resolve(FIXTURES_DIR, 'react-app'),
+    });
+  }, 120_000);
+
+  it('projectInfo', () => {
+    expect(normalizeProjectInfo(report.projectInfo)).toMatchSnapshot();
+  });
+
+  // Stable checks
+  for (const id of STABLE_CHECKS) {
+    it(id, () => snapshotCheck(report, id));
+  }
+
+  // Unstable checks — structural assertions only
+  it('npm-audit has valid structure', () => {
+    assertUnstableCheck(report, 'npm-audit', 'security');
+  });
+
+  it('outdated has valid structure', () => {
+    assertUnstableCheck(report, 'outdated', 'dependencies');
+  });
+
+  it('source-map-explorer has valid structure', () => {
+    assertUnstableCheck(report, 'source-map-explorer', 'performance');
+  });
+
+  it('asset-size has valid structure', () => {
+    assertUnstableCheck(report, 'asset-size', 'performance');
+  });
+
+  // Overall report
+  it('overall score is in expected range', () => {
+    expect(report.overallScore).toBeGreaterThanOrEqual(40);
+    expect(report.overallScore).toBeLessThanOrEqual(95);
+  });
+
+  it('summary shape', () => {
+    expect(report.summary).toMatchObject({
+      critical: expect.any(Number),
+      warnings: expect.any(Number),
+      info: expect.any(Number),
+    });
+  });
+});
+
+// --- node-api fixture ---
+
+describe('node-api', () => {
+  let report: SickbayReport;
+
+  beforeAll(async () => {
+    report = await runSickbay({
+      projectPath: resolve(FIXTURES_DIR, 'node-api'),
+    });
+  }, 120_000);
+
+  it('projectInfo', () => {
+    expect(normalizeProjectInfo(report.projectInfo)).toMatchSnapshot();
+  });
+
+  // Stable checks
+  for (const id of STABLE_CHECKS) {
+    it(id, () => snapshotCheck(report, id));
+  }
+
+  // Unstable checks — structural assertions only
+  it('npm-audit has valid structure', () => {
+    assertUnstableCheck(report, 'npm-audit', 'security');
+  });
+
+  it('outdated has valid structure', () => {
+    assertUnstableCheck(report, 'outdated', 'dependencies');
+  });
+
+  it('source-map-explorer has valid structure', () => {
+    assertUnstableCheck(report, 'source-map-explorer', 'performance');
+  });
+
+  it('asset-size has valid structure', () => {
+    assertUnstableCheck(report, 'asset-size', 'performance');
+  });
+
+  // Overall report — lower expected range for intentionally broken project
+  it('overall score is in expected range', () => {
+    expect(report.overallScore).toBeGreaterThanOrEqual(20);
+    expect(report.overallScore).toBeLessThanOrEqual(75);
+  });
+
+  it('summary shape', () => {
+    expect(report.summary).toMatchObject({
+      critical: expect.any(Number),
+      warnings: expect.any(Number),
+      info: expect.any(Number),
+    });
+  });
+});

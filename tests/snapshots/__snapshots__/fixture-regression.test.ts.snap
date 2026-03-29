@@ -1,0 +1,1193 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`node-api > complexity 1`] = `
+{
+  "category": "code-quality",
+  "id": "complexity",
+  "issues": [],
+  "name": "File Complexity",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "complexity",
+  ],
+}
+`;
+
+exports[`node-api > coverage 1`] = `
+{
+  "category": "code-quality",
+  "id": "coverage",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Fix failing tests",
+      },
+      "message": "1 test failing (6/7 passing)",
+      "reportedBy": [
+        "coverage",
+      ],
+      "severity": "critical",
+    },
+  ],
+  "name": "Tests & Coverage",
+  "score": 86,
+  "status": "fail",
+  "toolsUsed": [
+    "jest",
+  ],
+}
+`;
+
+exports[`node-api > depcheck 1`] = `
+{
+  "category": "dependencies",
+  "id": "depcheck",
+  "issues": [],
+  "name": "Dependency Health",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "depcheck",
+  ],
+}
+`;
+
+exports[`node-api > eslint 1`] = `
+{
+  "category": "code-quality",
+  "id": "eslint",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": "eslint src/__tests__/format.test.js --fix",
+        "description": "Fix ESLint issues in src/__tests__/format.test.js",
+      },
+      "message": "src/__tests__/format.test.js: 8 errors",
+      "reportedBy": [
+        "eslint",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "eslint src/__tests__/helpers.test.js --fix",
+        "description": "Fix ESLint issues in src/__tests__/helpers.test.js",
+      },
+      "message": "src/__tests__/helpers.test.js: 10 errors",
+      "reportedBy": [
+        "eslint",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "eslint src/index.js --fix",
+        "description": "Fix ESLint issues in src/index.js",
+      },
+      "message": "src/index.js: 11 errors",
+      "reportedBy": [
+        "eslint",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "eslint src/routes/products.js --fix",
+        "description": "Fix ESLint issues in src/routes/products.js",
+      },
+      "message": "src/routes/products.js: 7 errors",
+      "reportedBy": [
+        "eslint",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "eslint src/routes/users.js --fix",
+        "description": "Fix ESLint issues in src/routes/users.js",
+      },
+      "message": "src/routes/users.js: 6 errors",
+      "reportedBy": [
+        "eslint",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "eslint src/utils/format.js --fix",
+        "description": "Fix ESLint issues in src/utils/format.js",
+      },
+      "message": "src/utils/format.js: 3 errors",
+      "reportedBy": [
+        "eslint",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "eslint src/utils/helpers.js --fix",
+        "description": "Fix ESLint issues in src/utils/helpers.js",
+      },
+      "message": "src/utils/helpers.js: 3 errors",
+      "reportedBy": [
+        "eslint",
+      ],
+      "severity": "warning",
+    },
+  ],
+  "name": "Lint",
+  "score": 0,
+  "status": "fail",
+  "toolsUsed": [
+    "eslint",
+  ],
+}
+`;
+
+exports[`node-api > heavy-deps 1`] = `
+{
+  "category": "performance",
+  "id": "heavy-deps",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with native fetch",
+      },
+      "message": "axios — fetch is built-in to Node 18+ and all modern browsers",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with String.prototype.padStart()",
+      },
+      "message": "left-pad — padStart is a native JS method",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with lodash-es or individual lodash/* imports",
+      },
+      "message": "lodash — Full lodash bundle is 70KB+ — use tree-shakeable imports instead",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with dayjs or date-fns",
+      },
+      "message": "moment — moment is 300KB+ and mutable — modern alternatives are ~2KB",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with native fetch or undici",
+      },
+      "message": "request — request is deprecated and heavy",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with crypto.randomUUID()",
+      },
+      "message": "uuid — crypto.randomUUID() is native in Node 14.17+ and all modern browsers",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "info",
+    },
+  ],
+  "name": "Heavy Dependencies",
+  "score": 55,
+  "status": "warning",
+  "toolsUsed": [
+    "heavy-deps",
+  ],
+}
+`;
+
+exports[`node-api > jscpd 1`] = `
+{
+  "category": "code-quality",
+  "id": "jscpd",
+  "issues": [],
+  "name": "Code Duplication",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "jscpd",
+  ],
+}
+`;
+
+exports[`node-api > knip 1`] = `
+{
+  "category": "dependencies",
+  "id": "knip",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove axios",
+        "description": "Remove axios",
+      },
+      "message": "Unused dependency: axios",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove bcrypt",
+        "description": "Remove bcrypt",
+      },
+      "message": "Unused dependency: bcrypt",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove colors",
+        "description": "Remove colors",
+      },
+      "message": "Unused dependency: colors",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove left-pad",
+        "description": "Remove left-pad",
+      },
+      "message": "Unused dependency: left-pad",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove request",
+        "description": "Remove request",
+      },
+      "message": "Unused dependency: request",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove uuid",
+        "description": "Remove uuid",
+      },
+      "message": "Unused dependency: uuid",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "Unused export: src/utils/format.js: formatUsers",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "Unused export: src/utils/format.js: formatErrorResponse",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "info",
+    },
+  ],
+  "name": "Unused Code",
+  "score": 60,
+  "status": "warning",
+  "toolsUsed": [
+    "knip",
+  ],
+}
+`;
+
+exports[`node-api > license-checker 1`] = `
+{
+  "category": "security",
+  "id": "license-checker",
+  "issues": [],
+  "name": "License Compliance",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "license-checker",
+  ],
+}
+`;
+
+exports[`node-api > madge 1`] = `
+{
+  "category": "code-quality",
+  "id": "madge",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Refactor to break the circular dependency cycle",
+      },
+      "message": "Circular dependency: utils/format.js → utils/helpers.js",
+      "reportedBy": [
+        "madge",
+      ],
+      "severity": "warning",
+    },
+  ],
+  "name": "Circular Dependencies",
+  "score": 90,
+  "status": "warning",
+  "toolsUsed": [
+    "madge",
+  ],
+}
+`;
+
+exports[`node-api > node-async-errors 1`] = `
+{
+  "category": "code-quality",
+  "id": "node-async-errors",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Add app.use((err, req, res, next) => { res.status(500).json({ error: err.message }); }) after all routes",
+      },
+      "message": "No Express error handling middleware found (4-parameter function: err, req, res, next). Without it, errors passed to next() have no centralized handler.",
+      "reportedBy": [
+        "node-async-errors",
+      ],
+      "severity": "warning",
+    },
+  ],
+  "name": "Async Error Handling",
+  "score": 80,
+  "status": "pass",
+  "toolsUsed": [
+    "node-async-errors",
+  ],
+}
+`;
+
+exports[`node-api > node-input-validation 1`] = `
+{
+  "category": "code-quality",
+  "id": "node-input-validation",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": "npm install zod",
+        "description": "Add an input validation library and validate all incoming request data",
+      },
+      "message": "No input validation library found. Without validation, your API may accept malformed data leading to runtime errors or security vulnerabilities.",
+      "reportedBy": [
+        "node-input-validation",
+      ],
+      "severity": "warning",
+    },
+  ],
+  "name": "Input Validation",
+  "score": 20,
+  "status": "warning",
+  "toolsUsed": [
+    "node-input-validation",
+  ],
+}
+`;
+
+exports[`node-api > node-security 1`] = `
+{
+  "category": "security",
+  "id": "node-security",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": "npm install helmet",
+        "description": "Install helmet and add app.use(helmet()) before your routes",
+      },
+      "message": "Missing security headers middleware (helmet). HTTP security headers protect against XSS, clickjacking, MIME sniffing, and other common attacks.",
+      "reportedBy": [
+        "node-security",
+      ],
+      "severity": "critical",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "npm install express-rate-limit",
+        "description": "Install express-rate-limit and configure limits per route or globally",
+      },
+      "message": "Missing rate limiting middleware. Without rate limiting your API is vulnerable to DoS attacks and credential brute-forcing.",
+      "reportedBy": [
+        "node-security",
+      ],
+      "severity": "warning",
+    },
+  ],
+  "name": "Node Security Middleware",
+  "score": 30,
+  "status": "fail",
+  "toolsUsed": [
+    "node-security",
+  ],
+}
+`;
+
+exports[`node-api > projectInfo 1`] = `
+{
+  "framework": "express",
+  "hasESLint": true,
+  "hasPrettier": false,
+  "hasTypeScript": false,
+  "name": "sickbay-fixture-node-api",
+  "overrides": undefined,
+  "packageManager": "pnpm",
+  "version": "1.0.0",
+}
+`;
+
+exports[`node-api > secrets 1`] = `
+{
+  "category": "security",
+  "id": "secrets",
+  "issues": [
+    {
+      "file": "../../src/config.js",
+      "fix": {
+        "command": undefined,
+        "description": "Move secrets to environment variables",
+      },
+      "message": "src/config.js:8 — Hardcoded password detected",
+      "reportedBy": [
+        "secrets",
+      ],
+      "severity": "critical",
+    },
+    {
+      "file": "../../src/config.js",
+      "fix": {
+        "command": undefined,
+        "description": "Move secrets to environment variables",
+      },
+      "message": "src/config.js:12 — Hardcoded secret detected",
+      "reportedBy": [
+        "secrets",
+      ],
+      "severity": "critical",
+    },
+    {
+      "file": "../../src/config.js",
+      "fix": {
+        "command": undefined,
+        "description": "Move secrets to environment variables",
+      },
+      "message": "src/config.js:14 — AWS Access Key detected",
+      "reportedBy": [
+        "secrets",
+      ],
+      "severity": "critical",
+    },
+    {
+      "file": "../../src/config.js",
+      "fix": {
+        "command": undefined,
+        "description": "Move secrets to environment variables",
+      },
+      "message": "src/config.js:17 — Stripe Key detected",
+      "reportedBy": [
+        "secrets",
+      ],
+      "severity": "critical",
+    },
+  ],
+  "name": "Secrets Detection",
+  "score": 0,
+  "status": "fail",
+  "toolsUsed": [
+    "secrets",
+  ],
+}
+`;
+
+exports[`node-api > todo-scanner 1`] = `
+{
+  "category": "code-quality",
+  "id": "todo-scanner",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/config.js:2 — TODO: move all secrets to environment variables",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/index.js:12 — TODO: add helmet for security headers",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/index.js:13 — TODO: configure cors to restrict origins in production",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/products.js:7 — TODO: add authentication middleware",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/products.js:8 — TODO: add rate limiting",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/products.js:9 — TODO: add input sanitization",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/products.js:12 — FIXME: no pagination — will blow up on large datasets",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/products.js:22 — TODO: validate that id is a valid ObjectId before querying",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/products.js:28 — TODO: validate input schema",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/products.js:36 — TODO: add soft delete instead of hard delete",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/products.js:37 — TODO: check permissions before deleting",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/users.js:7 — TODO: add authentication middleware",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/users.js:8 — TODO: add rate limiting",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/users.js:9 — TODO: add input sanitization",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/users.js:12 — FIXME: no pagination — will blow up on large datasets",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/users.js:22 — TODO: validate that id is a valid ObjectId before querying",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/users.js:28 — TODO: validate input schema",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/users.js:36 — TODO: add soft delete instead of hard delete",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/routes/users.js:37 — TODO: check permissions before deleting",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/utils/format.js:13 — TODO: add pagination support here",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/utils/format.js:25 — FIXME: never expose stack traces in production",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/utils/helpers.js:4 — TODO: refactor this — cyclomatic complexity is out of control",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/utils/helpers.js:5 — TODO: add unit tests",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/utils/helpers.js:64 — TODO: this discount logic is a mess — rewrite before launch",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+  ],
+  "name": "Technical Debt",
+  "score": 50,
+  "status": "warning",
+  "toolsUsed": [
+    "todo-scanner",
+  ],
+}
+`;
+
+exports[`react-app > complexity 1`] = `
+{
+  "category": "code-quality",
+  "id": "complexity",
+  "issues": [],
+  "name": "File Complexity",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "complexity",
+  ],
+}
+`;
+
+exports[`react-app > coverage 1`] = `
+{
+  "category": "code-quality",
+  "id": "coverage",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Fix failing tests",
+      },
+      "message": "1 test failing (64/65 passing)",
+      "reportedBy": [
+        "coverage",
+      ],
+      "severity": "critical",
+    },
+  ],
+  "name": "Tests & Coverage",
+  "score": 98,
+  "status": "fail",
+  "toolsUsed": [
+    "vitest",
+  ],
+}
+`;
+
+exports[`react-app > depcheck 1`] = `
+{
+  "category": "dependencies",
+  "id": "depcheck",
+  "issues": [],
+  "name": "Dependency Health",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "depcheck",
+  ],
+}
+`;
+
+exports[`react-app > eslint 1`] = `
+{
+  "category": "code-quality",
+  "id": "eslint",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": "eslint src/hooks/useData.ts --fix",
+        "description": "Fix ESLint issues in src/hooks/useData.ts",
+      },
+      "message": "src/hooks/useData.ts: 1 error",
+      "reportedBy": [
+        "eslint",
+      ],
+      "severity": "warning",
+    },
+  ],
+  "name": "Lint",
+  "score": 95,
+  "status": "warning",
+  "toolsUsed": [
+    "eslint",
+  ],
+}
+`;
+
+exports[`react-app > heavy-deps 1`] = `
+{
+  "category": "performance",
+  "id": "heavy-deps",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with native fetch",
+      },
+      "message": "axios — fetch is built-in to Node 18+ and all modern browsers",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with native DOM APIs (querySelector, fetch, classList, etc.)",
+      },
+      "message": "jquery — Modern browsers cover virtually all jQuery use cases natively",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with lodash-es or individual lodash/* imports",
+      },
+      "message": "lodash — Full lodash bundle is 70KB+ — use tree-shakeable imports instead",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with dayjs or date-fns",
+      },
+      "message": "moment — moment is 300KB+ and mutable — modern alternatives are ~2KB",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Consider replacing with native JS methods (map, filter, reduce, etc.)",
+      },
+      "message": "underscore — Most underscore utilities have native equivalents",
+      "reportedBy": [
+        "heavy-deps",
+      ],
+      "severity": "warning",
+    },
+  ],
+  "name": "Heavy Dependencies",
+  "score": 55,
+  "status": "warning",
+  "toolsUsed": [
+    "heavy-deps",
+  ],
+}
+`;
+
+exports[`react-app > jscpd 1`] = `
+{
+  "category": "code-quality",
+  "id": "jscpd",
+  "issues": [],
+  "name": "Code Duplication",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "jscpd",
+  ],
+}
+`;
+
+exports[`react-app > knip 1`] = `
+{
+  "category": "dependencies",
+  "id": "knip",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove faker",
+        "description": "Remove faker",
+      },
+      "message": "Unused dependency: faker",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove jquery",
+        "description": "Remove jquery",
+      },
+      "message": "Unused dependency: jquery",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove underscore",
+        "description": "Remove underscore",
+      },
+      "message": "Unused dependency: underscore",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "warning",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove @types/jquery",
+        "description": "Remove @types/jquery",
+      },
+      "message": "Unused devDependency: @types/jquery",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove @vitest/coverage-v8",
+        "description": "Remove @vitest/coverage-v8",
+      },
+      "message": "Unused devDependency: @vitest/coverage-v8",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "info",
+    },
+    {
+      "file": undefined,
+      "fix": {
+        "command": "pnpm remove prettier",
+        "description": "Remove prettier",
+      },
+      "message": "Unused devDependency: prettier",
+      "reportedBy": [
+        "knip",
+      ],
+      "severity": "info",
+    },
+  ],
+  "name": "Unused Code",
+  "score": 70,
+  "status": "warning",
+  "toolsUsed": [
+    "knip",
+  ],
+}
+`;
+
+exports[`react-app > license-checker 1`] = `
+{
+  "category": "security",
+  "id": "license-checker",
+  "issues": [],
+  "name": "License Compliance",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "license-checker",
+  ],
+}
+`;
+
+exports[`react-app > madge 1`] = `
+{
+  "category": "code-quality",
+  "id": "madge",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": {
+        "command": undefined,
+        "description": "Refactor to break the circular dependency cycle",
+      },
+      "message": "Circular dependency: utils/formatter.ts → utils/validator.ts",
+      "reportedBy": [
+        "madge",
+      ],
+      "severity": "warning",
+    },
+  ],
+  "name": "Circular Dependencies",
+  "score": 90,
+  "status": "warning",
+  "toolsUsed": [
+    "madge",
+  ],
+}
+`;
+
+exports[`react-app > projectInfo 1`] = `
+{
+  "framework": "vite",
+  "hasESLint": true,
+  "hasPrettier": true,
+  "hasTypeScript": true,
+  "name": "sickbay-test-app",
+  "overrides": undefined,
+  "packageManager": "pnpm",
+  "version": "1.0.0",
+}
+`;
+
+exports[`react-app > react-perf 1`] = `
+{
+  "category": "performance",
+  "id": "react-perf",
+  "issues": [],
+  "name": "React Performance",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "react-perf",
+  ],
+}
+`;
+
+exports[`react-app > secrets 1`] = `
+{
+  "category": "security",
+  "id": "secrets",
+  "issues": [
+    {
+      "file": "../../src/utils/validator.ts",
+      "fix": {
+        "command": undefined,
+        "description": "Move secrets to environment variables",
+      },
+      "message": "src/utils/validator.ts:4 — Hardcoded API key detected",
+      "reportedBy": [
+        "secrets",
+      ],
+      "severity": "critical",
+    },
+  ],
+  "name": "Secrets Detection",
+  "score": 75,
+  "status": "fail",
+  "toolsUsed": [
+    "secrets",
+  ],
+}
+`;
+
+exports[`react-app > todo-scanner 1`] = `
+{
+  "category": "code-quality",
+  "id": "todo-scanner",
+  "issues": [
+    {
+      "file": undefined,
+      "fix": undefined,
+      "message": "src/utils/validator.ts:29 — TODO: Move to utils",
+      "reportedBy": [
+        "todo-scanner",
+      ],
+      "severity": "info",
+    },
+  ],
+  "name": "Technical Debt",
+  "score": 97,
+  "status": "pass",
+  "toolsUsed": [
+    "todo-scanner",
+  ],
+}
+`;
+
+exports[`react-app > typescript 1`] = `
+{
+  "category": "code-quality",
+  "id": "typescript",
+  "issues": [],
+  "name": "Type Safety",
+  "score": 100,
+  "status": "pass",
+  "toolsUsed": [
+    "tsc",
+  ],
+}
+`;
