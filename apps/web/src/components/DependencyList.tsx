@@ -162,7 +162,6 @@ interface Props {
 export function DependencyList({ report }: Props) {
   const deps = buildDependencyStatuses(report);
   const issueCount = deps.filter(d => d.unused || d.missing || d.outdatedTo).length;
-
   return (
     <div>
       <UpdateTotalsBanner deps={deps} />
@@ -238,6 +237,24 @@ export function DependencyList({ report }: Props) {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4 px-4 py-3 rounded-lg bg-gray-900/30 border border-gray-800/50">
+        <span className="text-sm text-gray-400">
+          For deep dependency inspection, try{' '}
+          <a
+            href="https://github.com/nicolo-ribaudo/node-modules-inspector"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 hover:underline"
+          >
+            Node Modules Inspector
+          </a>
+          {' '}— run{' '}
+          <code className="px-1.5 py-0.5 rounded bg-gray-800 text-green-400 text-xs">
+            npx node-modules-inspector
+          </code>
+        </span>
       </div>
     </div>
   );

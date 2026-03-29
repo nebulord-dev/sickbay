@@ -8,7 +8,7 @@ vi.mock('fs', () => ({
 }));
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { loadHistory, saveEntry, detectRegressions, saveLastReport } from './history.js';
+import { loadHistory, saveEntry, detectRegressions, saveLastReport, saveDepTree } from './history.js';
 import type { SickbayReport } from '@sickbay/core';
 import type { TrendEntry } from './history.js';
 
@@ -283,5 +283,36 @@ describe('saveLastReport', () => {
       '/my/project/.sickbay/last-report.json',
       expect.any(String),
     );
+  });
+});
+
+describe('saveDepTree', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('creates the .sickbay directory', () => {
+    saveDepTree('/my/project', { name: 'test', dependencies: {} });
+
+    expect(mockMkdirSync).toHaveBeenCalledWith(
+      expect.stringContaining('.sickbay'),
+      { recursive: true },
+    );
+  });
+
+  it('writes dep tree JSON to dep-tree.json', () => {
+    saveDepTree('/my/project', { name: 'test', dependencies: {} });
+
+    expect(mockWriteFileSync).toHaveBeenCalledWith(
+      '/my/project/.sickbay/dep-tree.json',
+      expect.any(String),
+    );
+  });
+
+  it('serializes the tree as formatted JSON', () => {
+    const tree = { name: 'test', dependencies: { react: '18.0.0' } };
+    saveDepTree('/my/project', tree);
+
+    const written = JSON.parse(mockWriteFileSync.mock.calls[0][1] as string);
+    expect(written.name).toBe('test');
+    expect(written.dependencies.react).toBe('18.0.0');
   });
 });

@@ -206,6 +206,11 @@ describe('DependencyList', () => {
     });
   });
 
+  it('renders a link to Node Modules Inspector', () => {
+    render(<DependencyList report={makeReport()} />);
+    expect(screen.getByText(/node modules inspector/i)).toBeInTheDocument();
+  });
+
   describe('OverridesSection', () => {
     it('renders overrides when present in projectInfo', () => {
       const report = makeReport({

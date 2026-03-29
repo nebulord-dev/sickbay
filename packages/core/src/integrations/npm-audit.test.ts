@@ -176,4 +176,69 @@ describe('NpmAuditRunner', () => {
     expect(result.score).toBe(0);
     expect(result.issues[0].severity).toBe('critical');
   });
+
+  it('populates metadata.vulnerablePackages with advisory counts per package', async () => {
+    mockExeca.mockResolvedValue({
+      stdout: makeAuditOutput(
+        {
+          lodash: {
+            name: 'lodash',
+            severity: 'high',
+            via: [
+              { title: 'Prototype Pollution', url: 'https://example.com/1' },
+              { title: 'Command Injection', url: 'https://example.com/2' },
+            ],
+            fixAvailable: false,
+          },
+          express: {
+            name: 'express',
+            severity: 'moderate',
+            via: [{ title: 'Open Redirect', url: 'https://example.com/3' }],
+            fixAvailable: false,
+          },
+        },
+        { high: 1, moderate: 1 },
+      ),
+    } as never);
+
+    const result = await runner.run('/project');
+
+    expect(result.metadata).toBeDefined();
+    expect((result.metadata as Record<string, unknown>).vulnerablePackages).toEqual({
+      lodash: 2,
+      express: 1,
+    });
+  });
+
+  it('counts only advisory objects in via, not transitive string references', async () => {
+    mockExeca.mockResolvedValue({
+      stdout: makeAuditOutput(
+        {
+          'nested-dep': {
+            name: 'nested-dep',
+            severity: 'moderate',
+            // all strings — transitive references only, no real advisories
+            via: ['some-parent-pkg'],
+            fixAvailable: false,
+          },
+          'real-vuln': {
+            name: 'real-vuln',
+            severity: 'high',
+            // mix: one advisory object + one transitive string
+            via: [{ title: 'RCE' }, 'another-dep'],
+            fixAvailable: false,
+          },
+        },
+        { moderate: 1, high: 1 },
+      ),
+    } as never);
+
+    const result = await runner.run('/project');
+
+    const vp = (result.metadata as Record<string, unknown>).vulnerablePackages as Record<string, number>;
+    // string-only via: falls back to Math.max(0, 1) = 1
+    expect(vp['nested-dep']).toBe(1);
+    // one advisory object in mixed via
+    expect(vp['real-vuln']).toBe(1);
+  });
 });

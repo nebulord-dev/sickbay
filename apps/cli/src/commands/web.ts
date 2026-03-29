@@ -122,6 +122,20 @@ export async function serveWeb(
       return;
     }
 
+    // Serve dependency tree
+    if (url === "/sickbay-dep-tree.json") {
+      const basePath = "isMonorepo" in report ? report.rootPath : report.projectPath;
+      const treePath = join(basePath, ".sickbay", "dep-tree.json");
+      if (existsSync(treePath)) {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(readFileSync(treePath, "utf-8"));
+      } else {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        res.end("{}");
+      }
+      return;
+    }
+
     // AI summary endpoint
     const parsedUrl = new URL(url, "http://localhost");
     const packageName = parsedUrl.searchParams.get("package");

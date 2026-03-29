@@ -1,4 +1,6 @@
 export { runSickbay, runSickbayMonorepo } from './runner.js';
+export { getDependencyTree } from './utils/dep-tree.js';
+export type { DependencyTree, DependencyTreeNode, MonorepoDependencyTree } from './utils/dep-tree.js';
 export { calculateOverallScore, buildSummary, getScoreColor, getScoreEmoji } from './scoring.js';
 export { detectProject, detectPackageManager, detectContext } from './utils/detect-project.js';
 export { detectMonorepo } from './utils/detect-monorepo.js';

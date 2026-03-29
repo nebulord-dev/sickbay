@@ -47,6 +47,18 @@ export class NpmAuditRunner extends BaseRunner {
       const issues: Issue[] = [];
       const meta = data.metadata?.vulnerabilities;
 
+      // Build package → advisory count map for graph annotation.
+      // Each vulnerability entry has a `via` array where objects with `title`
+      // represent distinct advisories. Strings in `via` are transitive references
+      // and should not be counted.
+      const vulnerablePackages: Record<string, number> = {};
+      for (const [pkgName, vuln] of Object.entries(data.vulnerabilities ?? {})) {
+        const advisoryCount = Array.isArray(vuln.via)
+          ? vuln.via.filter((v: unknown) => typeof v === 'object' && v !== null && 'title' in v).length
+          : 0;
+        vulnerablePackages[pkgName] = Math.max(advisoryCount, 1);
+      }
+
       for (const [, vuln] of Object.entries(data.vulnerabilities ?? {})) {
         const via = Array.isArray(vuln.via) ? vuln.via[0] : null;
         const title = typeof via === 'object' && via?.title ? via.title : `Vulnerability in ${vuln.name}`;
@@ -76,7 +88,7 @@ export class NpmAuditRunner extends BaseRunner {
         issues,
         toolsUsed: ['npm-audit'],
         duration: elapsed(),
-        metadata: { ...meta },
+        metadata: { ...meta, vulnerablePackages },
       };
     } catch (err) {
       return {
