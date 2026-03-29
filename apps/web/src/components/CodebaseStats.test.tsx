@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CodebaseStats } from './CodebaseStats.js';
-import type { SickbayReport, CheckResult } from '@sickbay/core';
+import type { SickbayReport, CheckResult } from '@nebulord/sickbay-core';
 
 // Mock DependencyGraph to avoid ReactFlow in tests
 vi.mock('./DependencyGraph.js', () => ({

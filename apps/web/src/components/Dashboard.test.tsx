@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Dashboard } from './Dashboard.js';
-import type { SickbayReport } from '@sickbay/core';
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 // Mock side-effectful components
 vi.mock('./AISummary.js', () => ({ AISummary: () => null }));

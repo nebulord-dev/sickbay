@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { SickbayReport } from "@sickbay/core";
+import type { SickbayReport } from "@nebulord/sickbay-core";
 
 interface CriticalIssuesProps {
   report: SickbayReport;

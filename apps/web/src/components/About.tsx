@@ -1,5 +1,5 @@
-import type { SickbayReport } from "@sickbay/core";
-import { SCORE_GOOD, SCORE_FAIR } from "@sickbay/constants";
+import type { SickbayReport } from "@nebulord/sickbay-core";
+import { SCORE_GOOD, SCORE_FAIR } from "@nebulord/sickbay-core";
 
 interface AboutProps {
   report: SickbayReport;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import type { SickbayReport } from "@sickbay/core";
+import type { SickbayReport } from "@nebulord/sickbay-core";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";

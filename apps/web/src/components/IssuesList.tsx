@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { CheckResult, Issue } from '@sickbay/core';
+import type { CheckResult, Issue } from '@nebulord/sickbay-core';
 
 interface IssuesListProps {
   checks: CheckResult[];

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SCORE_GOOD, SCORE_FAIR } from "@sickbay/constants";
+import { SCORE_GOOD, SCORE_FAIR } from "@nebulord/sickbay-core";
 
 export interface TrendEntry {
   timestamp: string;

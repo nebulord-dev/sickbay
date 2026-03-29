@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { SickbayReport } from '@sickbay/core';
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 interface DependencyStatus {
   name: string;
