@@ -120,7 +120,6 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
         message: `${unprotectedFiles} of ${routeFiles} route file(s) contain async handlers without try/catch. Unhandled promise rejections will crash the process in Node.js <15 or produce silent failures.`,
         fix: {
           description: 'Wrap async route handlers in try/catch or use express-async-errors to auto-wrap all handlers',
-          command: 'npm install express-async-errors',
         },
         reportedBy: ['node-async-errors'],
       });

@@ -92,7 +92,7 @@ describe('NpmAuditRunner', () => {
 
     const result = await runner.run('/project');
 
-    expect(result.issues[0].fix?.command).toBe('npm audit fix');
+    expect(result.issues[0].fix?.command).toBeUndefined();
     expect(result.issues[0].fix?.description).toContain('pkg@2.0.0');
   });
 
@@ -106,7 +106,8 @@ describe('NpmAuditRunner', () => {
 
     const result = await runner.run('/project');
 
-    expect(result.issues[0].fix?.command).toBe('npm audit fix --force');
+    expect(result.issues[0].fix?.command).toBeUndefined();
+    expect(result.issues[0].fix?.description).toBe('No automatic fix available');
   });
 
   it('falls back to "Vulnerability in {name}" when via entry is a string', async () => {

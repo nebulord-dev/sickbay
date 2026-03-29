@@ -48,6 +48,8 @@ export interface Issue {
 export interface FixSuggestion {
   command?: string;
   description: string;
+  modifiesSource?: boolean;
+  nextSteps?: string;
   codeChange?: {
     before: string;
     after: string;

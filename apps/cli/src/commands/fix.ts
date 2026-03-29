@@ -15,7 +15,7 @@ export interface FixableIssue {
   issue: Issue;
   checkId: string;
   checkName: string;
-  command: string;
+  command?: string;
 }
 
 export interface FixResult {
@@ -32,14 +32,17 @@ export function collectFixableIssues(report: SickbayReport): FixableIssue[] {
 
   for (const check of report.checks) {
     for (const issue of check.issues) {
-      if (issue.fix?.command && !seen.has(issue.fix.command)) {
-        seen.add(issue.fix.command);
-        fixable.push({
-          issue,
-          checkId: check.id,
-          checkName: check.name,
-          command: issue.fix.command,
-        });
+      if (issue.fix) {
+        const dedupeKey = issue.fix.command ?? issue.fix.description;
+        if (!seen.has(dedupeKey)) {
+          seen.add(dedupeKey);
+          fixable.push({
+            issue,
+            checkId: check.id,
+            checkName: check.name,
+            command: issue.fix.command,
+          });
+        }
       }
     }
   }
@@ -55,6 +58,15 @@ export async function executeFix(
   projectPath: string,
 ): Promise<FixResult> {
   const start = Date.now();
+  if (!fix.command) {
+    return {
+      fixable: fix,
+      success: false,
+      stdout: "",
+      stderr: "No command to execute (guidance-only fix)",
+      duration: 0,
+    };
+  }
   try {
     const parts = fix.command.split(/\s+/);
     const cmd = parts[0];

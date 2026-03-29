@@ -50,6 +50,7 @@ export class OutdatedRunner extends BaseRunner {
           fix: {
             description: `Update ${e.name} to ${e.latest}`,
             command: `${pm} update ${e.name}`,
+            nextSteps: 'Run tests to verify nothing broke',
           },
           reportedBy: ['outdated'],
         };

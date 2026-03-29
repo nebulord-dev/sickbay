@@ -3,7 +3,6 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { BaseRunner } from './base.js';
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
-import { detectPackageManager } from '../utils/detect-project.js';
 import type { CheckResult, Issue } from '../types.js';
 
 // Packages that are only ever imported in test files — knip flags them as unused
@@ -72,9 +71,6 @@ export class KnipRunner extends BaseRunner {
         if (scopeMatch) workspaceScope = scopeMatch[1];
       }
 
-      const packageManager = detectPackageManager(projectPath);
-      const removeCmd = packageManager === 'yarn' ? 'yarn remove' : `${packageManager} remove`;
-
       const deps = new Set<string>();
       const devDeps = new Set<string>();
       const unusedExports: string[] = [];
@@ -89,7 +85,7 @@ export class KnipRunner extends BaseRunner {
             severity: 'warning',
             message: `Unused file: ${filePath}`,
             file: filePath,
-            fix: { description: `Remove ${filePath}`, command: `rm ${filePath}` },
+            fix: { description: `Remove ${filePath}` },
             reportedBy: ['knip'],
           });
         });
@@ -118,7 +114,7 @@ export class KnipRunner extends BaseRunner {
         issues.push({
           severity: 'warning',
           message: `Unused dependency: ${dep}`,
-          fix: { description: `Remove ${dep}`, command: `${removeCmd} ${dep}` },
+          fix: { description: `Remove ${dep}` },
           reportedBy: ['knip'],
         })
       );
@@ -127,7 +123,7 @@ export class KnipRunner extends BaseRunner {
         issues.push({
           severity: 'info',
           message: `Unused devDependency: ${dep}`,
-          fix: { description: `Remove ${dep}`, command: `${removeCmd} ${dep}` },
+          fix: { description: `Remove ${dep}` },
           reportedBy: ['knip'],
         })
       );

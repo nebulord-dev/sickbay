@@ -78,7 +78,6 @@ Phase 5 — sickbay-py + Unified ░░░░░░░░░░░░░░░�
 
 - `[Testing]` `[Auto]` Extract fixtures to a dedicated private `sickbay-test-fixtures` repo — **primary driver is security compliance**: `node-api` contains intentional hardcoded secrets and vulnerable dependencies that will fail GitHub Enterprise security scanning and block Sickbay from reaching any internal main branch or environment; a private repo is not subject to the same scanning gates; secondary benefits: (1) CI clones the fixtures repo on demand instead of bundling it; (2) fixtures can have their own permissive security policy since issues are intentional by design; (3) versioned independently — sickbay CI can pin to a specific fixtures tag; migration path is clean since `fixtures/` is already a separate pnpm workspace — extract the directory, `git init`, push to new private repo, update CI workflow to clone it, remove `fixtures/` from the sickbay workspace; **this should be done before Sickbay is pushed to any internal infrastructure**
 
-- `[Testing]` `[Auto]` Snapshot regression testing against fixtures — run `sickbay --json` against each fixture app and commit the output as a snapshot (e.g. `fixtures/snapshots/react-app.json`, `node-api.json`); in CI, re-run and diff against the committed snapshot — any unexpected change in scores, check names, issue counts, or severity fails the build; this isn't about validating correctness (that requires human judgment on first run) but about catching unintended regressions when runners are modified; workflow: (1) initial snapshot is generated and reviewed manually, (2) committed as the source of truth, (3) future changes require a deliberate snapshot update (`sickbay --json > fixtures/snapshots/<name>.json`) which shows up in the PR diff for review; pairs naturally with the fixtures extraction task but can be built now against the existing `react-app` and `node-api` fixtures
 
 - `[Testing]` `[Plan→Auto]` Add Playwright tests to the web project — add end-to-end tests covering key dashboard interactions (tab switching, collapsible sections, dependency graph, AI drawer)
 
@@ -93,7 +92,6 @@ Phase 5 — sickbay-py + Unified ░░░░░░░░░░░░░░░�
 
 ### Security
 
-- `[Security]` `[Auto]` Resolve transitive `minimatch` ReDoS vulnerabilities before publishing — all are in transitive deps (`eslint`, `@typescript-eslint`, `depcheck`, `source-map-explorer`); fix via `pnpm.overrides` in root `package.json` once internal GitHub hosting is set up and audit gates are enforced; also a `rollup` path-traversal issue via `vite`; none are exploitable in current usage but will block publishing to internal registry
 
 ### Versioning
 
@@ -119,6 +117,8 @@ Phase 5 — sickbay-py + Unified ░░░░░░░░░░░░░░░�
 
 ## Done
 
+- `[Security]` Resolved transitive picomatch ReDoS and brace-expansion DoS vulnerabilities via `pnpm.overrides`; also includes previously resolved minimatch, rollup, and prismjs overrides
+- `[Testing]` Snapshot regression testing against fixtures — Vitest snapshot tests run `runSickbay` against `react-app` and `node-api` fixtures; 17 stable checks get full snapshots, 4 unstable checks get structural assertions; runs via `pnpm test:snapshots` separate from unit tests; 48 tests total
 - `[Feature]` Branch diff — `sickbay diff <branch>` compares health of current branch against another; per-check table with score deltas, color-coded arrows (regressions, improvements, unchanged, new, removed); reads baseline via `git show <branch>:.sickbay/last-report.json`; supports `--json` output; uses `execFileSync` to prevent command injection
 - `[Feature]` Sickbay badge — `sickbay badge` generates shields.io static badge markdown/HTML/URL from last scan score; supports `--url`, `--html`, `--label`, `--scan`, `--package` flags; color-coded green/yellow/red based on score thresholds
 - `[Task]` Rename to sickbay — updated all package names, CLI command, imports, branding, ASCII art header, and README references from vitals to sickbay; npm name `sickbay` secured

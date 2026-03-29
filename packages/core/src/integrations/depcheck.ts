@@ -50,7 +50,7 @@ export class DepcheckRunner extends BaseRunner {
         issues.push({
           severity: 'critical',
           message: `Missing dependency: ${dep} (used in ${files.length} file${files.length > 1 ? 's' : ''})`,
-          fix: { description: `Install ${dep}`, command: `npm install ${dep}` },
+          fix: { description: `Install ${dep}` },
           reportedBy: ['depcheck'],
         });
       }

@@ -86,7 +86,8 @@ describe('KnipRunner', () => {
     const depIssue = result.issues.find((i) => i.message.includes('lodash'));
     expect(depIssue).toBeDefined();
     expect(depIssue?.severity).toBe('warning');
-    expect(depIssue?.fix?.command).toBe('npm remove lodash');
+    expect(depIssue?.fix?.command).toBeUndefined();
+    expect(depIssue?.fix?.description).toBe('Remove lodash');
   });
 
   it('reports unused devDependencies as info issues', async () => {

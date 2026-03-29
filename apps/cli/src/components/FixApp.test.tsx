@@ -316,7 +316,7 @@ describe("FixApp", () => {
       expect(result.lastFrame()).toContain("Select fixes to apply");
     });
 
-    it("enters fixing phase on Enter when items are selected", async () => {
+    it("enters confirmation phase on Enter when items are selected", async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       // Space selects item — flush fully so React re-renders and latestHandler updates
@@ -326,9 +326,37 @@ describe("FixApp", () => {
         await Promise.resolve();
       });
 
-      // Now latestHandler has selected={0} in its closure — Enter transitions to fixing
+      // Now latestHandler has selected={0} in its closure — Enter transitions to confirming
       await act(async () => {
         fire("", { ...noKey, return: true });
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      // Should show confirmation prompt
+      expect(result.lastFrame()).toContain("Proceed?");
+    });
+
+    it("enters fixing phase after confirming with Y", async () => {
+      const { result, fire } = await renderInSelectingPhase();
+
+      // Select first item
+      await act(async () => {
+        fire(" ", noKey);
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      // Press Enter to go to confirmation
+      await act(async () => {
+        fire("", { ...noKey, return: true });
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      // Confirm with Y
+      await act(async () => {
+        fire("y", noKey);
         await Promise.resolve();
         await Promise.resolve();
       });
@@ -348,6 +376,86 @@ describe("FixApp", () => {
     );
 
     expect(result.lastFrame()).toContain("1/1");
+  });
+
+  describe("guidance-only issues", () => {
+    it("renders guidance-only items with info icon and dimmed text", async () => {
+      mockRunSickbay.mockResolvedValue(makeReport() as never);
+      mockCollectFixableIssues.mockReturnValue([
+        makeFixableIssue({
+          command: undefined,
+          issue: {
+            severity: "warning",
+            message: "Remove unused file",
+            reportedBy: [],
+            fix: { description: "Remove unused file" },
+          },
+        }),
+      ]);
+
+      const result = await renderAndFlush(
+        <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+      );
+
+      const output = result.lastFrame()!;
+      expect(output).toContain("ℹ");
+      expect(output).toContain("Remove unused file");
+      // Should not contain checkbox
+      expect(output).not.toContain("[✓]");
+    });
+  });
+
+  describe("confirmation flow", () => {
+    it("shows tier-2 warning for modifiesSource fixes", async () => {
+      mockRunSickbay.mockResolvedValue(makeReport() as never);
+      mockCollectFixableIssues.mockReturnValue([
+        makeFixableIssue({
+          command: "eslint src/App.tsx --fix",
+          issue: {
+            severity: "warning",
+            message: "ESLint issues",
+            reportedBy: [],
+            fix: { description: "Fix ESLint issues", command: "eslint src/App.tsx --fix", modifiesSource: true },
+          },
+        }),
+      ]);
+
+      const result = await renderAndFlush(
+        <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
+      );
+
+      // --apply-all skips tier-1 but still shows tier-2
+      expect(result.lastFrame()).toContain("modify source files");
+    });
+  });
+
+  describe("nextSteps display", () => {
+    it("shows nextSteps after successful execution", async () => {
+      const fix = makeFixableIssue({
+        command: "npm install helmet",
+        issue: {
+          severity: "critical",
+          message: "Missing helmet",
+          reportedBy: [],
+          fix: { description: "Install helmet", command: "npm install helmet", nextSteps: "Add app.use(helmet())" },
+        },
+      });
+      mockRunSickbay.mockResolvedValue(makeReport() as never);
+      mockCollectFixableIssues.mockReturnValue([fix]);
+      mockExecuteFix.mockResolvedValue({
+        fixable: fix,
+        success: true,
+        stdout: "",
+        stderr: "",
+        duration: 100,
+      });
+
+      const result = await renderAndFlush(
+        <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
+      );
+
+      expect(result.lastFrame()).toContain("Add app.use(helmet())");
+    });
   });
 
   describe("monorepo mode", () => {

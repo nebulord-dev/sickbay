@@ -141,6 +141,7 @@ describe('OutdatedRunner', () => {
     const result = await runner.run('/project');
 
     expect(result.issues[0].fix?.command).toBe('pnpm update pkg');
+    expect(result.issues[0].fix?.nextSteps).toBe('Run tests to verify nothing broke');
     expect(result.toolsUsed[0]).toBe('pnpm');
   });
 

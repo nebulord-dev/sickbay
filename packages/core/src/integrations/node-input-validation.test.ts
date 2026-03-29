@@ -62,6 +62,7 @@ describe('NodeInputValidationRunner', () => {
     expect(result.status).toBe('warning');
     expect(result.issues[0].severity).toBe('warning');
     expect(result.issues[0].fix?.command).toContain('npm install zod');
+    expect(result.issues[0].fix?.nextSteps).toBe('Add input validation schemas to all incoming request data');
   });
 
   it('reports which library was found as an info issue', async () => {

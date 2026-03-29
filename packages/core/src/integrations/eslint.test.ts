@@ -168,6 +168,7 @@ describe('ESLintRunner', () => {
 
     expect(result.issues[0].fix?.command).toContain('eslint');
     expect(result.issues[0].fix?.command).toContain('--fix');
+    expect(result.issues[0].fix?.modifiesSource).toBe(true);
   });
 
   it('returns fail with score 0 when execa throws', async () => {

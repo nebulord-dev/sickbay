@@ -57,8 +57,8 @@ export class NpmAuditRunner extends BaseRunner {
           message: title,
           fix:
             typeof vuln.fixAvailable === 'object'
-              ? { description: `Upgrade to ${vuln.fixAvailable.name}@${vuln.fixAvailable.version}`, command: 'npm audit fix' }
-              : { description: 'No automatic fix available', command: 'npm audit fix --force' },
+              ? { description: `Upgrade to ${vuln.fixAvailable.name}@${vuln.fixAvailable.version}` }
+              : { description: 'No automatic fix available' },
           reportedBy: ['npm-audit'],
           ...(url && { file: url }),
         });

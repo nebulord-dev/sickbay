@@ -23,7 +23,7 @@ interface FixAppProps {
   packageNames?: Map<string, string>;
 }
 
-type Phase = "scanning" | "selecting" | "fixing" | "done" | "error";
+type Phase = "scanning" | "selecting" | "confirming" | "fixing" | "done" | "error";
 
 interface ProgressItem {
   name: string;
@@ -63,6 +63,11 @@ export function FixApp({
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<ProgressItem[]>([]);
   const [projectName, setProjectName] = useState<string | undefined>();
+
+  // Confirmation state
+  const [confirmQueue, setConfirmQueue] = useState<MonorepoFixableIssue[]>([]);
+  const [confirmIndex, setConfirmIndex] = useState(0);
+  const [confirmedFixes, setConfirmedFixes] = useState<MonorepoFixableIssue[]>([]);
 
   // Phase 1: Run scan
   useEffect(() => {
@@ -116,7 +121,7 @@ export function FixApp({
             setPhase("done");
           } else if (applyAll) {
             setSelected(new Set(allFixable.map((_, i) => i)));
-            setPhase("fixing");
+            startConfirmation(allFixable, new Set(allFixable.map((_, i) => i)), true);
           } else {
             setPhase("selecting");
           }
@@ -185,7 +190,7 @@ export function FixApp({
             setPhase("done");
           } else if (applyAll) {
             setSelected(new Set(fixable.map((_, i) => i)));
-            setPhase("fixing");
+            startConfirmation(tagged, new Set(fixable.map((_, i) => i)), true);
           } else {
             setPhase("selecting");
           }
@@ -199,11 +204,48 @@ export function FixApp({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Start confirmation flow for selected actionable fixes
+  function startConfirmation(
+    issues: MonorepoFixableIssue[],
+    selectedSet: Set<number>,
+    isApplyAll: boolean,
+  ) {
+    // Only actionable fixes (with command) need confirmation
+    const actionable = issues.filter((f, i) => selectedSet.has(i) && f.command);
+
+    if (isApplyAll) {
+      // --apply-all: skip tier-1, but still confirm tier-2 (modifiesSource)
+      const tier2 = actionable.filter((f) => f.issue.fix?.modifiesSource);
+      const autoApproved = actionable.filter((f) => !f.issue.fix?.modifiesSource);
+      if (tier2.length === 0) {
+        // No tier-2 confirms needed, go straight to fixing
+        setConfirmedFixes(autoApproved);
+        setPhase("fixing");
+        return;
+      }
+      setConfirmedFixes(autoApproved);
+      setConfirmQueue(tier2);
+    } else {
+      setConfirmedFixes([]);
+      setConfirmQueue(actionable);
+    }
+    setConfirmIndex(0);
+
+    if (actionable.length === 0) {
+      // All selected are guidance-only
+      setPhase("done");
+      setTimeout(() => exit(), 100);
+      return;
+    }
+
+    setPhase("confirming");
+  }
+
   // Phase 3: Execute fixes
   useEffect(() => {
     if (phase !== "fixing") return;
 
-    const toFix = fixableIssues.filter((_, i) => selected.has(i));
+    const toFix = confirmedFixes;
     if (toFix.length === 0) {
       setPhase("done");
       setTimeout(() => exit(), 100);
@@ -234,43 +276,69 @@ export function FixApp({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  // Handle keyboard input during selection phase
+  // Handle keyboard input during selection and confirmation phases
   const handleInput = useCallback(
     (
       input: string,
       key: { upArrow: boolean; downArrow: boolean; return: boolean },
     ) => {
-      if (phase !== "selecting") return;
+      if (phase === "selecting") {
+        const isGuidanceOnly = (i: number) => !fixableIssues[i]?.command;
 
-      if (key.upArrow) {
-        setCursor((c) => Math.max(0, c - 1));
-      } else if (key.downArrow) {
-        setCursor((c) => Math.min(fixableIssues.length - 1, c + 1));
-      } else if (input === " ") {
-        setSelected((prev) => {
-          const next = new Set(prev);
-          if (next.has(cursor)) {
-            next.delete(cursor);
-          } else {
-            next.add(cursor);
+        if (key.upArrow) {
+          setCursor((c) => Math.max(0, c - 1));
+        } else if (key.downArrow) {
+          setCursor((c) => Math.min(fixableIssues.length - 1, c + 1));
+        } else if (input === " ") {
+          if (!isGuidanceOnly(cursor)) {
+            setSelected((prev) => {
+              const next = new Set(prev);
+              if (next.has(cursor)) {
+                next.delete(cursor);
+              } else {
+                next.add(cursor);
+              }
+              return next;
+            });
           }
-          return next;
-        });
-      } else if (input === "a") {
-        setSelected(new Set(fixableIssues.map((_, i) => i)));
-      } else if (input === "n") {
-        setSelected(new Set());
-      } else if (key.return) {
-        if (selected.size > 0) {
-          setPhase("fixing");
+        } else if (input === "a") {
+          // Select all actionable items only
+          setSelected(new Set(fixableIssues.map((f, i) => f.command ? i : -1).filter((i) => i >= 0)));
+        } else if (input === "n") {
+          setSelected(new Set());
+        } else if (key.return) {
+          if (selected.size > 0) {
+            startConfirmation(fixableIssues, selected, false);
+          }
+        }
+      } else if (phase === "confirming") {
+        const lower = input.toLowerCase();
+        if (lower === "y" || key.return) {
+          // Confirm current fix
+          setConfirmedFixes((prev) => [...prev, confirmQueue[confirmIndex]]);
+          if (confirmIndex + 1 < confirmQueue.length) {
+            setConfirmIndex((i) => i + 1);
+          } else {
+            setPhase("fixing");
+          }
+        } else if (lower === "n") {
+          // Skip current fix
+          if (confirmIndex + 1 < confirmQueue.length) {
+            setConfirmIndex((i) => i + 1);
+          } else {
+            setPhase("fixing");
+          }
         }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [phase, cursor, selected],
+    [phase, cursor, selected, confirmIndex, confirmQueue, fixableIssues],
   );
 
   useInput(handleInput);
+
+  const currentConfirmFix = confirmQueue[confirmIndex];
+  const isTier2 = currentConfirmFix?.issue.fix?.modifiesSource;
 
   return (
     <Box flexDirection="column" padding={1}>
@@ -310,25 +378,42 @@ export function FixApp({
             Select fixes to apply ({fixableIssues.length} available)
           </Text>
           <Box flexDirection="column" marginTop={1} marginLeft={2}>
-            {fixableIssues.map((fix, i) => (
-              <Box key={`${fix.packageName}-${fix.checkId}-${fix.issue.message}`}>
-                <Text color={i === cursor ? "cyan" : undefined}>
-                  {i === cursor ? "❯ " : "  "}
-                </Text>
-                <Text color={i === cursor ? "cyan" : undefined}>
-                  {selected.has(i) ? "[✓] " : "[ ] "}
-                </Text>
-                {isMonorepo && (
-                  <Text color="magenta" dimColor>
-                    [{shortName(fix.packageName)}]{" "}
-                  </Text>
-                )}
-                <Text color={SEVERITY_COLOR[fix.issue.severity]}>
-                  {fix.issue.fix!.description}
-                </Text>
-                <Text dimColor> ({fix.command})</Text>
-              </Box>
-            ))}
+            {fixableIssues.map((fix, i) => {
+              const isGuidance = !fix.command;
+              return (
+                <Box key={`${fix.packageName}-${fix.checkId}-${fix.command ?? fix.issue.fix?.description}`}>
+                  {isGuidance ? (
+                    <>
+                      <Text dimColor>  ℹ  </Text>
+                      {isMonorepo && (
+                        <Text color="magenta" dimColor>
+                          [{shortName(fix.packageName)}]{" "}
+                        </Text>
+                      )}
+                      <Text dimColor>{fix.issue.fix!.description}</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text color={i === cursor ? "cyan" : undefined}>
+                        {i === cursor ? "❯ " : "  "}
+                      </Text>
+                      <Text color={i === cursor ? "cyan" : undefined}>
+                        {selected.has(i) ? "[✓] " : "[ ] "}
+                      </Text>
+                      {isMonorepo && (
+                        <Text color="magenta" dimColor>
+                          [{shortName(fix.packageName)}]{" "}
+                        </Text>
+                      )}
+                      <Text color={SEVERITY_COLOR[fix.issue.severity]}>
+                        {fix.issue.fix!.description}
+                      </Text>
+                      <Text dimColor> ({fix.command})</Text>
+                    </>
+                  )}
+                </Box>
+              );
+            })}
           </Box>
           <Box marginTop={1} marginLeft={2}>
             <Text dimColor>
@@ -346,6 +431,25 @@ export function FixApp({
         </Box>
       )}
 
+      {/* Confirmation phase */}
+      {phase === "confirming" && currentConfirmFix && (
+        <Box flexDirection="column">
+          <Text bold>
+            Confirming fixes ({confirmIndex + 1}/{confirmQueue.length})
+          </Text>
+          <Box marginTop={1} marginLeft={2} flexDirection="column">
+            <Text>
+              {currentConfirmFix.issue.fix!.description} ({currentConfirmFix.command})
+            </Text>
+            {isTier2 ? (
+              <Text color="yellow">⚠ This will modify source files. Proceed? (Y/n)</Text>
+            ) : (
+              <Text dimColor>→ Proceed? (Y/n)</Text>
+            )}
+          </Box>
+        </Box>
+      )}
+
       {/* Fixing phase */}
       {phase === "fixing" && !dryRun && (
         <Box marginBottom={1}>
@@ -360,35 +464,37 @@ export function FixApp({
         <Box flexDirection="column">
           <Text bold>
             {dryRun ? "Dry run" : "Applying fixes"}... ({results.length}/
-            {fixableIssues.filter((_, i) => selected.has(i)).length})
+            {confirmedFixes.length})
           </Text>
           <Box flexDirection="column" marginTop={1} marginLeft={2}>
             {results.map((r) => (
-              <Box key={`${r.fixable.checkId}-${r.fixable.command}`}>
-                <Text color={r.success ? "green" : "red"}>
-                  {r.success ? "✓" : "✗"}{" "}
-                </Text>
-                {isMonorepo && (
-                  <Text color="magenta" dimColor>
-                    [{shortName((r.fixable as MonorepoFixableIssue).packageName)}]{" "}
+              <Box key={`${r.fixable.checkId}-${r.fixable.command ?? r.fixable.issue.fix?.description}`} flexDirection="column">
+                <Box>
+                  <Text color={r.success ? "green" : "red"}>
+                    {r.success ? "✓" : "✗"}{" "}
                   </Text>
+                  {isMonorepo && (
+                    <Text color="magenta" dimColor>
+                      [{shortName((r.fixable as MonorepoFixableIssue).packageName)}]{" "}
+                    </Text>
+                  )}
+                  <Text>{r.fixable.issue.fix!.description}</Text>
+                </Box>
+                {r.success && r.fixable.issue.fix?.nextSteps && (
+                  <Box marginLeft={2}>
+                    <Text dimColor>  → Next: {r.fixable.issue.fix.nextSteps}</Text>
+                  </Box>
                 )}
-                <Text>{r.fixable.issue.fix!.description}</Text>
               </Box>
             ))}
-            {results.length <
-              fixableIssues.filter((_, i) => selected.has(i)).length && (
+            {results.length < confirmedFixes.length && (
               <Box>
                 <Text color="green">
                   <Spinner type="dots" />
                 </Text>
                 <Text>
                   {" "}
-                  {
-                    fixableIssues.filter((_, i) => selected.has(i))[
-                      currentFixIndex
-                    ]?.issue.fix!.description
-                  }
+                  {confirmedFixes[currentFixIndex]?.issue.fix!.description}
                 </Text>
               </Box>
             )}
@@ -413,18 +519,25 @@ export function FixApp({
               <Text bold>{dryRun ? "Dry Run Results" : "Fix Results"}</Text>
               <Box flexDirection="column" marginTop={1} marginLeft={2}>
                 {results.map((r) => (
-                  <Box key={`${r.fixable.checkId}-${r.fixable.command}`}>
-                    <Text color={r.success ? "green" : "red"}>
-                      {r.success ? "✓" : "✗"}{" "}
-                    </Text>
-                    {isMonorepo && (
-                      <Text color="magenta" dimColor>
-                        [{shortName((r.fixable as MonorepoFixableIssue).packageName)}]{" "}
+                  <Box key={`${r.fixable.checkId}-${r.fixable.command ?? r.fixable.issue.fix?.description}`} flexDirection="column">
+                    <Box>
+                      <Text color={r.success ? "green" : "red"}>
+                        {r.success ? "✓" : "✗"}{" "}
                       </Text>
-                    )}
-                    <Text>{r.fixable.issue.fix!.description}</Text>
-                    {r.duration > 0 && (
-                      <Text dimColor> ({r.duration}ms)</Text>
+                      {isMonorepo && (
+                        <Text color="magenta" dimColor>
+                          [{shortName((r.fixable as MonorepoFixableIssue).packageName)}]{" "}
+                        </Text>
+                      )}
+                      <Text>{r.fixable.issue.fix!.description}</Text>
+                      {r.duration > 0 && (
+                        <Text dimColor> ({r.duration}ms)</Text>
+                      )}
+                    </Box>
+                    {r.success && r.fixable.issue.fix?.nextSteps && (
+                      <Box marginLeft={2}>
+                        <Text dimColor>  → Next: {r.fixable.issue.fix.nextSteps}</Text>
+                      </Box>
                     )}
                   </Box>
                 ))}

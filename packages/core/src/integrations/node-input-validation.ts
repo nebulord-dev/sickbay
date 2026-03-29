@@ -72,6 +72,7 @@ export class NodeInputValidationRunner extends BaseRunner {
         fix: {
           description: 'Add an input validation library and validate all incoming request data',
           command: 'npm install zod',
+          nextSteps: 'Add input validation schemas to all incoming request data',
         },
         reportedBy: ['node-input-validation'],
       },

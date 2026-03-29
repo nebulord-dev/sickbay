@@ -78,10 +78,27 @@ describe('collectFixableIssues', () => {
     expect(collectFixableIssues(report)).toEqual([]);
   });
 
-  it('returns empty array when issues have no fix command', () => {
+  it('returns empty array when issues have no fix at all', () => {
     const issue = makeIssue({ message: 'No fix available' });
     const report = makeReport([makeCheck('eslint', [issue])]);
     expect(collectFixableIssues(report)).toEqual([]);
+  });
+
+  it('includes guidance-only issues (fix with description but no command)', () => {
+    const issue = makeIssue({ fix: { description: 'Remove unused file' } });
+    const report = makeReport([makeCheck('knip', [issue])]);
+    const result = collectFixableIssues(report);
+    expect(result).toHaveLength(1);
+    expect(result[0].command).toBeUndefined();
+    expect(result[0].issue.fix!.description).toBe('Remove unused file');
+  });
+
+  it('deduplicates guidance-only issues by description', () => {
+    const issue1 = makeIssue({ message: 'Issue 1', fix: { description: 'Remove unused file' } });
+    const issue2 = makeIssue({ message: 'Issue 2', fix: { description: 'Remove unused file' } });
+    const report = makeReport([makeCheck('knip', [issue1, issue2])]);
+    const result = collectFixableIssues(report);
+    expect(result).toHaveLength(1);
   });
 
   it('includes issues that have a fix command', () => {
@@ -149,7 +166,7 @@ describe('executeFix', () => {
     vi.clearAllMocks();
   });
 
-  function makeFixableIssue(command: string): FixableIssue {
+  function makeFixableIssue(command?: string): FixableIssue {
     return {
       issue: makeIssue({ fix: { command, description: 'test fix' } }),
       checkId: 'test-check',
@@ -209,6 +226,15 @@ describe('executeFix', () => {
 
     expect(result.success).toBe(false);
     expect(result.stderr).toBe('string error');
+  });
+
+  it('returns failure for guidance-only fix (no command)', async () => {
+    const fix = makeFixableIssue(undefined);
+    const result = await executeFix(fix, '/project');
+
+    expect(result.success).toBe(false);
+    expect(result.stderr).toContain('guidance-only');
+    expect(mockExecFileAsync).not.toHaveBeenCalled();
   });
 
   it('returns empty stdout and stderr on success with no output', async () => {

@@ -194,11 +194,9 @@ export class SourceMapExplorerRunner extends BaseRunner {
           severity: "critical",
           message: `Initial bundle is ${initialKB}KB — exceeds 1MB threshold`,
           fix: {
-            description:
-              "Use code splitting and lazy imports to reduce bundle size",
-            command: hasSourceMaps
-              ? undefined
-              : "Enable source maps (sourcemap: true) for detailed analysis",
+            description: hasSourceMaps
+              ? "Use code splitting and lazy imports to reduce bundle size"
+              : "Use code splitting and lazy imports to reduce bundle size. Enable source maps (sourcemap: true) for detailed analysis",
           },
           reportedBy: ["bundle-size-check"],
         });
@@ -207,10 +205,9 @@ export class SourceMapExplorerRunner extends BaseRunner {
           severity: "warning",
           message: `Initial bundle is ${initialKB}KB — consider optimizing`,
           fix: {
-            description: "Review large dependencies and consider tree-shaking",
-            command: hasSourceMaps
-              ? undefined
-              : "Enable source maps (sourcemap: true) for detailed analysis",
+            description: hasSourceMaps
+              ? "Review large dependencies and consider tree-shaking"
+              : "Review large dependencies and consider tree-shaking. Enable source maps (sourcemap: true) for detailed analysis",
           },
           reportedBy: ["bundle-size-check"],
         });

@@ -57,6 +57,7 @@ export class NodeSecurityRunner extends BaseRunner {
         fix: {
           description: 'Install helmet and add app.use(helmet()) before your routes',
           command: 'npm install helmet',
+          nextSteps: 'Add app.use(helmet()) before your routes',
         },
         reportedBy: ['node-security'],
       });
@@ -71,6 +72,7 @@ export class NodeSecurityRunner extends BaseRunner {
         fix: {
           description: 'Install cors and configure allowed origins explicitly',
           command: 'npm install cors',
+          nextSteps: 'Configure allowed origins explicitly with cors({ origin: [...] })',
         },
         reportedBy: ['node-security'],
       });
@@ -85,6 +87,7 @@ export class NodeSecurityRunner extends BaseRunner {
         fix: {
           description: 'Install express-rate-limit and configure limits per route or globally',
           command: 'npm install express-rate-limit',
+          nextSteps: 'Configure rate limits per route or globally',
         },
         reportedBy: ['node-security'],
       });
