@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/*
+  - '!packages/sickbay-wrapper'
 
 catalog:
   '@testing-library/jest-dom': ^6.9.1
