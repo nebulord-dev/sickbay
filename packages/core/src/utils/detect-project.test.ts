@@ -229,6 +229,46 @@ describe('detectProject', () => {
     const info = await detectProject('/project');
     expect(info.overrides).toBeUndefined();
   });
+
+  it('resolves pnpm catalog: references to actual versions', async () => {
+    const workspaceYaml = [
+      'packages:',
+      '  - apps/*',
+      '',
+      'catalog:',
+      "  vitest: ^4.1.2",
+      "  '@types/react': ^19.2.14",
+      "  typescript: ^5.9.3",
+    ].join('\n');
+
+    mockExistsSync.mockImplementation((p) => {
+      const s = String(p);
+      return s.endsWith('package.json') || s.endsWith('pnpm-workspace.yaml');
+    });
+    mockReadFileSync.mockImplementation((p) => {
+      if (String(p).endsWith('pnpm-workspace.yaml')) return workspaceYaml as never;
+      return makePkg({
+        devDependencies: {
+          vitest: 'catalog:',
+          '@types/react': 'catalog:',
+          'some-other': '^1.0.0',
+        },
+      }) as never;
+    });
+
+    const info = await detectProject('/project');
+    expect(info.devDependencies.vitest).toBe('^4.1.2');
+    expect(info.devDependencies['@types/react']).toBe('^19.2.14');
+    expect(info.devDependencies['some-other']).toBe('^1.0.0');
+  });
+
+  it('leaves catalog: unchanged when no workspace yaml is found', async () => {
+    mockReadFileSync.mockReturnValue(
+      makePkg({ devDependencies: { vitest: 'catalog:' } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.devDependencies.vitest).toBe('catalog:');
+  });
 });
 
 describe('detectPackageManager', () => {

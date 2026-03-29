@@ -20,6 +20,18 @@ export async function detectProject(projectPath: string): Promise<ProjectInfo> {
   const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
   const deps: Record<string, string> = pkg.dependencies ?? {};
   const devDeps: Record<string, string> = pkg.devDependencies ?? {};
+
+  // Resolve pnpm catalog: references to actual versions
+  const catalog = loadPnpmCatalog(projectPath);
+  if (catalog) {
+    for (const [name, ver] of Object.entries(deps)) {
+      if (ver.startsWith("catalog:")) deps[name] = catalog[name] ?? ver;
+    }
+    for (const [name, ver] of Object.entries(devDeps)) {
+      if (ver.startsWith("catalog:")) devDeps[name] = catalog[name] ?? ver;
+    }
+  }
+
   const allDeps = { ...deps, ...devDeps };
 
   const rawOverrides: Record<string, string> | undefined =
@@ -123,4 +135,59 @@ export async function detectContext(projectPath: string): Promise<ProjectContext
   else if ("mocha" in allDeps) testFramework = "mocha";
 
   return { runtime, frameworks, buildTool, testFramework };
+}
+
+/**
+ * Walk up from projectPath to find pnpm-workspace.yaml and parse its catalog section.
+ * Returns a map of package name → version, or null if no catalog is found.
+ */
+function loadPnpmCatalog(projectPath: string): Record<string, string> | null {
+  let dir = projectPath;
+  while (true) {
+    const wsPath = join(dir, "pnpm-workspace.yaml");
+    if (existsSync(wsPath)) {
+      try {
+        const content = readFileSync(wsPath, "utf-8");
+        return parseCatalogFromYaml(content);
+      } catch {
+        return null;
+      }
+    }
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}
+
+/**
+ * Minimal YAML parser for the catalog: section of pnpm-workspace.yaml.
+ * Avoids adding a YAML parsing dependency — the catalog format is simple
+ * key-value pairs under a `catalog:` heading.
+ */
+function parseCatalogFromYaml(content: string): Record<string, string> | null {
+  const lines = content.split("\n");
+  const catalog: Record<string, string> = {};
+  let inCatalog = false;
+
+  for (const line of lines) {
+    // Detect `catalog:` top-level key
+    if (/^catalog:\s*$/.test(line)) {
+      inCatalog = true;
+      continue;
+    }
+    // End of catalog section when we hit another top-level key
+    if (inCatalog && /^\S/.test(line)) {
+      break;
+    }
+    if (inCatalog) {
+      // Parse indented entries like "  '@types/react': ^19.2.14"
+      const match = line.match(/^\s+['"]?([^'":\s][^'":]*?)['"]?\s*:\s*(.+)$/);
+      if (match) {
+        catalog[match[1].trim()] = match[2].trim();
+      }
+    }
+  }
+
+  return Object.keys(catalog).length > 0 ? catalog : null;
 }
