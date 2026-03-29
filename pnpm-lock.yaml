@@ -137,9 +137,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@nebulord/sickbay-core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@xyflow/react':
         specifier: ^12.10.2
         version: 12.10.2(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -159,6 +156,9 @@ importers:
         specifier: ^16.1.1
         version: 16.1.1(react@19.2.4)
     devDependencies:
+      '@nebulord/sickbay-core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@rolldown/plugin-babel':
         specifier: ^0.2.2
         version: 0.2.2(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.12(@emnapi/core@1.8.1)(@emnapi/runtime@1.8.1))(vite@8.0.3(@emnapi/core@1.8.1)(@emnapi/runtime@1.8.1)(@types/node@25.5.0)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))

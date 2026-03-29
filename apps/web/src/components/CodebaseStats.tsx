@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useState } from 'react';
 import type { SickbayReport } from '@nebulord/sickbay-core';
-import { WARN_LINES, CRITICAL_LINES } from '@nebulord/sickbay-core';
+import { WARN_LINES, CRITICAL_LINES } from '../lib/constants.js';
 
 // Lazy load heavy graph visualization
 const DependencyGraph = lazy(() => import('./DependencyGraph.js').then((m) => ({ default: m.DependencyGraph })));

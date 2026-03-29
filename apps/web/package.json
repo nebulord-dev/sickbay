@@ -16,7 +16,6 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@nebulord/sickbay-core": "workspace:*",
     "@xyflow/react": "^12.10.2",
     "dagre": "^0.8.5",
     "react": "^19.2.4",
@@ -25,6 +24,7 @@
     "react-syntax-highlighter": "^16.1.1"
   },
   "devDependencies": {
+    "@nebulord/sickbay-core": "workspace:*",
     "@rolldown/plugin-babel": "^0.2.2",
     "@tailwindcss/vite": "^4.2.2",
     "@testing-library/jest-dom": "catalog:",
