@@ -120,6 +120,38 @@ describe("serveWeb", () => {
       expect(data.checks[0].id).toBe("eslint");
     });
 
+    it("/sickbay-dep-tree.json returns 200 with cached file content when file exists", async () => {
+      const depTree = { name: "test-project", dependencies: { react: "^18.0.0" } };
+      mockExistsSync.mockImplementation((p: unknown) => {
+        const s = String(p);
+        if (s.endsWith("index.html")) return true;
+        if (s.endsWith("dep-tree.json")) return true;
+        return false;
+      });
+      mockReadFileSync.mockImplementation((p: unknown) => {
+        const s = String(p);
+        if (s.endsWith("dep-tree.json")) return Buffer.from(JSON.stringify(depTree));
+        return Buffer.from("<html><body>ok</body></html>");
+      });
+
+      const url = await serveWeb(makeReport(), 0);
+
+      const res = await fetch(`${url}/sickbay-dep-tree.json`);
+      expect(res.status).toBe(200);
+      expect(res.headers.get("content-type")).toContain("application/json");
+
+      const data = await res.json();
+      expect(data.name).toBe("test-project");
+      expect(data.dependencies.react).toBe("^18.0.0");
+    });
+
+    it("/sickbay-dep-tree.json returns 404 when no cache exists", async () => {
+      const url = await serveWeb(makeReport(), 0);
+
+      const res = await fetch(`${url}/sickbay-dep-tree.json`);
+      expect(res.status).toBe(404);
+    });
+
     it("/ai/summary returns 404 when no aiService provided", async () => {
       const url = await serveWeb(makeReport(), 0);
 

@@ -95,6 +95,17 @@ export function App({
           setMonorepoReport(r);
           setProjectName(`monorepo (${r.packages.length} packages)`);
 
+          // Cache dependency tree for web dashboard
+          try {
+            const { getDependencyTree } = await import("@sickbay/core");
+            const { saveDepTree } = await import("../lib/history.js");
+            const packages: Record<string, unknown> = {};
+            for (const pkg of r.packages) {
+              packages[pkg.name] = await getDependencyTree(pkg.path, r.packageManager);
+            }
+            saveDepTree(projectPath, { packages });
+          } catch { /* dep tree is optional */ }
+
           if (openWeb) {
             setPhase("opening-web");
             try {
@@ -166,6 +177,14 @@ export function App({
         } catch {
           // Non-critical — silently ignore history save failures
         }
+
+        // Cache dependency tree for web dashboard
+        try {
+          const { getDependencyTree } = await import("@sickbay/core");
+          const { saveDepTree } = await import("../lib/history.js");
+          const tree = await getDependencyTree(projectPath, r.projectInfo.packageManager);
+          saveDepTree(projectPath, tree);
+        } catch { /* dep tree is optional, don't break the scan */ }
 
         if (openWeb) {
           setPhase("opening-web");

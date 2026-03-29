@@ -76,6 +76,14 @@ export function saveLastReport(report: SickbayReport): void {
   );
 }
 
+export function saveDepTree(projectPath: string, tree: unknown): void {
+  mkdirSync(join(projectPath, ".sickbay"), { recursive: true });
+  writeFileSync(
+    join(projectPath, ".sickbay", "dep-tree.json"),
+    JSON.stringify(tree, null, 2),
+  );
+}
+
 export function detectRegressions(
   entries: TrendEntry[],
 ): Array<{ category: string; drop: number; from: number; to: number }> {

@@ -107,6 +107,14 @@ export function TuiApp({
         // Non-critical
       }
 
+      // Cache dependency tree for web dashboard
+      try {
+        const { getDependencyTree } = await import("@sickbay/core");
+        const { saveDepTree } = await import("../../lib/history.js");
+        const tree = await getDependencyTree(projectPath, result.projectInfo.packageManager);
+        saveDepTree(projectPath, tree);
+      } catch { /* dep tree is optional */ }
+
       const delta =
         prevScore !== null ? result.overallScore - prevScore : null;
       addActivity(

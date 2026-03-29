@@ -120,6 +120,14 @@ program
         // Non-critical
       }
 
+      // Cache dependency tree
+      try {
+        const { getDependencyTree } = await import("@sickbay/core");
+        const { saveDepTree } = await import("./lib/history.js");
+        const tree = await getDependencyTree(options.path, report.projectInfo.packageManager);
+        saveDepTree(options.path, tree);
+      } catch { /* dep tree is optional */ }
+
       process.stdout.write(JSON.stringify(report, null, 2) + "\n");
       process.exit(0);
     }
