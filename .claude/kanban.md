@@ -38,6 +38,7 @@ Phase 5 — sickbay-py + Unified ░░░░░░░░░░░░░░░�
 
 ### General
 
+- `[Task]` `[Auto]` Migrate Sickbay kanban to Jira — transfer all Backlog, Icebox, and In Progress tasks from `.claude/kanban.md` to the Ricochet Devs project (KAN) in Jira under a Sickbay epic; preserve task descriptions, automation tags, and blocking notes; once complete, remove task content from kanban.md and leave a pointer to Jira
 - `[Task]` `[Auto]` Scan the sickbay project with the sickbay CLI — run `sickbay` against this monorepo and review the results; use findings to identify gaps and inform future work
 
 ### Features

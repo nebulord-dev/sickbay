@@ -302,14 +302,14 @@ export function StatsApp({
 
         <Box flexDirection="column" marginTop={1} marginLeft={2}>
           <Box>
-            <Text bold>{"Package".padEnd(24)}</Text>
+            <Text bold>{"Package".padEnd(36)}</Text>
             <Text bold>{"Framework".padEnd(14)}</Text>
             <Text bold>{"Files".padEnd(8)}</Text>
             <Text bold>{"LOC".padEnd(10)}</Text>
             <Text bold>{"Deps".padEnd(8)}</Text>
             <Text bold>Tests</Text>
           </Box>
-          <Text dimColor>{"━".repeat(72)}</Text>
+          <Text dimColor>{"━".repeat(84)}</Text>
           {packageStats.map((pkg) => {
             const fw =
               FRAMEWORK_LABELS[pkg.stats.project.framework] ??
@@ -317,7 +317,7 @@ export function StatsApp({
             return (
               <Box key={pkg.path}>
                 <Text color="cyan">
-                  {shortName(pkg.name).padEnd(24)}
+                  {shortName(pkg.name).padEnd(36)}
                 </Text>
                 <Text>{fw.padEnd(14)}</Text>
                 <Text>{String(pkg.stats.files.total).padEnd(8)}</Text>
@@ -329,9 +329,9 @@ export function StatsApp({
               </Box>
             );
           })}
-          <Text dimColor>{"━".repeat(72)}</Text>
+          <Text dimColor>{"━".repeat(84)}</Text>
           <Box>
-            <Text bold>{"Total".padEnd(24)}</Text>
+            <Text bold>{"Total".padEnd(36)}</Text>
             <Text>{"".padEnd(14)}</Text>
             <Text bold>{String(totals.files).padEnd(8)}</Text>
             <Text bold>{totals.lines.toLocaleString().padEnd(10)}</Text>
