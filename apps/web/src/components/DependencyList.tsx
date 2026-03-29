@@ -243,7 +243,7 @@ export function DependencyList({ report }: Props) {
         <span className="text-sm text-gray-400">
           For deep dependency inspection, try{' '}
           <a
-            href="https://github.com/nicolo-ribaudo/node-modules-inspector"
+            href="https://github.com/antfu/node-modules-inspector"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-400 hover:text-blue-300 hover:underline"
