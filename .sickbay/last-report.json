@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-03-22T03:40:01.500Z",
-  "projectPath": "/Users/tracericochet/Desktop/dev/sickbay",
+  "timestamp": "2026-03-29T05:42:43.356Z",
+  "projectPath": "/Users/tracericochet/Desktop/nebulord/sickbay",
   "projectInfo": {
     "name": "sickbay-monorepo",
     "version": "0.0.1",
@@ -14,23 +14,25 @@
     "devDependencies": {
       "@eslint/js": "^10.0.1",
       "@types/node": "^25.5.0",
-      "@typescript-eslint/eslint-plugin": "^8.57.1",
-      "@typescript-eslint/parser": "^8.57.1",
-      "@vitest/coverage-v8": "^4.1.0",
+      "@typescript-eslint/eslint-plugin": "^8.57.2",
+      "@typescript-eslint/parser": "^8.57.2",
+      "@vitest/coverage-v8": "catalog:",
       "eslint": "^10.1.0",
       "eslint-config-prettier": "^10.1.8",
       "eslint-plugin-react": "^7.37.5",
       "eslint-plugin-react-hooks": "^7.0.1",
-      "tsup": "^8.5.1",
-      "turbo": "^2.8.20",
-      "typescript": "^5.9.3",
-      "vitest": "^4.1.0"
+      "tsup": "catalog:",
+      "turbo": "^2.8.21",
+      "typescript": "catalog:",
+      "vitest": "catalog:"
     },
     "overrides": {
       "minimatch": ">=10.2.3",
       "@types/minimatch": ">=3.0.5",
       "rollup": ">=4.59.0",
-      "prismjs": ">=1.30.0"
+      "prismjs": ">=1.30.0",
+      "picomatch": ">=4.0.4",
+      "brace-expansion": ">=5.0.5"
     }
   },
   "checks": [
@@ -44,7 +46,7 @@
       "toolsUsed": [
         "knip"
       ],
-      "duration": 2142,
+      "duration": 1084,
       "metadata": {
         "unusedFiles": 0,
         "unusedDeps": 0,
@@ -62,7 +64,7 @@
       "toolsUsed": [
         "depcheck"
       ],
-      "duration": 310,
+      "duration": 509,
       "metadata": {
         "unused": 0,
         "missing": 0
@@ -72,15 +74,28 @@
       "id": "outdated",
       "category": "dependencies",
       "name": "Outdated Packages",
-      "score": 100,
-      "status": "pass",
-      "issues": [],
+      "score": 97,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "typescript: 5.9.3 → 6.0.2 (major)",
+          "fix": {
+            "description": "Update typescript to 6.0.2",
+            "command": "pnpm update typescript",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        }
+      ],
       "toolsUsed": [
         "pnpm"
       ],
-      "duration": 996,
+      "duration": 1150,
       "metadata": {
-        "outdatedCount": 0
+        "outdatedCount": 1
       }
     },
     {
@@ -93,7 +108,7 @@
       "toolsUsed": [
         "npm-audit"
       ],
-      "duration": 169,
+      "duration": 357,
       "metadata": {}
     },
     {
@@ -106,7 +121,7 @@
       "toolsUsed": [
         "madge"
       ],
-      "duration": 284,
+      "duration": 480,
       "metadata": {
         "circularCount": 0,
         "graph": {}
@@ -121,7 +136,7 @@
       "issues": [
         {
           "severity": "warning",
-          "message": "Line coverage: 66.3% (target: 80%)",
+          "message": "Line coverage: 66.4% (target: 80%)",
           "fix": {
             "description": "Add tests to improve coverage"
           },
@@ -131,7 +146,7 @@
         },
         {
           "severity": "warning",
-          "message": "Function coverage: 64.3% (target: 80%)",
+          "message": "Function coverage: 64.1% (target: 80%)",
           "fix": {
             "description": "Add tests for uncovered functions"
           },
@@ -143,17 +158,17 @@
       "toolsUsed": [
         "vitest"
       ],
-      "duration": 3252,
+      "duration": 4864,
       "metadata": {
         "testRunner": "vitest",
-        "totalTests": 949,
-        "passed": 949,
+        "totalTests": 974,
+        "passed": 974,
         "failed": 0,
         "skipped": 0,
-        "lines": 66.31,
-        "statements": 64.54,
-        "functions": 64.31,
-        "branches": 55.35
+        "lines": 66.42,
+        "statements": 64.61,
+        "functions": 64.1,
+        "branches": 55.48
       }
     },
     {
@@ -166,7 +181,7 @@
       "toolsUsed": [
         "license-checker"
       ],
-      "duration": 106,
+      "duration": 337,
       "metadata": {
         "totalPackages": 1,
         "flagged": 0
@@ -182,7 +197,7 @@
       "toolsUsed": [
         "jscpd"
       ],
-      "duration": 204,
+      "duration": 432,
       "metadata": {
         "percentage": 0,
         "clones": 0
@@ -198,10 +213,10 @@
       "toolsUsed": [
         "git"
       ],
-      "duration": 52,
+      "duration": 323,
       "metadata": {
-        "lastCommit": "4 minutes ago",
-        "commitCount": 168,
+        "lastCommit": "27 minutes ago",
+        "commitCount": 186,
         "contributorCount": 2,
         "remoteBranches": 4
       }
@@ -263,13 +278,18 @@
       "toolsUsed": [
         "node-async-errors"
       ],
-      "duration": 8
+      "duration": 9
     }
   ],
-  "overallScore": 99,
+  "overallScore": 98,
   "summary": {
     "critical": 0,
-    "warnings": 2,
+    "warnings": 3,
     "info": 0
+  },
+  "quote": {
+    "text": "I'm not sure what you did, but keep doing it.",
+    "source": "T'Ana",
+    "severity": "allClear"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-29T00:43:02.627Z",
+  "timestamp": "2026-03-29T05:38:47.040Z",
   "projectPath": "/Users/tracericochet/Desktop/nebulord/sickbay/apps/cli",
   "projectInfo": {
     "name": "@sickbay/cli",
@@ -43,7 +43,7 @@
       "toolsUsed": [
         "knip"
       ],
-      "duration": 686,
+      "duration": 615,
       "metadata": {
         "unusedFiles": 0,
         "unusedDeps": 0,
@@ -61,7 +61,7 @@
       "toolsUsed": [
         "depcheck"
       ],
-      "duration": 485,
+      "duration": 468,
       "metadata": {
         "unused": 0,
         "missing": 0
@@ -79,7 +79,8 @@
           "message": "typescript: 5.9.3 → 6.0.2 (major)",
           "fix": {
             "description": "Update typescript to 6.0.2",
-            "command": "pnpm update typescript"
+            "command": "pnpm update typescript",
+            "nextSteps": "Run tests to verify nothing broke"
           },
           "reportedBy": [
             "outdated"
@@ -89,7 +90,7 @@
       "toolsUsed": [
         "pnpm"
       ],
-      "duration": 1132,
+      "duration": 1022,
       "metadata": {
         "outdatedCount": 1
       }
@@ -104,7 +105,7 @@
       "toolsUsed": [
         "npm-audit"
       ],
-      "duration": 292,
+      "duration": 300,
       "metadata": {}
     },
     {
@@ -117,7 +118,7 @@
       "toolsUsed": [
         "madge"
       ],
-      "duration": 1283,
+      "duration": 1206,
       "metadata": {
         "circularCount": 0,
         "graph": {
@@ -425,12 +426,12 @@
       "toolsUsed": [
         "file-size-analysis"
       ],
-      "duration": 24,
+      "duration": 21,
       "metadata": {
-        "initialBytes": 156132,
-        "initialKB": 152,
-        "totalBytes": 156132,
-        "totalKB": 152,
+        "initialBytes": 161108,
+        "initialKB": 157,
+        "totalBytes": 161108,
+        "totalKB": 157,
         "fileCount": 19,
         "entryChunks": 0,
         "method": "file-size-analysis",
@@ -446,7 +447,7 @@
       "issues": [
         {
           "severity": "warning",
-          "message": "Line coverage: 71.3% (target: 80%)",
+          "message": "Line coverage: 71.5% (target: 80%)",
           "fix": {
             "description": "Add tests to improve coverage"
           },
@@ -456,7 +457,7 @@
         },
         {
           "severity": "warning",
-          "message": "Function coverage: 70.0% (target: 80%)",
+          "message": "Function coverage: 69.3% (target: 80%)",
           "fix": {
             "description": "Add tests for uncovered functions"
           },
@@ -468,17 +469,17 @@
       "toolsUsed": [
         "vitest"
       ],
-      "duration": 3315,
+      "duration": 3317,
       "metadata": {
         "testRunner": "vitest",
-        "totalTests": 424,
-        "passed": 424,
+        "totalTests": 435,
+        "passed": 435,
         "failed": 0,
         "skipped": 0,
-        "lines": 71.25,
-        "statements": 70.21,
-        "functions": 70.02,
-        "branches": 58.75
+        "lines": 71.45,
+        "statements": 70.34,
+        "functions": 69.31,
+        "branches": 59.14
       }
     },
     {
@@ -491,7 +492,7 @@
       "toolsUsed": [
         "license-checker"
       ],
-      "duration": 251,
+      "duration": 225,
       "metadata": {
         "totalPackages": 20,
         "flagged": 0
@@ -507,7 +508,7 @@
       "toolsUsed": [
         "jscpd"
       ],
-      "duration": 1484,
+      "duration": 1447,
       "metadata": {
         "percentage": 0,
         "clones": 0
@@ -523,7 +524,7 @@
       "toolsUsed": [
         "tsc"
       ],
-      "duration": 1542,
+      "duration": 1521,
       "metadata": {
         "errors": 0
       }
@@ -538,7 +539,7 @@
       "toolsUsed": [
         "todo-scanner"
       ],
-      "duration": 6,
+      "duration": 5,
       "metadata": {
         "total": 0,
         "todo": 0,
@@ -555,7 +556,7 @@
       "issues": [
         {
           "severity": "info",
-          "message": "src/components/FixApp.tsx: 425 lines — consider splitting into smaller modules",
+          "message": "src/components/FixApp.tsx: 531 lines — consider splitting into smaller modules",
           "fix": {
             "description": "Extract concerns into smaller, focused files"
           },
@@ -565,7 +566,7 @@
         },
         {
           "severity": "info",
-          "message": "src/components/tui/TuiApp.tsx: 422 lines — consider splitting into smaller modules",
+          "message": "src/components/tui/TuiApp.tsx: 425 lines — consider splitting into smaller modules",
           "fix": {
             "description": "Extract concerns into smaller, focused files"
           },
@@ -580,25 +581,25 @@
       "duration": 1,
       "metadata": {
         "totalFiles": 41,
-        "totalLines": 5134,
-        "avgLines": 125,
+        "totalLines": 5280,
+        "avgLines": 129,
         "oversizedCount": 2,
         "topFiles": [
           {
             "path": "src/components/FixApp.tsx",
-            "lines": 425
+            "lines": 531
           },
           {
             "path": "src/components/tui/TuiApp.tsx",
-            "lines": 422
+            "lines": 425
+          },
+          {
+            "path": "src/index.ts",
+            "lines": 370
           },
           {
             "path": "src/commands/doctor.ts",
             "lines": 368
-          },
-          {
-            "path": "src/index.ts",
-            "lines": 363
           },
           {
             "path": "src/components/StatsApp.tsx",
@@ -606,7 +607,7 @@
           },
           {
             "path": "src/components/App.tsx",
-            "lines": 288
+            "lines": 292
           },
           {
             "path": "src/components/TrendApp.tsx",
@@ -668,7 +669,7 @@
       "issues": [
         {
           "severity": "info",
-          "message": "src/components/FixApp.tsx — Large component file (455 lines) — consider splitting",
+          "message": "src/components/FixApp.tsx — Large component file (568 lines) — consider splitting",
           "file": "src/components/FixApp.tsx",
           "fix": {
             "description": "Break into smaller, focused components to improve readability and render performance"
@@ -679,7 +680,7 @@
         },
         {
           "severity": "info",
-          "message": "src/components/tui/TuiApp.tsx — Large component file (457 lines) — consider splitting",
+          "message": "src/components/tui/TuiApp.tsx — Large component file (460 lines) — consider splitting",
           "file": "src/components/tui/TuiApp.tsx",
           "fix": {
             "description": "Break into smaller, focused components to improve readability and render performance"
@@ -692,7 +693,7 @@
       "toolsUsed": [
         "react-perf"
       ],
-      "duration": 2,
+      "duration": 3,
       "metadata": {
         "filesScanned": 23,
         "reactCompiler": false,
@@ -728,5 +729,10 @@
     "critical": 0,
     "warnings": 3,
     "info": 4
+  },
+  "quote": {
+    "text": "Full marks. Now get out of my sickbay before something breaks.",
+    "source": "T'Ana",
+    "severity": "allClear"
   }
 }
