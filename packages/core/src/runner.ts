@@ -3,6 +3,7 @@ import type { SickbayReport, CheckResult, ToolRunner, MonorepoReport, PackageRep
 import { detectProject, detectContext } from './utils/detect-project.js';
 import { detectMonorepo } from './utils/detect-monorepo.js';
 import { calculateOverallScore, buildSummary } from './scoring.js';
+import { getQuote } from './quotes/index.js';
 import { KnipRunner } from './integrations/knip.js';
 import { OutdatedRunner } from './integrations/outdated.js';
 import { NpmAuditRunner } from './integrations/npm-audit.js';
@@ -29,6 +30,7 @@ export interface RunnerOptions {
   projectPath?: string;
   checks?: string[];
   verbose?: boolean;
+  quotes?: boolean;
   onRunnersReady?: (names: string[]) => void;
   onCheckStart?: (name: string) => void;
   onCheckComplete?: (result: CheckResult) => void;
@@ -104,6 +106,7 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
     checks,
     overallScore,
     summary,
+    quote: options.quotes !== false ? getQuote(overallScore) : undefined,
   };
 }
 
@@ -163,5 +166,6 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
     packages: packageReports,
     overallScore,
     summary,
+    quote: options.quotes !== false ? getQuote(overallScore) : undefined,
   };
 }

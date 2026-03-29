@@ -10,6 +10,7 @@ interface ProgressItem {
 interface UseSickbayRunnerOptions {
   projectPath: string;
   checks?: string[];
+  quotes?: boolean;
 }
 
 /**
@@ -49,7 +50,7 @@ function rollUpMonorepoReport(monorepo: MonorepoReport): SickbayReport {
   };
 }
 
-export function useSickbayRunner({ projectPath, checks }: UseSickbayRunnerOptions) {
+export function useSickbayRunner({ projectPath, checks, quotes }: UseSickbayRunnerOptions) {
   const [report, setReport] = useState<SickbayReport | null>(null);
   const [monorepoReport, setMonorepoReport] = useState<MonorepoReport | null>(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -70,6 +71,7 @@ export function useSickbayRunner({ projectPath, checks }: UseSickbayRunnerOption
         const result = await runSickbayMonorepo({
           projectPath,
           checks,
+          quotes,
         });
 
         setMonorepoReport(result);
@@ -84,6 +86,7 @@ export function useSickbayRunner({ projectPath, checks }: UseSickbayRunnerOption
       const result = await runSickbay({
         projectPath,
         checks,
+        quotes,
         onRunnersReady: (names) => {
           setProgress(names.map((name) => ({ name, status: "pending" as const })));
         },
@@ -119,7 +122,7 @@ export function useSickbayRunner({ projectPath, checks }: UseSickbayRunnerOption
       scanningRef.current = false;
       return null;
     }
-  }, [projectPath, checks]);
+  }, [projectPath, checks, quotes]);
 
   return { report, monorepoReport, isScanning, progress, error, scan };
 }

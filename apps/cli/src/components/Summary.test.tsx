@@ -98,4 +98,23 @@ describe("Summary", () => {
     expect(output).toContain("0 warnings");
     expect(output).toContain("0 info");
   });
+
+  it("renders quote when present on report", () => {
+    const report = createMockReport({
+      quote: { text: "He's dead, Jim.", source: "Dr. McCoy", severity: "critical" },
+    });
+    const { lastFrame } = render(<Summary report={report} />);
+
+    const output = lastFrame();
+    expect(output).toContain("He's dead, Jim.");
+    expect(output).toContain("Dr. McCoy");
+  });
+
+  it("does not render quote section when report.quote is undefined", () => {
+    const report = createMockReport();
+    const { lastFrame } = render(<Summary report={report} />);
+
+    const output = lastFrame();
+    expect(output).not.toContain("Dr. McCoy");
+  });
 });

@@ -178,4 +178,24 @@ describe("ScorePanel", () => {
     await vi.advanceTimersByTimeAsync(2500);
     expect(lastFrame()).toContain("100/100");
   });
+
+  it("renders quote when present on report", () => {
+    const report = {
+      ...createMockReport(75),
+      quote: { text: "I'm a doctor, not an engineer!", source: "Dr. McCoy", severity: "warning" as const },
+    };
+    const { lastFrame } = render(
+      <ScorePanel report={report} previousScore={null} animate={false} />
+    );
+    expect(lastFrame()).toContain("I'm a doctor, not an engineer!");
+    expect(lastFrame()).toContain("Dr. McCoy");
+  });
+
+  it("does not render quote when absent", () => {
+    const report = createMockReport(75);
+    const { lastFrame } = render(
+      <ScorePanel report={report} previousScore={null} animate={false} />
+    );
+    expect(lastFrame()).not.toContain("Dr. McCoy");
+  });
 });

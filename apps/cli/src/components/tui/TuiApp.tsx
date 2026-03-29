@@ -20,6 +20,7 @@ interface TuiAppProps {
   checks?: string[];
   watchEnabled: boolean;
   refreshInterval: number;
+  quotes?: boolean;
   animateOnMount?: boolean;
 }
 
@@ -28,12 +29,14 @@ export function TuiApp({
   checks,
   watchEnabled,
   refreshInterval,
+  quotes,
   animateOnMount = true,
 }: TuiAppProps) {
   const { rows, columns } = useTerminalSize();
   const { report, monorepoReport, isScanning, progress, scan } = useSickbayRunner({
     projectPath,
     checks,
+    quotes,
   });
 
   const [focusedPanel, setFocusedPanel] = useState<PanelId | null>(null);

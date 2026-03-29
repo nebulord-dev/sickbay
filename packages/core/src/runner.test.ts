@@ -210,4 +210,19 @@ describe('runSickbay', () => {
 
     expect(allMockRunners.knip.run).toHaveBeenCalledWith('/p', { verbose: true });
   });
+
+  it('includes quote on report by default', async () => {
+    const report = await runSickbay({ projectPath: '/p' });
+
+    expect(report.quote).toBeDefined();
+    expect(report.quote).toHaveProperty('text');
+    expect(report.quote).toHaveProperty('source');
+    expect(report.quote).toHaveProperty('severity');
+  });
+
+  it('omits quote when quotes: false', async () => {
+    const report = await runSickbay({ projectPath: '/p', quotes: false });
+
+    expect(report.quote).toBeUndefined();
+  });
 });

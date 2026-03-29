@@ -38,6 +38,7 @@ program
   .option("--json", "output raw JSON report")
   .option("--web", "open web dashboard after scan")
   .option("--no-ai", "disable AI features")
+  .option("--no-quotes", "suppress personality quotes in output")
   .option("--verbose", "show verbose output")
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
@@ -73,7 +74,7 @@ program
       }
 
       if (options.json) {
-        const report = await runSickbay({ projectPath: targetPath, checks, verbose: options.verbose });
+        const report = await runSickbay({ projectPath: targetPath, checks, verbose: options.verbose, quotes: options.quotes });
         process.stdout.write(JSON.stringify(report, null, 2) + "\n");
         process.exit(0);
       }
@@ -85,6 +86,7 @@ program
           openWeb: options.web,
           enableAI: options.ai !== false,
           verbose: options.verbose,
+          quotes: options.quotes,
         }),
       );
       return;
@@ -96,6 +98,7 @@ program
           projectPath: options.path,
           checks,
           verbose: options.verbose,
+          quotes: options.quotes,
         });
         process.stdout.write(JSON.stringify(report, null, 2) + "\n");
         process.exit(0);
@@ -105,6 +108,7 @@ program
         projectPath: options.path,
         checks,
         verbose: options.verbose,
+        quotes: options.quotes,
       });
 
       // Auto-save to trend history and last-report snapshot
@@ -127,6 +131,7 @@ program
         openWeb: options.web,
         enableAI: options.ai !== false,
         verbose: options.verbose,
+        quotes: options.quotes,
         isMonorepo: monorepoInfo.isMonorepo,
       }),
     );
@@ -265,6 +270,7 @@ program
   .description("Launch the persistent developer dashboard")
   .option("-p, --path <path>", "project path to monitor", process.cwd())
   .option("--no-watch", "disable file-watching auto-refresh")
+  .option("--no-quotes", "suppress personality quotes in output")
   .option("--refresh <seconds>", "auto-refresh interval in seconds", "300")
   .option("-c, --checks <checks>", "comma-separated list of checks to run")
   .action(async (options) => {
@@ -278,6 +284,7 @@ program
         checks,
         watchEnabled: options.watch !== false,
         refreshInterval: parseInt(options.refresh, 10),
+        quotes: options.quotes,
       }),
       { exitOnCtrlC: true },
     );
@@ -349,7 +356,7 @@ program
 
     if (score === null) {
       const { runSickbay } = await import("@sickbay/core");
-      const report = await runSickbay({ projectPath });
+      const report = await runSickbay({ projectPath, quotes: false });
 
       try {
         const { saveEntry, saveLastReport } = await import("./lib/history.js");

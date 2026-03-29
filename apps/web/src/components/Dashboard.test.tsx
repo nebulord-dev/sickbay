@@ -144,4 +144,19 @@ describe('Dashboard', () => {
     expect(screen.getByText('ESLint warning')).toBeInTheDocument();
     expect(screen.queryByText('Knip info')).not.toBeInTheDocument();
   });
+
+  it('renders quote when present on report', () => {
+    const report = makeReport({
+      quote: { text: "He's dead, Jim.", source: "Dr. McCoy", severity: "critical" },
+    });
+    render(<Dashboard report={report} />);
+    expect(screen.getByText(/He's dead, Jim\./)).toBeInTheDocument();
+    expect(screen.getByText(/Dr\. McCoy/)).toBeInTheDocument();
+  });
+
+  it('does not render quote when absent', () => {
+    const report = makeReport();
+    render(<Dashboard report={report} />);
+    expect(screen.queryByText(/Dr\. McCoy/)).not.toBeInTheDocument();
+  });
 });

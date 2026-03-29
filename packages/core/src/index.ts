@@ -4,6 +4,7 @@ export { detectProject, detectPackageManager, detectContext } from './utils/dete
 export { detectMonorepo } from './utils/detect-monorepo.js';
 export type {
   SickbayReport,
+  Quote,
   ProjectInfo,
   CheckResult,
   Issue,

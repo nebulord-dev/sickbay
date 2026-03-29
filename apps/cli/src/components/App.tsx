@@ -17,6 +17,7 @@ interface AppProps {
   openWeb?: boolean;
   enableAI?: boolean;
   verbose?: boolean;
+  quotes?: boolean;
   isMonorepo?: boolean;
 }
 
@@ -39,6 +40,7 @@ export function App({
   openWeb,
   enableAI,
   verbose,
+  quotes,
   isMonorepo,
 }: AppProps) {
   const { exit } = useApp();
@@ -71,6 +73,7 @@ export function App({
         projectPath,
         checks,
         verbose,
+        quotes,
         onPackageStart: (name) => setScanningPackage(name),
         onPackageComplete: () => setScanningPackage(undefined),
       })
@@ -115,6 +118,7 @@ export function App({
       projectPath,
       checks,
       verbose,
+      quotes,
       onRunnersReady: (names) => {
         setProgress(names.map((name) => ({ name, status: "pending" as const })));
       },

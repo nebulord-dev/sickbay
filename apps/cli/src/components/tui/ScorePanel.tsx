@@ -86,6 +86,11 @@ export function ScorePanel({ report, previousScore, animate = true }: ScorePanel
           <Text dimColor>i {report.summary.info} info</Text>
         </Box>
       </Box>
+      {report.quote && (
+        <Box marginTop={1}>
+          <Text italic dimColor>"{report.quote.text}" — {report.quote.source}</Text>
+        </Box>
+      )}
     </Box>
   );
 }

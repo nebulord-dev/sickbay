@@ -27,6 +27,12 @@ export function Summary({ report }: SummaryProps) {
         <Text color="yellow"> ⚠ {report.summary.warnings} warnings</Text>
         <Text color="gray"> i {report.summary.info} info</Text>
       </Box>
+      {report.quote && (
+        <Box marginTop={1}>
+          <Text italic dimColor>"{report.quote.text}"</Text>
+          <Text dimColor> — {report.quote.source}</Text>
+        </Box>
+      )}
     </Box>
   );
 }

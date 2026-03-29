@@ -1,3 +1,9 @@
+export interface Quote {
+  text: string;
+  source: string;
+  severity: 'critical' | 'warning' | 'info' | 'allClear';
+}
+
 export interface SickbayReport {
   timestamp: string;
   projectPath: string;
@@ -9,6 +15,7 @@ export interface SickbayReport {
     warnings: number;
     info: number;
   };
+  quote?: Quote;
 }
 
 export interface ProjectInfo {
@@ -118,4 +125,5 @@ export interface MonorepoReport {
   packages: PackageReport[];
   overallScore: number;
   summary: { critical: number; warnings: number; info: number };
+  quote?: Quote;
 }

@@ -161,6 +161,11 @@ export function Dashboard({ report }: DashboardProps) {
                 {" · "}
                 <span className="text-yellow-400">{monorepo.summary.warnings} warnings</span>
               </div>
+              {monorepo.quote && (
+                <p className="text-sm italic text-gray-400 mt-2">
+                  "{monorepo.quote.text}" <span className="not-italic">— {monorepo.quote.source}</span>
+                </p>
+              )}
             </div>
             <nav className="p-2 flex-1 overflow-y-auto">
               <div className="text-xs text-gray-500 px-2 py-1">packages</div>
@@ -277,6 +282,11 @@ export function Dashboard({ report }: DashboardProps) {
                 {" · "}
                 <span className="text-gray-400">{activeReport.summary.info} info</span>
               </div>
+              {activeReport.quote && (
+                <p className="text-sm italic text-gray-400 mt-2">
+                  "{activeReport.quote.text}" <span className="not-italic">— {activeReport.quote.source}</span>
+                </p>
+              )}
             </div>
 
             <nav className="p-2 flex-1 overflow-y-auto">
