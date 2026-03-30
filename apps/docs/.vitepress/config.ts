@@ -6,6 +6,17 @@ export default defineConfig({
   base: '/sickbay/',
   appearance: 'dark',
 
+  head: [
+    [
+      'script',
+      {
+        defer: '',
+        src: 'https://static.cloudflareinsights.com/beacon.min.js',
+        'data-cf-beacon': '{"token": "8585c204658b4cc5ae21970ebed2e7f6"}',
+      },
+    ],
+  ],
+
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide/introduction' },
