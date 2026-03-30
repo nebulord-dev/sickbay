@@ -1,9 +1,4 @@
 {
-  "trivy.useIgnoreFile": true,
-  "trivy.ignoreFilePath": "/Users/chmc-gd9nn2t4fv/Documents/code/sickbay/.trivyignore.yaml",
-  "trivy.useConfigFile": true,
-  "trivy.onlyUseConfigFile": false,
-  "trivy.configFilePath": "/Users/chmc-gd9nn2t4fv/Documents/code/sickbay/trivy.yaml",
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "always"
   },
