@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { render } from 'ink-testing-library';
 import { Text } from 'ink';
 import type { SickbayReport } from '@nebulord/sickbay-core';
@@ -53,7 +53,6 @@ function RunnerDisplay({
   projectPath,
   checks,
   scanRef,
-  onScanComplete,
 }: {
   projectPath: string;
   checks?: string[];
@@ -110,9 +109,12 @@ describe('useSickbayRunner', () => {
 
     // Kick off scan (don't await — it's still pending)
     scanRef.current?.();
-    // React 18 batches and schedules re-renders via its internal scheduler.
-    // setTimeout(0) runs after React's scheduler has flushed the pending render.
-    await new Promise((r) => setTimeout(r, 0));
+    // React batches and schedules re-renders via its internal scheduler.
+    // Flush multiple ticks to ensure the render has completed on slower CI runners.
+    for (let i = 0; i < 5; i++) {
+      await new Promise((r) => setTimeout(r, 0));
+      if (lastFrame()?.includes('scanning:true')) break;
+    }
 
     expect(lastFrame()).toContain('scanning:true');
 
@@ -285,18 +287,16 @@ describe('useSickbayRunner', () => {
     mockRunSickbay.mockResolvedValue(report as any);
 
     const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
-    let returnedReport: SickbayReport | null | undefined = undefined;
-
     render(
       React.createElement(RunnerDisplay, {
         projectPath: '/test/project',
         scanRef,
-        onScanComplete: (r) => { returnedReport = r; },
+        onScanComplete: () => {},
       }),
     );
 
     await new Promise((r) => setImmediate(r));
-    returnedReport = await scanRef.current?.() ?? null;
+    const returnedReport = await scanRef.current?.() ?? null;
     await new Promise((r) => setImmediate(r));
 
     expect(returnedReport).toMatchObject({ overallScore: 99 });

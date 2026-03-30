@@ -135,7 +135,7 @@ describe('OutdatedRunner', () => {
   it('uses detected package manager in the fix command', async () => {
     mockDetectPM.mockReturnValue('pnpm');
     mockExeca.mockResolvedValue({
-      stdout: makeOutdated({ pkg: { current: '1.0.0', latest: '2.0.0' } }),
+      stdout: makeOutdated({ pkg: { current: '1.0.0', latest: '1.1.0' } }),
     } as never);
 
     const result = await runner.run('/project');

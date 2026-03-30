@@ -128,8 +128,6 @@ export function Dashboard({ report }: DashboardProps) {
     setView("overview");
   };
 
-  const displayReport = activeReport ?? report;
-
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
