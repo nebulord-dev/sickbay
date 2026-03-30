@@ -1,7 +1,7 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
-  plugins: ['typescript', 'react', 'react-hooks'],
+  plugins: ['typescript', 'react'],
   ignorePatterns: ['dist/**', '.turbo/**', 'coverage/**', 'build/**', 'fixtures/**'],
   rules: {
     // TypeScript
