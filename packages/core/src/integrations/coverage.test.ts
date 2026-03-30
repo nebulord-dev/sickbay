@@ -20,13 +20,11 @@ vi.mock('../utils/detect-project.js', () => ({
 import { execa } from 'execa';
 import { existsSync, readFileSync } from 'fs';
 import { readPackageJson } from '../utils/file-helpers.js';
-import { detectPackageManager } from '../utils/detect-project.js';
 
 const mockExeca = vi.mocked(execa);
 const mockExistsSync = vi.mocked(existsSync);
 const mockReadFileSync = vi.mocked(readFileSync);
 const mockReadPackageJson = vi.mocked(readPackageJson);
-const mockDetectPackageManager = vi.mocked(detectPackageManager);
 
 const goodCoverage = {
   total: {

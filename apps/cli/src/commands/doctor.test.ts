@@ -355,7 +355,7 @@ describe('runDiagnostics', () => {
 
   it('handles a check that throws by pushing a fail result', async () => {
     // Force readFileSync to throw so one of the checks blows up
-    mockReadFileSync.mockImplementation((p: unknown) => {
+    mockReadFileSync.mockImplementation(() => {
       throw new Error('permission denied');
     });
 

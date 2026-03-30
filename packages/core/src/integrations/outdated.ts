@@ -121,10 +121,6 @@ function getVersionParts(version: string): [number, number, number] {
   ];
 }
 
-function getMajor(version: string): number {
-  return getVersionParts(version)[0];
-}
-
 function getUpdateType(current: string, latest: string): 'major' | 'minor' | 'patch' {
   const [curMaj, curMin] = getVersionParts(current);
   const [latMaj, latMin] = getVersionParts(latest);

@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TodoScannerRunner } from './todo-scanner.js';
 
 import { existsSync, readdirSync, statSync, readFileSync } from 'fs';
-import { WARN_LINES } from '../constants.js';
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),

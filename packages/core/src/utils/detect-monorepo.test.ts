@@ -30,15 +30,6 @@ function setupGlobby(paths: string[]) {
   mockGlobby.mockResolvedValue(paths as never);
 }
 
-function packageJsonAt(...paths: string[]) {
-  mockExistsSync.mockImplementation((p) => {
-    const s = String(p);
-    return paths.some((allowed) => s === allowed || s === allowed + '/package.json') ||
-      paths.some((dir) => s === `${dir}/package.json`) ||
-      s === `${ROOT}/package.json`;
-  });
-}
-
 beforeEach(() => {
   vi.clearAllMocks();
   mockExistsSync.mockReturnValue(false);

@@ -13,7 +13,6 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 import { readdirSync, statSync, readFileSync } from 'fs';
-import { WARN_LINES } from '../constants.js';
 
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);

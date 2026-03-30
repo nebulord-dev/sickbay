@@ -41,7 +41,7 @@ const allMockRunners = vi.hoisted(() => {
 });
 
 // Regular functions (not arrow functions) are required so they can be called with `new`
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 vi.mock('./integrations/knip.js', () => ({ KnipRunner: function () { return allMockRunners.knip; } }));
 vi.mock('./integrations/outdated.js', () => ({ OutdatedRunner: function () { return allMockRunners.outdated; } }));
 vi.mock('./integrations/npm-audit.js', () => ({ NpmAuditRunner: function () { return allMockRunners.npmAudit; } }));
@@ -60,7 +60,7 @@ vi.mock('./integrations/secrets.js', () => ({ SecretsRunner: function () { retur
 vi.mock('./integrations/heavy-deps.js', () => ({ HeavyDepsRunner: function () { return allMockRunners.heavyDeps; } }));
 vi.mock('./integrations/react-perf.js', () => ({ ReactPerfRunner: function () { return allMockRunners.reactPerf; } }));
 vi.mock('./integrations/asset-size.js', () => ({ AssetSizeRunner: function () { return allMockRunners.assetSize; } }));
-/* eslint-enable @typescript-eslint/no-explicit-any */
+ 
 
 const mockProjectInfo = {
   name: 'test-project',

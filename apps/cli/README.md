@@ -2,6 +2,18 @@
 
 The terminal interface for Sickbay. Built with [Ink](https://github.com/vadimdemedes/ink) (React for terminals) and [Commander](https://github.com/tj/commander.js).
 
+## Quickstart
+```bash
+# Terminal
+npx sickbay
+
+# Web
+npx sickbay --web
+
+# TUI
+npx sickbay --tui
+```
+
 ## Usage
 
 ```bash

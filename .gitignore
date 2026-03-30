@@ -11,3 +11,6 @@ coverage/
 .sickbay/
 
 wallaby.cjs
+
+# ignore plans Claude makes using plugins
+docs/*
