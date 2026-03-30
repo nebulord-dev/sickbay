@@ -1,16 +1,19 @@
-import { execa } from "execa";
-import { globby } from "globby";
-import { statSync, readFileSync } from "fs";
-import { join } from "path";
-import { BaseRunner } from "./base.js";
+import { statSync, readFileSync } from 'fs';
+import { join } from 'path';
+
+import { execa } from 'execa';
+import { globby } from 'globby';
+
 import {
   timer,
   isCommandAvailable,
   fileExists,
   coreLocalDir,
   parseJsonOutput,
-} from "../utils/file-helpers.js";
-import type { CheckResult, Issue } from "../types.js";
+} from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
+import type { CheckResult, Issue } from '../types.js';
 
 /**
  * SourceMapExplorerRunner analyzes the project's JavaScript bundle size using source-map-explorer if source maps are available.
@@ -48,17 +51,17 @@ function findEntryChunks(buildPath: string): string[] {
 }
 
 export class SourceMapExplorerRunner extends BaseRunner {
-  name = "source-map-explorer";
-  category = "performance" as const;
+  name = 'source-map-explorer';
+  category = 'performance' as const;
   applicableRuntimes = ['browser'] as const;
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
-    const buildDir = fileExists(projectPath, "dist") ? "dist" : "build";
+    const buildDir = fileExists(projectPath, 'dist') ? 'dist' : 'build';
     const buildPath = join(projectPath, buildDir);
 
     // Check if source maps exist
-    const mapFiles = await globby("**/*.js.map", {
+    const mapFiles = await globby('**/*.js.map', {
       cwd: buildPath,
       absolute: false,
     });
@@ -66,23 +69,19 @@ export class SourceMapExplorerRunner extends BaseRunner {
 
     // Try source-map-explorer if maps exist and tool is available
     if (hasSourceMaps) {
-      const available = await isCommandAvailable("source-map-explorer");
+      const available = await isCommandAvailable('source-map-explorer');
       if (available) {
         try {
-          const { stdout } = await execa(
-            "source-map-explorer",
-            [`${buildDir}/**/*.js`, "--json"],
-            {
-              cwd: projectPath,
-              reject: false,
-              preferLocal: true,
-              localDir: coreLocalDir,
-            },
-          );
+          const { stdout } = await execa('source-map-explorer', [`${buildDir}/**/*.js`, '--json'], {
+            cwd: projectPath,
+            reject: false,
+            preferLocal: true,
+            localDir: coreLocalDir,
+          });
 
           // Validate JSON output before parsing
-          if (stdout && stdout.trim().startsWith("{")) {
-            const data = parseJsonOutput(stdout, "{}") as SmeOutput;
+          if (stdout && stdout.trim().startsWith('{')) {
+            const data = parseJsonOutput(stdout, '{}') as SmeOutput;
             const results = data.results ?? [];
 
             if (results.length > 0) {
@@ -94,23 +93,21 @@ export class SourceMapExplorerRunner extends BaseRunner {
               const issues: Issue[] = [];
               if (largestBytes > SIZE_THRESHOLD_FAIL) {
                 issues.push({
-                  severity: "critical",
+                  severity: 'critical',
                   message: `Largest bundle is ${largestKB}KB — exceeds 1MB threshold`,
                   fix: {
-                    description:
-                      "Use code splitting and lazy imports to reduce bundle size",
+                    description: 'Use code splitting and lazy imports to reduce bundle size',
                   },
-                  reportedBy: ["source-map-explorer"],
+                  reportedBy: ['source-map-explorer'],
                 });
               } else if (largestBytes > SIZE_THRESHOLD_WARN) {
                 issues.push({
-                  severity: "warning",
+                  severity: 'warning',
                   message: `Largest bundle is ${largestKB}KB — consider optimizing`,
                   fix: {
-                    description:
-                      "Review large dependencies and consider tree-shaking",
+                    description: 'Review large dependencies and consider tree-shaking',
                   },
-                  reportedBy: ["source-map-explorer"],
+                  reportedBy: ['source-map-explorer'],
                 });
               }
 
@@ -122,18 +119,18 @@ export class SourceMapExplorerRunner extends BaseRunner {
                     : 100;
 
               return {
-                id: "source-map-explorer",
+                id: 'source-map-explorer',
                 category: this.category,
-                name: "Bundle Size",
+                name: 'Bundle Size',
                 score,
                 status:
                   issues.length === 0
-                    ? "pass"
-                    : issues[0].severity === "critical"
-                      ? "fail"
-                      : "warning",
+                    ? 'pass'
+                    : issues[0].severity === 'critical'
+                      ? 'fail'
+                      : 'warning',
                 issues,
-                toolsUsed: ["source-map-explorer"],
+                toolsUsed: ['source-map-explorer'],
                 duration: elapsed(),
                 metadata: {
                   largestBytes,
@@ -141,7 +138,7 @@ export class SourceMapExplorerRunner extends BaseRunner {
                   totalBytes,
                   totalKB,
                   bundleCount: results.length,
-                  method: "source-map-explorer",
+                  method: 'source-map-explorer',
                 },
               };
             }
@@ -154,10 +151,10 @@ export class SourceMapExplorerRunner extends BaseRunner {
 
     // Fallback: simple file size analysis (no source maps needed)
     try {
-      const jsFiles = await globby("**/*.js", {
+      const jsFiles = await globby('**/*.js', {
         cwd: buildPath,
         absolute: true,
-        ignore: ["**/*.map"],
+        ignore: ['**/*.map'],
       });
 
       if (jsFiles.length === 0) {
@@ -191,48 +188,40 @@ export class SourceMapExplorerRunner extends BaseRunner {
 
       if (initialBytes > SIZE_THRESHOLD_FAIL) {
         issues.push({
-          severity: "critical",
+          severity: 'critical',
           message: `Initial bundle is ${initialKB}KB — exceeds 1MB threshold`,
           fix: {
             description: hasSourceMaps
-              ? "Use code splitting and lazy imports to reduce bundle size"
-              : "Use code splitting and lazy imports to reduce bundle size. Enable source maps (sourcemap: true) for detailed analysis",
+              ? 'Use code splitting and lazy imports to reduce bundle size'
+              : 'Use code splitting and lazy imports to reduce bundle size. Enable source maps (sourcemap: true) for detailed analysis',
           },
-          reportedBy: ["bundle-size-check"],
+          reportedBy: ['bundle-size-check'],
         });
       } else if (initialBytes > SIZE_THRESHOLD_WARN) {
         issues.push({
-          severity: "warning",
+          severity: 'warning',
           message: `Initial bundle is ${initialKB}KB — consider optimizing`,
           fix: {
             description: hasSourceMaps
-              ? "Review large dependencies and consider tree-shaking"
-              : "Review large dependencies and consider tree-shaking. Enable source maps (sourcemap: true) for detailed analysis",
+              ? 'Review large dependencies and consider tree-shaking'
+              : 'Review large dependencies and consider tree-shaking. Enable source maps (sourcemap: true) for detailed analysis',
           },
-          reportedBy: ["bundle-size-check"],
+          reportedBy: ['bundle-size-check'],
         });
       }
 
       const score =
-        initialBytes > SIZE_THRESHOLD_FAIL
-          ? 40
-          : initialBytes > SIZE_THRESHOLD_WARN
-            ? 70
-            : 100;
+        initialBytes > SIZE_THRESHOLD_FAIL ? 40 : initialBytes > SIZE_THRESHOLD_WARN ? 70 : 100;
 
       return {
-        id: "source-map-explorer",
+        id: 'source-map-explorer',
         category: this.category,
-        name: "Bundle Size",
+        name: 'Bundle Size',
         score,
         status:
-          issues.length === 0
-            ? "pass"
-            : issues[0].severity === "critical"
-              ? "fail"
-              : "warning",
+          issues.length === 0 ? 'pass' : issues[0].severity === 'critical' ? 'fail' : 'warning',
         issues,
-        toolsUsed: ["file-size-analysis"],
+        toolsUsed: ['file-size-analysis'],
         duration: elapsed(),
         metadata: {
           initialBytes,
@@ -241,29 +230,29 @@ export class SourceMapExplorerRunner extends BaseRunner {
           totalKB,
           fileCount: jsFiles.length,
           entryChunks: entryChunks.length,
-          method: "file-size-analysis",
+          method: 'file-size-analysis',
           note: hasEntryChunkInfo
             ? `Total bundle: ${totalKB}KB across ${jsFiles.length} chunks`
             : hasSourceMaps
-              ? "Source maps found but analysis failed"
-              : "No source maps — using total bundle size",
+              ? 'Source maps found but analysis failed'
+              : 'No source maps — using total bundle size',
         },
       };
     } catch (err) {
       return {
-        id: "source-map-explorer",
+        id: 'source-map-explorer',
         category: this.category,
-        name: "Bundle Size",
+        name: 'Bundle Size',
         score: 0,
-        status: "fail",
+        status: 'fail',
         issues: [
           {
-            severity: "critical",
+            severity: 'critical',
             message: `Bundle analysis failed: ${err}`,
-            reportedBy: ["bundle-size-check"],
+            reportedBy: ['bundle-size-check'],
           },
         ],
-        toolsUsed: ["file-size-analysis"],
+        toolsUsed: ['file-size-analysis'],
         duration: elapsed(),
       };
     }

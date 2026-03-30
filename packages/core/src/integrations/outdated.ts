@@ -1,7 +1,9 @@
 import { execa } from 'execa';
-import { BaseRunner } from './base.js';
-import { timer } from '../utils/file-helpers.js';
+
 import { detectPackageManager } from '../utils/detect-project.js';
+import { timer } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -80,7 +82,13 @@ export class OutdatedRunner extends BaseRunner {
         name: 'Outdated Packages',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `${pm} outdated failed: ${err}`, reportedBy: ['outdated'] }],
+        issues: [
+          {
+            severity: 'critical',
+            message: `${pm} outdated failed: ${err}`,
+            reportedBy: ['outdated'],
+          },
+        ],
         toolsUsed: [pm],
         duration: elapsed(),
       };
@@ -94,8 +102,10 @@ function parseOutdated(stdout: string): OutdatedEntry[] {
   try {
     // Both npm and pnpm return { pkgName: { current, latest, ... } }
     // npm uses `type`, pnpm uses `dependencyType`
-    const raw: Record<string, { current: string; latest: string; type?: string; dependencyType?: string }> =
-      JSON.parse(stdout);
+    const raw: Record<
+      string,
+      { current: string; latest: string; type?: string; dependencyType?: string }
+    > = JSON.parse(stdout);
 
     return Object.entries(raw)
       .filter(([_, info]) => info.current && info.latest) // Skip entries with missing version data

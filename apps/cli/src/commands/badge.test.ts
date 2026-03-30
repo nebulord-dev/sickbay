@@ -6,6 +6,7 @@ vi.mock('fs', () => ({
 }));
 
 import { existsSync, readFileSync } from 'fs';
+
 import {
   getScoreColor,
   badgeUrl,
@@ -86,7 +87,9 @@ describe('badgeMarkdown', () => {
 describe('badgeHtml', () => {
   it('wraps badge URL in an img tag', () => {
     const html = badgeHtml(92);
-    expect(html).toBe('<img src="https://img.shields.io/badge/sickbay-92%2F100-brightgreen" alt="sickbay" />');
+    expect(html).toBe(
+      '<img src="https://img.shields.io/badge/sickbay-92%2F100-brightgreen" alt="sickbay" />',
+    );
   });
 
   it('uses custom label in alt attribute', () => {

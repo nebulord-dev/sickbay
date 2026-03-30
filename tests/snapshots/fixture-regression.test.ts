@@ -1,6 +1,8 @@
 import { resolve, relative } from 'path';
 import { fileURLToPath } from 'url';
+
 import { runSickbay } from '@nebulord/sickbay-core';
+
 import type { SickbayReport, CheckResult } from '@nebulord/sickbay-core';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -35,11 +37,8 @@ function normalizeCheck(check: CheckResult): Record<string, unknown> {
   };
 }
 
-function normalizeProjectInfo(
-  info: Record<string, unknown>,
-): Record<string, unknown> {
-  const { dependencies, devDependencies, totalDependencies, ...stable } =
-    info as any;
+function normalizeProjectInfo(info: Record<string, unknown>): Record<string, unknown> {
+  const { dependencies, devDependencies, totalDependencies, ...stable } = info as any;
   return stable;
 }
 
@@ -52,11 +51,7 @@ function snapshotCheck(report: SickbayReport, id: string) {
   expect(normalizeCheck(check)).toMatchSnapshot();
 }
 
-function assertUnstableCheck(
-  report: SickbayReport,
-  id: string,
-  expectedCategory: string,
-) {
+function assertUnstableCheck(report: SickbayReport, id: string, expectedCategory: string) {
   const check = report.checks.find((c) => c.id === id);
   if (!check) return;
   expect(check).toMatchObject({

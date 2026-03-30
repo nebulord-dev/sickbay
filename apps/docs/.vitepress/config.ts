@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   title: 'Sickbay',
@@ -85,4 +85,4 @@ export default defineConfig({
       copyright: 'Copyright 2025-present Nebulord',
     },
   },
-})
+});

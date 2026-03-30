@@ -1,10 +1,13 @@
 import { readFileSync, existsSync, unlinkSync } from 'fs';
-import { join, dirname } from 'path';
 import { tmpdir } from 'os';
+import { join, dirname } from 'path';
+
 import { execa } from 'execa';
-import { BaseRunner } from './base.js';
-import { timer, readPackageJson } from '../utils/file-helpers.js';
+
 import { detectPackageManager } from '../utils/detect-project.js';
+import { timer, readPackageJson } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -31,10 +34,7 @@ interface VitestJsonResult {
   success?: boolean;
 }
 
-const COVERAGE_PATHS = [
-  'coverage/coverage-summary.json',
-  'coverage/coverage-final.json',
-];
+const COVERAGE_PATHS = ['coverage/coverage-summary.json', 'coverage/coverage-final.json'];
 
 export class CoverageRunner extends BaseRunner {
   name = 'coverage';
@@ -96,9 +96,15 @@ export class CoverageRunner extends BaseRunner {
       // Write JSON results to a temp file — avoids stdout-parsing fragility
       // (console.log noise from vite.config.ts, coverage text output, etc.)
       const tmpFile = join(tmpdir(), `sickbay-test-${Date.now()}.json`);
-      const args = runner === 'vitest'
-        ? ['run', '--reporter=json', `--outputFile=${tmpFile}`, ...(hasCoverage ? ['--coverage', '--coverage.reporter=json-summary'] : [])]
-        : ['--json', `--outputFile=${tmpFile}`, ...(hasCoverage ? ['--coverage'] : [])];
+      const args =
+        runner === 'vitest'
+          ? [
+              'run',
+              '--reporter=json',
+              `--outputFile=${tmpFile}`,
+              ...(hasCoverage ? ['--coverage', '--coverage.reporter=json-summary'] : []),
+            ]
+          : ['--json', `--outputFile=${tmpFile}`, ...(hasCoverage ? ['--coverage'] : [])];
 
       await execa(runner, args, {
         cwd: projectPath,
@@ -121,7 +127,11 @@ export class CoverageRunner extends BaseRunner {
             skipped: parsed.numSkippedTests ?? 0,
           };
         } finally {
-          try { unlinkSync(tmpFile); } catch { /* ignore cleanup error */ }
+          try {
+            unlinkSync(tmpFile);
+          } catch {
+            /* ignore cleanup error */
+          }
         }
       }
 
@@ -142,7 +152,14 @@ export class CoverageRunner extends BaseRunner {
       }
 
       const packageManager = detectPackageManager(projectPath);
-      return this.buildResult(elapsed, testCounts, coverageData, runner, hasCoverage, packageManager);
+      return this.buildResult(
+        elapsed,
+        testCounts,
+        coverageData,
+        runner,
+        hasCoverage,
+        packageManager,
+      );
     } catch (err) {
       return {
         id: 'coverage',
@@ -150,7 +167,9 @@ export class CoverageRunner extends BaseRunner {
         name: 'Tests & Coverage',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `Test run failed: ${err}`, reportedBy: ['coverage'] }],
+        issues: [
+          { severity: 'critical', message: `Test run failed: ${err}`, reportedBy: ['coverage'] },
+        ],
         toolsUsed: [runner],
         duration: elapsed(),
       };
@@ -197,7 +216,10 @@ export class CoverageRunner extends BaseRunner {
       issues.push({
         severity: 'info',
         message: 'Coverage data unavailable — install @vitest/coverage-v8 for coverage reporting',
-        fix: { description: 'Add coverage provider', command: `${packageManager} add -D @vitest/coverage-v8` },
+        fix: {
+          description: 'Add coverage provider',
+          command: `${packageManager} add -D @vitest/coverage-v8`,
+        },
         reportedBy: ['coverage'],
       });
     }
@@ -208,15 +230,25 @@ export class CoverageRunner extends BaseRunner {
       score = Math.round(100 * (counts.passed / counts.total));
     }
     if (coverage) {
-      const covAvg = (coverage.lines.pct + coverage.statements.pct + coverage.functions.pct + coverage.branches.pct) / 4;
+      const covAvg =
+        (coverage.lines.pct +
+          coverage.statements.pct +
+          coverage.functions.pct +
+          coverage.branches.pct) /
+        4;
       score = Math.round(score * 0.6 + covAvg * 0.4);
     }
 
-    const status = counts.failed > 0 ? 'fail'
-      : (coverage && coverage.lines.pct < 50) ? 'fail'
-      : (coverage && coverage.lines.pct < 80) ? 'warning'
-      : issues.length > 0 ? 'warning'
-      : 'pass';
+    const status =
+      counts.failed > 0
+        ? 'fail'
+        : coverage && coverage.lines.pct < 50
+          ? 'fail'
+          : coverage && coverage.lines.pct < 80
+            ? 'warning'
+            : issues.length > 0
+              ? 'warning'
+              : 'pass';
 
     return {
       id: 'coverage',
@@ -233,12 +265,14 @@ export class CoverageRunner extends BaseRunner {
         passed: counts.passed,
         failed: counts.failed,
         skipped: counts.skipped,
-        ...(coverage ? {
-          lines: coverage.lines.pct,
-          statements: coverage.statements.pct,
-          functions: coverage.functions.pct,
-          branches: coverage.branches.pct,
-        } : {}),
+        ...(coverage
+          ? {
+              lines: coverage.lines.pct,
+              statements: coverage.statements.pct,
+              functions: coverage.functions.pct,
+              branches: coverage.branches.pct,
+            }
+          : {}),
       },
     };
   }
@@ -273,7 +307,12 @@ export class CoverageRunner extends BaseRunner {
         issues,
         toolsUsed: ['coverage'],
         duration: elapsed(),
-        metadata: { lines: lines.pct, statements: statements.pct, functions: functions.pct, branches: branches.pct },
+        metadata: {
+          lines: lines.pct,
+          statements: statements.pct,
+          functions: functions.pct,
+          branches: branches.pct,
+        },
       };
     } catch (err) {
       return {
@@ -282,7 +321,13 @@ export class CoverageRunner extends BaseRunner {
         name: 'Tests & Coverage',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `Failed to parse coverage: ${err}`, reportedBy: ['coverage'] }],
+        issues: [
+          {
+            severity: 'critical',
+            message: `Failed to parse coverage: ${err}`,
+            reportedBy: ['coverage'],
+          },
+        ],
         toolsUsed: ['coverage'],
         duration: elapsed(),
       };

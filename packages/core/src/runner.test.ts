@@ -41,26 +41,97 @@ const allMockRunners = vi.hoisted(() => {
 });
 
 // Regular functions (not arrow functions) are required so they can be called with `new`
- 
-vi.mock('./integrations/knip.js', () => ({ KnipRunner: function () { return allMockRunners.knip; } }));
-vi.mock('./integrations/outdated.js', () => ({ OutdatedRunner: function () { return allMockRunners.outdated; } }));
-vi.mock('./integrations/npm-audit.js', () => ({ NpmAuditRunner: function () { return allMockRunners.npmAudit; } }));
-vi.mock('./integrations/depcheck.js', () => ({ DepcheckRunner: function () { return allMockRunners.depcheck; } }));
-vi.mock('./integrations/madge.js', () => ({ MadgeRunner: function () { return allMockRunners.madge; } }));
-vi.mock('./integrations/source-map-explorer.js', () => ({ SourceMapExplorerRunner: function () { return allMockRunners.sourceMapExplorer; } }));
-vi.mock('./integrations/coverage.js', () => ({ CoverageRunner: function () { return allMockRunners.coverage; } }));
-vi.mock('./integrations/license-checker.js', () => ({ LicenseCheckerRunner: function () { return allMockRunners.licenseChecker; } }));
-vi.mock('./integrations/jscpd.js', () => ({ JscpdRunner: function () { return allMockRunners.jscpd; } }));
-vi.mock('./integrations/git.js', () => ({ GitRunner: function () { return allMockRunners.git; } }));
-vi.mock('./integrations/eslint.js', () => ({ ESLintRunner: function () { return allMockRunners.eslint; } }));
-vi.mock('./integrations/typescript.js', () => ({ TypeScriptRunner: function () { return allMockRunners.typescript; } }));
-vi.mock('./integrations/todo-scanner.js', () => ({ TodoScannerRunner: function () { return allMockRunners.todoScanner; } }));
-vi.mock('./integrations/complexity.js', () => ({ ComplexityRunner: function () { return allMockRunners.complexity; } }));
-vi.mock('./integrations/secrets.js', () => ({ SecretsRunner: function () { return allMockRunners.secrets; } }));
-vi.mock('./integrations/heavy-deps.js', () => ({ HeavyDepsRunner: function () { return allMockRunners.heavyDeps; } }));
-vi.mock('./integrations/react-perf.js', () => ({ ReactPerfRunner: function () { return allMockRunners.reactPerf; } }));
-vi.mock('./integrations/asset-size.js', () => ({ AssetSizeRunner: function () { return allMockRunners.assetSize; } }));
- 
+
+vi.mock('./integrations/knip.js', () => ({
+  KnipRunner: function () {
+    return allMockRunners.knip;
+  },
+}));
+vi.mock('./integrations/outdated.js', () => ({
+  OutdatedRunner: function () {
+    return allMockRunners.outdated;
+  },
+}));
+vi.mock('./integrations/npm-audit.js', () => ({
+  NpmAuditRunner: function () {
+    return allMockRunners.npmAudit;
+  },
+}));
+vi.mock('./integrations/depcheck.js', () => ({
+  DepcheckRunner: function () {
+    return allMockRunners.depcheck;
+  },
+}));
+vi.mock('./integrations/madge.js', () => ({
+  MadgeRunner: function () {
+    return allMockRunners.madge;
+  },
+}));
+vi.mock('./integrations/source-map-explorer.js', () => ({
+  SourceMapExplorerRunner: function () {
+    return allMockRunners.sourceMapExplorer;
+  },
+}));
+vi.mock('./integrations/coverage.js', () => ({
+  CoverageRunner: function () {
+    return allMockRunners.coverage;
+  },
+}));
+vi.mock('./integrations/license-checker.js', () => ({
+  LicenseCheckerRunner: function () {
+    return allMockRunners.licenseChecker;
+  },
+}));
+vi.mock('./integrations/jscpd.js', () => ({
+  JscpdRunner: function () {
+    return allMockRunners.jscpd;
+  },
+}));
+vi.mock('./integrations/git.js', () => ({
+  GitRunner: function () {
+    return allMockRunners.git;
+  },
+}));
+vi.mock('./integrations/eslint.js', () => ({
+  ESLintRunner: function () {
+    return allMockRunners.eslint;
+  },
+}));
+vi.mock('./integrations/typescript.js', () => ({
+  TypeScriptRunner: function () {
+    return allMockRunners.typescript;
+  },
+}));
+vi.mock('./integrations/todo-scanner.js', () => ({
+  TodoScannerRunner: function () {
+    return allMockRunners.todoScanner;
+  },
+}));
+vi.mock('./integrations/complexity.js', () => ({
+  ComplexityRunner: function () {
+    return allMockRunners.complexity;
+  },
+}));
+vi.mock('./integrations/secrets.js', () => ({
+  SecretsRunner: function () {
+    return allMockRunners.secrets;
+  },
+}));
+vi.mock('./integrations/heavy-deps.js', () => ({
+  HeavyDepsRunner: function () {
+    return allMockRunners.heavyDeps;
+  },
+}));
+vi.mock('./integrations/react-perf.js', () => ({
+  ReactPerfRunner: function () {
+    return allMockRunners.reactPerf;
+  },
+}));
+vi.mock('./integrations/asset-size.js', () => ({
+  AssetSizeRunner: function () {
+    return allMockRunners.assetSize;
+  },
+}));
 
 const mockProjectInfo = {
   name: 'test-project',

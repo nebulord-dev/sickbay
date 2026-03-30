@@ -10,12 +10,12 @@ sickbay trend [options]
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-p, --path <path>` | Project path to analyze | Current working directory |
-| `-n, --last <count>` | Number of recent scans to show | `20` |
-| `--package <name>` | Scope to a single package (monorepo only) | — |
-| `--json` | Output trend data as JSON | `false` |
+| Flag                 | Description                               | Default                   |
+| -------------------- | ----------------------------------------- | ------------------------- |
+| `-p, --path <path>`  | Project path to analyze                   | Current working directory |
+| `-n, --last <count>` | Number of recent scans to show            | `20`                      |
+| `--package <name>`   | Scope to a single package (monorepo only) | —                         |
+| `--json`             | Output trend data as JSON                 | `false`                   |
 
 ## Prerequisites
 

@@ -9,6 +9,7 @@ to existing type names, util locations, and runner registration patterns.
 ## Feature Description
 
 Two additions to the web dashboard Dependencies tab:
+
 1. **Update totals banner** — shows aggregate counts of major, minor, and patch updates at the top
 2. **Package overrides section** — collapsible list showing pnpm.overrides / npm overrides / yarn resolutions
 
@@ -54,17 +55,20 @@ None — all changes are to existing files.
 ### Patterns to Follow
 
 **Issue message encoding** (from outdated.ts):
+
 ```typescript
 // Current: "react: 17.0.2 → 18.0.0"
 // New:     "react: 17.0.2 → 18.0.0 (major)"
 ```
 
 **Web-safe imports** (DependencyList.tsx):
+
 ```typescript
 import type { SickbayReport } from '@sickbay/core';
 ```
 
 **Test mocking pattern** (detect-project.test.ts):
+
 ```typescript
 vi.mock('fs', () => ({ existsSync: vi.fn(), readFileSync: vi.fn() }));
 ```
@@ -136,7 +140,9 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
   - Update `buildDependencyStatuses()` regex to parse `(major)`, `(minor)`, `(patch)` suffix from message:
     ```typescript
     // Updated regex: "react: 17.0.2 → 18.0.0 (major)"
-    const ncuMatch = msg.match(/^([^:]+):\s*([^\s]+)\s*→\s*([^\s]+?)(?:\s*\((major|minor|patch)\))?$/);
+    const ncuMatch = msg.match(
+      /^([^:]+):\s*([^\s]+)\s*→\s*([^\s]+?)(?:\s*\((major|minor|patch)\))?$/,
+    );
     ```
     Fall back to severity-based detection for backward compatibility with old reports.
   - Add `UpdateTotalsBanner` sub-component: counts major/minor/patch from deps array, renders three pills or green "all up to date" message
@@ -180,6 +186,7 @@ Update outdated runner tests, detect-project tests, and DependencyList tests.
 ## VALIDATION COMMANDS
 
 ### Level 1: Type checking and linting
+
 ```bash
 pnpm --filter @sickbay/core build
 pnpm --filter @sickbay/web build
@@ -187,17 +194,20 @@ pnpm lint
 ```
 
 ### Level 2: Unit tests
+
 ```bash
 pnpm --filter @sickbay/core test
 pnpm --filter @sickbay/web test
 ```
 
 ### Level 3: Full build
+
 ```bash
 pnpm build
 ```
 
 ### Level 4: Manual spot checks
+
 ```bash
 # Generate a report against a project with outdated deps
 node apps/cli/dist/index.js --path fixtures/packages/react-app --json | head -50

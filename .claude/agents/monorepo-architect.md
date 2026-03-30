@@ -32,22 +32,23 @@ Review code changes for architectural violations, misplaced functionality, and b
 
 ### 2. Where Code Lives
 
-| Code type | Belongs in | NOT in |
-|---|---|---|
-| Health check runners | `core/src/integrations/` | cli or web |
-| TypeScript interfaces/types | `core/src/types.ts` | duplicated in cli/web |
-| Scoring logic | `core/src/scoring.ts` | cli or web |
-| Report orchestration | `core/src/runner.ts` | cli or web |
-| Shared utilities (file ops, JSON parsing, exec) | `core/src/utils/` | cli or web |
-| Terminal UI components | `cli/src/components/` | core or web |
-| CLI flags/commands | `cli/src/index.ts`, `cli/src/commands/` | core or web |
-| Web UI components | `web/src/components/` | core or cli |
-| Report loading (HTTP, localStorage) | `web/src/lib/` | core or cli |
-| AI/Claude integration | `web/src/components/` (browser) or `cli/src/services/` (terminal) | core |
+| Code type                                       | Belongs in                                                        | NOT in                |
+| ----------------------------------------------- | ----------------------------------------------------------------- | --------------------- |
+| Health check runners                            | `core/src/integrations/`                                          | cli or web            |
+| TypeScript interfaces/types                     | `core/src/types.ts`                                               | duplicated in cli/web |
+| Scoring logic                                   | `core/src/scoring.ts`                                             | cli or web            |
+| Report orchestration                            | `core/src/runner.ts`                                              | cli or web            |
+| Shared utilities (file ops, JSON parsing, exec) | `core/src/utils/`                                                 | cli or web            |
+| Terminal UI components                          | `cli/src/components/`                                             | core or web           |
+| CLI flags/commands                              | `cli/src/index.ts`, `cli/src/commands/`                           | core or web           |
+| Web UI components                               | `web/src/components/`                                             | core or cli           |
+| Report loading (HTTP, localStorage)             | `web/src/lib/`                                                    | core or cli           |
+| AI/Claude integration                           | `web/src/components/` (browser) or `cli/src/services/` (terminal) | core                  |
 
 ### 3. Integration Runner Discipline
 
 Every integration runner in `core/src/integrations/`:
+
 - Extends `BaseRunner` and implements `run()`
 - Is registered in `core/src/runner.ts` → `ALL_RUNNERS` array
 - Imports execa directly (no shared exec wrapper currently)
@@ -58,6 +59,7 @@ Every integration runner in `core/src/integrations/`:
 ### 4. Build Order Matters
 
 Changes must be validated in dependency order:
+
 1. `pnpm --filter @sickbay/core build`
 2. `pnpm --filter @sickbay/cli build`
 3. `pnpm --filter @sickbay/web build`

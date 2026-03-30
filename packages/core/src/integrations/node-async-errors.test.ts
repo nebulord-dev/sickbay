@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { NodeAsyncErrorsRunner } from './node-async-errors.js';
 
 vi.mock('fs', () => ({

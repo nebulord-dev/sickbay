@@ -1,6 +1,14 @@
-import { readFileSync, existsSync } from "fs";
-import { join, dirname } from "path";
-import type { ProjectInfo, ProjectContext, Framework, Runtime, BuildTool, TestFramework } from "../types.js";
+import { readFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+
+import type {
+  ProjectInfo,
+  ProjectContext,
+  Framework,
+  Runtime,
+  BuildTool,
+  TestFramework,
+} from '../types.js';
 
 /**
  * detectProject analyzes the given project directory to extract key information about the project setup.
@@ -12,12 +20,12 @@ import type { ProjectInfo, ProjectContext, Framework, Runtime, BuildTool, TestFr
  */
 
 export async function detectProject(projectPath: string): Promise<ProjectInfo> {
-  const pkgPath = join(projectPath, "package.json");
+  const pkgPath = join(projectPath, 'package.json');
   if (!existsSync(pkgPath)) {
     throw new Error(`No package.json found at ${projectPath}`);
   }
 
-  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
   const deps: Record<string, string> = pkg.dependencies ?? {};
   const devDeps: Record<string, string> = pkg.devDependencies ?? {};
 
@@ -25,10 +33,10 @@ export async function detectProject(projectPath: string): Promise<ProjectInfo> {
   const catalog = loadPnpmCatalog(projectPath);
   if (catalog) {
     for (const [name, ver] of Object.entries(deps)) {
-      if (ver.startsWith("catalog:")) deps[name] = catalog[name] ?? ver;
+      if (ver.startsWith('catalog:')) deps[name] = catalog[name] ?? ver;
     }
     for (const [name, ver] of Object.entries(devDeps)) {
-      if (ver.startsWith("catalog:")) devDeps[name] = catalog[name] ?? ver;
+      if (ver.startsWith('catalog:')) devDeps[name] = catalog[name] ?? ver;
     }
   }
 
@@ -36,24 +44,21 @@ export async function detectProject(projectPath: string): Promise<ProjectInfo> {
 
   const rawOverrides: Record<string, string> | undefined =
     pkg.pnpm?.overrides ?? pkg.overrides ?? pkg.resolutions ?? undefined;
-  const overrides = rawOverrides && Object.keys(rawOverrides).length > 0
-    ? rawOverrides
-    : undefined;
+  const overrides = rawOverrides && Object.keys(rawOverrides).length > 0 ? rawOverrides : undefined;
 
   return {
-    name: pkg.name ?? "unknown",
-    version: pkg.version ?? "0.0.0",
-    hasTypeScript:
-      existsSync(join(projectPath, "tsconfig.json")) || "typescript" in allDeps,
+    name: pkg.name ?? 'unknown',
+    version: pkg.version ?? '0.0.0',
+    hasTypeScript: existsSync(join(projectPath, 'tsconfig.json')) || 'typescript' in allDeps,
     hasESLint:
-      existsSync(join(projectPath, ".eslintrc.js")) ||
-      existsSync(join(projectPath, ".eslintrc.json")) ||
-      existsSync(join(projectPath, "eslint.config.js")) ||
-      "eslint" in allDeps,
+      existsSync(join(projectPath, '.eslintrc.js')) ||
+      existsSync(join(projectPath, '.eslintrc.json')) ||
+      existsSync(join(projectPath, 'eslint.config.js')) ||
+      'eslint' in allDeps,
     hasPrettier:
-      existsSync(join(projectPath, ".prettierrc")) ||
-      existsSync(join(projectPath, ".prettierrc.json")) ||
-      "prettier" in allDeps,
+      existsSync(join(projectPath, '.prettierrc')) ||
+      existsSync(join(projectPath, '.prettierrc.json')) ||
+      'prettier' in allDeps,
     framework: detectFramework(allDeps),
     packageManager: detectPackageManager(projectPath),
     totalDependencies: Object.keys(allDeps).length,
@@ -63,76 +68,72 @@ export async function detectProject(projectPath: string): Promise<ProjectInfo> {
   };
 }
 
-function detectFramework(
-  deps: Record<string, string>,
-): ProjectInfo["framework"] {
-  if ("next" in deps) return "next";
-  if ("@vitejs/plugin-react" in deps || "vite" in deps) return "vite";
-  if ("react-scripts" in deps) return "cra";
-  if ("react" in deps) return "react";
-  if ("express" in deps) return "express";
-  if ("fastify" in deps) return "fastify";
-  if ("koa" in deps) return "koa";
-  if ("hono" in deps) return "hono";
-  if ("@hapi/hapi" in deps || "hapi" in deps) return "hapi";
-  return "node";
+function detectFramework(deps: Record<string, string>): ProjectInfo['framework'] {
+  if ('next' in deps) return 'next';
+  if ('@vitejs/plugin-react' in deps || 'vite' in deps) return 'vite';
+  if ('react-scripts' in deps) return 'cra';
+  if ('react' in deps) return 'react';
+  if ('express' in deps) return 'express';
+  if ('fastify' in deps) return 'fastify';
+  if ('koa' in deps) return 'koa';
+  if ('hono' in deps) return 'hono';
+  if ('@hapi/hapi' in deps || 'hapi' in deps) return 'hapi';
+  return 'node';
 }
 
-export function detectPackageManager(
-  projectPath: string,
-): ProjectInfo["packageManager"] {
+export function detectPackageManager(projectPath: string): ProjectInfo['packageManager'] {
   let dir = projectPath;
   while (true) {
-    if (existsSync(join(dir, "pnpm-lock.yaml"))) return "pnpm";
-    if (existsSync(join(dir, "yarn.lock"))) return "yarn";
-    if (existsSync(join(dir, "bun.lockb")) || existsSync(join(dir, "bun.lock"))) return "bun";
+    if (existsSync(join(dir, 'pnpm-lock.yaml'))) return 'pnpm';
+    if (existsSync(join(dir, 'yarn.lock'))) return 'yarn';
+    if (existsSync(join(dir, 'bun.lockb')) || existsSync(join(dir, 'bun.lock'))) return 'bun';
     const parent = dirname(dir);
     if (parent === dir) break; // reached filesystem root
     dir = parent;
   }
-  return "npm";
+  return 'npm';
 }
 
 export async function detectContext(projectPath: string): Promise<ProjectContext> {
-  const pkgPath = join(projectPath, "package.json");
+  const pkgPath = join(projectPath, 'package.json');
   if (!existsSync(pkgPath)) {
-    return { runtime: "unknown", frameworks: [], buildTool: "unknown", testFramework: null };
+    return { runtime: 'unknown', frameworks: [], buildTool: 'unknown', testFramework: null };
   }
 
-  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
   const deps: Record<string, string> = pkg.dependencies ?? {};
   const devDeps: Record<string, string> = pkg.devDependencies ?? {};
   const allDeps = { ...deps, ...devDeps };
 
   const frameworks: Framework[] = [];
-  if ("@angular/core" in allDeps) frameworks.push("angular");
-  if ("next" in allDeps) {
-    frameworks.push("react", "next");
-  } else if ("@remix-run/react" in allDeps) {
-    frameworks.push("react", "remix");
-  } else if ("react" in allDeps) {
-    frameworks.push("react");
+  if ('@angular/core' in allDeps) frameworks.push('angular');
+  if ('next' in allDeps) {
+    frameworks.push('react', 'next');
+  } else if ('@remix-run/react' in allDeps) {
+    frameworks.push('react', 'remix');
+  } else if ('react' in allDeps) {
+    frameworks.push('react');
   }
-  if ("vue" in allDeps) frameworks.push("vue");
-  if ("svelte" in allDeps) frameworks.push("svelte");
+  if ('vue' in allDeps) frameworks.push('vue');
+  if ('svelte' in allDeps) frameworks.push('svelte');
 
   // Projects with no recognised UI framework are assumed to be Node. Projects without
   // a package.json return runtime: 'unknown', which causes all runtime-scoped runners
   // (node-*, react-perf, etc.) to be silently skipped via isApplicableToContext().
-  const runtime: Runtime = frameworks.length === 0 ? "node" : "browser";
+  const runtime: Runtime = frameworks.length === 0 ? 'node' : 'browser';
 
-  let buildTool: BuildTool = "unknown";
-  if ("vite" in allDeps || "@vitejs/plugin-react" in allDeps) buildTool = "vite";
-  else if ("webpack" in allDeps) buildTool = "webpack";
-  else if ("esbuild" in allDeps) buildTool = "esbuild";
-  else if ("rollup" in allDeps) buildTool = "rollup";
-  else if ("next" in allDeps) buildTool = "webpack";
-  else if ("typescript" in allDeps) buildTool = "tsc";
+  let buildTool: BuildTool = 'unknown';
+  if ('vite' in allDeps || '@vitejs/plugin-react' in allDeps) buildTool = 'vite';
+  else if ('webpack' in allDeps) buildTool = 'webpack';
+  else if ('esbuild' in allDeps) buildTool = 'esbuild';
+  else if ('rollup' in allDeps) buildTool = 'rollup';
+  else if ('next' in allDeps) buildTool = 'webpack';
+  else if ('typescript' in allDeps) buildTool = 'tsc';
 
   let testFramework: TestFramework = null;
-  if ("vitest" in allDeps) testFramework = "vitest";
-  else if ("jest" in allDeps) testFramework = "jest";
-  else if ("mocha" in allDeps) testFramework = "mocha";
+  if ('vitest' in allDeps) testFramework = 'vitest';
+  else if ('jest' in allDeps) testFramework = 'jest';
+  else if ('mocha' in allDeps) testFramework = 'mocha';
 
   return { runtime, frameworks, buildTool, testFramework };
 }
@@ -144,10 +145,10 @@ export async function detectContext(projectPath: string): Promise<ProjectContext
 function loadPnpmCatalog(projectPath: string): Record<string, string> | null {
   let dir = projectPath;
   while (true) {
-    const wsPath = join(dir, "pnpm-workspace.yaml");
+    const wsPath = join(dir, 'pnpm-workspace.yaml');
     if (existsSync(wsPath)) {
       try {
-        const content = readFileSync(wsPath, "utf-8");
+        const content = readFileSync(wsPath, 'utf-8');
         return parseCatalogFromYaml(content);
       } catch {
         return null;
@@ -166,7 +167,7 @@ function loadPnpmCatalog(projectPath: string): Record<string, string> | null {
  * key-value pairs under a `catalog:` heading.
  */
 function parseCatalogFromYaml(content: string): Record<string, string> | null {
-  const lines = content.split("\n");
+  const lines = content.split('\n');
   const catalog: Record<string, string> = {};
   let inCatalog = false;
 

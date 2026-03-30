@@ -7,6 +7,7 @@ Read the full design spec at `docs/superpowers/specs/2026-03-28-audit-sickbay-fi
 ## Kanban Task
 
 Move this task to Done when complete:
+
 ```
 - `[Quality]` `[Auto]` Audit `sickbay fix` executable commands
 ```
@@ -22,6 +23,7 @@ Read the spec thoroughly. Then read every file listed in the "Files to Modify" s
 **File:** `packages/core/src/types.ts`
 
 Add two new optional fields to the `FixSuggestion` interface:
+
 - `modifiesSource?: boolean`
 - `nextSteps?: string`
 

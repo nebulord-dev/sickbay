@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { TodoScannerRunner } from './todo-scanner.js';
-
 import { existsSync, readdirSync, statSync, readFileSync } from 'fs';
+
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import { TodoScannerRunner } from './todo-scanner.js';
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
@@ -15,7 +16,6 @@ vi.mock('../utils/file-helpers.js', () => ({
   fileExists: vi.fn(),
   WARN_LINES: 400,
 }));
-
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReaddirSync = vi.mocked(readdirSync);
@@ -227,9 +227,7 @@ describe('TodoScannerRunner', () => {
     mockExistsSync.mockReturnValue(true);
     mockReaddirSync.mockReturnValue(['labels.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(
-      "const label = 'TODO: this is a label key';\n" as any,
-    );
+    mockReadFileSync.mockReturnValue("const label = 'TODO: this is a label key';\n" as any);
 
     const result = await runner.run('/project');
 
@@ -240,9 +238,7 @@ describe('TodoScannerRunner', () => {
     mockExistsSync.mockReturnValue(true);
     mockReaddirSync.mockReturnValue(['template.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(
-      'const msg = `TODO: ${name} needs attention`;\n' as any,
-    );
+    mockReadFileSync.mockReturnValue('const msg = `TODO: ${name} needs attention`;\n' as any);
 
     const result = await runner.run('/project');
 
@@ -253,9 +249,7 @@ describe('TodoScannerRunner', () => {
     mockExistsSync.mockReturnValue(true);
     mockReaddirSync.mockReturnValue(['mixed.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(
-      'const x = "some string"; // TODO: clean this up\n' as any,
-    );
+    mockReadFileSync.mockReturnValue('const x = "some string"; // TODO: clean this up\n' as any);
 
     const result = await runner.run('/project');
 

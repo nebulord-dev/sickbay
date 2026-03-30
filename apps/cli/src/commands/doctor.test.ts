@@ -11,7 +11,9 @@ vi.mock('@nebulord/sickbay-core', () => ({
 }));
 
 import { existsSync, readFileSync } from 'fs';
+
 import { detectProject, detectPackageManager } from '@nebulord/sickbay-core';
+
 import { runDiagnostics } from './doctor.js';
 
 const mockExistsSync = vi.mocked(existsSync);

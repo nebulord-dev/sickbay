@@ -1,5 +1,6 @@
-import type { MonorepoReport, PackageReport } from "@nebulord/sickbay-core";
-import { SCORE_GOOD, SCORE_FAIR } from "../lib/constants.js";
+import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
+
+import type { MonorepoReport, PackageReport } from '@nebulord/sickbay-core';
 
 interface MonorepoOverviewProps {
   report: MonorepoReport;
@@ -7,15 +8,15 @@ interface MonorepoOverviewProps {
 }
 
 function getScoreColorClass(score: number) {
-  if (score >= SCORE_GOOD) return "text-green-400";
-  if (score >= SCORE_FAIR) return "text-yellow-400";
-  return "text-red-400";
+  if (score >= SCORE_GOOD) return 'text-green-400';
+  if (score >= SCORE_FAIR) return 'text-yellow-400';
+  return 'text-red-400';
 }
 
 function getScoreRingClass(score: number) {
-  if (score >= SCORE_GOOD) return "stroke-green-400";
-  if (score >= SCORE_FAIR) return "stroke-yellow-400";
-  return "stroke-red-400";
+  if (score >= SCORE_GOOD) return 'stroke-green-400';
+  if (score >= SCORE_FAIR) return 'stroke-yellow-400';
+  return 'stroke-red-400';
 }
 
 function PackageScoreCard({
@@ -52,14 +53,18 @@ function PackageScoreCard({
             className={`transition-all duration-700 ${ringClass}`}
           />
         </svg>
-        <span className={`absolute inset-0 flex items-center justify-center text-lg font-bold ${colorClass}`}>
+        <span
+          className={`absolute inset-0 flex items-center justify-center text-lg font-bold ${colorClass}`}
+        >
           {pkg.score}
         </span>
       </div>
 
       <div className="text-center w-full">
         <div className="text-sm font-semibold truncate">{pkg.name}</div>
-        <div className="text-xs text-gray-500 mt-0.5">{pkg.framework} · {pkg.relativePath}</div>
+        <div className="text-xs text-gray-500 mt-0.5">
+          {pkg.framework} · {pkg.relativePath}
+        </div>
       </div>
 
       <div className="flex gap-3 text-xs w-full justify-center">
@@ -74,9 +79,7 @@ function PackageScoreCard({
         )}
       </div>
 
-      <div className="text-xs text-gray-500">
-        {index + 1 === 1 ? "click to inspect →" : ""}
-      </div>
+      <div className="text-xs text-gray-500">{index + 1 === 1 ? 'click to inspect →' : ''}</div>
     </button>
   );
 }
@@ -89,7 +92,7 @@ function collectQuickWins(packages: PackageReport[], limit = 8) {
   for (const pkg of packages) {
     for (const check of pkg.checks) {
       for (const issue of check.issues) {
-        if (issue.severity === "critical" && issue.fix) {
+        if (issue.severity === 'critical' && issue.fix) {
           const key = issue.fix.command ?? issue.fix.description;
           if (!seen.has(key)) {
             seen.add(key);
@@ -130,9 +133,7 @@ export function MonorepoOverview({ report, onSelectPackage }: MonorepoOverviewPr
 
       {/* Package scoreboard */}
       <div className="mb-8">
-        <h2 className="text-xs text-gray-500 font-mono uppercase tracking-wider mb-3">
-          packages
-        </h2>
+        <h2 className="text-xs text-gray-500 font-mono uppercase tracking-wider mb-3">packages</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {report.packages.map((pkg, i) => (
             <PackageScoreCard
@@ -153,7 +154,10 @@ export function MonorepoOverview({ report, onSelectPackage }: MonorepoOverviewPr
           </h2>
           <div className="space-y-2">
             {quickWins.map((win) => (
-              <div key={`${win.pkg}-${win.message}`} className="flex flex-col gap-0.5 p-3 rounded-sm border border-border bg-surface">
+              <div
+                key={`${win.pkg}-${win.message}`}
+                className="flex flex-col gap-0.5 p-3 rounded-sm border border-border bg-surface"
+              >
                 <div className="flex items-start gap-2">
                   <span className="text-red-400 text-xs font-mono shrink-0">●</span>
                   <div>

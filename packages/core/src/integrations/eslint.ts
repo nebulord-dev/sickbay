@@ -1,8 +1,11 @@
-import { execa } from 'execa';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { BaseRunner } from './base.js';
+
+import { execa } from 'execa';
+
 import { timer, parseJsonOutput } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -57,7 +60,7 @@ export class ESLintRunner extends BaseRunner {
       const { stdout } = await execa(
         'eslint',
         [...dirsToScan, '--format', 'json', '--no-error-on-unmatched-pattern'],
-        { cwd: projectPath, reject: false, preferLocal: true, timeout: 60_000 }
+        { cwd: projectPath, reject: false, preferLocal: true, timeout: 60_000 },
       );
 
       const results = parseJsonOutput(stdout, '[]') as ESLintFileResult[];
@@ -73,12 +76,18 @@ export class ESLintRunner extends BaseRunner {
         if (file.errorCount > 0 || file.warningCount > 0) {
           const relPath = file.filePath.replace(projectPath + '/', '');
           const parts = [];
-          if (file.errorCount > 0) parts.push(`${file.errorCount} error${file.errorCount > 1 ? 's' : ''}`);
-          if (file.warningCount > 0) parts.push(`${file.warningCount} warning${file.warningCount > 1 ? 's' : ''}`);
+          if (file.errorCount > 0)
+            parts.push(`${file.errorCount} error${file.errorCount > 1 ? 's' : ''}`);
+          if (file.warningCount > 0)
+            parts.push(`${file.warningCount} warning${file.warningCount > 1 ? 's' : ''}`);
           issues.push({
             severity: file.errorCount > 0 ? 'warning' : 'info',
             message: `${relPath}: ${parts.join(', ')}`,
-            fix: { description: `Fix ESLint issues in ${relPath}`, command: `eslint ${relPath} --fix`, modifiesSource: true },
+            fix: {
+              description: `Fix ESLint issues in ${relPath}`,
+              command: `eslint ${relPath} --fix`,
+              modifiesSource: true,
+            },
             reportedBy: ['eslint'],
           });
         }
@@ -91,7 +100,14 @@ export class ESLintRunner extends BaseRunner {
         category: this.category,
         name: 'Lint',
         score,
-        status: totalErrors > 10 ? 'fail' : totalErrors > 0 ? 'warning' : totalWarnings > 0 ? 'warning' : 'pass',
+        status:
+          totalErrors > 10
+            ? 'fail'
+            : totalErrors > 0
+              ? 'warning'
+              : totalWarnings > 0
+                ? 'warning'
+                : 'pass',
         issues,
         toolsUsed: ['eslint'],
         duration: elapsed(),
@@ -104,7 +120,9 @@ export class ESLintRunner extends BaseRunner {
         name: 'Lint',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `ESLint failed: ${err}`, reportedBy: ['eslint'] }],
+        issues: [
+          { severity: 'critical', message: `ESLint failed: ${err}`, reportedBy: ['eslint'] },
+        ],
         toolsUsed: ['eslint'],
         duration: elapsed(),
       };

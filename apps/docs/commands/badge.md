@@ -10,14 +10,14 @@ sickbay badge [options]
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-p, --path <path>` | Project path | Current working directory |
-| `--package <name>` | Scope to a single package (monorepo only) | — |
-| `--html` | Output an HTML `<img>` tag instead of Markdown | `false` |
-| `--url` | Output bare badge URL only | `false` |
-| `--label <text>` | Custom badge label | `sickbay` |
-| `--scan` | Run a fresh scan instead of using last report | `false` |
+| Flag                | Description                                    | Default                   |
+| ------------------- | ---------------------------------------------- | ------------------------- |
+| `-p, --path <path>` | Project path                                   | Current working directory |
+| `--package <name>`  | Scope to a single package (monorepo only)      | —                         |
+| `--html`            | Output an HTML `<img>` tag instead of Markdown | `false`                   |
+| `--url`             | Output bare badge URL only                     | `false`                   |
+| `--label <text>`    | Custom badge label                             | `sickbay`                 |
+| `--scan`            | Run a fresh scan instead of using last report  | `false`                   |
 
 ## Examples
 
@@ -42,7 +42,7 @@ sickbay badge --path ~/my-project --html
 Output:
 
 ```html
-<img src="https://img.shields.io/badge/sickbay-85%25-brightgreen" alt="sickbay">
+<img src="https://img.shields.io/badge/sickbay-85%25-brightgreen" alt="sickbay" />
 ```
 
 ### Bare URL
@@ -79,11 +79,11 @@ sickbay badge --path ~/my-project --scan
 
 The badge color is determined by the health score:
 
-| Score | Color |
-|-------|-------|
+| Score  | Color                 |
+| ------ | --------------------- |
 | 80-100 | Green (`brightgreen`) |
-| 60-79 | Yellow (`yellow`) |
-| 0-59 | Red (`red`) |
+| 60-79  | Yellow (`yellow`)     |
+| 0-59   | Red (`red`)           |
 
 ## How It Works
 

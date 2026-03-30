@@ -1,7 +1,15 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { existsSync, readFileSync } from 'fs';
+
 import { execa } from 'execa';
-import { timer, parseJsonOutput, readPackageJson, isCommandAvailable, fileExists } from './file-helpers.js';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+import {
+  timer,
+  parseJsonOutput,
+  readPackageJson,
+  isCommandAvailable,
+  fileExists,
+} from './file-helpers.js';
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
@@ -138,7 +146,9 @@ describe('readPackageJson', () => {
   });
 
   it('throws when the file does not exist', () => {
-    vi.mocked(readFileSync).mockImplementation(() => { throw new Error('ENOENT'); });
+    vi.mocked(readFileSync).mockImplementation(() => {
+      throw new Error('ENOENT');
+    });
     expect(() => readPackageJson('/missing')).toThrow('ENOENT');
   });
 

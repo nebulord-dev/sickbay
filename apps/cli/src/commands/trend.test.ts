@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import { sparkline, trendArrow } from './trend.js';
 
 describe('sparkline', () => {

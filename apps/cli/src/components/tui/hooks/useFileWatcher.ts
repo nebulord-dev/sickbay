@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import type { FSWatcher } from "chokidar";
+import { useState, useEffect, useRef } from 'react';
+
+import type { FSWatcher } from 'chokidar';
 
 interface UseFileWatcherOptions {
   projectPath: string;
@@ -15,9 +16,7 @@ export function useFileWatcher({
   onFilesChanged,
 }: UseFileWatcherOptions) {
   const [changedFiles, setChangedFiles] = useState<string[]>([]);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pendingRef = useRef<string[]>([]);
   const watcherRef = useRef<FSWatcher | null>(null);
 
@@ -28,19 +27,19 @@ export function useFileWatcher({
 
     (async () => {
       try {
-        const { watch } = await import("chokidar");
+        const { watch } = await import('chokidar');
         if (!mounted) return;
 
-        const watcher = watch(["**/*.{ts,tsx,js,jsx,json}"], {
+        const watcher = watch(['**/*.{ts,tsx,js,jsx,json}'], {
           cwd: projectPath,
           ignored: [
-            "**/node_modules/**",
-            "**/dist/**",
-            "**/.git/**",
-            "**/build/**",
-            "**/.next/**",
-            "**/.turbo/**",
-            "**/coverage/**",
+            '**/node_modules/**',
+            '**/dist/**',
+            '**/.git/**',
+            '**/build/**',
+            '**/.next/**',
+            '**/.turbo/**',
+            '**/coverage/**',
           ],
           ignoreInitial: true,
           persistent: true,
@@ -48,7 +47,7 @@ export function useFileWatcher({
 
         watcherRef.current = watcher;
 
-        watcher.on("change", (path: string) => {
+        watcher.on('change', (path: string) => {
           pendingRef.current.push(path);
           setChangedFiles((prev) => [...prev, path]);
 

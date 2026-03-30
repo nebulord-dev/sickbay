@@ -1,25 +1,29 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import React from "react";
-import { render } from "ink-testing-library";
-import type { SickbayReport } from "@nebulord/sickbay-core";
-import type { FixableIssue } from "../commands/fix.js";
+import React from 'react';
 
-vi.mock("@nebulord/sickbay-core", () => ({
+import { render } from 'ink-testing-library';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import type { FixableIssue } from '../commands/fix.js';
+import type { SickbayReport } from '@nebulord/sickbay-core';
+
+vi.mock('@nebulord/sickbay-core', () => ({
   runSickbay: vi.fn(),
 }));
 
-vi.mock("../commands/fix.js", () => ({
+vi.mock('../commands/fix.js', () => ({
   collectFixableIssues: vi.fn(),
   executeFix: vi.fn(),
 }));
 
-vi.mock("../lib/resolve-package.js", async () => {
-  const actual = await vi.importActual<typeof import("../lib/resolve-package.js")>("../lib/resolve-package.js");
+vi.mock('../lib/resolve-package.js', async () => {
+  const actual = await vi.importActual<typeof import('../lib/resolve-package.js')>(
+    '../lib/resolve-package.js',
+  );
   return { ...actual };
 });
 
-vi.mock("ink", async () => {
-  const actual = await vi.importActual<typeof import("ink")>("ink");
+vi.mock('ink', async () => {
+  const actual = await vi.importActual<typeof import('ink')>('ink');
   return {
     ...actual,
     useApp: () => ({ exit: vi.fn() }),
@@ -27,10 +31,11 @@ vi.mock("ink", async () => {
   };
 });
 
-import { FixApp } from "./FixApp.js";
-import { runSickbay } from "@nebulord/sickbay-core";
-import { collectFixableIssues, executeFix } from "../commands/fix.js";
-import { useInput } from "ink";
+import { runSickbay } from '@nebulord/sickbay-core';
+import { useInput } from 'ink';
+
+import { collectFixableIssues, executeFix } from '../commands/fix.js';
+import { FixApp } from './FixApp.js';
 
 const mockRunSickbay = vi.mocked(runSickbay);
 const mockCollectFixableIssues = vi.mocked(collectFixableIssues);
@@ -39,13 +44,13 @@ const { act } = React;
 
 function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {
-    timestamp: "2024-01-01T00:00:00.000Z",
-    projectPath: "/test/project",
+    timestamp: '2024-01-01T00:00:00.000Z',
+    projectPath: '/test/project',
     projectInfo: {
-      name: "test-project",
-      version: "1.0.0",
-      framework: "react",
-      packageManager: "npm",
+      name: 'test-project',
+      version: '1.0.0',
+      framework: 'react',
+      packageManager: 'npm',
       totalDependencies: 0,
       dependencies: {},
       devDependencies: {},
@@ -62,14 +67,14 @@ function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
 
 function makeFixableIssue(overrides: Partial<FixableIssue> = {}): FixableIssue {
   return {
-    checkId: "knip",
-    checkName: "Knip",
-    command: "npx knip --fix",
+    checkId: 'knip',
+    checkName: 'Knip',
+    command: 'npx knip --fix',
     issue: {
-      severity: "warning",
-      message: "Unused exports found",
+      severity: 'warning',
+      message: 'Unused exports found',
       reportedBy: [],
-      fix: { description: "Remove unused exports", command: "npx knip --fix" },
+      fix: { description: 'Remove unused exports', command: 'npx knip --fix' },
     },
     ...overrides,
   };
@@ -87,30 +92,30 @@ async function renderAndFlush(element: React.ReactElement) {
   return result;
 }
 
-describe("FixApp", () => {
+describe('FixApp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCollectFixableIssues.mockReturnValue([]);
     mockExecuteFix.mockResolvedValue({
       fixable: makeFixableIssue(),
       success: true,
-      stdout: "",
-      stderr: "",
+      stdout: '',
+      stderr: '',
       duration: 100,
     });
   });
 
-  it("shows scanning spinner while running", () => {
+  it('shows scanning spinner while running', () => {
     mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
     const { lastFrame } = render(
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
     );
 
-    expect(lastFrame()).toContain("Scanning for fixable issues...");
+    expect(lastFrame()).toContain('Scanning for fixable issues...');
   });
 
-  it("shows no-fixable-issues message when done with empty list", async () => {
+  it('shows no-fixable-issues message when done with empty list', async () => {
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([]);
 
@@ -118,10 +123,10 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("No auto-fixable issues found");
+    expect(result.lastFrame()).toContain('No auto-fixable issues found');
   });
 
-  it("shows selection phase heading when issues exist and applyAll is false", async () => {
+  it('shows selection phase heading when issues exist and applyAll is false', async () => {
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue()]);
 
@@ -129,18 +134,18 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("Select fixes to apply");
+    expect(result.lastFrame()).toContain('Select fixes to apply');
   });
 
-  it("shows fix description in selection list", async () => {
+  it('shows fix description in selection list', async () => {
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([
       makeFixableIssue({
         issue: {
-          severity: "warning",
-          message: "Unused exports found",
+          severity: 'warning',
+          message: 'Unused exports found',
           reportedBy: [],
-          fix: { description: "Remove unused exports", command: "npx knip --fix" },
+          fix: { description: 'Remove unused exports', command: 'npx knip --fix' },
         },
       }),
     ]);
@@ -149,10 +154,10 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("Remove unused exports");
+    expect(result.lastFrame()).toContain('Remove unused exports');
   });
 
-  it("shows count of available issues in selection heading", async () => {
+  it('shows count of available issues in selection heading', async () => {
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue(), makeFixableIssue()]);
 
@@ -160,10 +165,10 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("2 available");
+    expect(result.lastFrame()).toContain('2 available');
   });
 
-  it("shows dry run warning in selection phase when dryRun is true", async () => {
+  it('shows dry run warning in selection phase when dryRun is true', async () => {
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue()]);
 
@@ -171,27 +176,27 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={false} dryRun={true} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("Dry run mode");
+    expect(result.lastFrame()).toContain('Dry run mode');
   });
 
-  it("shows error message when runSickbay rejects", async () => {
-    mockRunSickbay.mockRejectedValue(new Error("Scan failed"));
+  it('shows error message when runSickbay rejects', async () => {
+    mockRunSickbay.mockRejectedValue(new Error('Scan failed'));
 
     const result = await renderAndFlush(
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("Scan failed");
+    expect(result.lastFrame()).toContain('Scan failed');
   });
 
-  it("passes projectPath and checks to runSickbay", async () => {
+  it('passes projectPath and checks to runSickbay', async () => {
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([]);
 
     await renderAndFlush(
       <FixApp
         projectPath="/my/project"
-        checks={["eslint", "knip"]}
+        checks={['eslint', 'knip']}
         applyAll={false}
         dryRun={false}
         verbose={false}
@@ -199,11 +204,11 @@ describe("FixApp", () => {
     );
 
     expect(mockRunSickbay).toHaveBeenCalledWith(
-      expect.objectContaining({ projectPath: "/my/project", checks: ["eslint", "knip"] }),
+      expect.objectContaining({ projectPath: '/my/project', checks: ['eslint', 'knip'] }),
     );
   });
 
-  it("shows Fix Results heading in done phase after applyAll", async () => {
+  it('shows Fix Results heading in done phase after applyAll', async () => {
     const fix = makeFixableIssue();
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([fix]);
@@ -212,10 +217,10 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("Fix Results");
+    expect(result.lastFrame()).toContain('Fix Results');
   });
 
-  it("shows Dry Run Results heading in done phase when dryRun is true and applyAll", async () => {
+  it('shows Dry Run Results heading in done phase when dryRun is true and applyAll', async () => {
     const fix = makeFixableIssue();
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([fix]);
@@ -224,10 +229,10 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={true} dryRun={true} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("Dry Run Results");
+    expect(result.lastFrame()).toContain('Dry Run Results');
   });
 
-  describe("keyboard navigation in selection phase", () => {
+  describe('keyboard navigation in selection phase', () => {
     type KeyEvent = { upArrow: boolean; downArrow: boolean; return: boolean };
     const noKey: KeyEvent = { upArrow: false, downArrow: false, return: false };
 
@@ -250,125 +255,125 @@ describe("FixApp", () => {
       return { result, fire };
     }
 
-    it("moves cursor down with downArrow key", async () => {
+    it('moves cursor down with downArrow key', async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       await act(async () => {
-        fire("", { ...noKey, downArrow: true });
+        fire('', { ...noKey, downArrow: true });
         await Promise.resolve();
       });
 
       // Still in selecting phase — no crash
-      expect(result.lastFrame()).toContain("Select fixes to apply");
+      expect(result.lastFrame()).toContain('Select fixes to apply');
     });
 
-    it("moves cursor up with upArrow key", async () => {
+    it('moves cursor up with upArrow key', async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       await act(async () => {
-        fire("", { ...noKey, upArrow: true });
+        fire('', { ...noKey, upArrow: true });
         await Promise.resolve();
       });
 
-      expect(result.lastFrame()).toContain("Select fixes to apply");
+      expect(result.lastFrame()).toContain('Select fixes to apply');
     });
 
-    it("toggles item selection with space key", async () => {
+    it('toggles item selection with space key', async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       await act(async () => {
-        fire(" ", noKey);
+        fire(' ', noKey);
         await Promise.resolve();
       });
 
-      expect(result.lastFrame()).toContain("Select fixes to apply");
+      expect(result.lastFrame()).toContain('Select fixes to apply');
     });
 
     it("selects all items with 'a' key", async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       await act(async () => {
-        fire("a", noKey);
+        fire('a', noKey);
         await Promise.resolve();
       });
 
-      expect(result.lastFrame()).toContain("Select fixes to apply");
+      expect(result.lastFrame()).toContain('Select fixes to apply');
     });
 
     it("deselects all items with 'n' key", async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       await act(async () => {
-        fire("n", noKey);
+        fire('n', noKey);
         await Promise.resolve();
       });
 
-      expect(result.lastFrame()).toContain("Select fixes to apply");
+      expect(result.lastFrame()).toContain('Select fixes to apply');
     });
 
-    it("does nothing on Enter when nothing is selected", async () => {
+    it('does nothing on Enter when nothing is selected', async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       await act(async () => {
-        fire("", { ...noKey, return: true });
+        fire('', { ...noKey, return: true });
         await Promise.resolve();
       });
 
       // Stays in selecting phase — selected.size === 0
-      expect(result.lastFrame()).toContain("Select fixes to apply");
+      expect(result.lastFrame()).toContain('Select fixes to apply');
     });
 
-    it("enters confirmation phase on Enter when items are selected", async () => {
+    it('enters confirmation phase on Enter when items are selected', async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       // Space selects item — flush fully so React re-renders and latestHandler updates
       await act(async () => {
-        fire(" ", noKey);
+        fire(' ', noKey);
         await Promise.resolve();
         await Promise.resolve();
       });
 
       // Now latestHandler has selected={0} in its closure — Enter transitions to confirming
       await act(async () => {
-        fire("", { ...noKey, return: true });
+        fire('', { ...noKey, return: true });
         await Promise.resolve();
         await Promise.resolve();
       });
 
       // Should show confirmation prompt
-      expect(result.lastFrame()).toContain("Proceed?");
+      expect(result.lastFrame()).toContain('Proceed?');
     });
 
-    it("enters fixing phase after confirming with Y", async () => {
+    it('enters fixing phase after confirming with Y', async () => {
       const { result, fire } = await renderInSelectingPhase();
 
       // Select first item
       await act(async () => {
-        fire(" ", noKey);
+        fire(' ', noKey);
         await Promise.resolve();
         await Promise.resolve();
       });
 
       // Press Enter to go to confirmation
       await act(async () => {
-        fire("", { ...noKey, return: true });
+        fire('', { ...noKey, return: true });
         await Promise.resolve();
         await Promise.resolve();
       });
 
       // Confirm with Y
       await act(async () => {
-        fire("y", noKey);
+        fire('y', noKey);
         await Promise.resolve();
         await Promise.resolve();
       });
 
       // executeFix resolves immediately so component reaches done phase
-      expect(result.lastFrame()).toContain("Fix Results");
+      expect(result.lastFrame()).toContain('Fix Results');
     });
   });
 
-  it("shows fix count summary in done phase", async () => {
+  it('shows fix count summary in done phase', async () => {
     const fix = makeFixableIssue();
     mockRunSickbay.mockResolvedValue(makeReport() as never);
     mockCollectFixableIssues.mockReturnValue([fix]);
@@ -377,11 +382,11 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("1/1");
+    expect(result.lastFrame()).toContain('1/1');
   });
 
-  describe("guidance-only issues", () => {
-    it("excludes guidance-only items from the selection list", async () => {
+  describe('guidance-only issues', () => {
+    it('excludes guidance-only items from the selection list', async () => {
       mockRunSickbay.mockResolvedValue(makeReport() as never);
       mockCollectFixableIssues.mockReturnValue([
         // One actionable fix so we reach the selecting phase
@@ -389,10 +394,10 @@ describe("FixApp", () => {
         makeFixableIssue({
           command: undefined,
           issue: {
-            severity: "warning",
-            message: "Remove unused file",
+            severity: 'warning',
+            message: 'Remove unused file',
             reportedBy: [],
-            fix: { description: "Remove unused file" },
+            fix: { description: 'Remove unused file' },
           },
         }),
       ]);
@@ -403,23 +408,27 @@ describe("FixApp", () => {
 
       const output = result.lastFrame()!;
       // Only 1 actionable fix should appear in the selection list
-      expect(output).toContain("1 available");
+      expect(output).toContain('1 available');
       // Guidance-only item should not appear
-      expect(output).not.toContain("Remove unused file");
+      expect(output).not.toContain('Remove unused file');
     });
   });
 
-  describe("confirmation flow", () => {
-    it("shows tier-2 warning for modifiesSource fixes", async () => {
+  describe('confirmation flow', () => {
+    it('shows tier-2 warning for modifiesSource fixes', async () => {
       mockRunSickbay.mockResolvedValue(makeReport() as never);
       mockCollectFixableIssues.mockReturnValue([
         makeFixableIssue({
-          command: "eslint src/App.tsx --fix",
+          command: 'eslint src/App.tsx --fix',
           issue: {
-            severity: "warning",
-            message: "ESLint issues",
+            severity: 'warning',
+            message: 'ESLint issues',
             reportedBy: [],
-            fix: { description: "Fix ESLint issues", command: "eslint src/App.tsx --fix", modifiesSource: true },
+            fix: {
+              description: 'Fix ESLint issues',
+              command: 'eslint src/App.tsx --fix',
+              modifiesSource: true,
+            },
           },
         }),
       ]);
@@ -429,19 +438,23 @@ describe("FixApp", () => {
       );
 
       // --apply-all skips tier-1 but still shows tier-2
-      expect(result.lastFrame()).toContain("modify source files");
+      expect(result.lastFrame()).toContain('modify source files');
     });
   });
 
-  describe("nextSteps display", () => {
-    it("shows nextSteps after successful execution", async () => {
+  describe('nextSteps display', () => {
+    it('shows nextSteps after successful execution', async () => {
       const fix = makeFixableIssue({
-        command: "npm install helmet",
+        command: 'npm install helmet',
         issue: {
-          severity: "critical",
-          message: "Missing helmet",
+          severity: 'critical',
+          message: 'Missing helmet',
           reportedBy: [],
-          fix: { description: "Install helmet", command: "npm install helmet", nextSteps: "Add app.use(helmet())" },
+          fix: {
+            description: 'Install helmet',
+            command: 'npm install helmet',
+            nextSteps: 'Add app.use(helmet())',
+          },
         },
       });
       mockRunSickbay.mockResolvedValue(makeReport() as never);
@@ -449,8 +462,8 @@ describe("FixApp", () => {
       mockExecuteFix.mockResolvedValue({
         fixable: fix,
         success: true,
-        stdout: "",
-        stderr: "",
+        stdout: '',
+        stderr: '',
         duration: 100,
       });
 
@@ -458,18 +471,18 @@ describe("FixApp", () => {
         <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
       );
 
-      expect(result.lastFrame()).toContain("Add app.use(helmet())");
+      expect(result.lastFrame()).toContain('Add app.use(helmet())');
     });
   });
 
-  describe("monorepo mode", () => {
-    const packagePaths = ["/root/packages/app-a", "/root/packages/app-b"];
+  describe('monorepo mode', () => {
+    const packagePaths = ['/root/packages/app-a', '/root/packages/app-b'];
     const packageNames = new Map([
-      ["/root/packages/app-a", "@scope/app-a"],
-      ["/root/packages/app-b", "app-b"],
+      ['/root/packages/app-a', '@scope/app-a'],
+      ['/root/packages/app-b', 'app-b'],
     ]);
 
-    it("shows monorepo scanning message with package count", () => {
+    it('shows monorepo scanning message with package count', () => {
       mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
       const { lastFrame } = render(
@@ -484,10 +497,10 @@ describe("FixApp", () => {
         />,
       );
 
-      expect(lastFrame()).toContain("across 2 packages");
+      expect(lastFrame()).toContain('across 2 packages');
     });
 
-    it("shows no-fixable message for clean monorepo", async () => {
+    it('shows no-fixable message for clean monorepo', async () => {
       mockRunSickbay.mockResolvedValue(makeReport() as never);
       mockCollectFixableIssues.mockReturnValue([]);
 
@@ -503,15 +516,13 @@ describe("FixApp", () => {
         />,
       );
 
-      expect(result.lastFrame()).toContain("No auto-fixable issues found");
-      expect(result.lastFrame()).toContain("across any package");
+      expect(result.lastFrame()).toContain('No auto-fixable issues found');
+      expect(result.lastFrame()).toContain('across any package');
     });
 
-    it("shows package name labels in selection phase", async () => {
+    it('shows package name labels in selection phase', async () => {
       mockRunSickbay.mockResolvedValue(makeReport() as never);
-      mockCollectFixableIssues
-        .mockReturnValueOnce([makeFixableIssue()])
-        .mockReturnValueOnce([]);
+      mockCollectFixableIssues.mockReturnValueOnce([makeFixableIssue()]).mockReturnValueOnce([]);
 
       const result = await renderAndFlush(
         <FixApp
@@ -526,8 +537,8 @@ describe("FixApp", () => {
       );
 
       const output = result.lastFrame()!;
-      expect(output).toContain("Select fixes to apply");
-      expect(output).toContain("[app-a]");
+      expect(output).toContain('Select fixes to apply');
+      expect(output).toContain('[app-a]');
     });
   });
 });

@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen, within, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+
 import { DependencyList } from './DependencyList.js';
+
 import type { SickbayReport } from '@nebulord/sickbay-core';
 
 function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
@@ -8,11 +10,16 @@ function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test',
     projectInfo: {
-      name: 'test-project', version: '1.0.0', framework: 'react',
-      packageManager: 'npm', totalDependencies: 3,
+      name: 'test-project',
+      version: '1.0.0',
+      framework: 'react',
+      packageManager: 'npm',
+      totalDependencies: 3,
       dependencies: { react: '^18.0.0', lodash: '^4.0.0' },
       devDependencies: { typescript: '^5.0.0' },
-      hasESLint: false, hasPrettier: false, hasTypeScript: true,
+      hasESLint: false,
+      hasPrettier: false,
+      hasTypeScript: true,
     },
     overallScore: 80,
     summary: { critical: 0, warnings: 0, info: 0 },
@@ -44,11 +51,20 @@ describe('DependencyList', () => {
 
   it('shows "unused" badge for an unused dependency', () => {
     const report = makeReport({
-      checks: [{
-        id: 'knip', name: 'Knip', category: 'dependencies', score: 80,
-        status: 'warning', toolsUsed: ['knip'], duration: 0,
-        issues: [{ severity: 'warning', message: 'Unused dependency: lodash', reportedBy: ['knip'] }],
-      }],
+      checks: [
+        {
+          id: 'knip',
+          name: 'Knip',
+          category: 'dependencies',
+          score: 80,
+          status: 'warning',
+          toolsUsed: ['knip'],
+          duration: 0,
+          issues: [
+            { severity: 'warning', message: 'Unused dependency: lodash', reportedBy: ['knip'] },
+          ],
+        },
+      ],
     });
     render(<DependencyList report={report} />);
     const table = screen.getByRole('table');
@@ -57,11 +73,24 @@ describe('DependencyList', () => {
 
   it('shows "missing" badge for a missing dependency', () => {
     const report = makeReport({
-      checks: [{
-        id: 'depcheck', name: 'Depcheck', category: 'dependencies', score: 60,
-        status: 'warning', toolsUsed: ['depcheck'], duration: 0,
-        issues: [{ severity: 'critical', message: 'Missing dependency: react', reportedBy: ['depcheck'] }],
-      }],
+      checks: [
+        {
+          id: 'depcheck',
+          name: 'Depcheck',
+          category: 'dependencies',
+          score: 60,
+          status: 'warning',
+          toolsUsed: ['depcheck'],
+          duration: 0,
+          issues: [
+            {
+              severity: 'critical',
+              message: 'Missing dependency: react',
+              reportedBy: ['depcheck'],
+            },
+          ],
+        },
+      ],
     });
     render(<DependencyList report={report} />);
     const table = screen.getByRole('table');
@@ -70,11 +99,20 @@ describe('DependencyList', () => {
 
   it('shows outdated arrow when a dependency has an update', () => {
     const report = makeReport({
-      checks: [{
-        id: 'outdated', name: 'Outdated', category: 'dependencies', score: 70,
-        status: 'warning', toolsUsed: ['ncu'], duration: 0,
-        issues: [{ severity: 'info', message: 'lodash: 4.0.0 → 4.17.21 (patch)', reportedBy: ['ncu'] }],
-      }],
+      checks: [
+        {
+          id: 'outdated',
+          name: 'Outdated',
+          category: 'dependencies',
+          score: 70,
+          status: 'warning',
+          toolsUsed: ['ncu'],
+          duration: 0,
+          issues: [
+            { severity: 'info', message: 'lodash: 4.0.0 → 4.17.21 (patch)', reportedBy: ['ncu'] },
+          ],
+        },
+      ],
     });
     render(<DependencyList report={report} />);
     expect(screen.getByText('→ 4.17.21')).toBeInTheDocument();
@@ -82,11 +120,20 @@ describe('DependencyList', () => {
 
   it('shows "patch update" badge for a patch bump', () => {
     const report = makeReport({
-      checks: [{
-        id: 'outdated', name: 'Outdated', category: 'dependencies', score: 70,
-        status: 'warning', toolsUsed: ['ncu'], duration: 0,
-        issues: [{ severity: 'info', message: 'lodash: 4.0.0 → 4.0.1 (patch)', reportedBy: ['ncu'] }],
-      }],
+      checks: [
+        {
+          id: 'outdated',
+          name: 'Outdated',
+          category: 'dependencies',
+          score: 70,
+          status: 'warning',
+          toolsUsed: ['ncu'],
+          duration: 0,
+          issues: [
+            { severity: 'info', message: 'lodash: 4.0.0 → 4.0.1 (patch)', reportedBy: ['ncu'] },
+          ],
+        },
+      ],
     });
     render(<DependencyList report={report} />);
     expect(screen.getByText('patch update')).toBeInTheDocument();
@@ -94,11 +141,20 @@ describe('DependencyList', () => {
 
   it('shows "minor update" badge for a minor bump', () => {
     const report = makeReport({
-      checks: [{
-        id: 'outdated', name: 'Outdated', category: 'dependencies', score: 70,
-        status: 'warning', toolsUsed: ['ncu'], duration: 0,
-        issues: [{ severity: 'info', message: 'lodash: 4.0.0 → 4.1.0 (minor)', reportedBy: ['ncu'] }],
-      }],
+      checks: [
+        {
+          id: 'outdated',
+          name: 'Outdated',
+          category: 'dependencies',
+          score: 70,
+          status: 'warning',
+          toolsUsed: ['ncu'],
+          duration: 0,
+          issues: [
+            { severity: 'info', message: 'lodash: 4.0.0 → 4.1.0 (minor)', reportedBy: ['ncu'] },
+          ],
+        },
+      ],
     });
     render(<DependencyList report={report} />);
     expect(screen.getByText('minor update')).toBeInTheDocument();
@@ -106,11 +162,20 @@ describe('DependencyList', () => {
 
   it('shows "major update" badge for a major version bump', () => {
     const report = makeReport({
-      checks: [{
-        id: 'outdated', name: 'Outdated', category: 'dependencies', score: 50,
-        status: 'warning', toolsUsed: ['ncu'], duration: 0,
-        issues: [{ severity: 'warning', message: 'react: 17.0.0 → 18.0.0 (major)', reportedBy: ['ncu'] }],
-      }],
+      checks: [
+        {
+          id: 'outdated',
+          name: 'Outdated',
+          category: 'dependencies',
+          score: 50,
+          status: 'warning',
+          toolsUsed: ['ncu'],
+          duration: 0,
+          issues: [
+            { severity: 'warning', message: 'react: 17.0.0 → 18.0.0 (major)', reportedBy: ['ncu'] },
+          ],
+        },
+      ],
     });
     render(<DependencyList report={report} />);
     expect(screen.getByText('major update')).toBeInTheDocument();
@@ -118,11 +183,18 @@ describe('DependencyList', () => {
 
   it('falls back to severity-based detection for legacy messages without type suffix', () => {
     const report = makeReport({
-      checks: [{
-        id: 'outdated', name: 'Outdated', category: 'dependencies', score: 50,
-        status: 'warning', toolsUsed: ['ncu'], duration: 0,
-        issues: [{ severity: 'warning', message: 'react: 17.0.0 → 18.0.0', reportedBy: ['ncu'] }],
-      }],
+      checks: [
+        {
+          id: 'outdated',
+          name: 'Outdated',
+          category: 'dependencies',
+          score: 50,
+          status: 'warning',
+          toolsUsed: ['ncu'],
+          duration: 0,
+          issues: [{ severity: 'warning', message: 'react: 17.0.0 → 18.0.0', reportedBy: ['ncu'] }],
+        },
+      ],
     });
     render(<DependencyList report={report} />);
     expect(screen.getByText('major update')).toBeInTheDocument();
@@ -136,11 +208,20 @@ describe('DependencyList', () => {
 
   it('shows the "with issues" count when issues exist', () => {
     const report = makeReport({
-      checks: [{
-        id: 'knip', name: 'Knip', category: 'dependencies', score: 80,
-        status: 'warning', toolsUsed: ['knip'], duration: 0,
-        issues: [{ severity: 'warning', message: 'Unused dependency: lodash', reportedBy: ['knip'] }],
-      }],
+      checks: [
+        {
+          id: 'knip',
+          name: 'Knip',
+          category: 'dependencies',
+          score: 80,
+          status: 'warning',
+          toolsUsed: ['knip'],
+          duration: 0,
+          issues: [
+            { severity: 'warning', message: 'Unused dependency: lodash', reportedBy: ['knip'] },
+          ],
+        },
+      ],
     });
     render(<DependencyList report={report} />);
     expect(screen.getByText(/1 with issues/)).toBeInTheDocument();
@@ -153,11 +234,20 @@ describe('DependencyList', () => {
 
   it('sorts dependencies with issues before healthy ones', () => {
     const report = makeReport({
-      checks: [{
-        id: 'depcheck', name: 'Depcheck', category: 'dependencies', score: 60,
-        status: 'warning', toolsUsed: ['depcheck'], duration: 0,
-        issues: [{ severity: 'warning', message: 'Unused dependency: react', reportedBy: ['depcheck'] }],
-      }],
+      checks: [
+        {
+          id: 'depcheck',
+          name: 'Depcheck',
+          category: 'dependencies',
+          score: 60,
+          status: 'warning',
+          toolsUsed: ['depcheck'],
+          duration: 0,
+          issues: [
+            { severity: 'warning', message: 'Unused dependency: react', reportedBy: ['depcheck'] },
+          ],
+        },
+      ],
     });
     const { container } = render(<DependencyList report={report} />);
     const rows = container.querySelectorAll('tbody tr');
@@ -173,15 +263,30 @@ describe('DependencyList', () => {
 
     it('shows correct major/minor/patch counts', () => {
       const report = makeReport({
-        checks: [{
-          id: 'outdated', name: 'Outdated', category: 'dependencies', score: 50,
-          status: 'warning', toolsUsed: ['ncu'], duration: 0,
-          issues: [
-            { severity: 'warning', message: 'react: 17.0.0 → 18.0.0 (major)', reportedBy: ['ncu'] },
-            { severity: 'info', message: 'lodash: 4.0.0 → 4.1.0 (minor)', reportedBy: ['ncu'] },
-            { severity: 'info', message: 'typescript: 5.0.0 → 5.0.1 (patch)', reportedBy: ['ncu'] },
-          ],
-        }],
+        checks: [
+          {
+            id: 'outdated',
+            name: 'Outdated',
+            category: 'dependencies',
+            score: 50,
+            status: 'warning',
+            toolsUsed: ['ncu'],
+            duration: 0,
+            issues: [
+              {
+                severity: 'warning',
+                message: 'react: 17.0.0 → 18.0.0 (major)',
+                reportedBy: ['ncu'],
+              },
+              { severity: 'info', message: 'lodash: 4.0.0 → 4.1.0 (minor)', reportedBy: ['ncu'] },
+              {
+                severity: 'info',
+                message: 'typescript: 5.0.0 → 5.0.1 (patch)',
+                reportedBy: ['ncu'],
+              },
+            ],
+          },
+        ],
       });
       render(<DependencyList report={report} />);
       expect(screen.getByText('1 major')).toBeInTheDocument();
@@ -191,13 +296,20 @@ describe('DependencyList', () => {
 
     it('omits zero-count pills', () => {
       const report = makeReport({
-        checks: [{
-          id: 'outdated', name: 'Outdated', category: 'dependencies', score: 70,
-          status: 'warning', toolsUsed: ['ncu'], duration: 0,
-          issues: [
-            { severity: 'info', message: 'lodash: 4.0.0 → 4.0.1 (patch)', reportedBy: ['ncu'] },
-          ],
-        }],
+        checks: [
+          {
+            id: 'outdated',
+            name: 'Outdated',
+            category: 'dependencies',
+            score: 70,
+            status: 'warning',
+            toolsUsed: ['ncu'],
+            duration: 0,
+            issues: [
+              { severity: 'info', message: 'lodash: 4.0.0 → 4.0.1 (patch)', reportedBy: ['ncu'] },
+            ],
+          },
+        ],
       });
       render(<DependencyList report={report} />);
       expect(screen.queryByText(/major/)).not.toBeInTheDocument();

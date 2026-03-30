@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import type { CheckResult, Issue } from '@nebulord/sickbay-core';
 
 interface IssuesListProps {
@@ -9,7 +10,7 @@ export function IssuesList({ checks }: IssuesListProps) {
   const [filter, setFilter] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
 
   const allIssues = checks.flatMap((c) =>
-    c.issues.map((issue) => ({ ...issue, checkName: c.name, checkId: c.id }))
+    c.issues.map((issue) => ({ ...issue, checkName: c.name, checkId: c.id })),
   );
 
   const filtered = filter === 'all' ? allIssues : allIssues.filter((i) => i.severity === filter);
@@ -40,7 +41,11 @@ export function IssuesList({ checks }: IssuesListProps) {
           <div className="text-gray-500 text-sm py-4 text-center">No issues found ✓</div>
         )}
         {filtered.map((issue) => (
-          <IssueRow key={`${issue.checkName}-${issue.message}`} issue={issue} checkName={issue.checkName} />
+          <IssueRow
+            key={`${issue.checkName}-${issue.message}`}
+            issue={issue}
+            checkName={issue.checkName}
+          />
         ))}
       </div>
     </div>
@@ -62,8 +67,8 @@ function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
     issue.severity === 'critical'
       ? 'border-l-red-500 bg-red-500/5'
       : issue.severity === 'warning'
-      ? 'border-l-yellow-500 bg-yellow-500/5'
-      : 'border-l-gray-500 bg-gray-500/5';
+        ? 'border-l-yellow-500 bg-yellow-500/5'
+        : 'border-l-gray-500 bg-gray-500/5';
 
   return (
     <div className={`flex flex-col gap-2 px-3 py-2 border-l-2 rounded-r ${color}`}>

@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
-import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
@@ -21,7 +21,8 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('react-dom') || id.includes('react/')) return 'react';
           if (id.includes('@xyflow/react') || id.includes('dagre')) return 'graph-viz';
-          if (id.includes('react-markdown') || id.includes('react-syntax-highlighter')) return 'markdown';
+          if (id.includes('react-markdown') || id.includes('react-syntax-highlighter'))
+            return 'markdown';
         },
       },
     },

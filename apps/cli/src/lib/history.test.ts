@@ -8,9 +8,17 @@ vi.mock('fs', () => ({
 }));
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { loadHistory, saveEntry, detectRegressions, saveLastReport, saveDepTree } from './history.js';
-import type { SickbayReport } from '@nebulord/sickbay-core';
+
+import {
+  loadHistory,
+  saveEntry,
+  detectRegressions,
+  saveLastReport,
+  saveDepTree,
+} from './history.js';
+
 import type { TrendEntry } from './history.js';
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReadFileSync = vi.mocked(readFileSync);
@@ -34,8 +42,26 @@ function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
       hasTypeScript: false,
     },
     checks: [
-      { id: 'knip', category: 'dependencies', name: 'Unused Code', score: 90, status: 'pass', issues: [], toolsUsed: ['knip'], duration: 0 },
-      { id: 'eslint', category: 'code-quality', name: 'Lint', score: 80, status: 'pass', issues: [], toolsUsed: ['eslint'], duration: 0 },
+      {
+        id: 'knip',
+        category: 'dependencies',
+        name: 'Unused Code',
+        score: 90,
+        status: 'pass',
+        issues: [],
+        toolsUsed: ['knip'],
+        duration: 0,
+      },
+      {
+        id: 'eslint',
+        category: 'code-quality',
+        name: 'Lint',
+        score: 80,
+        status: 'pass',
+        issues: [],
+        toolsUsed: ['eslint'],
+        duration: 0,
+      },
     ],
     overallScore: 85,
     summary: { critical: 0, warnings: 2, info: 3 },
@@ -86,10 +112,9 @@ describe('saveEntry', () => {
 
     saveEntry(makeReport());
 
-    expect(mockMkdirSync).toHaveBeenCalledWith(
-      expect.stringContaining('.sickbay'),
-      { recursive: true },
-    );
+    expect(mockMkdirSync).toHaveBeenCalledWith(expect.stringContaining('.sickbay'), {
+      recursive: true,
+    });
   });
 
   it('writes a new history file with one entry when none existed', () => {
@@ -146,8 +171,26 @@ describe('saveEntry', () => {
   it('excludes skipped checks from category score calculation', () => {
     const report = makeReport({
       checks: [
-        { id: 'knip', category: 'dependencies', name: 'Unused Code', score: 90, status: 'pass', issues: [], toolsUsed: ['knip'], duration: 0 },
-        { id: 'skipped', category: 'dependencies', name: 'Skipped', score: 100, status: 'skipped', issues: [], toolsUsed: [], duration: 0 },
+        {
+          id: 'knip',
+          category: 'dependencies',
+          name: 'Unused Code',
+          score: 90,
+          status: 'pass',
+          issues: [],
+          toolsUsed: ['knip'],
+          duration: 0,
+        },
+        {
+          id: 'skipped',
+          category: 'dependencies',
+          name: 'Skipped',
+          score: 100,
+          status: 'skipped',
+          issues: [],
+          toolsUsed: [],
+          duration: 0,
+        },
       ],
     });
     mockExistsSync.mockReturnValue(false);
@@ -248,10 +291,9 @@ describe('saveLastReport', () => {
   it('creates the .sickbay directory', () => {
     saveLastReport(makeReport());
 
-    expect(mockMkdirSync).toHaveBeenCalledWith(
-      expect.stringContaining('.sickbay'),
-      { recursive: true },
-    );
+    expect(mockMkdirSync).toHaveBeenCalledWith(expect.stringContaining('.sickbay'), {
+      recursive: true,
+    });
   });
 
   it('writes report JSON to last-report.json', () => {
@@ -292,10 +334,9 @@ describe('saveDepTree', () => {
   it('creates the .sickbay directory', () => {
     saveDepTree('/my/project', { name: 'test', dependencies: {} });
 
-    expect(mockMkdirSync).toHaveBeenCalledWith(
-      expect.stringContaining('.sickbay'),
-      { recursive: true },
-    );
+    expect(mockMkdirSync).toHaveBeenCalledWith(expect.stringContaining('.sickbay'), {
+      recursive: true,
+    });
   });
 
   it('writes dep tree JSON to dep-tree.json', () => {

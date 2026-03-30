@@ -1,9 +1,11 @@
-import { readFileSync, readdirSync, statSync, existsSync } from "fs";
-import { join, extname } from "path";
-import { BaseRunner } from "./base.js";
-import { timer, WARN_LINES } from "../utils/file-helpers.js";
-import { CRITICAL_LINES } from "../constants.js";
-import type { CheckResult, Issue } from "../types.js";
+import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
+import { join, extname } from 'path';
+
+import { CRITICAL_LINES } from '../constants.js';
+import { timer, WARN_LINES } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
+import type { CheckResult, Issue } from '../types.js';
 
 /**
  * ComplexityRunner analyzes the source code files in the 'src' directory to identify files with high line counts, which can indicate complexity and maintenance challenges.
@@ -11,14 +13,7 @@ import type { CheckResult, Issue } from "../types.js";
  * The runner also calculates overall statistics such as total lines of code and average lines per file to give a broader view of code complexity in the project.
  */
 
-const SOURCE_EXTENSIONS = new Set([
-  ".ts",
-  ".tsx",
-  ".js",
-  ".jsx",
-  ".mts",
-  ".cts",
-]);
+const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts']);
 
 interface FileStats {
   path: string;
@@ -26,49 +21,44 @@ interface FileStats {
 }
 
 export class ComplexityRunner extends BaseRunner {
-  name = "complexity";
-  category = "code-quality" as const;
+  name = 'complexity';
+  category = 'code-quality' as const;
 
   async isApplicable(projectPath: string): Promise<boolean> {
-    return existsSync(join(projectPath, "src"));
+    return existsSync(join(projectPath, 'src'));
   }
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
 
     try {
-      const files = scanDirectory(join(projectPath, "src"), projectPath);
+      const files = scanDirectory(join(projectPath, 'src'), projectPath);
 
       const oversized = files.filter((f) => f.lines >= WARN_LINES);
       const issues: Issue[] = oversized.map((f) => ({
-        severity: (f.lines >= CRITICAL_LINES
-          ? "warning"
-          : "info") as Issue["severity"],
+        severity: (f.lines >= CRITICAL_LINES ? 'warning' : 'info') as Issue['severity'],
         message: `${f.path}: ${f.lines} lines — consider splitting into smaller modules`,
-        fix: { description: "Extract concerns into smaller, focused files" },
-        reportedBy: ["complexity"],
+        fix: { description: 'Extract concerns into smaller, focused files' },
+        reportedBy: ['complexity'],
       }));
 
       const totalLines = files.reduce((sum, f) => sum + f.lines, 0);
-      const avgLines =
-        files.length > 0 ? Math.round(totalLines / files.length) : 0;
+      const avgLines = files.length > 0 ? Math.round(totalLines / files.length) : 0;
       const score = Math.max(0, 100 - oversized.length * 10);
-      const topFiles = [...files]
-        .sort((a, b) => b.lines - a.lines)
-        .slice(0, 10);
+      const topFiles = [...files].sort((a, b) => b.lines - a.lines).slice(0, 10);
 
       return {
-        id: "complexity",
+        id: 'complexity',
         category: this.category,
-        name: "File Complexity",
+        name: 'File Complexity',
         score,
         status: oversized.some((f) => f.lines >= CRITICAL_LINES)
-          ? "warning"
+          ? 'warning'
           : oversized.length > 0
-            ? "warning"
-            : "pass",
+            ? 'warning'
+            : 'pass',
         issues,
-        toolsUsed: ["complexity"],
+        toolsUsed: ['complexity'],
         duration: elapsed(),
         metadata: {
           totalFiles: files.length,
@@ -80,19 +70,19 @@ export class ComplexityRunner extends BaseRunner {
       };
     } catch (err) {
       return {
-        id: "complexity",
+        id: 'complexity',
         category: this.category,
-        name: "File Complexity",
+        name: 'File Complexity',
         score: 0,
-        status: "fail",
+        status: 'fail',
         issues: [
           {
-            severity: "critical",
+            severity: 'critical',
             message: `Complexity scan failed: ${err}`,
-            reportedBy: ["complexity"],
+            reportedBy: ['complexity'],
           },
         ],
-        toolsUsed: ["complexity"],
+        toolsUsed: ['complexity'],
         duration: elapsed(),
       };
     }
@@ -104,11 +94,11 @@ function scanDirectory(dir: string, projectRoot: string): FileStats[] {
   try {
     for (const entry of readdirSync(dir)) {
       if (
-        entry.startsWith(".") ||
-        entry === "node_modules" ||
-        entry === "__tests__" ||
-        entry === "test" ||
-        entry === "tests"
+        entry.startsWith('.') ||
+        entry === 'node_modules' ||
+        entry === '__tests__' ||
+        entry === 'test' ||
+        entry === 'tests'
       )
         continue;
       const fullPath = join(dir, entry);
@@ -117,10 +107,10 @@ function scanDirectory(dir: string, projectRoot: string): FileStats[] {
         files.push(...scanDirectory(fullPath, projectRoot));
       } else if (SOURCE_EXTENSIONS.has(extname(entry)) && !isTestFile(entry)) {
         try {
-          const lines = readFileSync(fullPath, "utf-8")
-            .split("\n")
+          const lines = readFileSync(fullPath, 'utf-8')
+            .split('\n')
             .filter((l) => l.trim()).length;
-          files.push({ path: fullPath.replace(projectRoot + "/", ""), lines });
+          files.push({ path: fullPath.replace(projectRoot + '/', ''), lines });
         } catch {
           // skip unreadable files
         }

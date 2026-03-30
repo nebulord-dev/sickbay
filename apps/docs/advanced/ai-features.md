@@ -74,6 +74,7 @@ When AI features are enabled, the following data is sent to the Anthropic API:
 - Your chat messages in the interactive drawer
 
 **Not sent:**
+
 - Source code file contents
 - Environment variables (other than what appears in the report)
 - Git credentials or commit history

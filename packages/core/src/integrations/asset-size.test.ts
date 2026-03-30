@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { AssetSizeRunner } from './asset-size.js';
 
 vi.mock('fs', () => ({
@@ -12,6 +13,7 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 import { readdirSync, statSync } from 'fs';
+
 import { fileExists } from '../utils/file-helpers.js';
 
 const mockReaddirSync = vi.mocked(readdirSync);
@@ -120,7 +122,12 @@ describe('AssetSizeRunner', () => {
       // 6 files of 1MB each = 6MB total, each under per-file thresholds
       mockFileExists.mockImplementation((_root, dir) => dir === 'public');
       mockReaddirSync.mockReturnValue([
-        'a.jpg', 'b.jpg', 'c.jpg', 'd.jpg', 'e.jpg', 'f.jpg',
+        'a.jpg',
+        'b.jpg',
+        'c.jpg',
+        'd.jpg',
+        'e.jpg',
+        'f.jpg',
       ] as never);
       // Each file is 1MB — under IMAGE_CRITICAL (2MB) but over IMAGE_WARN (500KB)
       // That means each also triggers an individual warning — let's use ~900KB to keep
@@ -189,8 +196,8 @@ describe('AssetSizeRunner', () => {
       mockFileExists.mockImplementation((_root, dir) => dir === 'public' || dir === 'src/assets');
       // public has one file, src/assets has one file
       mockReaddirSync
-        .mockReturnValueOnce(['logo.png'] as never)  // public
-        .mockReturnValueOnce(['icon.png'] as never);  // src/assets
+        .mockReturnValueOnce(['logo.png'] as never) // public
+        .mockReturnValueOnce(['icon.png'] as never); // src/assets
       mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 * KB } as never);
 
       const result = await runner.run('/project');

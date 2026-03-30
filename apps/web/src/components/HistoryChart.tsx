@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { SCORE_GOOD, SCORE_FAIR } from "../lib/constants.js";
+import { useState } from 'react';
+
+import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
 
 export interface TrendEntry {
   timestamp: string;
@@ -20,11 +21,11 @@ interface HistoryChartProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  dependencies: "#60a5fa",
-  security: "#f87171",
-  "code-quality": "#a78bfa",
-  performance: "#fb923c",
-  git: "#34d399",
+  dependencies: '#60a5fa',
+  security: '#f87171',
+  'code-quality': '#a78bfa',
+  performance: '#fb923c',
+  git: '#34d399',
 };
 
 const PAD = { top: 20, right: 24, bottom: 44, left: 44 };
@@ -48,26 +49,23 @@ function formatDate(iso: string): string {
 }
 
 function scoreColor(score: number): string {
-  if (score >= SCORE_GOOD) return "#4ade80";
-  if (score >= SCORE_FAIR) return "#facc15";
-  return "#f87171";
+  if (score >= SCORE_GOOD) return '#4ade80';
+  if (score >= SCORE_FAIR) return '#facc15';
+  return '#f87171';
 }
 
 export function HistoryChart({ history }: HistoryChartProps) {
   const { entries } = history;
 
-  const allCategories = Array.from(
-    new Set(entries.flatMap((e) => Object.keys(e.categoryScores))),
-  );
+  const allCategories = Array.from(new Set(entries.flatMap((e) => Object.keys(e.categoryScores))));
 
-  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(
-    new Set(),
-  );
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
 
   if (entries.length === 0) {
     return (
       <div className="flex items-center justify-center h-48 text-gray-500 text-sm font-mono">
-        No history yet — run <code className="mx-1 px-1 bg-card rounded-sm">sickbay</code> to start tracking
+        No history yet — run <code className="mx-1 px-1 bg-card rounded-sm">sickbay</code> to start
+        tracking
       </div>
     );
   }
@@ -94,9 +92,7 @@ export function HistoryChart({ history }: HistoryChartProps) {
 
   // Build polyline points for a series
   function points(values: number[]): string {
-    return values
-      .map((v, i) => `${entryToX(i, n)},${scoreToY(v)}`)
-      .join(" ");
+    return values.map((v, i) => `${entryToX(i, n)},${scoreToY(v)}`).join(' ');
   }
 
   const overallPoints = points(entries.map((e) => e.overallScore));
@@ -118,9 +114,9 @@ export function HistoryChart({ history }: HistoryChartProps) {
                 y1={scoreToY(y)}
                 x2={PAD.left + CHART_W}
                 y2={scoreToY(y)}
-                stroke={y === 60 || y === 80 ? (y === 80 ? "#4ade8033" : "#facc1533") : "#ffffff0d"}
+                stroke={y === 60 || y === 80 ? (y === 80 ? '#4ade8033' : '#facc1533') : '#ffffff0d'}
                 strokeWidth={y === 60 || y === 80 ? 1.5 : 1}
-                strokeDasharray={y === 60 || y === 80 ? "4 3" : undefined}
+                strokeDasharray={y === 60 || y === 80 ? '4 3' : undefined}
               />
               <text
                 x={PAD.left - 8}
@@ -151,15 +147,13 @@ export function HistoryChart({ history }: HistoryChartProps) {
           {/* Category lines (behind overall) */}
           {allCategories.map((cat) => {
             if (hiddenCategories.has(cat)) return null;
-            const values = entries.map(
-              (e) => e.categoryScores[cat] ?? 0,
-            );
+            const values = entries.map((e) => e.categoryScores[cat] ?? 0);
             return (
               <polyline
                 key={cat}
                 points={points(values)}
                 fill="none"
-                stroke={CATEGORY_COLORS[cat] ?? "#9ca3af"}
+                stroke={CATEGORY_COLORS[cat] ?? '#9ca3af'}
                 strokeWidth={1.5}
                 strokeOpacity={0.5}
               />
@@ -167,12 +161,7 @@ export function HistoryChart({ history }: HistoryChartProps) {
           })}
 
           {/* Overall score line (prominent) */}
-          <polyline
-            points={overallPoints}
-            fill="none"
-            stroke="#ffffff"
-            strokeWidth={2.5}
-          />
+          <polyline points={overallPoints} fill="none" stroke="#ffffff" strokeWidth={2.5} />
 
           {/* Overall score dots */}
           {entries.map((e, i) => (
@@ -198,13 +187,13 @@ export function HistoryChart({ history }: HistoryChartProps) {
         </div>
 
         {allCategories.map((cat) => {
-          const color = CATEGORY_COLORS[cat] ?? "#9ca3af";
+          const color = CATEGORY_COLORS[cat] ?? '#9ca3af';
           const hidden = hiddenCategories.has(cat);
           return (
             <button
               key={cat}
               onClick={() => toggleCategory(cat)}
-              className={`flex items-center gap-1.5 text-xs font-mono transition-opacity ${hidden ? "opacity-30" : "opacity-80 hover:opacity-100"}`}
+              className={`flex items-center gap-1.5 text-xs font-mono transition-opacity ${hidden ? 'opacity-30' : 'opacity-80 hover:opacity-100'}`}
               style={{ color }}
             >
               <span
@@ -218,51 +207,49 @@ export function HistoryChart({ history }: HistoryChartProps) {
       </div>
 
       {/* Latest scores summary */}
-      {entries.length > 0 && (() => {
-        const latest = entries[entries.length - 1];
-        const prev = entries.length > 1 ? entries[entries.length - 2] : null;
-        const delta = prev ? latest.overallScore - prev.overallScore : null;
-        return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            <div className="bg-surface border border-border rounded-lg p-3">
-              <div className="text-xs text-gray-500 mb-1">current overall</div>
-              <div
-                className="text-2xl font-bold font-mono"
-                style={{ color: scoreColor(latest.overallScore) }}
-              >
-                {latest.overallScore}
-                {delta !== null && (
-                  <span
-                    className="text-sm ml-1.5"
-                    style={{ color: delta >= 0 ? "#4ade80" : "#f87171" }}
-                  >
-                    {delta >= 0 ? `+${delta}` : delta}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {allCategories.map((cat) => {
-              const score = latest.categoryScores[cat];
-              if (score == null) return null;
-              return (
+      {entries.length > 0 &&
+        (() => {
+          const latest = entries[entries.length - 1];
+          const prev = entries.length > 1 ? entries[entries.length - 2] : null;
+          const delta = prev ? latest.overallScore - prev.overallScore : null;
+          return (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              <div className="bg-surface border border-border rounded-lg p-3">
+                <div className="text-xs text-gray-500 mb-1">current overall</div>
                 <div
-                  key={cat}
-                  className="bg-surface border border-border rounded-lg p-3"
+                  className="text-2xl font-bold font-mono"
+                  style={{ color: scoreColor(latest.overallScore) }}
                 >
-                  <div className="text-xs text-gray-500 mb-1">{cat}</div>
-                  <div
-                    className="text-2xl font-bold font-mono"
-                    style={{ color: CATEGORY_COLORS[cat] ?? scoreColor(score) }}
-                  >
-                    {score}
-                  </div>
+                  {latest.overallScore}
+                  {delta !== null && (
+                    <span
+                      className="text-sm ml-1.5"
+                      style={{ color: delta >= 0 ? '#4ade80' : '#f87171' }}
+                    >
+                      {delta >= 0 ? `+${delta}` : delta}
+                    </span>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        );
-      })()}
+              </div>
+
+              {allCategories.map((cat) => {
+                const score = latest.categoryScores[cat];
+                if (score == null) return null;
+                return (
+                  <div key={cat} className="bg-surface border border-border rounded-lg p-3">
+                    <div className="text-xs text-gray-500 mb-1">{cat}</div>
+                    <div
+                      className="text-2xl font-bold font-mono"
+                      style={{ color: CATEGORY_COLORS[cat] ?? scoreColor(score) }}
+                    >
+                      {score}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
     </div>
   );
 }

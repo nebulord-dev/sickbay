@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { JscpdRunner } from './jscpd.js';
 
 vi.mock('execa', () => ({
@@ -19,6 +20,7 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 import { execa } from 'execa';
+
 import { isCommandAvailable } from '../utils/file-helpers.js';
 
 const mockExeca = vi.mocked(execa);

@@ -1,6 +1,8 @@
-import React from "react";
-import { Box, Text } from "ink";
-import { useGitStatus } from "./hooks/useGitStatus.js";
+import React from 'react';
+
+import { Box, Text } from 'ink';
+
+import { useGitStatus } from './hooks/useGitStatus.js';
 
 interface GitPanelProps {
   projectPath: string;
@@ -29,24 +31,26 @@ export function GitPanel({ projectPath, availableWidth = 30 }: GitPanelProps) {
       {(status.ahead > 0 || status.behind > 0) && (
         <Box>
           {status.ahead > 0 && (
-            <Text color="green">{"\u2191"}{status.ahead} </Text>
+            <Text color="green">
+              {'\u2191'}
+              {status.ahead}{' '}
+            </Text>
           )}
           {status.behind > 0 && (
-            <Text color="red">{"\u2193"}{status.behind}</Text>
+            <Text color="red">
+              {'\u2193'}
+              {status.behind}
+            </Text>
           )}
         </Box>
       )}
       <Box>
-        <Text dimColor>Modified:  </Text>
-        <Text color={status.modified > 0 ? "yellow" : "green"}>
-          {status.modified}
-        </Text>
+        <Text dimColor>Modified: </Text>
+        <Text color={status.modified > 0 ? 'yellow' : 'green'}>{status.modified}</Text>
       </Box>
       <Box>
-        <Text dimColor>Staged:    </Text>
-        <Text color={status.staged > 0 ? "cyan" : "green"}>
-          {status.staged}
-        </Text>
+        <Text dimColor>Staged: </Text>
+        <Text color={status.staged > 0 ? 'cyan' : 'green'}>{status.staged}</Text>
       </Box>
       <Box>
         <Text dimColor>Untracked: </Text>
@@ -54,7 +58,7 @@ export function GitPanel({ projectPath, availableWidth = 30 }: GitPanelProps) {
       </Box>
       {status.stashes > 0 && (
         <Box>
-          <Text dimColor>Stashes:   </Text>
+          <Text dimColor>Stashes: </Text>
           <Text>{status.stashes}</Text>
         </Box>
       )}
@@ -63,7 +67,7 @@ export function GitPanel({ projectPath, availableWidth = 30 }: GitPanelProps) {
           <Text dimColor>Last commit:</Text>
           <Text>
             {status.lastCommit.length > availableWidth
-              ? status.lastCommit.slice(0, availableWidth - 3) + "..."
+              ? status.lastCommit.slice(0, availableWidth - 3) + '...'
               : status.lastCommit}
           </Text>
           <Text dimColor>{status.lastCommitTime}</Text>

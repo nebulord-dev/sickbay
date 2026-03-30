@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
-import { render } from 'ink-testing-library';
+
 import { Text } from 'ink';
+import { render } from 'ink-testing-library';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import { useTerminalSize } from './useTerminalSize.js';
 
 // Wrapper component that renders size info as text so we can inspect it

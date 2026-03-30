@@ -1,6 +1,7 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
-import type { SickbayReport } from "@nebulord/sickbay-core";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { join } from 'path';
+
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 export interface TrendEntry {
   timestamp: string;
@@ -17,21 +18,21 @@ export interface TrendHistory {
 }
 
 function historyFilePath(projectPath: string): string {
-  return join(projectPath, ".sickbay", "history.json");
+  return join(projectPath, '.sickbay', 'history.json');
 }
 
 export function loadHistory(projectPath: string): TrendHistory | null {
   const filePath = historyFilePath(projectPath);
   if (!existsSync(filePath)) return null;
   try {
-    return JSON.parse(readFileSync(filePath, "utf-8"));
+    return JSON.parse(readFileSync(filePath, 'utf-8'));
   } catch {
     return null;
   }
 }
 
 export function saveEntry(report: SickbayReport): void {
-  mkdirSync(join(report.projectPath, ".sickbay"), { recursive: true });
+  mkdirSync(join(report.projectPath, '.sickbay'), { recursive: true });
 
   const filePath = historyFilePath(report.projectPath);
   const existing = loadHistory(report.projectPath) ?? {
@@ -43,14 +44,12 @@ export function saveEntry(report: SickbayReport): void {
   const categoryScores: Record<string, number> = {};
   const categoryChecks: Record<string, number[]> = {};
   for (const check of report.checks) {
-    if (check.status === "skipped") continue;
+    if (check.status === 'skipped') continue;
     if (!categoryChecks[check.category]) categoryChecks[check.category] = [];
     categoryChecks[check.category].push(check.score);
   }
   for (const [cat, scores] of Object.entries(categoryChecks)) {
-    categoryScores[cat] = Math.round(
-      scores.reduce((a, b) => a + b, 0) / scores.length,
-    );
+    categoryScores[cat] = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
   }
 
   existing.entries.push({
@@ -58,7 +57,7 @@ export function saveEntry(report: SickbayReport): void {
     overallScore: report.overallScore,
     categoryScores,
     summary: { ...report.summary },
-    checksRun: report.checks.filter((c) => c.status !== "skipped").length,
+    checksRun: report.checks.filter((c) => c.status !== 'skipped').length,
   });
 
   if (existing.entries.length > 100) {
@@ -69,19 +68,16 @@ export function saveEntry(report: SickbayReport): void {
 }
 
 export function saveLastReport(report: SickbayReport): void {
-  mkdirSync(join(report.projectPath, ".sickbay"), { recursive: true });
+  mkdirSync(join(report.projectPath, '.sickbay'), { recursive: true });
   writeFileSync(
-    join(report.projectPath, ".sickbay", "last-report.json"),
+    join(report.projectPath, '.sickbay', 'last-report.json'),
     JSON.stringify(report, null, 2),
   );
 }
 
 export function saveDepTree(projectPath: string, tree: unknown): void {
-  mkdirSync(join(projectPath, ".sickbay"), { recursive: true });
-  writeFileSync(
-    join(projectPath, ".sickbay", "dep-tree.json"),
-    JSON.stringify(tree, null, 2),
-  );
+  mkdirSync(join(projectPath, '.sickbay'), { recursive: true });
+  writeFileSync(join(projectPath, '.sickbay', 'dep-tree.json'), JSON.stringify(tree, null, 2));
 }
 
 export function detectRegressions(
@@ -100,7 +96,7 @@ export function detectRegressions(
 
   if (latest.overallScore < previous.overallScore - 5) {
     regressions.push({
-      category: "overall",
+      category: 'overall',
       drop: previous.overallScore - latest.overallScore,
       from: previous.overallScore,
       to: latest.overallScore,

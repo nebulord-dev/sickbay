@@ -1,6 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { IssuesList } from './IssuesList.js';
+
 import type { CheckResult } from '@nebulord/sickbay-core';
 
 function makeCheck(overrides: Partial<CheckResult> = {}): CheckResult {
@@ -111,7 +113,9 @@ describe('IssuesList', () => {
 
   it('displays the file path when an issue has one', () => {
     const check = makeCheck({
-      issues: [{ severity: 'warning', message: 'Lint error', file: 'src/foo.ts', reportedBy: ['test'] }],
+      issues: [
+        { severity: 'warning', message: 'Lint error', file: 'src/foo.ts', reportedBy: ['test'] },
+      ],
     });
     render(<IssuesList checks={[check]} />);
     expect(screen.getByText('src/foo.ts')).toBeInTheDocument();
@@ -119,12 +123,14 @@ describe('IssuesList', () => {
 
   it('shows the fix command as a button', () => {
     const check = makeCheck({
-      issues: [{
-        severity: 'warning',
-        message: 'Remove dep',
-        reportedBy: ['knip'],
-        fix: { description: 'Uninstall it', command: 'npm uninstall lodash' },
-      }],
+      issues: [
+        {
+          severity: 'warning',
+          message: 'Remove dep',
+          reportedBy: ['knip'],
+          fix: { description: 'Uninstall it', command: 'npm uninstall lodash' },
+        },
+      ],
     });
     render(<IssuesList checks={[check]} />);
     expect(screen.getByText('npm uninstall lodash')).toBeInTheDocument();
@@ -132,12 +138,14 @@ describe('IssuesList', () => {
 
   it('copies the fix command to clipboard when the button is clicked', () => {
     const check = makeCheck({
-      issues: [{
-        severity: 'warning',
-        message: 'Remove dep',
-        reportedBy: ['knip'],
-        fix: { description: 'Uninstall it', command: 'npm uninstall lodash' },
-      }],
+      issues: [
+        {
+          severity: 'warning',
+          message: 'Remove dep',
+          reportedBy: ['knip'],
+          fix: { description: 'Uninstall it', command: 'npm uninstall lodash' },
+        },
+      ],
     });
     render(<IssuesList checks={[check]} />);
     fireEvent.click(screen.getByText('npm uninstall lodash'));
@@ -146,8 +154,16 @@ describe('IssuesList', () => {
 
   it('aggregates issues from multiple checks', () => {
     const checks = [
-      makeCheck({ id: 'a', name: 'Check A', issues: [{ severity: 'critical', message: 'From A', reportedBy: ['a'] }] }),
-      makeCheck({ id: 'b', name: 'Check B', issues: [{ severity: 'warning', message: 'From B', reportedBy: ['b'] }] }),
+      makeCheck({
+        id: 'a',
+        name: 'Check A',
+        issues: [{ severity: 'critical', message: 'From A', reportedBy: ['a'] }],
+      }),
+      makeCheck({
+        id: 'b',
+        name: 'Check B',
+        issues: [{ severity: 'warning', message: 'From B', reportedBy: ['b'] }],
+      }),
     ];
     render(<IssuesList checks={checks} />);
     expect(screen.getByText('all (2)')).toBeInTheDocument();

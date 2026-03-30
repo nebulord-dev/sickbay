@@ -1,18 +1,17 @@
-import { useState, lazy, Suspense, useEffect, useRef, useCallback } from "react";
-import type { SickbayReport, MonorepoReport, PackageReport } from "@nebulord/sickbay-core";
-import { SCORE_GOOD, SCORE_FAIR } from "../lib/constants.js";
+import { useState, lazy, Suspense, useEffect, useRef, useCallback } from 'react';
+
+import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
+
+import type { SickbayReport, MonorepoReport, PackageReport } from '@nebulord/sickbay-core';
 
 function getScoreColor(score: number) {
-  if (score >= SCORE_GOOD) return "green";
-  if (score >= SCORE_FAIR) return "yellow";
-  return "red";
+  if (score >= SCORE_GOOD) return 'green';
+  if (score >= SCORE_FAIR) return 'yellow';
+  return 'red';
 }
 
 function getMeta(report: SickbayReport, id: string): Record<string, unknown> {
-  return (report.checks.find((c) => c.id === id)?.metadata ?? {}) as Record<
-    string,
-    unknown
-  >;
+  return (report.checks.find((c) => c.id === id)?.metadata ?? {}) as Record<string, unknown>;
 }
 
 function fmt(n: number): string {
@@ -20,45 +19,48 @@ function fmt(n: number): string {
   return String(n);
 }
 
-import { ScoreCard } from "./ScoreCard.js";
-import { IssuesList } from "./IssuesList.js";
-import { DependencyList } from "./DependencyList.js";
-import { CodebaseStats } from "./CodebaseStats.js";
-import { About } from "./About.js";
-import { AISummary } from "./AISummary.js";
-import { CriticalIssues } from "./CriticalIssues.js";
-import { HistoryChart } from "./HistoryChart.js";
-import type { TrendHistory } from "./HistoryChart.js";
+import { About } from './About.js';
+import { AISummary } from './AISummary.js';
+import { CodebaseStats } from './CodebaseStats.js';
+import { CriticalIssues } from './CriticalIssues.js';
+import { DependencyList } from './DependencyList.js';
+import { HistoryChart } from './HistoryChart.js';
+import { IssuesList } from './IssuesList.js';
+import { ScoreCard } from './ScoreCard.js';
+
+import type { TrendHistory } from './HistoryChart.js';
 
 // Lazy load heavy components
-const ChatDrawer = lazy(() =>
-  import("./ChatDrawer.js").then((m) => ({ default: m.ChatDrawer })),
-);
+const ChatDrawer = lazy(() => import('./ChatDrawer.js').then((m) => ({ default: m.ChatDrawer })));
 
 interface DashboardProps {
   report: SickbayReport | MonorepoReport;
 }
 
-type View = "overview" | "issues" | "dependencies" | "codebase" | "history" | "about";
+type View = 'overview' | 'issues' | 'dependencies' | 'codebase' | 'history' | 'about';
 
 function isMonorepoReport(r: SickbayReport | MonorepoReport): r is MonorepoReport {
-  return "isMonorepo" in r;
+  return 'isMonorepo' in r;
 }
 
 /** Build a minimal SickbayReport from a PackageReport for use in existing Dashboard components */
-function packageReportToSickbayReport(pkg: PackageReport, parentReport: MonorepoReport): SickbayReport {
+function packageReportToSickbayReport(
+  pkg: PackageReport,
+  parentReport: MonorepoReport,
+): SickbayReport {
   return {
     timestamp: parentReport.timestamp,
     projectPath: pkg.path,
     projectInfo: {
       name: pkg.name,
-      version: "unknown",
+      version: 'unknown',
       hasTypeScript: false,
       hasESLint: false,
       hasPrettier: false,
       framework: pkg.framework,
       packageManager: parentReport.packageManager,
-      totalDependencies: Object.keys(pkg.dependencies).length + Object.keys(pkg.devDependencies).length,
+      totalDependencies:
+        Object.keys(pkg.dependencies).length + Object.keys(pkg.devDependencies).length,
       dependencies: pkg.dependencies,
       devDependencies: pkg.devDependencies,
     },
@@ -79,7 +81,7 @@ export function Dashboard({ report }: DashboardProps) {
       ? packageReportToSickbayReport(monorepo.packages[selectedPackageIdx], monorepo)
       : null
     : (report as SickbayReport);
-  const [view, setView] = useState<View>("overview");
+  const [view, setView] = useState<View>('overview');
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
   const [isAIDrawerOpen, setIsAIDrawerOpen] = useState(false);
   const [history, setHistory] = useState<TrendHistory | null>(null);
@@ -89,33 +91,35 @@ export function Dashboard({ report }: DashboardProps) {
 
   // Reset view when switching packages
   useEffect(() => {
-    setView("overview");
+    setView('overview');
     setSelectedCheck(null);
     setIsAIDrawerOpen(false);
   }, [selectedPackageIdx]);
 
   // Scroll to top when view changes
   useEffect(() => {
-    mainContentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   }, [view]);
 
   // Lazily fetch history when History tab is first activated
   const fetchHistory = useCallback(() => {
     if (historyFetched.current) return;
     historyFetched.current = true;
-    fetch("/sickbay-history.json")
+    fetch('/sickbay-history.json')
       .then((r) => (r.ok ? r.json() : null))
       .then((data: TrendHistory | null) => {
         if (data && Array.isArray(data.entries) && data.entries.length > 0) {
           setHistory(data);
         }
       })
-      .catch(() => {/* no history available */});
+      .catch(() => {
+        /* no history available */
+      });
   }, []);
 
-  const complexityMeta = activeReport ? getMeta(activeReport, "complexity") : {};
-  const gitMeta = activeReport ? getMeta(activeReport, "git") : {};
-  const coverageMeta = activeReport ? getMeta(activeReport, "coverage") : {};
+  const complexityMeta = activeReport ? getMeta(activeReport, 'complexity') : {};
+  const gitMeta = activeReport ? getMeta(activeReport, 'git') : {};
+  const coverageMeta = activeReport ? getMeta(activeReport, 'coverage') : {};
 
   const filteredChecks = activeReport
     ? selectedCheck
@@ -125,7 +129,7 @@ export function Dashboard({ report }: DashboardProps) {
 
   const handleCriticalCheckClick = (checkId: string) => {
     setSelectedCheck(checkId);
-    setView("overview");
+    setView('overview');
   };
 
   return (
@@ -133,11 +137,9 @@ export function Dashboard({ report }: DashboardProps) {
       {/* Sidebar */}
       <aside className="w-72 border-r border-border flex flex-col shrink-0 bg-surface">
         <div className="p-4 border-b border-border">
-          <div className="text-green-400 font-bold text-xl tracking-wider">
-            SICKBAY
-          </div>
+          <div className="text-green-400 font-bold text-xl tracking-wider">SICKBAY</div>
           <div className="text-gray-400 text-xs mt-0.5">
-            {monorepo ? "Monorepo Health Dashboard" : "Project Health Dashboard"}
+            {monorepo ? 'Monorepo Health Dashboard' : 'Project Health Dashboard'}
           </div>
         </div>
 
@@ -147,21 +149,26 @@ export function Dashboard({ report }: DashboardProps) {
             <div className="p-4 border-b border-border">
               <div className="text-xs text-gray-500 mb-1">monorepo</div>
               <div className="font-semibold text-sm">{monorepo.monorepoType} workspaces</div>
-              <div className="text-xs text-gray-500">{monorepo.packages.length} packages · {monorepo.packageManager}</div>
+              <div className="text-xs text-gray-500">
+                {monorepo.packages.length} packages · {monorepo.packageManager}
+              </div>
             </div>
             <div className="p-4 border-b border-border">
               <div className="text-xs text-gray-500 mb-2">overall score</div>
-              <div className={`text-4xl font-bold ${scoreColor === "green" ? "text-green-400" : scoreColor === "yellow" ? "text-yellow-400" : "text-red-400"}`}>
+              <div
+                className={`text-4xl font-bold ${scoreColor === 'green' ? 'text-green-400' : scoreColor === 'yellow' ? 'text-yellow-400' : 'text-red-400'}`}
+              >
                 {monorepo.overallScore}
               </div>
               <div className="text-xs text-gray-500 mt-1">
                 <span className="text-red-400">{monorepo.summary.critical} critical</span>
-                {" · "}
+                {' · '}
                 <span className="text-yellow-400">{monorepo.summary.warnings} warnings</span>
               </div>
               {monorepo.quote && (
                 <p className="text-sm italic text-gray-400 mt-2">
-                  "{monorepo.quote.text}" <span className="not-italic">— {monorepo.quote.source}</span>
+                  "{monorepo.quote.text}"{' '}
+                  <span className="not-italic">— {monorepo.quote.source}</span>
                 </p>
               )}
             </div>
@@ -170,18 +177,23 @@ export function Dashboard({ report }: DashboardProps) {
               <button
                 onClick={() => setSelectedPackageIdx(-1)}
                 className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-sm transition-colors
-                  ${selectedPackageIdx === -1 ? "bg-card text-white" : "text-gray-400 hover:text-white hover:bg-card/50"}`}
+                  ${selectedPackageIdx === -1 ? 'bg-card text-white' : 'text-gray-400 hover:text-white hover:bg-card/50'}`}
               >
                 <span className="font-mono">overview</span>
               </button>
               {monorepo.packages.map((pkg, i) => {
-                const color = pkg.score >= SCORE_GOOD ? "text-green-400" : pkg.score >= SCORE_FAIR ? "text-yellow-400" : "text-red-400";
+                const color =
+                  pkg.score >= SCORE_GOOD
+                    ? 'text-green-400'
+                    : pkg.score >= SCORE_FAIR
+                      ? 'text-yellow-400'
+                      : 'text-red-400';
                 return (
                   <button
                     key={pkg.path}
                     onClick={() => setSelectedPackageIdx(i)}
                     className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-sm transition-colors
-                      ${selectedPackageIdx === i ? "bg-card text-white" : "text-gray-400 hover:text-white hover:bg-card/50"}`}
+                      ${selectedPackageIdx === i ? 'bg-card text-white' : 'text-gray-400 hover:text-white hover:bg-card/50'}`}
                   >
                     <span className="font-mono truncate text-left">{pkg.name}</span>
                     <span className={`text-xs font-bold ml-2 shrink-0 ${color}`}>{pkg.score}</span>
@@ -199,9 +211,7 @@ export function Dashboard({ report }: DashboardProps) {
             <div className="p-4 border-b border-border">
               <div className="text-xs text-gray-500 mb-1">project</div>
               <div className="font-semibold">{activeReport.projectInfo.name}</div>
-              <div className="text-xs text-gray-500">
-                v{activeReport.projectInfo.version}
-              </div>
+              <div className="text-xs text-gray-500">v{activeReport.projectInfo.version}</div>
               <div className="text-xs text-gray-500 mt-1">
                 {activeReport.projectInfo.framework} · {activeReport.projectInfo.packageManager}
               </div>
@@ -265,24 +275,21 @@ export function Dashboard({ report }: DashboardProps) {
             <div className="p-4 border-b border-border">
               <div className="text-xs text-gray-500 mb-2">overall score</div>
               <div
-                className={`text-4xl font-bold ${scoreColor === "green" ? "text-green-400" : scoreColor === "yellow" ? "text-yellow-400" : "text-red-400"}`}
+                className={`text-4xl font-bold ${scoreColor === 'green' ? 'text-green-400' : scoreColor === 'yellow' ? 'text-yellow-400' : 'text-red-400'}`}
               >
                 {activeReport.overallScore}
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                <span className="text-red-400">
-                  {activeReport.summary.critical} critical
-                </span>
-                {" · "}
-                <span className="text-yellow-400">
-                  {activeReport.summary.warnings} warnings
-                </span>
-                {" · "}
+                <span className="text-red-400">{activeReport.summary.critical} critical</span>
+                {' · '}
+                <span className="text-yellow-400">{activeReport.summary.warnings} warnings</span>
+                {' · '}
                 <span className="text-gray-400">{activeReport.summary.info} info</span>
               </div>
               {activeReport.quote && (
                 <p className="text-sm italic text-gray-400 mt-2">
-                  "{activeReport.quote.text}" <span className="not-italic">— {activeReport.quote.source}</span>
+                  "{activeReport.quote.text}"{' '}
+                  <span className="not-italic">— {activeReport.quote.source}</span>
                 </p>
               )}
             </div>
@@ -292,26 +299,22 @@ export function Dashboard({ report }: DashboardProps) {
               {activeReport.checks.map((check) => {
                 const color =
                   check.score >= SCORE_GOOD
-                    ? "text-green-400"
+                    ? 'text-green-400'
                     : check.score >= SCORE_FAIR
-                      ? "text-yellow-400"
-                      : "text-red-400";
+                      ? 'text-yellow-400'
+                      : 'text-red-400';
                 return (
                   <button
                     key={check.id}
                     onClick={() => {
-                      setSelectedCheck(
-                        selectedCheck === check.id ? null : check.id,
-                      );
-                      setView("issues");
+                      setSelectedCheck(selectedCheck === check.id ? null : check.id);
+                      setView('issues');
                     }}
                     className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-sm transition-colors
-                      ${selectedCheck === check.id ? "bg-card text-white" : "text-gray-400 hover:text-white hover:bg-card/50"}`}
+                      ${selectedCheck === check.id ? 'bg-card text-white' : 'text-gray-400 hover:text-white hover:bg-card/50'}`}
                   >
                     <span className="font-mono">{check.name}</span>
-                    <span className={`text-xs font-bold ${color}`}>
-                      {check.score}
-                    </span>
+                    <span className={`text-xs font-bold ${color}`}>{check.score}</span>
                   </button>
                 );
               })}
@@ -333,32 +336,30 @@ export function Dashboard({ report }: DashboardProps) {
           <>
             <div className="p-4 border-b border-border flex items-center">
               <div className="flex gap-2 flex-1">
-                {(["overview", "issues", "dependencies", "codebase"] as View[]).map(
-                  (v) => (
-                    <button
-                      key={v}
-                      onClick={() => {
-                        setView(v);
-                        if (v === "overview") {
-                          setSelectedCheck(null);
-                        }
-                      }}
-                      className={`px-3 py-1 rounded text-sm font-mono transition-colors
-                      ${view === v ? "bg-accent text-black font-semibold" : "text-gray-400 hover:text-white"}`}
-                    >
-                      {v}
-                    </button>
-                  ),
-                )}
+                {(['overview', 'issues', 'dependencies', 'codebase'] as View[]).map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => {
+                      setView(v);
+                      if (v === 'overview') {
+                        setSelectedCheck(null);
+                      }
+                    }}
+                    className={`px-3 py-1 rounded text-sm font-mono transition-colors
+                      ${view === v ? 'bg-accent text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    {v}
+                  </button>
+                ))}
                 {/* History tab only for root single-project (not per-package in monorepo) */}
                 {!monorepo && (
                   <button
                     onClick={() => {
-                      setView("history");
+                      setView('history');
                       fetchHistory();
                     }}
                     className={`px-3 py-1 rounded text-sm font-mono transition-colors
-                      ${view === "history" ? "bg-accent text-black font-semibold" : "text-gray-400 hover:text-white"}`}
+                      ${view === 'history' ? 'bg-accent text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
                   >
                     history
                   </button>
@@ -369,7 +370,7 @@ export function Dashboard({ report }: DashboardProps) {
                   <button
                     onClick={() => setIsAIDrawerOpen(!isAIDrawerOpen)}
                     className={`px-3 py-1 rounded text-sm font-mono transition-colors flex items-center gap-1.5
-                      ${isAIDrawerOpen ? "bg-purple-500/20 text-purple-300 font-semibold" : "text-gray-400 hover:text-white"}`}
+                      ${isAIDrawerOpen ? 'bg-purple-500/20 text-purple-300 font-semibold' : 'text-gray-400 hover:text-white'}`}
                   >
                     <span>
                       <svg
@@ -390,9 +391,9 @@ export function Dashboard({ report }: DashboardProps) {
                   </button>
                 )}
                 <button
-                  onClick={() => setView("about")}
+                  onClick={() => setView('about')}
                   className={`px-3 py-1 rounded text-sm font-mono transition-colors
-                    ${view === "about" ? "bg-accent text-black font-semibold" : "text-gray-400 hover:text-white"}`}
+                    ${view === 'about' ? 'bg-accent text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
                 >
                   about
                 </button>
@@ -400,22 +401,17 @@ export function Dashboard({ report }: DashboardProps) {
             </div>
 
             <div className="p-6">
-              {view === "overview" && (
+              {view === 'overview' && (
                 <>
-                  <CriticalIssues
-                    report={activeReport}
-                    onCheckClick={handleCriticalCheckClick}
-                  />
+                  <CriticalIssues report={activeReport} onCheckClick={handleCriticalCheckClick} />
                   <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {filteredChecks.map((check) => (
                       <ScoreCard
                         key={check.id}
                         check={check}
                         onClick={() => {
-                          setSelectedCheck(
-                            selectedCheck === check.id ? null : check.id,
-                          );
-                          setView("overview");
+                          setSelectedCheck(selectedCheck === check.id ? null : check.id);
+                          setView('overview');
                         }}
                         active={selectedCheck === check.id}
                       />
@@ -424,23 +420,25 @@ export function Dashboard({ report }: DashboardProps) {
                 </>
               )}
 
-              {view === "issues" && <IssuesList checks={filteredChecks} />}
+              {view === 'issues' && <IssuesList checks={filteredChecks} />}
 
-              {view === "dependencies" && <DependencyList report={activeReport} />}
+              {view === 'dependencies' && <DependencyList report={activeReport} />}
 
-              {view === "codebase" && <CodebaseStats report={activeReport} />}
+              {view === 'codebase' && <CodebaseStats report={activeReport} />}
 
-              {view === "history" && !monorepo && (
-                history
-                  ? <HistoryChart history={history} />
-                  : (
-                    <div className="flex items-center justify-center h-48 text-gray-500 text-sm font-mono">
-                      No history found — run <code className="mx-1 px-1 bg-card rounded-sm">sickbay init</code> then scan at least once
-                    </div>
-                  )
-              )}
+              {view === 'history' &&
+                !monorepo &&
+                (history ? (
+                  <HistoryChart history={history} />
+                ) : (
+                  <div className="flex items-center justify-center h-48 text-gray-500 text-sm font-mono">
+                    No history found — run{' '}
+                    <code className="mx-1 px-1 bg-card rounded-sm">sickbay init</code> then scan at
+                    least once
+                  </div>
+                ))}
 
-              {view === "about" && <About report={activeReport} />}
+              {view === 'about' && <About report={activeReport} />}
             </div>
           </>
         ) : null}
@@ -478,7 +476,7 @@ function MonorepoOverviewWrapper({
   onSelectPackage: (idx: number) => void;
 }) {
   const MonorepoOverview = lazy(() =>
-    import("./MonorepoOverview.js").then((m) => ({ default: m.MonorepoOverview })),
+    import('./MonorepoOverview.js').then((m) => ({ default: m.MonorepoOverview })),
   );
   return (
     <Suspense fallback={<div className="p-8 text-gray-500">Loading overview...</div>}>

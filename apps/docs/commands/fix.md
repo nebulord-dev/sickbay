@@ -10,14 +10,14 @@ sickbay fix [options]
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-p, --path <path>` | Project path to analyze | Current working directory |
-| `-c, --checks <checks>` | Comma-separated list of checks to run | All applicable checks |
-| `--package <name>` | Scope to a single package (monorepo only) | — |
-| `--all` | Apply all available fixes without prompting | `false` |
-| `--dry-run` | Preview what would be fixed without executing | `false` |
-| `--verbose` | Show verbose output | `false` |
+| Flag                    | Description                                   | Default                   |
+| ----------------------- | --------------------------------------------- | ------------------------- |
+| `-p, --path <path>`     | Project path to analyze                       | Current working directory |
+| `-c, --checks <checks>` | Comma-separated list of checks to run         | All applicable checks     |
+| `--package <name>`      | Scope to a single package (monorepo only)     | —                         |
+| `--all`                 | Apply all available fixes without prompting   | `false`                   |
+| `--dry-run`             | Preview what would be fixed without executing | `false`                   |
+| `--verbose`             | Show verbose output                           | `false`                   |
 
 ## Examples
 
@@ -60,6 +60,7 @@ Not every issue can be auto-fixed. Sickbay distinguishes between two types:
 ### Actionable fixes
 
 These can be applied automatically. Examples:
+
 - Removing unused dependencies (`knip`, `depcheck`)
 - Updating outdated packages (`outdated`)
 - Adding missing `.gitignore` entries
@@ -69,6 +70,7 @@ When an actionable fix is available, `sickbay fix` shows what it will do and ask
 ### Guidance-only fixes
 
 These require manual work and cannot be automated. Examples:
+
 - Resolving circular dependencies (`madge`)
 - Reducing code duplication (`jscpd`)
 - Fixing security vulnerabilities that require code changes
@@ -85,6 +87,7 @@ sickbay fix --dry-run --path ~/my-project
 ```
 
 In dry-run mode, Sickbay:
+
 - Runs the full scan
 - Lists every fixable issue
 - Shows what each fix would do

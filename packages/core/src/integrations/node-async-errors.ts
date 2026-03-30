@@ -1,18 +1,31 @@
 import { readFileSync, existsSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
-import type { CheckResult, Issue } from '../types.js';
-import { BaseRunner } from './base.js';
+
 import { timer } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
+import type { CheckResult, Issue } from '../types.js';
 
 const SOURCE_EXTENSIONS = new Set(['.js', '.ts', '.mjs', '.cjs']);
-const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', 'coverage', 'test', 'tests', '__tests__']);
+const SKIP_DIRS = new Set([
+  'node_modules',
+  '.git',
+  'dist',
+  'build',
+  'coverage',
+  'test',
+  'tests',
+  '__tests__',
+]);
 
 // Detects async route handler declarations (handles multiline via /s flag)
-const ASYNC_ROUTE_RE = /(?:app|router)\s*\.\s*(?:get|post|put|patch|delete|all)\s*\([^;]*\basync\b/s;
+const ASYNC_ROUTE_RE =
+  /(?:app|router)\s*\.\s*(?:get|post|put|patch|delete|all)\s*\([^;]*\basync\b/s;
 // Detects try/catch usage
 const TRY_CATCH_RE = /\btry\s*\{/;
 // Detects express-async-errors import/require
-const ASYNC_ERRORS_RE = /require\s*\(\s*['"]express-async-errors['"]\s*\)|from\s+['"]express-async-errors['"]/;
+const ASYNC_ERRORS_RE =
+  /require\s*\(\s*['"]express-async-errors['"]\s*\)|from\s+['"]express-async-errors['"]/;
 // Detects 4-param error middleware
 const ERROR_MIDDLEWARE_RE = /\(\s*(?:err|error)\s*,\s*\w+\s*,\s*\w+\s*,\s*\w+\s*\)\s*(?:=>|\{)/;
 
@@ -37,7 +50,7 @@ function collectSourceFiles(dir: string): string[] {
 }
 
 export class NodeAsyncErrorsRunner extends BaseRunner {
-  name     = 'node-async-errors';
+  name = 'node-async-errors';
   category = 'code-quality' as const;
   applicableRuntimes = ['node'] as const;
 
@@ -49,7 +62,7 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
       return this.skipped('No package.json found');
     }
 
-    const pkg     = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     const allDeps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
 
     // express-async-errors patches Express globally — all handlers are protected
@@ -63,7 +76,8 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
         issues: [
           {
             severity: 'info',
-            message: 'express-async-errors detected — all async route handlers are automatically protected.',
+            message:
+              'express-async-errors detected — all async route handlers are automatically protected.',
             reportedBy: ['node-async-errors'],
           },
         ],
@@ -73,9 +87,9 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
     }
 
     const srcDir = join(projectPath, 'src');
-    const files  = collectSourceFiles(existsSync(srcDir) ? srcDir : projectPath);
+    const files = collectSourceFiles(existsSync(srcDir) ? srcDir : projectPath);
 
-    let routeFiles     = 0;
+    let routeFiles = 0;
     let protectedFiles = 0;
     let hasErrorMiddleware = false;
 
@@ -112,14 +126,15 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
     }
 
     const unprotectedFiles = routeFiles - protectedFiles;
-    const protectionRatio  = protectedFiles / routeFiles;
+    const protectionRatio = protectedFiles / routeFiles;
 
     if (unprotectedFiles > 0) {
       issues.push({
         severity: unprotectedFiles === routeFiles ? 'critical' : 'warning',
         message: `${unprotectedFiles} of ${routeFiles} route file(s) contain async handlers without try/catch. Unhandled promise rejections will crash the process in Node.js <15 or produce silent failures.`,
         fix: {
-          description: 'Wrap async route handlers in try/catch or use express-async-errors to auto-wrap all handlers',
+          description:
+            'Wrap async route handlers in try/catch or use express-async-errors to auto-wrap all handlers',
         },
         reportedBy: ['node-async-errors'],
       });
@@ -128,18 +143,20 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
     if (!hasErrorMiddleware) {
       issues.push({
         severity: 'warning',
-        message: 'No Express error handling middleware found (4-parameter function: err, req, res, next). Without it, errors passed to next() have no centralized handler.',
+        message:
+          'No Express error handling middleware found (4-parameter function: err, req, res, next). Without it, errors passed to next() have no centralized handler.',
         fix: {
-          description: "Add app.use((err, req, res, next) => { res.status(500).json({ error: err.message }); }) after all routes",
+          description:
+            'Add app.use((err, req, res, next) => { res.status(500).json({ error: err.message }); }) after all routes',
         },
         reportedBy: ['node-async-errors'],
       });
     }
 
-    const baseScore       = Math.round(protectionRatio * 80);
+    const baseScore = Math.round(protectionRatio * 80);
     const middlewareBonus = hasErrorMiddleware ? 20 : 0;
-    const score           = Math.min(100, baseScore + middlewareBonus);
-    const status          = score >= 80 ? 'pass' : score >= 50 ? 'warning' : 'fail';
+    const score = Math.min(100, baseScore + middlewareBonus);
+    const status = score >= 80 ? 'pass' : score >= 50 ? 'warning' : 'fail';
 
     return {
       id: 'node-async-errors',

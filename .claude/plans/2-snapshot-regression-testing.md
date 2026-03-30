@@ -7,6 +7,7 @@ Read the full design spec at `docs/superpowers/specs/2026-03-28-snapshot-regress
 ## Kanban Task
 
 Move this task to Done when complete:
+
 ```
 - `[Testing]` `[Auto]` Snapshot regression testing against fixtures
 ```
@@ -16,6 +17,7 @@ Move this task to Done when complete:
 ### 1. Read the spec and understand the fixture projects
 
 Read the spec thoroughly. Then read:
+
 - `fixtures/README.md` — understand what each fixture contains and what issues are intentional
 - `fixtures/packages/react-app/package.json` — the healthy React app
 - `fixtures/packages/node-api/package.json` — the intentionally broken Node API
@@ -37,6 +39,7 @@ Read the spec thoroughly. Then read:
 **Create:** `tests/snapshots/fixture-regression.test.ts`
 
 Follow the spec's structure exactly:
+
 - Import `runSickbay` and types from `@sickbay/core`
 - Use `fileURLToPath(new URL('.', import.meta.url))` for ESM-compatible `__dirname`
 - Define `FIXTURES_DIR` pointing to `../../fixtures/packages`
@@ -58,6 +61,7 @@ Not every check runs on every fixture — `snapshotCheck` handles this by snapsh
 **Edit:** `package.json` (root)
 
 Add to scripts:
+
 ```json
 "test:snapshots": "vitest run --config tests/snapshots/vitest.config.ts"
 ```

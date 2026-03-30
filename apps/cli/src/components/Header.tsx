@@ -1,5 +1,6 @@
-import React from "react";
-import { Box, Text } from "ink";
+import React from 'react';
+
+import { Box, Text } from 'ink';
 
 declare const __VERSION__: string;
 
@@ -22,7 +23,7 @@ export function Header({ projectName }: HeaderProps) {
     <Box flexDirection="column" marginBottom={1}>
       <Text color="green">{ASCII_ART}</Text>
       <Box marginTop={1}>
-      <Text dimColor> v{__VERSION__}</Text>
+        <Text dimColor> v{__VERSION__}</Text>
       </Box>
       {projectName && (
         <Box marginTop={1}>

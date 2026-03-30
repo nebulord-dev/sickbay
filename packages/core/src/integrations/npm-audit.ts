@@ -1,6 +1,8 @@
 import { execa } from 'execa';
-import { BaseRunner } from './base.js';
+
 import { timer, parseJsonOutput } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -54,18 +56,21 @@ export class NpmAuditRunner extends BaseRunner {
       const vulnerablePackages: Record<string, number> = {};
       for (const [pkgName, vuln] of Object.entries(data.vulnerabilities ?? {})) {
         const advisoryCount = Array.isArray(vuln.via)
-          ? vuln.via.filter((v: unknown) => typeof v === 'object' && v !== null && 'title' in v).length
+          ? vuln.via.filter((v: unknown) => typeof v === 'object' && v !== null && 'title' in v)
+              .length
           : 0;
         vulnerablePackages[pkgName] = Math.max(advisoryCount, 1);
       }
 
       for (const [, vuln] of Object.entries(data.vulnerabilities ?? {})) {
         const via = Array.isArray(vuln.via) ? vuln.via[0] : null;
-        const title = typeof via === 'object' && via?.title ? via.title : `Vulnerability in ${vuln.name}`;
+        const title =
+          typeof via === 'object' && via?.title ? via.title : `Vulnerability in ${vuln.name}`;
         const url = typeof via === 'object' && via?.url ? via.url : undefined;
 
         issues.push({
-          severity: vuln.severity === 'critical' || vuln.severity === 'high' ? 'critical' : 'warning',
+          severity:
+            vuln.severity === 'critical' || vuln.severity === 'high' ? 'critical' : 'warning',
           message: title,
           fix:
             typeof vuln.fixAvailable === 'object'
@@ -77,7 +82,10 @@ export class NpmAuditRunner extends BaseRunner {
       }
 
       const critical = (meta?.critical ?? 0) + (meta?.high ?? 0);
-      const score = critical > 0 ? Math.max(0, 60 - critical * 15) : Math.max(0, 100 - (meta?.moderate ?? 0) * 10 - (meta?.low ?? 0) * 2);
+      const score =
+        critical > 0
+          ? Math.max(0, 60 - critical * 15)
+          : Math.max(0, 100 - (meta?.moderate ?? 0) * 10 - (meta?.low ?? 0) * 2);
 
       return {
         id: 'npm-audit',
@@ -97,7 +105,9 @@ export class NpmAuditRunner extends BaseRunner {
         name: 'Security Vulnerabilities',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `npm audit failed: ${err}`, reportedBy: ['npm-audit'] }],
+        issues: [
+          { severity: 'critical', message: `npm audit failed: ${err}`, reportedBy: ['npm-audit'] },
+        ],
         toolsUsed: ['npm-audit'],
         duration: elapsed(),
       };

@@ -1,6 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
+
 import { render } from 'ink-testing-library';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import { ProgressList } from './ProgressList.js';
 
 describe('ProgressList', () => {
@@ -24,16 +26,12 @@ describe('ProgressList', () => {
   });
 
   it('shows ✓ for done items', () => {
-    const { lastFrame } = render(
-      <ProgressList items={[{ name: 'check', status: 'done' }]} />,
-    );
+    const { lastFrame } = render(<ProgressList items={[{ name: 'check', status: 'done' }]} />);
     expect(lastFrame()).toContain('✓');
   });
 
   it('shows ○ for pending items', () => {
-    const { lastFrame } = render(
-      <ProgressList items={[{ name: 'check', status: 'pending' }]} />,
-    );
+    const { lastFrame } = render(<ProgressList items={[{ name: 'check', status: 'pending' }]} />);
     expect(lastFrame()).toContain('○');
   });
 
@@ -57,18 +55,14 @@ describe('ProgressList', () => {
 
   it('shows a spinner character for running items', () => {
     const SPINNER_FRAMES = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
-    const { lastFrame } = render(
-      <ProgressList items={[{ name: 'check', status: 'running' }]} />,
-    );
+    const { lastFrame } = render(<ProgressList items={[{ name: 'check', status: 'running' }]} />);
     const output = lastFrame() ?? '';
     const hasSpinner = SPINNER_FRAMES.some((frame) => output.includes(frame));
     expect(hasSpinner).toBe(true);
   });
 
   it('does not show ✓ or ○ for running items', () => {
-    const { lastFrame } = render(
-      <ProgressList items={[{ name: 'check', status: 'running' }]} />,
-    );
+    const { lastFrame } = render(<ProgressList items={[{ name: 'check', status: 'running' }]} />);
     const output = lastFrame() ?? '';
     expect(output).not.toContain('✓');
     expect(output).not.toContain('○');

@@ -1,4 +1,4 @@
-import type { SickbayReport, MonorepoReport } from "@nebulord/sickbay-core";
+import type { SickbayReport, MonorepoReport } from '@nebulord/sickbay-core';
 
 /**
  * loadReport attempts to retrieve a SickbayReport or MonorepoReport from multiple potential
@@ -13,7 +13,7 @@ import type { SickbayReport, MonorepoReport } from "@nebulord/sickbay-core";
 export async function loadReport(): Promise<SickbayReport | MonorepoReport | null> {
   // 1. Try URL query param: ?report=<base64 or path>
   const params = new URLSearchParams(window.location.search);
-  const reportParam = params.get("report");
+  const reportParam = params.get('report');
 
   if (reportParam) {
     try {
@@ -25,16 +25,15 @@ export async function loadReport(): Promise<SickbayReport | MonorepoReport | nul
 
   // 2. Try fetching sickbay-report.json from the server root
   try {
-    const res = await fetch("/sickbay-report.json");
-    const ct = res.headers.get("content-type") ?? "";
-    if (res.ok && ct.includes("json"))
-      return res.json() as Promise<SickbayReport | MonorepoReport>;
+    const res = await fetch('/sickbay-report.json');
+    const ct = res.headers.get('content-type') ?? '';
+    if (res.ok && ct.includes('json')) return res.json() as Promise<SickbayReport | MonorepoReport>;
   } catch {
     // not available
   }
 
   // 3. Try localStorage
-  const stored = localStorage.getItem("sickbay-report");
+  const stored = localStorage.getItem('sickbay-report');
   if (stored) {
     try {
       return JSON.parse(stored) as SickbayReport | MonorepoReport;

@@ -1,8 +1,10 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import type { CheckResult, Issue } from '../types.js';
-import { BaseRunner } from './base.js';
+
 import { timer, fileExists } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
+import type { CheckResult, Issue } from '../types.js';
 
 /**
  * HeavyDepsRunner scans the project's dependencies for known heavy or unnecessary packages, providing insights into potential performance issues.
@@ -17,37 +19,37 @@ interface HeavyDep {
 }
 
 const HEAVY_DEPS: Record<string, HeavyDep> = {
-  'moment': {
+  moment: {
     alternative: 'dayjs or date-fns',
     reason: 'moment is 300KB+ and mutable — modern alternatives are ~2KB',
     severity: 'warning',
   },
-  'lodash': {
+  lodash: {
     alternative: 'lodash-es or individual lodash/* imports',
     reason: 'Full lodash bundle is 70KB+ — use tree-shakeable imports instead',
     severity: 'warning',
   },
-  'underscore': {
+  underscore: {
     alternative: 'native JS methods (map, filter, reduce, etc.)',
     reason: 'Most underscore utilities have native equivalents',
     severity: 'warning',
   },
-  'jquery': {
+  jquery: {
     alternative: 'native DOM APIs (querySelector, fetch, classList, etc.)',
     reason: 'Modern browsers cover virtually all jQuery use cases natively',
     severity: 'warning',
   },
-  'request': {
+  request: {
     alternative: 'native fetch or undici',
     reason: 'request is deprecated and heavy',
     severity: 'warning',
   },
-  'bluebird': {
+  bluebird: {
     alternative: 'native Promises',
     reason: 'Native Promises are performant in modern Node/browsers',
     severity: 'info',
   },
-  'axios': {
+  axios: {
     alternative: 'native fetch',
     reason: 'fetch is built-in to Node 18+ and all modern browsers',
     severity: 'info',
@@ -72,7 +74,7 @@ const HEAVY_DEPS: Record<string, HeavyDep> = {
     reason: 'Trivial check — no package needed',
     severity: 'info',
   },
-  'classnames': {
+  classnames: {
     alternative: 'clsx (lighter drop-in replacement)',
     reason: 'clsx is smaller and faster',
     severity: 'info',
@@ -87,22 +89,22 @@ const HEAVY_DEPS: Record<string, HeavyDep> = {
     reason: 'moment-timezone bundles all IANA timezone data — 500KB+ unminified',
     severity: 'warning',
   },
-  'uuid': {
+  uuid: {
     alternative: 'crypto.randomUUID()',
     reason: 'crypto.randomUUID() is native in Node 14.17+ and all modern browsers',
     severity: 'info',
   },
-  'rimraf': {
+  rimraf: {
     alternative: 'fs.rm(path, { recursive: true, force: true })',
     reason: 'fs.rm with recursive option is built into Node 14.14+',
     severity: 'info',
   },
-  'mkdirp': {
+  mkdirp: {
     alternative: 'fs.mkdir(path, { recursive: true })',
     reason: 'fs.mkdir with recursive option is built into Node 10.12+',
     severity: 'info',
   },
-  'qs': {
+  qs: {
     alternative: 'URLSearchParams',
     reason: 'URLSearchParams handles query string parsing natively in Node and browsers',
     severity: 'info',
@@ -172,7 +174,13 @@ export class HeavyDepsRunner extends BaseRunner {
         name: 'Heavy Dependencies',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `Heavy deps check failed: ${err}`, reportedBy: ['heavy-deps'] }],
+        issues: [
+          {
+            severity: 'critical',
+            message: `Heavy deps check failed: ${err}`,
+            reportedBy: ['heavy-deps'],
+          },
+        ],
         toolsUsed: ['heavy-deps'],
         duration: elapsed(),
       };

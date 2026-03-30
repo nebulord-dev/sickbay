@@ -1,8 +1,10 @@
-import { readFileSync, readdirSync, statSync, existsSync } from "fs";
-import { join, extname } from "path";
-import { execSync } from "child_process";
-import { detectProject } from "@nebulord/sickbay-core";
-import type { ProjectInfo } from "@nebulord/sickbay-core";
+import { execSync } from 'child_process';
+import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
+import { join, extname } from 'path';
+
+import { detectProject } from '@nebulord/sickbay-core';
+
+import type { ProjectInfo } from '@nebulord/sickbay-core';
 
 /**
  * This module provides a function to gather various statistics about a project, including file counts, line counts, component types, dependencies, and git information.
@@ -41,47 +43,44 @@ export interface ProjectStats {
 }
 
 const IGNORE_DIRS = new Set([
-  "node_modules",
-  ".git",
-  "dist",
-  "build",
-  ".next",
-  "coverage",
-  ".turbo",
-  ".cache",
-  ".vite",
-  "__pycache__",
-  ".svelte-kit",
+  'node_modules',
+  '.git',
+  'dist',
+  'build',
+  '.next',
+  'coverage',
+  '.turbo',
+  '.cache',
+  '.vite',
+  '__pycache__',
+  '.svelte-kit',
 ]);
 
 const SOURCE_EXTENSIONS = new Set([
-  ".ts",
-  ".tsx",
-  ".js",
-  ".jsx",
-  ".mjs",
-  ".cjs",
-  ".css",
-  ".scss",
-  ".less",
-  ".sass",
-  ".json",
-  ".html",
-  ".svg",
-  ".vue",
-  ".svelte",
+  '.ts',
+  '.tsx',
+  '.js',
+  '.jsx',
+  '.mjs',
+  '.cjs',
+  '.css',
+  '.scss',
+  '.less',
+  '.sass',
+  '.json',
+  '.html',
+  '.svg',
+  '.vue',
+  '.svelte',
 ]);
 
-function walkDir(
-  dir: string,
-  extensions: Set<string>,
-): { path: string; ext: string }[] {
+function walkDir(dir: string, extensions: Set<string>): { path: string; ext: string }[] {
   const results: { path: string; ext: string }[] = [];
 
   try {
     const entries = readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
-      if (entry.name.startsWith(".") && entry.isDirectory()) continue;
+      if (entry.name.startsWith('.') && entry.isDirectory()) continue;
       if (IGNORE_DIRS.has(entry.name)) continue;
 
       const fullPath = join(dir, entry.name);
@@ -103,8 +102,8 @@ function walkDir(
 
 function countLines(filePath: string): number {
   try {
-    const content = readFileSync(filePath, "utf-8");
-    return content.split("\n").length;
+    const content = readFileSync(filePath, 'utf-8');
+    return content.split('\n').length;
   } catch {
     return 0;
   }
@@ -115,22 +114,15 @@ function countComponents(filePath: string): {
   classBased: number;
 } {
   try {
-    const content = readFileSync(filePath, "utf-8");
+    const content = readFileSync(filePath, 'utf-8');
     const functional =
+      (content.match(/(?:export\s+)?(?:default\s+)?function\s+[A-Z]\w*\s*\(/g) ?? []).length +
       (
-        content.match(
-          /(?:export\s+)?(?:default\s+)?function\s+[A-Z]\w*\s*\(/g,
-        ) ?? []
-      ).length +
-      (
-        content.match(
-          /(?:export\s+)?(?:default\s+)?const\s+[A-Z]\w*\s*[=:]\s*(?:\(|React\.)/g,
-        ) ?? []
+        content.match(/(?:export\s+)?(?:default\s+)?const\s+[A-Z]\w*\s*[=:]\s*(?:\(|React\.)/g) ??
+        []
       ).length;
     const classBased = (
-      content.match(
-        /class\s+[A-Z]\w*\s+extends\s+(?:React\.)?(?:Component|PureComponent)/g,
-      ) ?? []
+      content.match(/class\s+[A-Z]\w*\s+extends\s+(?:React\.)?(?:Component|PureComponent)/g) ?? []
     ).length;
     return { functional, classBased };
   } catch {
@@ -138,14 +130,14 @@ function countComponents(filePath: string): {
   }
 }
 
-function getGitInfo(projectPath: string): ProjectStats["git"] {
+function getGitInfo(projectPath: string): ProjectStats['git'] {
   try {
-    if (!existsSync(join(projectPath, ".git"))) return null;
+    if (!existsSync(join(projectPath, '.git'))) return null;
 
     const commits = parseInt(
-      execSync("git rev-list --count HEAD", {
+      execSync('git rev-list --count HEAD', {
         cwd: projectPath,
-        encoding: "utf-8",
+        encoding: 'utf-8',
       }).trim(),
       10,
     );
@@ -153,21 +145,21 @@ function getGitInfo(projectPath: string): ProjectStats["git"] {
     const contributors = parseInt(
       execSync("git log --format='%ae' | sort -u | wc -l", {
         cwd: projectPath,
-        encoding: "utf-8",
-        shell: "/bin/sh",
+        encoding: 'utf-8',
+        shell: '/bin/sh',
       }).trim(),
       10,
     );
 
     const firstCommit = execSync("git log --reverse --format='%ar' | head -1", {
       cwd: projectPath,
-      encoding: "utf-8",
-      shell: "/bin/sh",
+      encoding: 'utf-8',
+      shell: '/bin/sh',
     }).trim();
 
-    const branch = execSync("git branch --show-current", {
+    const branch = execSync('git branch --show-current', {
       cwd: projectPath,
-      encoding: "utf-8",
+      encoding: 'utf-8',
     }).trim();
 
     return { commits, contributors, age: firstCommit, branch };
@@ -197,7 +189,7 @@ export async function gatherStats(projectPath: string): Promise<ProjectStats> {
   let testFiles = 0;
   let totalBytes = 0;
 
-  const componentExts = new Set([".tsx", ".jsx", ".js", ".ts"]);
+  const componentExts = new Set(['.tsx', '.jsx', '.js', '.ts']);
 
   for (const f of files) {
     const lines = countLines(f.path);
@@ -216,11 +208,7 @@ export async function gatherStats(projectPath: string): Promise<ProjectStats> {
     }
 
     const name = f.path.toLowerCase();
-    if (
-      name.includes(".test.") ||
-      name.includes(".spec.") ||
-      name.includes("__tests__")
-    ) {
+    if (name.includes('.test.') || name.includes('.spec.') || name.includes('__tests__')) {
       testFiles++;
     }
   }

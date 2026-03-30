@@ -1,5 +1,6 @@
-import { execFileSync } from "child_process";
-import type { SickbayReport } from "@nebulord/sickbay-core";
+import { execFileSync } from 'child_process';
+
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 export interface CheckDiff {
   id: string;
@@ -8,7 +9,7 @@ export interface CheckDiff {
   currentScore: number;
   baseScore: number;
   delta: number;
-  status: "improved" | "regressed" | "unchanged" | "new" | "removed";
+  status: 'improved' | 'regressed' | 'unchanged' | 'new' | 'removed';
 }
 
 export interface DiffResult {
@@ -26,23 +27,20 @@ export interface DiffResult {
   };
 }
 
-export function loadBaseReport(
-  projectPath: string,
-  branch: string,
-): SickbayReport | null {
+export function loadBaseReport(projectPath: string, branch: string): SickbayReport | null {
   try {
-    const output = execFileSync(
-      "git",
-      ["show", `${branch}:.sickbay/last-report.json`],
-      { cwd: projectPath, encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] },
-    );
+    const output = execFileSync('git', ['show', `${branch}:.sickbay/last-report.json`], {
+      cwd: projectPath,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
     return JSON.parse(output) as SickbayReport;
   } catch {
     return null;
   }
 }
 
-const STATUS_ORDER: Record<CheckDiff["status"], number> = {
+const STATUS_ORDER: Record<CheckDiff['status'], number> = {
   regressed: 0,
   improved: 1,
   new: 2,
@@ -71,7 +69,7 @@ export function compareReports(
         currentScore: check.score,
         baseScore: 0,
         delta: check.score,
-        status: "new",
+        status: 'new',
       });
     } else {
       const delta = check.score - baseCheck.score;
@@ -82,7 +80,7 @@ export function compareReports(
         currentScore: check.score,
         baseScore: baseCheck.score,
         delta,
-        status: delta > 0 ? "improved" : delta < 0 ? "regressed" : "unchanged",
+        status: delta > 0 ? 'improved' : delta < 0 ? 'regressed' : 'unchanged',
       });
     }
   }
@@ -97,7 +95,7 @@ export function compareReports(
         currentScore: 0,
         baseScore: check.score,
         delta: -check.score,
-        status: "removed",
+        status: 'removed',
       });
     }
   }
@@ -106,11 +104,11 @@ export function compareReports(
   checks.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
 
   const summary = {
-    improved: checks.filter((c) => c.status === "improved").length,
-    regressed: checks.filter((c) => c.status === "regressed").length,
-    unchanged: checks.filter((c) => c.status === "unchanged").length,
-    newChecks: checks.filter((c) => c.status === "new").length,
-    removedChecks: checks.filter((c) => c.status === "removed").length,
+    improved: checks.filter((c) => c.status === 'improved').length,
+    regressed: checks.filter((c) => c.status === 'regressed').length,
+    unchanged: checks.filter((c) => c.status === 'unchanged').length,
+    newChecks: checks.filter((c) => c.status === 'new').length,
+    removedChecks: checks.filter((c) => c.status === 'removed').length,
   };
 
   return {

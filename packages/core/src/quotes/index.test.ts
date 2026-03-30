@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import { getQuote } from './index.js';
 import startrekQuotes from './startrek.json';
 

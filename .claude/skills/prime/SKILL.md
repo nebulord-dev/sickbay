@@ -32,31 +32,37 @@ Read in this order — each builds on the previous:
 Read based on the task at hand:
 
 **If working on checks/scoring:**
+
 - `packages/core/src/types.ts` — core interfaces (`SickbayReport`, `CheckResult`, `Issue`)
 - `packages/core/src/runner.ts` — main orchestrator
 - `packages/core/src/scoring.ts` — weighted scoring logic
 - `packages/core/src/integrations/` — individual check runners
 
 **If working on terminal UI:**
+
 - `apps/cli/src/index.ts` — CLI entry, Commander setup
 - `apps/cli/src/components/App.tsx` — root Ink component, UI phases
 - `apps/cli/src/components/tui/` — TUI dashboard components
 
 **If working on web dashboard:**
+
 - `apps/web/src/App.tsx` — root component, report loading
 - `apps/web/src/components/Dashboard.tsx` — main layout
 - `apps/web/src/lib/load-report.ts` — report loading priority logic
 
 **If working on tests:**
+
 - Tests are colocated with source files (e.g. `scoring.test.ts` sits next to `scoring.ts`)
 - `packages/core/src/integrations/knip.test.ts` — pattern for testing a runner
 - `packages/core/src/integrations/base.test.ts` — pattern for testing base class
 - `apps/cli/src/components/QuickWins.test.tsx` — pattern for testing Ink components
 
 **If working on documentation site:**
+
 - `apps/docs/` — VitePress site deployed to nebulord-dev.github.io/sickbay
 
 **If working on test fixtures:**
+
 - `fixtures/README.md` — fixture structure, intentional issues per package, how to add new fixtures
 - `fixtures/packages/react-app/` — moderately healthy React + Vite + TypeScript app
 - `fixtures/packages/node-api/` — intentionally broken Node API (secrets, circular deps, outdated deps, no tests, duplicate code)

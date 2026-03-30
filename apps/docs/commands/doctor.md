@@ -10,12 +10,12 @@ sickbay doctor [options]
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-p, --path <path>` | Project path to analyze | Current working directory |
-| `--package <name>` | Scope to a single package (monorepo only) | — |
-| `--fix` | Auto-scaffold missing configuration files | `false` |
-| `--json` | Output diagnostic results as JSON | `false` |
+| Flag                | Description                               | Default                   |
+| ------------------- | ----------------------------------------- | ------------------------- |
+| `-p, --path <path>` | Project path to analyze                   | Current working directory |
+| `--package <name>`  | Scope to a single package (monorepo only) | —                         |
+| `--fix`             | Auto-scaffold missing configuration files | `false`                   |
+| `--json`            | Output diagnostic results as JSON         | `false`                   |
 
 ## Examples
 
@@ -47,14 +47,14 @@ sickbay doctor --path ~/my-monorepo --package @acme/api
 
 The doctor command inspects your project for the following:
 
-| Check | What It Looks For |
-|-------|-------------------|
-| **package.json** | Exists and is valid JSON |
-| **Lock file** | `pnpm-lock.yaml`, `package-lock.json`, or `yarn.lock` present |
-| **tsconfig** | `tsconfig.json` exists (for TypeScript projects) |
-| **ESLint** | `.eslintrc.*` or `eslint.config.*` configuration present |
-| **Test framework** | Vitest, Jest, or other test runner configured |
-| **.gitignore** | `.gitignore` exists with reasonable defaults |
+| Check              | What It Looks For                                             |
+| ------------------ | ------------------------------------------------------------- |
+| **package.json**   | Exists and is valid JSON                                      |
+| **Lock file**      | `pnpm-lock.yaml`, `package-lock.json`, or `yarn.lock` present |
+| **tsconfig**       | `tsconfig.json` exists (for TypeScript projects)              |
+| **ESLint**         | `.eslintrc.*` or `eslint.config.*` configuration present      |
+| **Test framework** | Vitest, Jest, or other test runner configured                 |
+| **.gitignore**     | `.gitignore` exists with reasonable defaults                  |
 
 Each item is reported as a pass, warning, or fail with a brief description of the issue.
 

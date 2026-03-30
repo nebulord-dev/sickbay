@@ -1,10 +1,17 @@
-import { useState, useCallback, useRef } from "react";
-import type { SickbayReport, MonorepoReport, CheckResult } from "@nebulord/sickbay-core";
-import { runSickbay, runSickbayMonorepo, detectMonorepo, buildSummary } from "@nebulord/sickbay-core";
+import { useState, useCallback, useRef } from 'react';
+
+import {
+  runSickbay,
+  runSickbayMonorepo,
+  detectMonorepo,
+  buildSummary,
+} from '@nebulord/sickbay-core';
+
+import type { SickbayReport, MonorepoReport, CheckResult } from '@nebulord/sickbay-core';
 
 interface ProgressItem {
   name: string;
-  status: "pending" | "running" | "done";
+  status: 'pending' | 'running' | 'done';
 }
 
 interface UseSickbayRunnerOptions {
@@ -34,11 +41,11 @@ function rollUpMonorepoReport(monorepo: MonorepoReport): SickbayReport {
     projectPath: monorepo.rootPath,
     projectInfo: {
       name: `monorepo (${monorepo.packages.length} packages)`,
-      version: "0.0.0",
+      version: '0.0.0',
       hasTypeScript: false,
       hasESLint: false,
       hasPrettier: false,
-      framework: "node",
+      framework: 'node',
       packageManager: monorepo.packageManager,
       totalDependencies: 0,
       dependencies: {},
@@ -88,16 +95,16 @@ export function useSickbayRunner({ projectPath, checks, quotes }: UseSickbayRunn
         checks,
         quotes,
         onRunnersReady: (names) => {
-          setProgress(names.map((name) => ({ name, status: "pending" as const })));
+          setProgress(names.map((name) => ({ name, status: 'pending' as const })));
         },
         onCheckStart: (name) => {
           setProgress((prev) =>
-            prev.map((p) => (p.name === name ? { ...p, status: "running" } : p)),
+            prev.map((p) => (p.name === name ? { ...p, status: 'running' } : p)),
           );
         },
         onCheckComplete: (check) => {
           setProgress((prev) =>
-            prev.map((p) => (p.name === check.id ? { ...p, status: "done" } : p)),
+            prev.map((p) => (p.name === check.id ? { ...p, status: 'done' } : p)),
           );
         },
       });
@@ -107,7 +114,7 @@ export function useSickbayRunner({ projectPath, checks, quotes }: UseSickbayRunn
 
       // Save to trend history
       try {
-        const { saveEntry } = await import("../../../lib/history.js");
+        const { saveEntry } = await import('../../../lib/history.js');
         saveEntry(result);
       } catch {
         // Non-critical
@@ -126,4 +133,3 @@ export function useSickbayRunner({ projectPath, checks, quotes }: UseSickbayRunn
 
   return { report, monorepoReport, isScanning, progress, error, scan };
 }
-

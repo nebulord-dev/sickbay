@@ -4,13 +4,13 @@ Sickbay produces a single overall health score (0-100) from weighted category sc
 
 ## Categories and Weights
 
-| Category | Weight | Checks |
-|----------|--------|--------|
-| **Security** | 30% | npm-audit, secrets, license-checker |
-| **Dependencies** | 25% | knip, depcheck, outdated, heavy-deps |
-| **Code Quality** | 25% | eslint, jscpd, typescript, todo-scanner, complexity, node-security, node-input-validation, node-async-errors |
-| **Performance** | 15% | source-map-explorer, react-perf, asset-size |
-| **Git** | 5% | coverage |
+| Category         | Weight | Checks                                                                                                       |
+| ---------------- | ------ | ------------------------------------------------------------------------------------------------------------ |
+| **Security**     | 30%    | npm-audit, secrets, license-checker                                                                          |
+| **Dependencies** | 25%    | knip, depcheck, outdated, heavy-deps                                                                         |
+| **Code Quality** | 25%    | eslint, jscpd, typescript, todo-scanner, complexity, node-security, node-input-validation, node-async-errors |
+| **Performance**  | 15%    | source-map-explorer, react-perf, asset-size                                                                  |
+| **Git**          | 5%     | coverage                                                                                                     |
 
 ## How Scores Work
 
@@ -21,11 +21,11 @@ Sickbay produces a single overall health score (0-100) from weighted category sc
 
 ## Score Thresholds
 
-| Score | Status | Color |
-|-------|--------|-------|
-| 80-100 | Good | Green |
-| 60-79 | Fair | Yellow |
-| 0-59 | Needs attention | Red |
+| Score  | Status          | Color  |
+| ------ | --------------- | ------ |
+| 80-100 | Good            | Green  |
+| 60-79  | Fair            | Yellow |
+| 0-59   | Needs attention | Red    |
 
 ## Issue Severity
 
@@ -38,6 +38,7 @@ Each check can report issues at three severity levels:
 ## Example
 
 A React project might score:
+
 - Security: 100 (no vulnerabilities, no secrets, all licenses OK)
 - Dependencies: 85 (2 unused packages, 1 outdated)
 - Code Quality: 72 (some ESLint warnings, 3 complex files)

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { HeavyDepsRunner } from './heavy-deps.js';
 
 vi.mock('fs', () => ({
@@ -15,12 +16,16 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 import { readFileSync } from 'fs';
+
 import { fileExists } from '../utils/file-helpers.js';
 
 const mockReadFileSync = vi.mocked(readFileSync);
 const mockFileExists = vi.mocked(fileExists);
 
-function makePackageJson(deps: Record<string, string> = {}, devDeps: Record<string, string> = {}): string {
+function makePackageJson(
+  deps: Record<string, string> = {},
+  devDeps: Record<string, string> = {},
+): string {
   return JSON.stringify({ dependencies: deps, devDependencies: devDeps });
 }
 
@@ -49,7 +54,9 @@ describe('HeavyDepsRunner', () => {
   });
 
   it('returns pass with score 100 when no heavy deps are present', async () => {
-    mockReadFileSync.mockReturnValue(makePackageJson({ react: '^18.0.0', typescript: '^5.0.0' }) as any);
+    mockReadFileSync.mockReturnValue(
+      makePackageJson({ react: '^18.0.0', typescript: '^5.0.0' }) as any,
+    );
 
     const result = await runner.run('/project');
 
@@ -102,7 +109,9 @@ describe('HeavyDepsRunner', () => {
   });
 
   it('calculates score correctly with warning deps (reduce by 10 each)', async () => {
-    mockReadFileSync.mockReturnValue(makePackageJson({ moment: '^2.29.0', lodash: '^4.17.21' }) as any);
+    mockReadFileSync.mockReturnValue(
+      makePackageJson({ moment: '^2.29.0', lodash: '^4.17.21' }) as any,
+    );
 
     const result = await runner.run('/project');
 
@@ -157,7 +166,9 @@ describe('HeavyDepsRunner', () => {
   });
 
   it('reports multiple mixed severity deps correctly', async () => {
-    mockReadFileSync.mockReturnValue(makePackageJson({ moment: '^2.29.0', axios: '^1.4.0', uuid: '^9.0.0' }) as any);
+    mockReadFileSync.mockReturnValue(
+      makePackageJson({ moment: '^2.29.0', axios: '^1.4.0', uuid: '^9.0.0' }) as any,
+    );
 
     const result = await runner.run('/project');
 
@@ -171,7 +182,9 @@ describe('HeavyDepsRunner', () => {
   });
 
   it('returns correct metadata', async () => {
-    mockReadFileSync.mockReturnValue(makePackageJson({ react: '^18.0.0', moment: '^2.29.0' }) as any);
+    mockReadFileSync.mockReturnValue(
+      makePackageJson({ react: '^18.0.0', moment: '^2.29.0' }) as any,
+    );
 
     const result = await runner.run('/project');
 

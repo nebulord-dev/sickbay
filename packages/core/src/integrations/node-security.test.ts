@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { NodeSecurityRunner } from './node-security.js';
 
 vi.mock('fs', () => ({
@@ -75,9 +76,7 @@ describe('NodeSecurityRunner', () => {
   });
 
   it('deducts 35 points for missing rate limiting and marks it warning', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ helmet: '^7.0.0', cors: '^2.0.0' }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ helmet: '^7.0.0', cors: '^2.0.0' }) as never);
     const result = await runner.run('/project');
     expect(result.score).toBe(65);
     const rateIssue = result.issues.find((i) => i.message.toLowerCase().includes('rate limit'));

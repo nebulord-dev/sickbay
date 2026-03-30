@@ -15,9 +15,11 @@ vi.mock('@nebulord/sickbay-core', () => ({
   detectProject: vi.fn(),
 }));
 
-import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
+import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
+
 import { detectProject } from '@nebulord/sickbay-core';
+
 import { gatherStats } from './stats.js';
 
 const mockReadFileSync = vi.mocked(readFileSync);
@@ -187,10 +189,10 @@ class AnotherComp extends Component {
     });
 
     mockExecSync
-      .mockReturnValueOnce('42\n' as any)      // git rev-list --count HEAD
-      .mockReturnValueOnce('3\n' as any)       // contributors
+      .mockReturnValueOnce('42\n' as any) // git rev-list --count HEAD
+      .mockReturnValueOnce('3\n' as any) // contributors
       .mockReturnValueOnce('2 years ago\n' as any) // first commit
-      .mockReturnValueOnce('main\n' as any);   // branch
+      .mockReturnValueOnce('main\n' as any); // branch
 
     const stats = await gatherStats(PROJECT_PATH);
 
@@ -216,11 +218,13 @@ class AnotherComp extends Component {
   });
 
   it('returns dependency counts from project info', async () => {
-    mockDetectProject.mockResolvedValue(makeProjectInfo({
-      dependencies: { react: '^18', 'react-dom': '^18' },
-      devDependencies: { typescript: '^5', vitest: '^1', eslint: '^8' },
-      totalDependencies: 5,
-    }) as any);
+    mockDetectProject.mockResolvedValue(
+      makeProjectInfo({
+        dependencies: { react: '^18', 'react-dom': '^18' },
+        devDependencies: { typescript: '^5', vitest: '^1', eslint: '^8' },
+        totalDependencies: 5,
+      }) as any,
+    );
 
     const stats = await gatherStats(PROJECT_PATH);
 
@@ -278,10 +282,7 @@ class AnotherComp extends Component {
     mockReaddirSync.mockImplementation((dir: unknown) => {
       const d = String(dir);
       if (d === PROJECT_PATH) {
-        return [
-          makeDirEntry('.turbo', true),
-          makeDirEntry('src', true),
-        ] as any;
+        return [makeDirEntry('.turbo', true), makeDirEntry('src', true)] as any;
       }
       if (d.endsWith('src')) {
         return [makeDirEntry('app.ts', false)] as any;

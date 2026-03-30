@@ -12,16 +12,16 @@ No subcommand is needed — running `sickbay` by itself starts a scan.
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-p, --path <path>` | Project path to analyze | Current working directory |
-| `-c, --checks <checks>` | Comma-separated list of checks to run | All applicable checks |
-| `--package <name>` | Scope to a single named package (monorepo only) | — |
-| `--json` | Output raw JSON report to stdout | `false` |
-| `--web` | Open the web dashboard after the scan completes | `false` |
-| `--no-ai` | Disable AI-powered features | AI enabled |
-| `--no-quotes` | Suppress personality quotes in output | Quotes enabled |
-| `--verbose` | Show verbose output with extra detail | `false` |
+| Flag                    | Description                                     | Default                   |
+| ----------------------- | ----------------------------------------------- | ------------------------- |
+| `-p, --path <path>`     | Project path to analyze                         | Current working directory |
+| `-c, --checks <checks>` | Comma-separated list of checks to run           | All applicable checks     |
+| `--package <name>`      | Scope to a single named package (monorepo only) | —                         |
+| `--json`                | Output raw JSON report to stdout                | `false`                   |
+| `--web`                 | Open the web dashboard after the scan completes | `false`                   |
+| `--no-ai`               | Disable AI-powered features                     | AI enabled                |
+| `--no-quotes`           | Suppress personality quotes in output           | Quotes enabled            |
+| `--verbose`             | Show verbose output with extra detail           | `false`                   |
 
 ## Examples
 
@@ -64,6 +64,7 @@ sickbay --path ~/my-project --web
 ```
 
 The dashboard provides:
+
 - **Score cards** for each category with circular progress indicators
 - **Filterable issues table** sorted by severity
 - **Quick wins** panel highlighting the most impactful fixes
@@ -88,11 +89,12 @@ Run `sickbay init` first to set up the `.sickbay/` directory with proper `.gitig
 
 ## Environment Variables
 
-| Variable | Purpose |
-|----------|---------|
+| Variable            | Purpose                                          |
+| ------------------- | ------------------------------------------------ |
 | `ANTHROPIC_API_KEY` | Enables AI-powered insights in the web dashboard |
 
 Sickbay loads `.env` files from three locations (in order of priority):
+
 1. The project path being analyzed (highest priority)
 2. The current working directory
 3. `~/.sickbay/.env` (global config, lowest priority)

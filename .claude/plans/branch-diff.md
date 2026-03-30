@@ -23,6 +23,7 @@ There's no way to see if a branch introduced health regressions relative to anot
 ## Solution Statement
 
 Add a `sickbay diff <branch>` subcommand that:
+
 1. Reads the target branch's last report from git (`git show <branch>:.sickbay/last-report.json`)
 2. Runs a fresh scan on the current working directory
 3. Compares the two reports per-check and overall
@@ -61,12 +62,14 @@ This avoids git checkout/worktree complexity by relying on the auto-save to `.si
 ### Patterns to Follow
 
 **Command module pattern** (from stats.ts, badge.ts):
+
 ```typescript
 export function loadBaseReport(projectPath: string, branch: string): SickbayReport | null { ... }
 export function compareReports(current: SickbayReport, base: SickbayReport): DiffResult { ... }
 ```
 
 **Ink component pattern** (from TrendApp.tsx):
+
 ```typescript
 export function DiffApp({ projectPath, branch, jsonOutput }: DiffAppProps) {
   const { exit } = useApp();
@@ -76,6 +79,7 @@ export function DiffApp({ projectPath, branch, jsonOutput }: DiffAppProps) {
 ```
 
 **Git command for reading file from another branch:**
+
 ```bash
 git show main:.sickbay/last-report.json
 ```
@@ -160,6 +164,7 @@ Unit tests for diff logic and component.
   - Use `loadBaseReport` from `./commands/diff.js` for base
   - If base report is null, show error: "No saved report found on {branch}. Run `sickbay` on that branch first."
   - Render a table:
+
     ```
     Branch Diff: current vs main
 
@@ -173,16 +178,19 @@ Unit tests for diff logic and component.
     = Git Health         100    100      0
     + React Perf          90      —    new
     ```
+
   - Color: green for improvements, red for regressions, dim for unchanged, cyan for new
   - After table, show summary line: "3 improved, 1 regressed, 8 unchanged"
   - If `jsonOutput`, write `DiffResult` as JSON and exit
   - Save current report to history/last-report as other commands do
+
 - **PATTERN**: Mirror `TrendApp.tsx` structure (useEffect scan, loading/error/results phases)
 - **VALIDATE**: `pnpm --filter @sickbay/cli build`
 
 ### 3. UPDATE `apps/cli/src/index.ts`
 
 - **IMPLEMENT**: Register `sickbay diff <branch>` command:
+
   ```typescript
   program
     .command("diff <branch>")
@@ -193,9 +201,11 @@ Unit tests for diff logic and component.
     .option("--verbose", "show verbose output")
     .action(async (branch, options) => { ... });
   ```
+
   - Note: Commander passes positional args before options in `.action()` callback
   - Dynamic import `DiffApp` component, render with Ink
   - Load .env from project path like other commands
+
 - **PATTERN**: Mirror `trend` command registration
 - **VALIDATE**: `pnpm --filter @sickbay/cli build`
 
@@ -230,16 +240,19 @@ Unit tests for diff logic and component.
 ## VALIDATION COMMANDS
 
 ### Level 1: Type checking
+
 ```bash
 pnpm --filter @sickbay/cli build
 ```
 
 ### Level 2: Unit tests
+
 ```bash
 pnpm --filter @sickbay/cli test
 ```
 
 ### Level 3: Manual spot checks
+
 ```bash
 # Run sickbay on main first to create baseline
 git stash && node apps/cli/dist/index.js --path . && git stash pop

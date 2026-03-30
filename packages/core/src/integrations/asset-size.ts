@@ -1,8 +1,10 @@
 import { readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
-import type { CheckResult, Issue } from '../types.js';
-import { BaseRunner } from './base.js';
+
 import { timer, fileExists } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
+import type { CheckResult, Issue } from '../types.js';
 
 /**
  * AssetSizeRunner scans common asset directories for images, SVGs, and fonts, and checks their file sizes against defined thresholds.
@@ -19,11 +21,11 @@ const FONT_EXTENSIONS = new Set(['.woff', '.woff2', '.ttf', '.otf', '.eot']);
 const SKIP_EXTENSIONS = new Set(['.mp4', '.webm', '.ogg', '.mp3', '.wav', '.flac', '.avi', '.mov']);
 
 // Thresholds in bytes
-const IMAGE_WARN = 500 * 1024;    // 500KB
+const IMAGE_WARN = 500 * 1024; // 500KB
 const IMAGE_CRITICAL = 2 * 1024 * 1024; // 2MB
-const SVG_WARN = 100 * 1024;      // 100KB
-const FONT_WARN = 500 * 1024;     // 500KB
-const TOTAL_WARN = 5 * 1024 * 1024;    // 5MB
+const SVG_WARN = 100 * 1024; // 100KB
+const FONT_WARN = 500 * 1024; // 500KB
+const TOTAL_WARN = 5 * 1024 * 1024; // 5MB
 const TOTAL_CRITICAL = 10 * 1024 * 1024; // 10MB
 
 interface AssetFile {
@@ -63,7 +65,10 @@ export class AssetSizeRunner extends BaseRunner {
               severity: 'critical',
               message: `${asset.path} — ${sizeMB}MB image (exceeds 2MB)`,
               file: asset.path,
-              fix: { description: 'Compress with tools like squoosh.app, tinypng.com, or convert to WebP/AVIF format' },
+              fix: {
+                description:
+                  'Compress with tools like squoosh.app, tinypng.com, or convert to WebP/AVIF format',
+              },
               reportedBy: ['asset-size'],
             });
           } else if (asset.size > IMAGE_WARN) {
@@ -81,7 +86,9 @@ export class AssetSizeRunner extends BaseRunner {
               severity: 'warning',
               message: `${asset.path} — ${sizeKB}KB SVG (exceeds 100KB, likely unoptimized)`,
               file: asset.path,
-              fix: { description: 'Optimize with SVGO or svgomg.net — remove metadata, simplify paths' },
+              fix: {
+                description: 'Optimize with SVGO or svgomg.net — remove metadata, simplify paths',
+              },
               reportedBy: ['asset-size'],
             });
           }
@@ -91,7 +98,10 @@ export class AssetSizeRunner extends BaseRunner {
               severity: 'warning',
               message: `${asset.path} — ${sizeKB}KB font (exceeds 500KB)`,
               file: asset.path,
-              fix: { description: 'Subset the font to include only needed characters, or use WOFF2 format' },
+              fix: {
+                description:
+                  'Subset the font to include only needed characters, or use WOFF2 format',
+              },
               reportedBy: ['asset-size'],
             });
           }
@@ -145,7 +155,13 @@ export class AssetSizeRunner extends BaseRunner {
         name: 'Asset Sizes',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `Asset size check failed: ${err}`, reportedBy: ['asset-size'] }],
+        issues: [
+          {
+            severity: 'critical',
+            message: `Asset size check failed: ${err}`,
+            reportedBy: ['asset-size'],
+          },
+        ],
         toolsUsed: ['asset-size'],
         duration: elapsed(),
       };
@@ -179,5 +195,7 @@ function scanAssets(dir: string, projectRoot: string, assets: AssetFile[]): void
         });
       }
     }
-  } catch { /* directory doesn't exist or unreadable */ }
+  } catch {
+    /* directory doesn't exist or unreadable */
+  }
 }

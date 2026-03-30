@@ -1,11 +1,13 @@
-import { describe, it, expect } from "vitest";
-import { BaseRunner } from "./base.js";
-import type { CheckResult, ProjectContext } from "../types.js";
+import { describe, it, expect } from 'vitest';
+
+import { BaseRunner } from './base.js';
+
+import type { CheckResult, ProjectContext } from '../types.js';
 
 // Concrete implementation for testing
 class TestRunner extends BaseRunner {
-  name = "test-runner";
-  category = "dependencies" as const;
+  name = 'test-runner';
+  category = 'dependencies' as const;
 
   async run(): Promise<CheckResult> {
     return {
@@ -13,7 +15,7 @@ class TestRunner extends BaseRunner {
       name: this.name,
       category: this.category,
       score: 85,
-      status: "pass",
+      status: 'pass',
       issues: [],
       toolsUsed: [this.name],
       duration: 100,
@@ -21,8 +23,8 @@ class TestRunner extends BaseRunner {
   }
 }
 
-describe("BaseRunner", () => {
-  it("implements default isApplicable that returns true", async () => {
+describe('BaseRunner', () => {
+  it('implements default isApplicable that returns true', async () => {
     const runner = new TestRunner();
     const context: ProjectContext = {
       runtime: 'browser',
@@ -31,48 +33,48 @@ describe("BaseRunner", () => {
       testFramework: null,
     };
 
-    expect(await runner.isApplicable("/test/path", context)).toBe(true);
+    expect(await runner.isApplicable('/test/path', context)).toBe(true);
   });
 
-  it("creates skipped result with correct structure", () => {
+  it('creates skipped result with correct structure', () => {
     const runner = new TestRunner();
-    const result = runner["skipped"]("Tool not installed");
+    const result = runner['skipped']('Tool not installed');
 
     expect(result).toEqual({
-      id: "test-runner",
-      category: "dependencies",
-      name: "test-runner",
+      id: 'test-runner',
+      category: 'dependencies',
+      name: 'test-runner',
       score: 100,
-      status: "skipped",
+      status: 'skipped',
       issues: [],
-      toolsUsed: ["test-runner"],
+      toolsUsed: ['test-runner'],
       duration: 0,
-      metadata: { reason: "Tool not installed" },
+      metadata: { reason: 'Tool not installed' },
     });
   });
 
-  it("skipped result has score of 100", () => {
+  it('skipped result has score of 100', () => {
     const runner = new TestRunner();
-    const result = runner["skipped"]("Any reason");
+    const result = runner['skipped']('Any reason');
 
     expect(result.score).toBe(100);
-    expect(result.status).toBe("skipped");
+    expect(result.status).toBe('skipped');
   });
 
-  it("includes skip reason in metadata", () => {
+  it('includes skip reason in metadata', () => {
     const runner = new TestRunner();
-    const reason = "Custom skip reason";
-    const result = runner["skipped"](reason);
+    const reason = 'Custom skip reason';
+    const result = runner['skipped'](reason);
 
-    expect(result.metadata).toHaveProperty("reason", reason);
+    expect(result.metadata).toHaveProperty('reason', reason);
   });
 
-  it("can be extended with custom run implementation", async () => {
+  it('can be extended with custom run implementation', async () => {
     const runner = new TestRunner();
     const result = await runner.run();
 
-    expect(result.id).toBe("test-runner");
-    expect(result.category).toBe("dependencies");
+    expect(result.id).toBe('test-runner');
+    expect(result.category).toBe('dependencies');
     expect(result.score).toBe(85);
   });
 });
@@ -108,19 +110,25 @@ describe('isApplicableToContext', () => {
   it('returns true when applicableRuntimes includes the project runtime', () => {
     const runner = new TestRunner();
     runner.applicableRuntimes = ['node'] as const;
-    expect(runner.isApplicableToContext(makeContext({ runtime: 'node', frameworks: [] }))).toBe(true);
+    expect(runner.isApplicableToContext(makeContext({ runtime: 'node', frameworks: [] }))).toBe(
+      true,
+    );
   });
 
   it('returns false when runtime does not match applicableRuntimes', () => {
     const runner = new TestRunner();
     runner.applicableRuntimes = ['browser'] as const;
-    expect(runner.isApplicableToContext(makeContext({ runtime: 'node', frameworks: [] }))).toBe(false);
+    expect(runner.isApplicableToContext(makeContext({ runtime: 'node', frameworks: [] }))).toBe(
+      false,
+    );
   });
 
   it('returns false when frameworks match but runtime does not', () => {
     const runner = new TestRunner();
     runner.applicableFrameworks = ['react'] as const;
     runner.applicableRuntimes = ['browser'] as const;
-    expect(runner.isApplicableToContext(makeContext({ frameworks: ['react'], runtime: 'node' }))).toBe(false);
+    expect(
+      runner.isApplicableToContext(makeContext({ frameworks: ['react'], runtime: 'node' })),
+    ).toBe(false);
   });
 });

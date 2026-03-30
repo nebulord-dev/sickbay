@@ -1,11 +1,19 @@
-import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('@xyflow/react', () => ({
-  ReactFlow: ({ nodes, edges }: { nodes: Array<{id: string; data: {label: string}}>; edges: Array<{id: string; animated?: boolean}> }) => (
+  ReactFlow: ({
+    nodes,
+    edges,
+  }: {
+    nodes: Array<{ id: string; data: { label: string } }>;
+    edges: Array<{ id: string; animated?: boolean }>;
+  }) => (
     <div data-testid="react-flow">
       {nodes.map((n) => (
-        <div key={n.id} data-testid="flow-node">{n.data.label}</div>
+        <div key={n.id} data-testid="flow-node">
+          {n.data.label}
+        </div>
       ))}
       {edges.map((e) => (
         <div key={e.id} data-testid="flow-edge" data-animated={String(e.animated ?? false)} />
@@ -52,7 +60,9 @@ describe('DependencyGraph', () => {
   });
 
   it('renders file names (not full paths) as node labels', () => {
-    render(<DependencyGraph graph={{ 'src/components/Button.tsx': [], 'src/utils/helpers.ts': [] }} />);
+    render(
+      <DependencyGraph graph={{ 'src/components/Button.tsx': [], 'src/utils/helpers.ts': [] }} />,
+    );
     expect(screen.getByText('Button.tsx')).toBeInTheDocument();
     expect(screen.getByText('helpers.ts')).toBeInTheDocument();
   });

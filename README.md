@@ -206,42 +206,42 @@ Sickbay automatically detects your project type and runs only applicable checks.
 
 ### Dependencies (4 checks)
 
-| Check       | What it does                                           | Scope |
-| ----------- | ------------------------------------------------------ | ----- |
-| `knip`      | Unused files, dependencies, and exports                | All   |
-| `depcheck`  | Missing dependencies (cross-refs with knip for unused) | All   |
-| `outdated`  | Outdated package versions (uses pnpm/npm/yarn)         | All   |
-| `heavy-deps`| Detects heavy dependencies (moment, lodash, etc.)      | All   |
+| Check        | What it does                                           | Scope |
+| ------------ | ------------------------------------------------------ | ----- |
+| `knip`       | Unused files, dependencies, and exports                | All   |
+| `depcheck`   | Missing dependencies (cross-refs with knip for unused) | All   |
+| `outdated`   | Outdated package versions (uses pnpm/npm/yarn)         | All   |
+| `heavy-deps` | Detects heavy dependencies (moment, lodash, etc.)      | All   |
 
 ### Security (4 checks)
 
-| Check                    | What it does                                      | Scope         |
-| ------------------------ | ------------------------------------------------- | ------------- |
-| `npm-audit`              | Known vulnerability scan                          | All           |
-| `license-checker`        | Flags problematic licenses (GPL, AGPL, etc.)      | All           |
-| `secrets`                | Detects exposed API keys, tokens, and credentials | All           |
-| `node-security`          | Helmet, CORS, rate limiting checks                | Node (server) |
+| Check             | What it does                                      | Scope         |
+| ----------------- | ------------------------------------------------- | ------------- |
+| `npm-audit`       | Known vulnerability scan                          | All           |
+| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.)      | All           |
+| `secrets`         | Detects exposed API keys, tokens, and credentials | All           |
+| `node-security`   | Helmet, CORS, rate limiting checks                | Node (server) |
 
 ### Code Quality (8 checks)
 
-| Check                    | What it does                                         | Scope         |
-| ------------------------ | ---------------------------------------------------- | ------------- |
-| `eslint`                 | Linting errors and warnings                          | All           |
-| `typescript`             | Type errors and issues                               | All           |
-| `madge`                  | Circular module dependencies                         | All           |
-| `jscpd`                  | Copy-paste duplication detection                     | All           |
-| `coverage`               | Test coverage % and test counts (vitest/jest)        | All           |
-| `todo-scanner`           | TODO/FIXME comments (technical debt tracker)         | All           |
-| `complexity`             | High cyclomatic complexity files                     | All           |
-| `node-input-validation`  | Input validation library usage (zod, joi, etc.)      | Node (server) |
+| Check                   | What it does                                    | Scope         |
+| ----------------------- | ----------------------------------------------- | ------------- |
+| `eslint`                | Linting errors and warnings                     | All           |
+| `typescript`            | Type errors and issues                          | All           |
+| `madge`                 | Circular module dependencies                    | All           |
+| `jscpd`                 | Copy-paste duplication detection                | All           |
+| `coverage`              | Test coverage % and test counts (vitest/jest)   | All           |
+| `todo-scanner`          | TODO/FIXME comments (technical debt tracker)    | All           |
+| `complexity`            | High cyclomatic complexity files                | All           |
+| `node-input-validation` | Input validation library usage (zod, joi, etc.) | Node (server) |
 
 ### Performance (3 checks)
 
-| Check            | What it does                                 | Scope  |
-| ---------------- | -------------------------------------------- | ------ |
-| `react-perf`     | React performance anti-patterns              | React  |
-| `asset-size`     | Oversized images, fonts, and static assets   | React  |
-| `node-async-errors` | Async error handling in route handlers    | Node (server) |
+| Check               | What it does                               | Scope         |
+| ------------------- | ------------------------------------------ | ------------- |
+| `react-perf`        | React performance anti-patterns            | React         |
+| `asset-size`        | Oversized images, fonts, and static assets | React         |
+| `node-async-errors` | Async error handling in route handlers     | Node (server) |
 
 ### Git (1 check)
 

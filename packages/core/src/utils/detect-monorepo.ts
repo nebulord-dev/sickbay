@@ -1,8 +1,11 @@
 import { existsSync, readFileSync } from 'fs';
 import { join, resolve } from 'path';
+
 import { globby } from 'globby';
-import type { MonorepoInfo, ProjectInfo } from '../types.js';
+
 import { detectPackageManager } from './detect-project.js';
+
+import type { MonorepoInfo, ProjectInfo } from '../types.js';
 
 type NotMonorepo = { isMonorepo: false };
 
@@ -89,10 +92,9 @@ function detectSignals(
   if (existsSync(pkgJson)) {
     try {
       const pkg = JSON.parse(readFileSync(pkgJson, 'utf-8'));
-      const workspaces: string[] | undefined =
-        Array.isArray(pkg.workspaces)
-          ? pkg.workspaces
-          : Array.isArray(pkg.workspaces?.packages)
+      const workspaces: string[] | undefined = Array.isArray(pkg.workspaces)
+        ? pkg.workspaces
+        : Array.isArray(pkg.workspaces?.packages)
           ? pkg.workspaces.packages
           : undefined;
 

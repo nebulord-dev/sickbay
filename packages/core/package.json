@@ -7,9 +7,9 @@
     "type": "git",
     "url": "https://github.com/nebulord-dev/sickbay"
   },
-  "publishConfig": {
-    "access": "public"
-  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,9 +19,9 @@
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -29,8 +29,6 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui --coverage",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix",
     "clean": "rm -rf dist"
   },
   "dependencies": {

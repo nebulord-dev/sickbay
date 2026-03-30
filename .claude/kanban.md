@@ -12,13 +12,13 @@ Phase 4 — Polyglot Ecosystem  ░░░░░░░░░░░░░░░░
 Phase 5 — sickbay-py + Unified ░░░░░░░░░░░░░░░░░░░░░░░░░░░█████
 ```
 
-| Phase | Focus               | Key tasks                                                                                                                                                                                                    | Unblocks                 |
-| ----- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ |
-| **1** | Testing & Hygiene   | Core runner tests, CLI component tests, `sickbay-test-fixtures` repo, Playwright (web), linting, CI quality checks                                                                                            | Safe refactor in Phase 3 |
-| **2** | Standalone Polish   | Fill codebase tab (TS projects), CI/CD guide, historical trends, branch diff, sickbay badge, expand command suite, version bumping, publishing & registry; **`ProjectContext` infrastructure refactor (late P2)** | Phase 3 framework work   |
-| **3** | Monorepo Support    | Monorepo detection, `MonorepoReport` data shape, per-package runner scoping (uses `ProjectContext`), web tab UI, per-package coverage fix, About page dynamic, `--package` flag; **framework-specific runners (Angular, Next, Node/Express) + fixtures** | Phase 4 features         |
-| **4** | Polyglot Ecosystem  | Custom plugins API, VS Code extension, `.sickbayrc` config, team dashboard, context-aware tips, Lighthouse integration                                                                                        | Phase 5                  |
-| **5** | sickbay-py + Unified | Python CLI (`sickbay-py`), unified polyglot dashboard spanning both CLIs                                                                                                                                      | —                        |
+| Phase | Focus                | Key tasks                                                                                                                                                                                                                                                | Unblocks                 |
+| ----- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **1** | Testing & Hygiene    | Core runner tests, CLI component tests, `sickbay-test-fixtures` repo, Playwright (web), linting, CI quality checks                                                                                                                                       | Safe refactor in Phase 3 |
+| **2** | Standalone Polish    | Fill codebase tab (TS projects), CI/CD guide, historical trends, branch diff, sickbay badge, expand command suite, version bumping, publishing & registry; **`ProjectContext` infrastructure refactor (late P2)**                                        | Phase 3 framework work   |
+| **3** | Monorepo Support     | Monorepo detection, `MonorepoReport` data shape, per-package runner scoping (uses `ProjectContext`), web tab UI, per-package coverage fix, About page dynamic, `--package` flag; **framework-specific runners (Angular, Next, Node/Express) + fixtures** | Phase 4 features         |
+| **4** | Polyglot Ecosystem   | Custom plugins API, VS Code extension, `.sickbayrc` config, team dashboard, context-aware tips, Lighthouse integration                                                                                                                                   | Phase 5                  |
+| **5** | sickbay-py + Unified | Python CLI (`sickbay-py`), unified polyglot dashboard spanning both CLIs                                                                                                                                                                                 | —                        |
 
 > **Blocked items**: Custom plugins, VS Code ext, `.sickbayrc`, team dashboard, and context-aware tips all explicitly require Phase 3 to be complete before starting. See individual task descriptions for details.
 >
@@ -36,20 +36,19 @@ All backlog, icebox, and in-progress tasks have been migrated to Jira:
 
 ### Label Reference
 
-| Label | Meaning |
-|-------|---------|
-| `auto` | Can be executed headless from a written plan |
-| `collab` | Needs user in the loop for design/UX/product decisions |
-| `plan-auto` | Needs a planning session, then execution can be headless |
-| `blocked` | Explicitly blocked by prerequisite work |
-| `tui-enhancement` | TUI-specific feature or improvement |
-| `icebox` | Low priority / deferred |
-| `phase-N` | Roadmap phase the task belongs to |
+| Label             | Meaning                                                  |
+| ----------------- | -------------------------------------------------------- |
+| `auto`            | Can be executed headless from a written plan             |
+| `collab`          | Needs user in the loop for design/UX/product decisions   |
+| `plan-auto`       | Needs a planning session, then execution can be headless |
+| `blocked`         | Explicitly blocked by prerequisite work                  |
+| `tui-enhancement` | TUI-specific feature or improvement                      |
+| `icebox`          | Low priority / deferred                                  |
+| `phase-N`         | Roadmap phase the task belongs to                        |
 
 ---
 
 ## In Progress
-
 
 ## Done
 

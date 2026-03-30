@@ -1,6 +1,8 @@
 import { execa } from 'execa';
-import { BaseRunner } from './base.js';
+
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -62,7 +64,8 @@ export class DepcheckRunner extends BaseRunner {
         category: this.category,
         name: 'Dependency Health',
         score,
-        status: issues.length === 0 ? 'pass' : issues[0].severity === 'critical' ? 'fail' : 'warning',
+        status:
+          issues.length === 0 ? 'pass' : issues[0].severity === 'critical' ? 'fail' : 'warning',
         issues,
         toolsUsed: ['depcheck'],
         duration: elapsed(),
@@ -78,7 +81,9 @@ export class DepcheckRunner extends BaseRunner {
         name: 'Dependency Health',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `depcheck failed: ${err}`, reportedBy: ['depcheck'] }],
+        issues: [
+          { severity: 'critical', message: `depcheck failed: ${err}`, reportedBy: ['depcheck'] },
+        ],
         toolsUsed: ['depcheck'],
         duration: elapsed(),
       };

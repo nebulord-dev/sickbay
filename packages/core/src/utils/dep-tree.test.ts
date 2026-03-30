@@ -5,27 +5,30 @@ vi.mock('execa', () => ({
 }));
 
 import { execa } from 'execa';
+
 import { getDependencyTree } from './dep-tree.js';
 
 const mockExeca = vi.mocked(execa);
 
 describe('getDependencyTree', () => {
   it('parses pnpm ls --json --depth 1 output', async () => {
-    const pnpmOutput = JSON.stringify([{
-      name: 'my-app',
-      version: '1.0.0',
-      dependencies: {
-        react: {
-          from: 'react',
-          version: '19.0.0',
-          resolved: '',
-          dependencies: {
-            'loose-envify': { from: 'loose-envify', version: '1.4.0', resolved: '' },
+    const pnpmOutput = JSON.stringify([
+      {
+        name: 'my-app',
+        version: '1.0.0',
+        dependencies: {
+          react: {
+            from: 'react',
+            version: '19.0.0',
+            resolved: '',
+            dependencies: {
+              'loose-envify': { from: 'loose-envify', version: '1.4.0', resolved: '' },
+            },
           },
+          lodash: { from: 'lodash', version: '4.17.21', resolved: '' },
         },
-        lodash: { from: 'lodash', version: '4.17.21', resolved: '' },
       },
-    }]);
+    ]);
 
     mockExeca.mockResolvedValueOnce({ stdout: pnpmOutput } as any);
 

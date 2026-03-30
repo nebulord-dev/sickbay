@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
-import type { SickbayReport, MonorepoReport } from "@nebulord/sickbay-core";
-import { loadReport } from "./lib/load-report.js";
-import { Dashboard } from "./components/Dashboard.js";
+import { useState, useEffect } from 'react';
+
+import { Dashboard } from './components/Dashboard.js';
+import { loadReport } from './lib/load-report.js';
+
+import type { SickbayReport, MonorepoReport } from '@nebulord/sickbay-core';
 
 export function App() {
   const [report, setReport] = useState<SickbayReport | MonorepoReport | null>(null);
@@ -24,9 +26,7 @@ export function App() {
       <div className="flex items-center justify-center h-screen text-green-400">
         <div className="text-center">
           <div className="text-2xl font-bold mb-2">SICKBAY</div>
-          <div className="text-sm text-gray-500 animate-pulse">
-            Loading report...
-          </div>
+          <div className="text-sm text-gray-500 animate-pulse">Loading report...</div>
         </div>
       </div>
     );
@@ -42,7 +42,7 @@ export function App() {
           </div>
           <div className="bg-card border border-border rounded-lg p-4 text-left">
             <div className="text-green-400 font-mono text-sm">
-              $ npx sickbay --json {">"} sickbay-report.json
+              $ npx sickbay --json {'>'} sickbay-report.json
             </div>
           </div>
           <div className="text-xs text-gray-600 mt-4">

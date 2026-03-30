@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Text } from "ink";
-import type { SickbayReport } from "@nebulord/sickbay-core";
+import React, { useState, useEffect, useRef } from 'react';
+
+import { Box, Text } from 'ink';
+
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 interface ScorePanelProps {
   report: SickbayReport | null;
@@ -9,14 +11,14 @@ interface ScorePanelProps {
 }
 
 function scoreColor(score: number): string {
-  if (score >= 80) return "green";
-  if (score >= 60) return "yellow";
-  return "red";
+  if (score >= 80) return 'green';
+  if (score >= 60) return 'yellow';
+  return 'red';
 }
 
 function scoreBar(score: number, width = 15): string {
   const filled = Math.round((score / 100) * width);
-  return "\u2588".repeat(filled) + "\u2591".repeat(width - filled);
+  return '\u2588'.repeat(filled) + '\u2591'.repeat(width - filled);
 }
 
 export function ScorePanel({ report, previousScore, animate = true }: ScorePanelProps) {
@@ -74,21 +76,27 @@ export function ScorePanel({ report, previousScore, animate = true }: ScorePanel
       </Box>
       {delta !== null && (
         <Text dimColor>
-          {delta > 0 ? `+${delta}` : delta === 0 ? "\u00B10" : `${delta}`} since last scan
+          {delta > 0 ? `+${delta}` : delta === 0 ? '\u00B10' : `${delta}`} since last scan
         </Text>
       )}
       <Box marginTop={1} flexDirection="column">
         <Box>
-          <Text color="red">{"\u2717"} {report.summary.critical} critical</Text>
-          <Text>{"  "}</Text>
-          <Text color="yellow">{"\u26A0"} {report.summary.warnings} warn</Text>
-          <Text>{"  "}</Text>
+          <Text color="red">
+            {'\u2717'} {report.summary.critical} critical
+          </Text>
+          <Text>{'  '}</Text>
+          <Text color="yellow">
+            {'\u26A0'} {report.summary.warnings} warn
+          </Text>
+          <Text>{'  '}</Text>
           <Text dimColor>i {report.summary.info} info</Text>
         </Box>
       </Box>
       {report.quote && (
         <Box marginTop={1}>
-          <Text italic dimColor>"{report.quote.text}" — {report.quote.source}</Text>
+          <Text italic dimColor>
+            "{report.quote.text}" — {report.quote.source}
+          </Text>
         </Box>
       )}
     </Box>

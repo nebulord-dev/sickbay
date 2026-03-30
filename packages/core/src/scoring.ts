@@ -1,5 +1,6 @@
-import type { CheckResult, SickbayReport } from './types.js';
 import { SCORE_EXCELLENT, SCORE_GOOD, SCORE_FAIR } from './constants.js';
+
+import type { CheckResult, SickbayReport } from './types.js';
 
 /**
  * This module provides functions to calculate the overall health score of a project based on various checks,
@@ -11,7 +12,7 @@ import { SCORE_EXCELLENT, SCORE_GOOD, SCORE_FAIR } from './constants.js';
 
 const CATEGORY_WEIGHTS: Record<string, number> = {
   dependencies: 0.25,
-  security: 0.30,
+  security: 0.3,
   'code-quality': 0.25,
   performance: 0.15,
   git: 0.05,

@@ -1,8 +1,11 @@
-import React from "react";
-import { Box, Text } from "ink";
-import type { SickbayReport } from "@nebulord/sickbay-core";
-import { getScoreEmoji } from "@nebulord/sickbay-core";
-import { ScoreBar } from "./ScoreBar.js";
+import React from 'react';
+
+import { getScoreEmoji } from '@nebulord/sickbay-core';
+import { Box, Text } from 'ink';
+
+import { ScoreBar } from './ScoreBar.js';
+
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 /**
  * Summary component displays the overall health score of the project along with a breakdown of critical issues, warnings, and info.
@@ -26,14 +29,12 @@ function formatDuration(ms: number): string {
 export function Summary({ report, scanDuration }: SummaryProps) {
   return (
     <Box flexDirection="column">
-      <Text dimColor>{"━".repeat(52)}</Text>
+      <Text dimColor>{'━'.repeat(52)}</Text>
       <Box marginTop={1}>
         <Text bold>Overall Health Score: </Text>
         <ScoreBar score={report.overallScore} width={12} />
         <Text> {getScoreEmoji(report.overallScore)}</Text>
-        {scanDuration != null && (
-          <Text dimColor>  {formatDuration(scanDuration)}</Text>
-        )}
+        {scanDuration != null && <Text dimColor> {formatDuration(scanDuration)}</Text>}
       </Box>
       <Box marginTop={1}>
         <Text color="red"> ✗ {report.summary.critical} critical</Text>
@@ -42,7 +43,9 @@ export function Summary({ report, scanDuration }: SummaryProps) {
       </Box>
       {report.quote && (
         <Box marginTop={1}>
-          <Text italic dimColor>"{report.quote.text}"</Text>
+          <Text italic dimColor>
+            "{report.quote.text}"
+          </Text>
           <Text dimColor> — {report.quote.source}</Text>
         </Box>
       )}
