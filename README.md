@@ -2,6 +2,9 @@
 
 A zero-config health check CLI for JavaScript and TypeScript projects. Run `sickbay` in any project to get an instant report on dependencies, security, code quality, performance, and git health — with a web dashboard for deep dives.
 
+> [!NOTE]
+> `sickbay` is currently in aplha
+
 ```
 ┌──────────────────────────────────────────────────────┐
 │  ███████ ██  ██████ ██   ██ ██████   █████  ██    ██ │
