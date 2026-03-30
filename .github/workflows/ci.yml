@@ -36,7 +36,7 @@ jobs:
         run: pnpm build
 
   lint:
-    name: Lint
+    name: Lint & Format
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -57,6 +57,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: Check formatting
+        run: pnpm format:check
 
   test:
     name: Test
