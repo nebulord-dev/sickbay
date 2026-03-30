@@ -1,8 +1,10 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import type { CheckResult, Issue, ProjectContext } from '../types.js';
-import { BaseRunner } from './base.js';
+
 import { timer } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
+import type { CheckResult, Issue, ProjectContext } from '../types.js';
 
 const VALIDATION_PACKAGES = [
   'zod',
@@ -14,12 +16,20 @@ const VALIDATION_PACKAGES = [
   'valibot',
 ];
 const HTTP_SERVER_PACKAGES = [
-  'express', 'fastify', 'koa', 'hapi', '@hapi/hapi',
-  'restify', 'polka', 'micro', '@nestjs/core', 'h3',
+  'express',
+  'fastify',
+  'koa',
+  'hapi',
+  '@hapi/hapi',
+  'restify',
+  'polka',
+  'micro',
+  '@nestjs/core',
+  'h3',
 ];
 
 export class NodeInputValidationRunner extends BaseRunner {
-  name     = 'node-input-validation';
+  name = 'node-input-validation';
   category = 'code-quality' as const;
   applicableRuntimes = ['node'] as const;
 
@@ -39,7 +49,7 @@ export class NodeInputValidationRunner extends BaseRunner {
       return this.skipped('No package.json found');
     }
 
-    const pkg     = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     const allDeps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
 
     const found = VALIDATION_PACKAGES.find((p) => p in allDeps);

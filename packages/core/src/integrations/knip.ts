@@ -1,8 +1,11 @@
-import { execa } from 'execa';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import { BaseRunner } from './base.js';
+
+import { execa } from 'execa';
+
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 // Packages that are only ever imported in test files — knip flags them as unused
@@ -17,7 +20,9 @@ const TEST_RUNNER_PACKAGES = ['vitest', 'jest', '@jest/core', '@jest/globals'];
  * It calculates an overall score based on the number of issues found, providing insights into the level of unused code in the project.
  */
 
-interface KnipItem { name: string; }
+interface KnipItem {
+  name: string;
+}
 
 interface KnipFileIssue {
   file: string;
@@ -100,13 +105,11 @@ export class KnipRunner extends BaseRunner {
           if (workspaceScope && d.name.startsWith(`${workspaceScope}/`)) return;
           // Filter test-only packages when a test runner is present — these are
           // false positives caused by test files being excluded from knip analysis.
-          const isTestOnly = TEST_ONLY_PACKAGE_PREFIXES.some((prefix) =>
-            d.name.startsWith(prefix)
-          );
+          const isTestOnly = TEST_ONLY_PACKAGE_PREFIXES.some((prefix) => d.name.startsWith(prefix));
           if (!isTestOnly || !hasTestRunner) devDeps.add(d.name);
         });
         (fileIssue.exports ?? []).forEach((e) =>
-          unusedExports.push(`${fileIssue.file}: ${e.name}`)
+          unusedExports.push(`${fileIssue.file}: ${e.name}`),
         );
       }
 
@@ -116,7 +119,7 @@ export class KnipRunner extends BaseRunner {
           message: `Unused dependency: ${dep}`,
           fix: { description: `Remove ${dep}` },
           reportedBy: ['knip'],
-        })
+        }),
       );
 
       devDeps.forEach((dep) =>
@@ -125,7 +128,7 @@ export class KnipRunner extends BaseRunner {
           message: `Unused devDependency: ${dep}`,
           fix: { description: `Remove ${dep}` },
           reportedBy: ['knip'],
-        })
+        }),
       );
 
       unusedExports.slice(0, 5).forEach((exp) =>
@@ -133,7 +136,7 @@ export class KnipRunner extends BaseRunner {
           severity: 'info',
           message: `Unused export: ${exp}`,
           reportedBy: ['knip'],
-        })
+        }),
       );
       if (unusedExports.length > 5) {
         issues.push({

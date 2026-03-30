@@ -1,12 +1,15 @@
 #!/usr/bin/env node
-import { config } from "dotenv";
-import { existsSync } from "fs";
-import { join } from "path";
-import { homedir } from "os";
-import { Command } from "commander";
-import { render } from "ink";
-import React from "react";
-import { App } from "./components/App.js";
+import { existsSync } from 'fs';
+import { homedir } from 'os';
+import { join } from 'path';
+
+import React from 'react';
+
+import { Command } from 'commander';
+import { config } from 'dotenv';
+import { render } from 'ink';
+
+import { App } from './components/App.js';
 
 /**
  * Entry point for the Sickbay CLI application.
@@ -16,7 +19,7 @@ import { App } from "./components/App.js";
  */
 
 // Load .env from global config first (~/.sickbay/.env)
-const globalConfigPath = join(homedir(), ".sickbay", ".env");
+const globalConfigPath = join(homedir(), '.sickbay', '.env');
 if (existsSync(globalConfigPath)) {
   config({ path: globalConfigPath, debug: false, quiet: true });
 }
@@ -27,41 +30,42 @@ config({ debug: false, quiet: true });
 const program = new Command();
 
 program
-  .name("sickbay")
-  .description("React project health check CLI")
-  .version("0.0.1")
+  .name('sickbay')
+  .description('React project health check CLI')
+  .version('0.0.1')
   .enablePositionalOptions()
   .passThroughOptions()
-  .option("-p, --path <path>", "project path to analyze", process.cwd())
-  .option("-c, --checks <checks>", "comma-separated list of checks to run")
-  .option("--package <name>", "scope to a single named package (monorepo only)")
-  .option("--json", "output raw JSON report")
-  .option("--web", "open web dashboard after scan")
-  .option("--no-ai", "disable AI features")
-  .option("--no-quotes", "suppress personality quotes in output")
-  .option("--verbose", "show verbose output")
+  .option('-p, --path <path>', 'project path to analyze', process.cwd())
+  .option('-c, --checks <checks>', 'comma-separated list of checks to run')
+  .option('--package <name>', 'scope to a single named package (monorepo only)')
+  .option('--json', 'output raw JSON report')
+  .option('--web', 'open web dashboard after scan')
+  .option('--no-ai', 'disable AI features')
+  .option('--no-quotes', 'suppress personality quotes in output')
+  .option('--verbose', 'show verbose output')
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
     if (options.path && options.path !== process.cwd()) {
-      const projectEnvPath = join(options.path, ".env");
+      const projectEnvPath = join(options.path, '.env');
       if (existsSync(projectEnvPath)) {
         config({ path: projectEnvPath, override: true });
       }
     }
 
     const checks = options.checks
-      ? options.checks.split(",").map((s: string) => s.trim())
+      ? options.checks.split(',').map((s: string) => s.trim())
       : undefined;
 
-    const { detectMonorepo, runSickbay, runSickbayMonorepo } = await import("@nebulord/sickbay-core");
+    const { detectMonorepo, runSickbay, runSickbayMonorepo } =
+      await import('@nebulord/sickbay-core');
     const monorepoInfo = await detectMonorepo(options.path);
 
     // --package flag: scope to a single named package within a monorepo
     if (options.package && monorepoInfo.isMonorepo) {
-      const { readFileSync } = await import("fs");
+      const { readFileSync } = await import('fs');
       const targetPath = monorepoInfo.packagePaths.find((p) => {
         try {
-          const pkg = JSON.parse(readFileSync(join(p, "package.json"), "utf-8"));
+          const pkg = JSON.parse(readFileSync(join(p, 'package.json'), 'utf-8'));
           return pkg.name === options.package || pkg.name?.endsWith(`/${options.package}`);
         } catch {
           return false;
@@ -74,8 +78,13 @@ program
       }
 
       if (options.json) {
-        const report = await runSickbay({ projectPath: targetPath, checks, verbose: options.verbose, quotes: options.quotes });
-        process.stdout.write(JSON.stringify(report, null, 2) + "\n");
+        const report = await runSickbay({
+          projectPath: targetPath,
+          checks,
+          verbose: options.verbose,
+          quotes: options.quotes,
+        });
+        process.stdout.write(JSON.stringify(report, null, 2) + '\n');
         process.exit(0);
       }
 
@@ -100,7 +109,7 @@ program
           verbose: options.verbose,
           quotes: options.quotes,
         });
-        process.stdout.write(JSON.stringify(report, null, 2) + "\n");
+        process.stdout.write(JSON.stringify(report, null, 2) + '\n');
         process.exit(0);
       }
 
@@ -113,7 +122,7 @@ program
 
       // Auto-save to trend history and last-report snapshot
       try {
-        const { saveEntry, saveLastReport } = await import("./lib/history.js");
+        const { saveEntry, saveLastReport } = await import('./lib/history.js');
         saveEntry(report);
         saveLastReport(report);
       } catch {
@@ -122,13 +131,15 @@ program
 
       // Cache dependency tree
       try {
-        const { getDependencyTree } = await import("@nebulord/sickbay-core");
-        const { saveDepTree } = await import("./lib/history.js");
+        const { getDependencyTree } = await import('@nebulord/sickbay-core');
+        const { saveDepTree } = await import('./lib/history.js');
         const tree = await getDependencyTree(options.path, report.projectInfo.packageManager);
         saveDepTree(options.path, tree);
-      } catch { /* dep tree is optional */ }
+      } catch {
+        /* dep tree is optional */
+      }
 
-      process.stdout.write(JSON.stringify(report, null, 2) + "\n");
+      process.stdout.write(JSON.stringify(report, null, 2) + '\n');
       process.exit(0);
     }
 
@@ -147,43 +158,43 @@ program
 
 // --- sickbay init ---
 program
-  .command("init")
-  .description("Initialize .sickbay/ folder and run an initial baseline scan")
-  .option("-p, --path <path>", "project path to initialize", process.cwd())
+  .command('init')
+  .description('Initialize .sickbay/ folder and run an initial baseline scan')
+  .option('-p, --path <path>', 'project path to initialize', process.cwd())
   .action(async (options) => {
-    const { initSickbay } = await import("./commands/init.js");
+    const { initSickbay } = await import('./commands/init.js');
     await initSickbay(options.path);
   });
 
 // --- sickbay fix ---
 program
-  .command("fix")
-  .description("Interactively fix issues found by sickbay scan")
-  .option("-p, --path <path>", "project path to analyze", process.cwd())
-  .option("-c, --checks <checks>", "comma-separated list of checks to run")
-  .option("--package <name>", "scope to a single package (monorepo only)")
-  .option("--all", "apply all available fixes without prompting")
-  .option("--dry-run", "show what would be fixed without executing")
-  .option("--verbose", "show verbose output")
+  .command('fix')
+  .description('Interactively fix issues found by sickbay scan')
+  .option('-p, --path <path>', 'project path to analyze', process.cwd())
+  .option('-c, --checks <checks>', 'comma-separated list of checks to run')
+  .option('--package <name>', 'scope to a single package (monorepo only)')
+  .option('--all', 'apply all available fixes without prompting')
+  .option('--dry-run', 'show what would be fixed without executing')
+  .option('--verbose', 'show verbose output')
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
     if (options.path && options.path !== process.cwd()) {
-      const projectEnvPath = join(options.path, ".env");
+      const projectEnvPath = join(options.path, '.env');
       if (existsSync(projectEnvPath)) {
         config({ path: projectEnvPath, override: true });
       }
     }
 
-    const { resolveProject } = await import("./lib/resolve-package.js");
+    const { resolveProject } = await import('./lib/resolve-package.js');
     const resolution = await resolveProject(options.path, options.package);
 
-    const { FixApp } = await import("./components/FixApp.js");
+    const { FixApp } = await import('./components/FixApp.js');
     const checks = options.checks
-      ? options.checks.split(",").map((s: string) => s.trim())
+      ? options.checks.split(',').map((s: string) => s.trim())
       : undefined;
 
     const projectPath = resolution.isMonorepo
-      ? resolution.targetPath ?? options.path
+      ? (resolution.targetPath ?? options.path)
       : resolution.targetPath;
 
     render(
@@ -202,29 +213,29 @@ program
 
 // --- sickbay trend ---
 program
-  .command("trend")
-  .description("Show score history and trends over time")
-  .option("-p, --path <path>", "project path to analyze", process.cwd())
-  .option("-n, --last <count>", "number of recent scans to show", "20")
-  .option("--package <name>", "scope to a single package (monorepo only)")
-  .option("--json", "output trend data as JSON")
+  .command('trend')
+  .description('Show score history and trends over time')
+  .option('-p, --path <path>', 'project path to analyze', process.cwd())
+  .option('-n, --last <count>', 'number of recent scans to show', '20')
+  .option('--package <name>', 'scope to a single package (monorepo only)')
+  .option('--json', 'output trend data as JSON')
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
     if (options.path && options.path !== process.cwd()) {
-      const projectEnvPath = join(options.path, ".env");
+      const projectEnvPath = join(options.path, '.env');
       if (existsSync(projectEnvPath)) {
         config({ path: projectEnvPath, override: true });
       }
     }
 
-    const { resolveProject } = await import("./lib/resolve-package.js");
+    const { resolveProject } = await import('./lib/resolve-package.js');
     const resolution = await resolveProject(options.path, options.package);
 
     const projectPath = resolution.isMonorepo
-      ? resolution.targetPath ?? options.path
+      ? (resolution.targetPath ?? options.path)
       : resolution.targetPath;
 
-    const { TrendApp } = await import("./components/TrendApp.js");
+    const { TrendApp } = await import('./components/TrendApp.js');
     render(
       React.createElement(TrendApp, {
         projectPath,
@@ -239,28 +250,28 @@ program
 
 // --- sickbay stats ---
 program
-  .command("stats")
-  .description("Show a quick codebase overview and project summary")
-  .option("-p, --path <path>", "project path to analyze", process.cwd())
-  .option("--package <name>", "scope to a single package (monorepo only)")
-  .option("--json", "output stats as JSON")
+  .command('stats')
+  .description('Show a quick codebase overview and project summary')
+  .option('-p, --path <path>', 'project path to analyze', process.cwd())
+  .option('--package <name>', 'scope to a single package (monorepo only)')
+  .option('--json', 'output stats as JSON')
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
     if (options.path && options.path !== process.cwd()) {
-      const projectEnvPath = join(options.path, ".env");
+      const projectEnvPath = join(options.path, '.env');
       if (existsSync(projectEnvPath)) {
         config({ path: projectEnvPath, override: true });
       }
     }
 
-    const { resolveProject } = await import("./lib/resolve-package.js");
+    const { resolveProject } = await import('./lib/resolve-package.js');
     const resolution = await resolveProject(options.path, options.package);
 
     const projectPath = resolution.isMonorepo
-      ? resolution.targetPath ?? options.path
+      ? (resolution.targetPath ?? options.path)
       : resolution.targetPath;
 
-    const { StatsApp } = await import("./components/StatsApp.js");
+    const { StatsApp } = await import('./components/StatsApp.js');
     render(
       React.createElement(StatsApp, {
         projectPath,
@@ -274,17 +285,17 @@ program
 
 // --- sickbay tui ---
 program
-  .command("tui")
-  .description("Launch the persistent developer dashboard")
-  .option("-p, --path <path>", "project path to monitor", process.cwd())
-  .option("--no-watch", "disable file-watching auto-refresh")
-  .option("--no-quotes", "suppress personality quotes in output")
-  .option("--refresh <seconds>", "auto-refresh interval in seconds", "300")
-  .option("-c, --checks <checks>", "comma-separated list of checks to run")
+  .command('tui')
+  .description('Launch the persistent developer dashboard')
+  .option('-p, --path <path>', 'project path to monitor', process.cwd())
+  .option('--no-watch', 'disable file-watching auto-refresh')
+  .option('--no-quotes', 'suppress personality quotes in output')
+  .option('--refresh <seconds>', 'auto-refresh interval in seconds', '300')
+  .option('-c, --checks <checks>', 'comma-separated list of checks to run')
   .action(async (options) => {
-    const { TuiApp } = await import("./components/tui/TuiApp.js");
+    const { TuiApp } = await import('./components/tui/TuiApp.js');
     const checks = options.checks
-      ? options.checks.split(",").map((s: string) => s.trim())
+      ? options.checks.split(',').map((s: string) => s.trim())
       : undefined;
     render(
       React.createElement(TuiApp, {
@@ -300,29 +311,29 @@ program
 
 // --- sickbay doctor ---
 program
-  .command("doctor")
-  .description("Diagnose project setup and configuration issues")
-  .option("-p, --path <path>", "project path to analyze", process.cwd())
-  .option("--package <name>", "scope to a single package (monorepo only)")
-  .option("--fix", "auto-scaffold missing configuration files")
-  .option("--json", "output diagnostic results as JSON")
+  .command('doctor')
+  .description('Diagnose project setup and configuration issues')
+  .option('-p, --path <path>', 'project path to analyze', process.cwd())
+  .option('--package <name>', 'scope to a single package (monorepo only)')
+  .option('--fix', 'auto-scaffold missing configuration files')
+  .option('--json', 'output diagnostic results as JSON')
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
     if (options.path && options.path !== process.cwd()) {
-      const projectEnvPath = join(options.path, ".env");
+      const projectEnvPath = join(options.path, '.env');
       if (existsSync(projectEnvPath)) {
         config({ path: projectEnvPath, override: true });
       }
     }
 
-    const { resolveProject } = await import("./lib/resolve-package.js");
+    const { resolveProject } = await import('./lib/resolve-package.js');
     const resolution = await resolveProject(options.path, options.package);
 
     const projectPath = resolution.isMonorepo
-      ? resolution.targetPath ?? options.path
+      ? (resolution.targetPath ?? options.path)
       : resolution.targetPath;
 
-    const { DoctorApp } = await import("./components/DoctorApp.js");
+    const { DoctorApp } = await import('./components/DoctorApp.js');
     render(
       React.createElement(DoctorApp, {
         projectPath,
@@ -337,37 +348,33 @@ program
 
 // --- sickbay badge ---
 program
-  .command("badge")
-  .description("Generate a health score badge for your README")
-  .option("-p, --path <path>", "project path", process.cwd())
-  .option("--package <name>", "scope to a single package (monorepo only)")
-  .option("--html", "output HTML <img> tag instead of markdown")
-  .option("--url", "output bare badge URL only")
-  .option("--label <text>", "custom badge label", "sickbay")
-  .option("--scan", "run a fresh scan instead of using last report")
+  .command('badge')
+  .description('Generate a health score badge for your README')
+  .option('-p, --path <path>', 'project path', process.cwd())
+  .option('--package <name>', 'scope to a single package (monorepo only)')
+  .option('--html', 'output HTML <img> tag instead of markdown')
+  .option('--url', 'output bare badge URL only')
+  .option('--label <text>', 'custom badge label', 'sickbay')
+  .option('--scan', 'run a fresh scan instead of using last report')
   .action(async (options) => {
-    const { resolveProject } = await import("./lib/resolve-package.js");
+    const { resolveProject } = await import('./lib/resolve-package.js');
     const resolution = await resolveProject(options.path, options.package);
 
     const projectPath = resolution.isMonorepo
-      ? resolution.targetPath ?? options.path
+      ? (resolution.targetPath ?? options.path)
       : resolution.targetPath;
 
-    const {
-      loadScoreFromLastReport,
-      badgeUrl,
-      badgeMarkdown,
-      badgeHtml,
-    } = await import("./commands/badge.js");
+    const { loadScoreFromLastReport, badgeUrl, badgeMarkdown, badgeHtml } =
+      await import('./commands/badge.js');
 
     let score = options.scan ? null : loadScoreFromLastReport(projectPath);
 
     if (score === null) {
-      const { runSickbay } = await import("@nebulord/sickbay-core");
+      const { runSickbay } = await import('@nebulord/sickbay-core');
       const report = await runSickbay({ projectPath, quotes: false });
 
       try {
-        const { saveEntry, saveLastReport } = await import("./lib/history.js");
+        const { saveEntry, saveLastReport } = await import('./lib/history.js');
         saveEntry(report);
         saveLastReport(report);
       } catch {
@@ -386,32 +393,32 @@ program
       output = badgeMarkdown(score, options.label);
     }
 
-    process.stdout.write(output + "\n");
+    process.stdout.write(output + '\n');
     process.exit(0);
   });
 
 // --- sickbay diff ---
 program
-  .command("diff <branch>")
-  .description("Compare health score against another branch")
-  .option("-p, --path <path>", "project path to analyze", process.cwd())
-  .option("-c, --checks <checks>", "comma-separated list of checks to run")
-  .option("--json", "output diff as JSON")
-  .option("--verbose", "show verbose output")
+  .command('diff <branch>')
+  .description('Compare health score against another branch')
+  .option('-p, --path <path>', 'project path to analyze', process.cwd())
+  .option('-c, --checks <checks>', 'comma-separated list of checks to run')
+  .option('--json', 'output diff as JSON')
+  .option('--verbose', 'show verbose output')
   .action(async (branch, options) => {
     // Load .env from project path if it differs from cwd
     if (options.path && options.path !== process.cwd()) {
-      const projectEnvPath = join(options.path, ".env");
+      const projectEnvPath = join(options.path, '.env');
       if (existsSync(projectEnvPath)) {
         config({ path: projectEnvPath, override: true });
       }
     }
 
     const checks = options.checks
-      ? options.checks.split(",").map((s: string) => s.trim())
+      ? options.checks.split(',').map((s: string) => s.trim())
       : undefined;
 
-    const { DiffApp } = await import("./components/DiffApp.js");
+    const { DiffApp } = await import('./components/DiffApp.js');
     render(
       React.createElement(DiffApp, {
         projectPath: options.path,

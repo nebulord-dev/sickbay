@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { TypeScriptRunner } from './typescript.js';
 
 vi.mock('execa', () => ({ execa: vi.fn() }));
@@ -8,13 +9,20 @@ vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
 }));
 
-import { execa } from 'execa';
 import { existsSync } from 'fs';
+
+import { execa } from 'execa';
 
 const mockExeca = vi.mocked(execa);
 const mockExistsSync = vi.mocked(existsSync);
 
-function makeErrorLine(file = 'src/index.ts', line = 10, col = 5, code = 'TS2345', msg = 'Type error') {
+function makeErrorLine(
+  file = 'src/index.ts',
+  line = 10,
+  col = 5,
+  code = 'TS2345',
+  msg = 'Type error',
+) {
   return `${file}(${line},${col}): error ${code}: ${msg}`;
 }
 
@@ -50,7 +58,10 @@ describe('TypeScriptRunner', () => {
 
   it('returns warning when 1–20 type errors found', async () => {
     mockExeca.mockResolvedValue({
-      stdout: [makeErrorLine(), makeErrorLine('src/utils.ts', 20, 3, 'TS2304', 'Cannot find name')].join('\n'),
+      stdout: [
+        makeErrorLine(),
+        makeErrorLine('src/utils.ts', 20, 3, 'TS2304', 'Cannot find name'),
+      ].join('\n'),
       stderr: '',
     } as never);
 

@@ -1,6 +1,8 @@
 import { execa } from 'execa';
-import { BaseRunner } from './base.js';
+
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -70,7 +72,13 @@ export class LicenseCheckerRunner extends BaseRunner {
         name: 'License Compliance',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `license-checker failed: ${err}`, reportedBy: ['license-checker'] }],
+        issues: [
+          {
+            severity: 'critical',
+            message: `license-checker failed: ${err}`,
+            reportedBy: ['license-checker'],
+          },
+        ],
         toolsUsed: ['license-checker'],
         duration: elapsed(),
       };

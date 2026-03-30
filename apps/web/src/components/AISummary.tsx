@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ReactMarkdown, { Components } from "react-markdown";
-import type { SickbayReport } from "@nebulord/sickbay-core";
+import React, { useState, useEffect, useCallback } from 'react';
+import ReactMarkdown, { Components } from 'react-markdown';
+
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 interface AISummaryProps {
   report: SickbayReport;
@@ -16,7 +17,7 @@ interface ParsedSection {
 
 function parseStructuredSummary(text: string): ParsedSection[] {
   const sections: ParsedSection[] = [];
-  const lines = text.split("\n").filter((line) => line.trim());
+  const lines = text.split('\n').filter((line) => line.trim());
 
   let currentSection: ParsedSection | null = null;
 
@@ -25,9 +26,9 @@ function parseStructuredSummary(text: string): ParsedSection[] {
     const headingMatch = line.match(/^\*\*(.+?)\*\*$/);
     if (headingMatch) {
       if (currentSection) sections.push(currentSection);
-      currentSection = { title: headingMatch[1].trim(), content: "" };
+      currentSection = { title: headingMatch[1].trim(), content: '' };
     } else if (currentSection) {
-      currentSection.content += (currentSection.content ? "\n" : "") + line;
+      currentSection.content += (currentSection.content ? '\n' : '') + line;
     }
   }
 
@@ -64,21 +65,19 @@ const markdownComponents: Partial<Components> = {
 
 function SectionIcon({ title }: { title: string }) {
   const icons: Record<string, string> = {
-    "Health Assessment": "●",
-    "Critical Issues": "●",
-    "What's Going Well": "●",
-    "Next Steps": "●",
+    'Health Assessment': '●',
+    'Critical Issues': '●',
+    "What's Going Well": '●',
+    'Next Steps': '●',
   };
   const colors: Record<string, string> = {
-    "Health Assessment": "text-green-500",
-    "Critical Issues": "text-red-500",
-    "What's Going Well": "text-green-400",
-    "Next Steps": "text-blue-400",
+    'Health Assessment': 'text-green-500',
+    'Critical Issues': 'text-red-500',
+    "What's Going Well": 'text-green-400',
+    'Next Steps': 'text-blue-400',
   };
   return (
-    <span className={`text-xs ${colors[title] || "text-gray-400"}`}>
-      {icons[title] || "●"}
-    </span>
+    <span className={`text-xs ${colors[title] || 'text-gray-400'}`}>{icons[title] || '●'}</span>
   );
 }
 
@@ -89,7 +88,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
 
   const summaryUrl = packageName
     ? `/ai/summary?package=${encodeURIComponent(packageName)}`
-    : "/ai/summary";
+    : '/ai/summary';
   const cacheKeySuffix = packageName ? `${report.timestamp}-${packageName}` : report.timestamp;
 
   const fetchSummary = useCallback(async () => {
@@ -140,12 +139,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
           <div className="flex items-center justify-between px-4 py-3 bg-linear-to-r from-purple-500/10 to-blue-500/10 border-b border-purple-500/20">
             <div className="flex items-center gap-2">
               <span className="text-lg">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                   <path
                     fill="none"
                     stroke="currentColor"
@@ -154,9 +148,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
                   />
                 </svg>
               </span>
-              <span className="font-semibold text-base text-gray-200">
-                AI Insights
-              </span>
+              <span className="font-semibold text-base text-gray-200">AI Insights</span>
             </div>
             <div className="flex items-center gap-2">
               {!loading && summary && (
@@ -166,7 +158,7 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
                   className="text-xl text-gray-500 hover:text-accent transition-colors disabled:opacity-50 px-2 py-1 rounded-sm hover:bg-purple-500/10"
                   title="Regenerate insights"
                 >
-                  {regenerating ? "⠋" : "↻"}
+                  {regenerating ? '⠋' : '↻'}
                 </button>
               )}
               <button
@@ -188,13 +180,10 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
             ) : !summary ? (
               <div className="space-y-2">
                 <div className="text-base text-gray-400">
-                  AI insights are not available. This feature requires an
-                  Anthropic API key.
+                  AI insights are not available. This feature requires an Anthropic API key.
                 </div>
                 <div className="text-base text-gray-500 bg-card p-2.5 rounded-sm border border-border font-mono">
-                  <div className="mb-1.5 text-gray-400">
-                    To enable AI features:
-                  </div>
+                  <div className="mb-1.5 text-gray-400">To enable AI features:</div>
                   <div>export ANTHROPIC_API_KEY=sk-ant-...</div>
                   <div>sickbay --path ~/project --web</div>
                 </div>
@@ -209,13 +198,9 @@ export function AISummary({ report, isOpen, onToggle, packageName }: AISummaryPr
                     </h3>
                   </div>
                   <div className="text-base text-gray-300 leading-snug pl-4">
-                    <ReactMarkdown components={markdownComponents}>
-                      {section.content}
-                    </ReactMarkdown>
+                    <ReactMarkdown components={markdownComponents}>{section.content}</ReactMarkdown>
                   </div>
-                  {i < sections.length - 1 && (
-                    <div className="border-t border-border/50 mt-2" />
-                  )}
+                  {i < sections.length - 1 && <div className="border-t border-border/50 mt-2" />}
                 </div>
               ))
             )}

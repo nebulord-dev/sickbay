@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Box, Text, useInput } from "ink";
-import type { SickbayReport, MonorepoReport } from "@nebulord/sickbay-core";
-import { PanelBorder } from "./PanelBorder.js";
-import { HotkeyBar, type PanelId } from "./HotkeyBar.js";
-import { HealthPanel } from "./HealthPanel.js";
-import { ScorePanel } from "./ScorePanel.js";
-import { TrendPanel } from "./TrendPanel.js";
-import { GitPanel } from "./GitPanel.js";
-import { QuickWinsPanel } from "./QuickWinsPanel.js";
-import { MonorepoPanel } from "./MonorepoPanel.js";
-import { ActivityPanel, type ActivityEntry } from "./ActivityPanel.js";
-import { HelpPanel } from "./HelpPanel.js";
-import { useSickbayRunner } from "./hooks/useSickbayRunner.js";
-import { useFileWatcher } from "./hooks/useFileWatcher.js";
-import { useTerminalSize } from "./hooks/useTerminalSize.js";
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+
+import { Box, Text, useInput } from 'ink';
+
+import { ActivityPanel, type ActivityEntry } from './ActivityPanel.js';
+import { GitPanel } from './GitPanel.js';
+import { HealthPanel } from './HealthPanel.js';
+import { HelpPanel } from './HelpPanel.js';
+import { useFileWatcher } from './hooks/useFileWatcher.js';
+import { useSickbayRunner } from './hooks/useSickbayRunner.js';
+import { useTerminalSize } from './hooks/useTerminalSize.js';
+import { HotkeyBar, type PanelId } from './HotkeyBar.js';
+import { MonorepoPanel } from './MonorepoPanel.js';
+import { PanelBorder } from './PanelBorder.js';
+import { QuickWinsPanel } from './QuickWinsPanel.js';
+import { ScorePanel } from './ScorePanel.js';
+import { TrendPanel } from './TrendPanel.js';
+
+import type { SickbayReport, MonorepoReport } from '@nebulord/sickbay-core';
 
 interface TuiAppProps {
   projectPath: string;
@@ -46,8 +49,8 @@ export function TuiApp({
   const [previousScore, setPreviousScore] = useState<number | null>(null);
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [healthScrollOffset, setHealthScrollOffset] = useState(0);
-  const [scoreFlash, setScoreFlash] = useState<"green" | "red" | undefined>();
-  const ALL_PANELS = new Set(["health", "score", "trend", "git", "quickwins", "activity"]);
+  const [scoreFlash, setScoreFlash] = useState<'green' | 'red' | undefined>();
+  const ALL_PANELS = new Set(['health', 'score', 'trend', 'git', 'quickwins', 'activity']);
   const [visiblePanels, setVisiblePanels] = useState<Set<string>>(
     animateOnMount ? new Set() : ALL_PANELS,
   );
@@ -56,12 +59,12 @@ export function TuiApp({
   // Panel entrance animation — stagger panels appearing on mount
   useEffect(() => {
     const schedule: Array<[string, number]> = [
-      ["health", 100],
-      ["score", 300],
-      ["trend", 500],
-      ["git", 700],
-      ["quickwins", 900],
-      ["activity", 1100],
+      ['health', 100],
+      ['score', 300],
+      ['trend', 500],
+      ['git', 700],
+      ['quickwins', 900],
+      ['activity', 1100],
     ];
     const timers = schedule.map(([panel, delay]) =>
       setTimeout(() => {
@@ -83,15 +86,9 @@ export function TuiApp({
     monorepoReportRef.current = monorepoReport;
   }, [monorepoReport]);
 
-  const addActivity = useCallback(
-    (type: ActivityEntry["type"], message: string) => {
-      setActivityLog((prev) => [
-        ...prev,
-        { timestamp: new Date(), type, message },
-      ]);
-    },
-    [],
-  );
+  const addActivity = useCallback((type: ActivityEntry['type'], message: string) => {
+    setActivityLog((prev) => [...prev, { timestamp: new Date(), type, message }]);
+  }, []);
 
   const handleScanComplete = useCallback(
     async (result: SickbayReport) => {
@@ -101,7 +98,7 @@ export function TuiApp({
 
       // Auto-save last report snapshot
       try {
-        const { saveLastReport } = await import("../../lib/history.js");
+        const { saveLastReport } = await import('../../lib/history.js');
         saveLastReport(result);
       } catch {
         // Non-critical
@@ -109,37 +106,36 @@ export function TuiApp({
 
       // Cache dependency tree for web dashboard
       try {
-        const { getDependencyTree } = await import("@nebulord/sickbay-core");
-        const { saveDepTree } = await import("../../lib/history.js");
+        const { getDependencyTree } = await import('@nebulord/sickbay-core');
+        const { saveDepTree } = await import('../../lib/history.js');
         const tree = await getDependencyTree(projectPath, result.projectInfo.packageManager);
         saveDepTree(projectPath, tree);
-      } catch { /* dep tree is optional */ }
+      } catch {
+        /* dep tree is optional */
+      }
 
-      const delta =
-        prevScore !== null ? result.overallScore - prevScore : null;
+      const delta = prevScore !== null ? result.overallScore - prevScore : null;
       addActivity(
-        "scan-complete",
-        `Scan complete: ${result.overallScore}/100${delta !== null ? ` (${delta >= 0 ? "+" : ""}${delta})` : ""}`,
+        'scan-complete',
+        `Scan complete: ${result.overallScore}/100${delta !== null ? ` (${delta >= 0 ? '+' : ''}${delta})` : ''}`,
       );
 
       // Flash score panel border on score change
       if (delta !== null && delta !== 0) {
-        const flash = delta > 0 ? "green" : "red";
+        const flash = delta > 0 ? 'green' : 'red';
         setScoreFlash(flash);
         setTimeout(() => setScoreFlash(undefined), 600);
       }
 
       // Check for regressions
       try {
-        const { loadHistory, detectRegressions } = await import(
-          "../../lib/history.js"
-        );
+        const { loadHistory, detectRegressions } = await import('../../lib/history.js');
         const history = loadHistory(projectPath);
         if (history) {
           const regressions = detectRegressions(history.entries);
           for (const reg of regressions) {
             addActivity(
-              "regression",
+              'regression',
               `\u26A0 ${reg.category} regressed: ${reg.from} \u2192 ${reg.to}`,
             );
           }
@@ -153,19 +149,19 @@ export function TuiApp({
 
   // Initial scan
   useEffect(() => {
-    addActivity("info", "TUI started");
-    addActivity("scan-start", "Starting initial health scan...");
+    addActivity('info', 'TUI started');
+    addActivity('scan-start', 'Starting initial health scan...');
     scan().then((result) => {
       if (result) handleScanComplete(result);
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-refresh timer
   useEffect(() => {
     if (refreshInterval <= 0) return;
     refreshRef.current = setInterval(async () => {
-      addActivity("scan-start", "Auto-scan triggered");
+      addActivity('scan-start', 'Auto-scan triggered');
       const result = await scan();
       if (result) handleScanComplete(result);
     }, refreshInterval * 1000);
@@ -181,12 +177,12 @@ export function TuiApp({
     enabled: watchEnabled,
     onFilesChanged: async (files) => {
       for (const f of files.slice(0, 3)) {
-        addActivity("file-change", `File changed: ${f}`);
+        addActivity('file-change', `File changed: ${f}`);
       }
       if (files.length > 3) {
-        addActivity("file-change", `...and ${files.length - 3} more files`);
+        addActivity('file-change', `...and ${files.length - 3} more files`);
       }
-      addActivity("scan-start", "Re-scan triggered (file change)");
+      addActivity('scan-start', 'Re-scan triggered (file change)');
       const result = await scan();
       if (result) handleScanComplete(result);
     },
@@ -194,92 +190,90 @@ export function TuiApp({
 
   // Manual re-scan
   const triggerRescan = useCallback(async () => {
-    addActivity("scan-start", "Manual re-scan triggered");
+    addActivity('scan-start', 'Manual re-scan triggered');
     const result = await scan();
     if (result) handleScanComplete(result);
   }, [addActivity, scan, handleScanComplete]);
 
   // Keyboard input — only active when stdin supports raw mode (interactive TTY)
   const isTTY = !!(process.stdin.isTTY && process.stdin.setRawMode);
-  useInput((input, key) => {
-    // Help overlay: ? toggles, Escape closes
-    if (showHelp) {
-      if (input === "?" || key.escape) {
-        setShowHelp(false);
-      }
-      return;
-    }
-
-    // Expanded panel: escape or f to exit
-    if (expandedPanel) {
-      if (key.escape || input === "f") {
-        setExpandedPanel(null);
+  useInput(
+    (input, key) => {
+      // Help overlay: ? toggles, Escape closes
+      if (showHelp) {
+        if (input === '?' || key.escape) {
+          setShowHelp(false);
+        }
         return;
       }
-    }
 
-    if (input === "?") {
-      setShowHelp(true);
-      return;
-    }
-
-    // Panel focus toggles
-    if (input === "h")
-      setFocusedPanel((prev) => (prev === "health" ? null : "health"));
-    else if (input === "g")
-      setFocusedPanel((prev) => (prev === "git" ? null : "git"));
-    else if (input === "t")
-      setFocusedPanel((prev) => (prev === "trend" ? null : "trend"));
-    else if (input === "q")
-      setFocusedPanel((prev) => (prev === "quickwins" ? null : "quickwins"));
-    else if (input === "a")
-      setFocusedPanel((prev) => (prev === "activity" ? null : "activity"));
-    else if (input === "r") triggerRescan();
-    else if (input === "f" && focusedPanel) setExpandedPanel(focusedPanel);
-    else if (input === "w" || input === "W") {
-      const withAI = input === "W";
-      (async () => {
-        const webReport = monorepoReportRef.current ?? reportRef.current;
-        if (!webReport) return;
-        try {
-          const { serveWeb } = await import("../../commands/web.js");
-          const { default: openBrowser } = await import("open");
-
-          let aiService;
-          if (withAI && process.env.ANTHROPIC_API_KEY && !monorepoReportRef.current) {
-            const { createAIService } = await import("../../services/ai.js");
-            aiService = createAIService(process.env.ANTHROPIC_API_KEY);
-            addActivity("info", "Launching web dashboard with AI...");
-          } else {
-            addActivity("info", "Launching web dashboard...");
-          }
-
-          const url = await serveWeb(webReport, 3030, aiService);
-          await openBrowser(url);
-          addActivity("info", `Web dashboard at ${url}${withAI && aiService ? " (AI enabled)" : ""}`);
-        } catch (err) {
-          addActivity(
-            "info",
-            `Failed to open web: ${err instanceof Error ? err.message : err}`,
-          );
+      // Expanded panel: escape or f to exit
+      if (expandedPanel) {
+        if (key.escape || input === 'f') {
+          setExpandedPanel(null);
+          return;
         }
-      })();
-    } else if (key.escape) {
-      setFocusedPanel(null);
-    }
-
-    // Scrolling in focused health panel
-    if (focusedPanel === "health") {
-      if (key.upArrow)
-        setHealthScrollOffset((prev) => Math.max(0, prev - 1));
-      if (key.downArrow) {
-        const maxOffset = Math.max(0, visibleChecks.length - 5);
-        setHealthScrollOffset((prev) => Math.min(maxOffset, prev + 1));
       }
-    }
-  }, { isActive: isTTY });
 
-  const visibleChecks = report?.checks.filter((c) => c.status !== "skipped") ?? [];
+      if (input === '?') {
+        setShowHelp(true);
+        return;
+      }
+
+      // Panel focus toggles
+      if (input === 'h') setFocusedPanel((prev) => (prev === 'health' ? null : 'health'));
+      else if (input === 'g') setFocusedPanel((prev) => (prev === 'git' ? null : 'git'));
+      else if (input === 't') setFocusedPanel((prev) => (prev === 'trend' ? null : 'trend'));
+      else if (input === 'q')
+        setFocusedPanel((prev) => (prev === 'quickwins' ? null : 'quickwins'));
+      else if (input === 'a') setFocusedPanel((prev) => (prev === 'activity' ? null : 'activity'));
+      else if (input === 'r') triggerRescan();
+      else if (input === 'f' && focusedPanel) setExpandedPanel(focusedPanel);
+      else if (input === 'w' || input === 'W') {
+        const withAI = input === 'W';
+        (async () => {
+          const webReport = monorepoReportRef.current ?? reportRef.current;
+          if (!webReport) return;
+          try {
+            const { serveWeb } = await import('../../commands/web.js');
+            const { default: openBrowser } = await import('open');
+
+            let aiService;
+            if (withAI && process.env.ANTHROPIC_API_KEY && !monorepoReportRef.current) {
+              const { createAIService } = await import('../../services/ai.js');
+              aiService = createAIService(process.env.ANTHROPIC_API_KEY);
+              addActivity('info', 'Launching web dashboard with AI...');
+            } else {
+              addActivity('info', 'Launching web dashboard...');
+            }
+
+            const url = await serveWeb(webReport, 3030, aiService);
+            await openBrowser(url);
+            addActivity(
+              'info',
+              `Web dashboard at ${url}${withAI && aiService ? ' (AI enabled)' : ''}`,
+            );
+          } catch (err) {
+            addActivity('info', `Failed to open web: ${err instanceof Error ? err.message : err}`);
+          }
+        })();
+      } else if (key.escape) {
+        setFocusedPanel(null);
+      }
+
+      // Scrolling in focused health panel
+      if (focusedPanel === 'health') {
+        if (key.upArrow) setHealthScrollOffset((prev) => Math.max(0, prev - 1));
+        if (key.downArrow) {
+          const maxOffset = Math.max(0, visibleChecks.length - 5);
+          setHealthScrollOffset((prev) => Math.min(maxOffset, prev + 1));
+        }
+      }
+    },
+    { isActive: isTTY },
+  );
+
+  const visibleChecks = report?.checks.filter((c) => c.status !== 'skipped') ?? [];
 
   // Layout calculations — reserve 1 row for project header + 1 for hotkey bar
   const topHeight = Math.floor((rows - 2) * 0.6);
@@ -304,7 +298,7 @@ export function TuiApp({
     return (
       <Box flexDirection="column" width={columns} height={rows}>
         <Box flexGrow={1}>
-          {expandedPanel === "health" && (
+          {expandedPanel === 'health' && (
             <PanelBorder title="HEALTH CHECKS" color="green" focused>
               <HealthPanel
                 checks={visibleChecks}
@@ -315,21 +309,18 @@ export function TuiApp({
               />
             </PanelBorder>
           )}
-          {expandedPanel === "git" && (
+          {expandedPanel === 'git' && (
             <PanelBorder title="GIT STATUS" color="yellow" focused>
               <GitPanel projectPath={projectPath} availableWidth={columns - 4} />
             </PanelBorder>
           )}
-          {expandedPanel === "trend" && (
+          {expandedPanel === 'trend' && (
             <PanelBorder title="TREND" color="magenta" focused>
-              <TrendPanel
-                projectPath={projectPath}
-                lastScanTime={lastScanTime}
-              />
+              <TrendPanel projectPath={projectPath} lastScanTime={lastScanTime} />
             </PanelBorder>
           )}
-          {expandedPanel === "quickwins" && (
-            <PanelBorder title={monorepoReport ? "MONOREPO" : "QUICK WINS"} color="red" focused>
+          {expandedPanel === 'quickwins' && (
+            <PanelBorder title={monorepoReport ? 'MONOREPO' : 'QUICK WINS'} color="red" focused>
               {monorepoReport ? (
                 <MonorepoPanel report={monorepoReport} />
               ) : (
@@ -337,12 +328,9 @@ export function TuiApp({
               )}
             </PanelBorder>
           )}
-          {expandedPanel === "activity" && (
+          {expandedPanel === 'activity' && (
             <PanelBorder title="ACTIVITY" color="cyan" focused>
-              <ActivityPanel
-                entries={activityLog}
-                availableHeight={rows - 4}
-              />
+              <ActivityPanel entries={activityLog} availableHeight={rows - 4} />
             </PanelBorder>
           )}
         </Box>
@@ -353,19 +341,23 @@ export function TuiApp({
 
   // Normal grid layout
   const projectName = monorepoReport
-    ? `${monorepoReport.rootPath.split("/").pop()} (monorepo)`
-    : (report?.projectInfo?.name ?? "—");
+    ? `${monorepoReport.rootPath.split('/').pop()} (monorepo)`
+    : (report?.projectInfo?.name ?? '—');
   const projectVersion = report?.projectInfo?.version;
   const scanLabel = lastScanTime
     ? `Last scan ${lastScanTime.toLocaleTimeString()}`
-    : isScanning ? "Scanning…" : "Not yet scanned";
+    : isScanning
+      ? 'Scanning…'
+      : 'Not yet scanned';
 
   return (
     <Box flexDirection="column" width={columns} height={rows}>
       {/* Project header */}
       <Box paddingX={1} justifyContent="space-between">
         <Box gap={1}>
-          <Text bold color="cyan">SICKBAY</Text>
+          <Text bold color="cyan">
+            SICKBAY
+          </Text>
           <Text bold>{projectName}</Text>
           {projectVersion && <Text dimColor>v{projectVersion}</Text>}
         </Box>
@@ -378,8 +370,8 @@ export function TuiApp({
           <PanelBorder
             title="HEALTH CHECKS"
             color="green"
-            focused={focusedPanel === "health"}
-            visible={visiblePanels.has("health")}
+            focused={focusedPanel === 'health'}
+            visible={visiblePanels.has('health')}
           >
             <HealthPanel
               checks={visibleChecks}
@@ -392,7 +384,12 @@ export function TuiApp({
         </Box>
         <Box width="45%" flexDirection="column">
           <Box height="50%">
-            <PanelBorder title="SCORE" color="blue" visible={visiblePanels.has("score")} flash={scoreFlash}>
+            <PanelBorder
+              title="SCORE"
+              color="blue"
+              visible={visiblePanels.has('score')}
+              flash={scoreFlash}
+            >
               <ScorePanel report={report} previousScore={previousScore} animate={animateOnMount} />
             </PanelBorder>
           </Box>
@@ -400,8 +397,8 @@ export function TuiApp({
             <PanelBorder
               title="TREND"
               color="magenta"
-              focused={focusedPanel === "trend"}
-              visible={visiblePanels.has("trend")}
+              focused={focusedPanel === 'trend'}
+              visible={visiblePanels.has('trend')}
             >
               <TrendPanel
                 projectPath={projectPath}
@@ -419,29 +416,26 @@ export function TuiApp({
           <PanelBorder
             title="GIT STATUS"
             color="yellow"
-            focused={focusedPanel === "git"}
-            visible={visiblePanels.has("git")}
+            focused={focusedPanel === 'git'}
+            visible={visiblePanels.has('git')}
           >
             <GitPanel projectPath={projectPath} availableWidth={Math.floor(columns * 0.25) - 4} />
           </PanelBorder>
         </Box>
         <Box width="30%">
           <PanelBorder
-            title={monorepoReport ? "MONOREPO" : "QUICK WINS"}
+            title={monorepoReport ? 'MONOREPO' : 'QUICK WINS'}
             color="red"
-            focused={focusedPanel === "quickwins"}
-            visible={visiblePanels.has("quickwins")}
+            focused={focusedPanel === 'quickwins'}
+            visible={visiblePanels.has('quickwins')}
           >
             {monorepoReport ? (
               <MonorepoPanel
                 report={monorepoReport}
-                availableWidth={Math.floor(columns * 0.30) - 4}
+                availableWidth={Math.floor(columns * 0.3) - 4}
               />
             ) : (
-              <QuickWinsPanel
-                report={report}
-                availableWidth={Math.floor(columns * 0.30) - 4}
-              />
+              <QuickWinsPanel report={report} availableWidth={Math.floor(columns * 0.3) - 4} />
             )}
           </PanelBorder>
         </Box>
@@ -449,13 +443,10 @@ export function TuiApp({
           <PanelBorder
             title="ACTIVITY"
             color="cyan"
-            focused={focusedPanel === "activity"}
-            visible={visiblePanels.has("activity")}
+            focused={focusedPanel === 'activity'}
+            visible={visiblePanels.has('activity')}
           >
-            <ActivityPanel
-              entries={activityLog}
-              availableHeight={bottomHeight - 4}
-            />
+            <ActivityPanel entries={activityLog} availableHeight={bottomHeight - 4} />
           </PanelBorder>
         </Box>
       </Box>

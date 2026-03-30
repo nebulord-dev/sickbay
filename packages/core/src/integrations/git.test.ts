@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { GitRunner } from './git.js';
 
 vi.mock('execa', () => ({ execa: vi.fn() }));
@@ -9,6 +10,7 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 import { execa } from 'execa';
+
 import { fileExists } from '../utils/file-helpers.js';
 
 const mockExeca = vi.mocked(execa);
@@ -29,16 +31,11 @@ function makeGitMock({
 } = {}) {
   mockExeca.mockImplementation(((_cmd: unknown, args: unknown) => {
     const a = Array.isArray(args) ? (args as string[]) : [];
-    if (a.includes('remote') && !a.includes('-r'))
-      return Promise.resolve({ stdout: remotes });
-    if (a.includes('-r'))
-      return Promise.resolve({ stdout: branches });
-    if (a.includes('-1'))
-      return Promise.resolve({ stdout: lastCommit });
-    if (a.includes('--count'))
-      return Promise.resolve({ stdout: commitCount });
-    if (a.includes('-sn'))
-      return Promise.resolve({ stdout: contributors });
+    if (a.includes('remote') && !a.includes('-r')) return Promise.resolve({ stdout: remotes });
+    if (a.includes('-r')) return Promise.resolve({ stdout: branches });
+    if (a.includes('-1')) return Promise.resolve({ stdout: lastCommit });
+    if (a.includes('--count')) return Promise.resolve({ stdout: commitCount });
+    if (a.includes('-sn')) return Promise.resolve({ stdout: contributors });
     return Promise.resolve({ stdout: '' });
   }) as never);
 }
@@ -132,7 +129,11 @@ describe('GitRunner', () => {
   });
 
   it('populates metadata with commit stats', async () => {
-    makeGitMock({ lastCommit: '3 hours ago', commitCount: '150', contributors: '  100\tAlice\n  50\tBob' });
+    makeGitMock({
+      lastCommit: '3 hours ago',
+      commitCount: '150',
+      contributors: '  100\tAlice\n  50\tBob',
+    });
 
     const result = await runner.run('/project');
 

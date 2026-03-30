@@ -1,9 +1,13 @@
 import React, { lazy, Suspense, useState } from 'react';
-import type { SickbayReport } from '@nebulord/sickbay-core';
+
 import { WARN_LINES, CRITICAL_LINES } from '../lib/constants.js';
 
+import type { SickbayReport } from '@nebulord/sickbay-core';
+
 // Lazy load heavy graph visualization
-const DependencyGraph = lazy(() => import('./DependencyGraph.js').then((m) => ({ default: m.DependencyGraph })));
+const DependencyGraph = lazy(() =>
+  import('./DependencyGraph.js').then((m) => ({ default: m.DependencyGraph })),
+);
 
 interface CodebaseStatsProps {
   report: SickbayReport;
@@ -23,17 +27,19 @@ function StatCard({ label, value, sub }: { label: string; value: string | number
   );
 }
 
-function SectionHeader({ label, extra, collapsed, onToggle }: {
+function SectionHeader({
+  label,
+  extra,
+  collapsed,
+  onToggle,
+}: {
   label: string;
   extra?: React.ReactNode;
   collapsed: boolean;
   onToggle: () => void;
 }) {
   return (
-    <button
-      onClick={onToggle}
-      className="flex items-center gap-2 w-full text-left group mb-3"
-    >
+    <button onClick={onToggle} className="flex items-center gap-2 w-full text-left group mb-3">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="12"
@@ -65,7 +71,10 @@ function CoverageBar({ label, pct }: { label: string; pct: number }) {
         <span className="font-mono font-semibold">{pct.toFixed(1)}%</span>
       </div>
       <div className="bg-surface rounded-full h-2">
-        <div className={`h-2 rounded-full transition-all ${color}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+        <div
+          className={`h-2 rounded-full transition-all ${color}`}
+          style={{ width: `${Math.min(pct, 100)}%` }}
+        />
       </div>
     </div>
   );
@@ -81,7 +90,8 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
   const git = getMeta(report, 'git');
   const coverage = getMeta(report, 'coverage');
 
-  const topFiles = (complexity.topFiles as Array<{ path: string; lines: number }> | undefined) ?? [];
+  const topFiles =
+    (complexity.topFiles as Array<{ path: string; lines: number }> | undefined) ?? [];
   const maxLines = topFiles[0]?.lines ?? 1;
 
   const madge = getMeta(report, 'madge');
@@ -106,7 +116,10 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                 <StatCard label="total files" value={complexity.totalFiles as number} />
-                <StatCard label="total lines" value={(complexity.totalLines as number).toLocaleString()} />
+                <StatCard
+                  label="total lines"
+                  value={(complexity.totalLines as number).toLocaleString()}
+                />
                 <StatCard label="avg file size" value={`${complexity.avgLines as number} loc`} />
                 <StatCard
                   label="oversized files"
@@ -121,7 +134,10 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
                   <div className="space-y-2">
                     {topFiles.slice(0, 10).map((f) => (
                       <div key={f.path} className="flex items-center gap-3">
-                        <div className="w-48 text-xs font-mono text-gray-400 truncate shrink-0" title={f.path}>
+                        <div
+                          className="w-48 text-xs font-mono text-gray-400 truncate shrink-0"
+                          title={f.path}
+                        >
                           {f.path.split('/').slice(-2).join('/')}
                         </div>
                         <div className="flex-1 bg-surface rounded-full h-4 overflow-hidden">
@@ -153,7 +169,10 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
           />
           {!gitCollapsed && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <StatCard label="total commits" value={(git.commitCount as number).toLocaleString()} />
+              <StatCard
+                label="total commits"
+                value={(git.commitCount as number).toLocaleString()}
+              />
               <StatCard label="contributors" value={git.contributorCount as number} />
               <StatCard label="remote branches" value={git.remoteBranches as number} />
               <StatCard label="last commit" value={git.lastCommit as string} />
@@ -181,7 +200,11 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
               {coverage.totalTests != null && (
                 <div className="grid grid-cols-2 gap-3">
                   <StatCard label="total tests" value={coverage.totalTests as number} />
-                  <StatCard label="passing" value={coverage.passed as number} sub={`${coverage.failed} failing`} />
+                  <StatCard
+                    label="passing"
+                    value={coverage.passed as number}
+                    sub={`${coverage.failed} failing`}
+                  />
                 </div>
               )}
             </div>
@@ -209,10 +232,7 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
           />
           {!graphCollapsed && (
             <Suspense fallback={<div className="text-gray-500 text-sm">Loading graph...</div>}>
-              <DependencyGraph
-                graph={depGraph}
-                circularCount={madge.circularCount as number}
-              />
+              <DependencyGraph graph={depGraph} circularCount={madge.circularCount as number} />
             </Suspense>
           )}
         </section>

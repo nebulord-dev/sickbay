@@ -21,6 +21,7 @@ So that I get accurate per-package results instead of misleading root-level outp
 ## Problem Statement
 
 All four subcommands blindly use `options.path` (defaulting to cwd) as a single project path. In a monorepo this means:
+
 - `doctor` checks root-level configs that may not exist (browserslist, React versions) and misses package-level issues
 - `stats` counts root files and misses per-package breakdowns
 - `trend` looks for `.sickbay/history.json` at the root which may not exist per-package
@@ -68,15 +69,16 @@ None — all changes are to existing files.
 ### Patterns to Follow
 
 **Package resolution pattern** (from `index.ts`):
+
 ```typescript
-const { detectMonorepo } = await import("@sickbay/core");
+const { detectMonorepo } = await import('@sickbay/core');
 const monorepoInfo = await detectMonorepo(options.path);
 
 if (options.package && monorepoInfo.isMonorepo) {
-  const { readFileSync } = await import("fs");
+  const { readFileSync } = await import('fs');
   const targetPath = monorepoInfo.packagePaths.find((p) => {
     try {
-      const pkg = JSON.parse(readFileSync(join(p, "package.json"), "utf-8"));
+      const pkg = JSON.parse(readFileSync(join(p, 'package.json'), 'utf-8'));
       return pkg.name === options.package || pkg.name?.endsWith(`/${options.package}`);
     } catch {
       return false;
@@ -131,16 +133,16 @@ Update existing tests and add new test cases for monorepo scenarios.
 Extract the package resolution logic into a reusable helper:
 
 ```typescript
-import { readFileSync } from "fs";
-import { join } from "path";
-import { detectMonorepo } from "@sickbay/core";
-import type { MonorepoInfo } from "@sickbay/core";
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { detectMonorepo } from '@sickbay/core';
+import type { MonorepoInfo } from '@sickbay/core';
 
 export interface MonorepoResolution {
   isMonorepo: true;
   monorepoInfo: MonorepoInfo;
-  targetPath?: string;        // set when --package resolves
-  packagePaths: string[];     // all discovered packages
+  targetPath?: string; // set when --package resolves
+  packagePaths: string[]; // all discovered packages
   packageNames: Map<string, string>; // path → name
 }
 
@@ -169,7 +171,7 @@ export async function resolveProject(
   const packageNames = new Map<string, string>();
   for (const p of monorepoInfo.packagePaths) {
     try {
-      const pkg = JSON.parse(readFileSync(join(p, "package.json"), "utf-8"));
+      const pkg = JSON.parse(readFileSync(join(p, 'package.json'), 'utf-8'));
       packageNames.set(p, pkg.name ?? p);
     } catch {
       packageNames.set(p, p);
@@ -178,7 +180,7 @@ export async function resolveProject(
 
   if (packageName) {
     const targetPath = monorepoInfo.packagePaths.find((p) => {
-      const name = packageNames.get(p) ?? "";
+      const name = packageNames.get(p) ?? '';
       return name === packageName || name.endsWith(`/${packageName}`);
     });
 
@@ -210,6 +212,7 @@ export async function resolveProject(
 ### 2. UPDATE `apps/cli/src/index.ts` — Add `--package` to all four subcommands
 
 For each subcommand (`doctor`, `stats`, `trend`, `fix`), add:
+
 ```
 .option("--package <name>", "scope to a single package (monorepo only)")
 ```
@@ -217,17 +220,21 @@ For each subcommand (`doctor`, `stats`, `trend`, `fix`), add:
 Then in each action handler, call `resolveProject()` and pass the resolution to the component.
 
 **doctor handler changes:**
+
 - Import `resolveProject`
 - Call `resolveProject(options.path, options.package)`
 - Pass resolution info to `DoctorApp` as new props: `isMonorepo`, `packagePaths`, `packageNames`, or `targetPath` for single-package
 
 **stats handler changes:**
+
 - Same pattern as doctor
 
 **trend handler changes:**
+
 - Same pattern as doctor
 
 **fix handler changes:**
+
 - Same pattern as doctor
 
 - **VALIDATE**: `pnpm --filter @sickbay/cli build`
@@ -235,19 +242,21 @@ Then in each action handler, call `resolveProject()` and pass the resolution to 
 ### 3. UPDATE `apps/cli/src/components/DoctorApp.tsx` — Multi-package support
 
 **Props change:**
+
 ```typescript
 interface DoctorAppProps {
-  projectPath: string;         // root or single package path
+  projectPath: string; // root or single package path
   autoFix: boolean;
   jsonOutput: boolean;
   // New:
   isMonorepo?: boolean;
-  packagePaths?: string[];     // when monorepo, all package paths
+  packagePaths?: string[]; // when monorepo, all package paths
   packageNames?: Map<string, string>;
 }
 ```
 
 **Behavior:**
+
 - If `isMonorepo` and `packagePaths` provided: run `runDiagnostics` for each package, display results grouped under package name headers
 - If single project: unchanged behavior
 - JSON output: array of `{ package: string, results: DiagnosticResult[] }` for monorepo
@@ -257,6 +266,7 @@ interface DoctorAppProps {
 ### 4. UPDATE `apps/cli/src/components/StatsApp.tsx` — Multi-package support
 
 **Props change:**
+
 ```typescript
 interface StatsAppProps {
   projectPath: string;
@@ -269,6 +279,7 @@ interface StatsAppProps {
 ```
 
 **Behavior:**
+
 - If monorepo: run `gatherStats` per package, show a compact summary table (package name, files, LOC, deps, framework)
 - If single project: unchanged behavior
 
@@ -277,6 +288,7 @@ interface StatsAppProps {
 ### 5. UPDATE `apps/cli/src/components/TrendApp.tsx` — Multi-package support
 
 **Props change:**
+
 ```typescript
 interface TrendAppProps {
   projectPath: string;
@@ -290,6 +302,7 @@ interface TrendAppProps {
 ```
 
 **Behavior:**
+
 - If monorepo: load history for each package, show a per-package sparkline + score summary
 - If single project: unchanged behavior
 
@@ -298,6 +311,7 @@ interface TrendAppProps {
 ### 6. UPDATE `apps/cli/src/components/FixApp.tsx` — Multi-package support
 
 **Props change:**
+
 ```typescript
 interface FixAppProps {
   projectPath: string;
@@ -313,6 +327,7 @@ interface FixAppProps {
 ```
 
 **Behavior:**
+
 - If monorepo: scan each package via `runSickbay`, collect fixable issues with package labels, present grouped selection UI, execute fixes in the correct package directory
 - If single project: unchanged behavior
 
@@ -339,23 +354,27 @@ Optionally refactor the main scan's inline package resolution to use the new sha
 ## VALIDATION COMMANDS
 
 ### Level 1: Type checking and linting
+
 ```bash
 pnpm --filter @sickbay/cli build    # catches type errors
 pnpm lint                           # ESLint across all packages
 ```
 
 ### Level 2: Unit tests
+
 ```bash
 pnpm --filter @sickbay/cli test     # cli unit tests
 pnpm --filter @sickbay/core test    # core tests (should be unaffected)
 ```
 
 ### Level 3: Full build and manual validation
+
 ```bash
 pnpm build                          # full turbo build
 ```
 
 ### Level 4: Manual spot checks
+
 ```bash
 # Single project (should work as before)
 node apps/cli/dist/index.js doctor --path fixtures/packages/react-app

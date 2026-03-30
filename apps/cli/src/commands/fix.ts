@@ -1,6 +1,7 @@
-import { execFile } from "child_process";
-import { promisify } from "util";
-import type { Issue, SickbayReport } from "@nebulord/sickbay-core";
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+
+import type { Issue, SickbayReport } from '@nebulord/sickbay-core';
 
 /**
  * This module provides functions to collect fixable issues from a Sickbay report and execute the associated fix commands.
@@ -53,17 +54,14 @@ export function collectFixableIssues(report: SickbayReport): FixableIssue[] {
   return fixable;
 }
 
-export async function executeFix(
-  fix: FixableIssue,
-  projectPath: string,
-): Promise<FixResult> {
+export async function executeFix(fix: FixableIssue, projectPath: string): Promise<FixResult> {
   const start = Date.now();
   if (!fix.command) {
     return {
       fixable: fix,
       success: false,
-      stdout: "",
-      stderr: "No command to execute (guidance-only fix)",
+      stdout: '',
+      stderr: 'No command to execute (guidance-only fix)',
       duration: 0,
     };
   }
@@ -79,15 +77,15 @@ export async function executeFix(
     return {
       fixable: fix,
       success: true,
-      stdout: stdout ?? "",
-      stderr: stderr ?? "",
+      stdout: stdout ?? '',
+      stderr: stderr ?? '',
       duration: Date.now() - start,
     };
   } catch (err) {
     return {
       fixable: fix,
       success: false,
-      stdout: "",
+      stdout: '',
       stderr: err instanceof Error ? err.message : String(err),
       duration: Date.now() - start,
     };

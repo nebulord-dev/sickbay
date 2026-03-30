@@ -14,6 +14,7 @@ Tasks are executed via a two-phase workflow:
 2. **Execution** — approved plans are moved to `.claude/plans/ready/` and executed headlessly via a shell script that spawns one `claude` session per plan
 
 **Conventions:**
+
 - One task = one plan file = one session = one commit
 - Drafts live in `.claude/plans/`, approved plans in `.claude/plans/ready/`
 - The `ready/` subfolder is the approval gate — only plans there get picked up by the script
@@ -23,11 +24,11 @@ Tasks are executed via a two-phase workflow:
 
 Each backlog task is tagged with one of:
 
-| Tag | Meaning |
-|-----|---------|
-| `[Auto]` | Can be executed headless from a written plan — no mid-task judgment needed |
-| `[Plan→Auto]` | Needs a collaborative planning session, then execution can be headless |
-| `[Collab]` | Needs the user in the loop throughout for design/UX/product decisions |
+| Tag           | Meaning                                                                    |
+| ------------- | -------------------------------------------------------------------------- |
+| `[Auto]`      | Can be executed headless from a written plan — no mid-task judgment needed |
+| `[Plan→Auto]` | Needs a collaborative planning session, then execution can be headless     |
+| `[Collab]`    | Needs the user in the loop throughout for design/UX/product decisions      |
 
 This document helps Claude Code understand the Sickbay codebase structure and where to look when making updates.
 
@@ -167,8 +168,8 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
    ```typescript
    export class MyCheckRunner extends BaseRunner {
-     name = "my-check";
-     category = "code-quality" as const;
+     name = 'my-check';
+     category = 'code-quality' as const;
 
      async run(projectPath: string): Promise<CheckResult> {
        // Implementation
@@ -182,10 +183,10 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
    ```typescript
    // Only runs on Node projects (no React/Vue/etc. in deps)
-   applicableRuntimes = ["node"] as const;
+   applicableRuntimes = ['node'] as const;
 
    // Only runs on React/Next/Remix projects
-   applicableFrameworks = ["react", "next", "remix"] as const;
+   applicableFrameworks = ['react', 'next', 'remix'] as const;
    ```
 
    Runtime is derived automatically: projects with no recognised UI framework get

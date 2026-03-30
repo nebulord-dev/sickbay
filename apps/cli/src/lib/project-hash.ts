@@ -1,5 +1,5 @@
-import { createHash } from "crypto";
-import { resolve } from "path";
+import { createHash } from 'crypto';
+import { resolve } from 'path';
 
 /**
  * Generates a unique hash for a given project path.
@@ -10,8 +10,5 @@ import { resolve } from "path";
  * @returns A 16-character hexadecimal string representing the hash of the project path.
  */
 export function projectHash(projectPath: string): string {
-  return createHash("sha256")
-    .update(resolve(projectPath))
-    .digest("hex")
-    .slice(0, 16);
+  return createHash('sha256').update(resolve(projectPath)).digest('hex').slice(0, 16);
 }

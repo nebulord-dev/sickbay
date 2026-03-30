@@ -1,5 +1,6 @@
-import type { CheckResult } from '@nebulord/sickbay-core';
 import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
+
+import type { CheckResult } from '@nebulord/sickbay-core';
 
 const CATEGORY_ICONS: Record<string, string> = {
   dependencies: '📦',
@@ -17,9 +18,17 @@ interface ScoreCardProps {
 
 export function ScoreCard({ check, onClick, active }: ScoreCardProps) {
   const color =
-    check.score >= SCORE_GOOD ? 'text-green-400' : check.score >= SCORE_FAIR ? 'text-yellow-400' : 'text-red-400';
+    check.score >= SCORE_GOOD
+      ? 'text-green-400'
+      : check.score >= SCORE_FAIR
+        ? 'text-yellow-400'
+        : 'text-red-400';
   const ring =
-    check.score >= SCORE_GOOD ? 'stroke-green-400' : check.score >= SCORE_FAIR ? 'stroke-yellow-400' : 'stroke-red-400';
+    check.score >= SCORE_GOOD
+      ? 'stroke-green-400'
+      : check.score >= SCORE_FAIR
+        ? 'stroke-yellow-400'
+        : 'stroke-red-400';
   const circumference = 2 * Math.PI * 28;
   const offset = circumference - (check.score / 100) * circumference;
 
@@ -35,7 +44,9 @@ export function ScoreCard({ check, onClick, active }: ScoreCardProps) {
         <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
           <circle cx="32" cy="32" r="28" fill="none" stroke="#2a2a2a" strokeWidth="4" />
           <circle
-            cx="32" cy="32" r="28"
+            cx="32"
+            cy="32"
+            r="28"
             fill="none"
             strokeWidth="4"
             strokeDasharray={circumference}
@@ -44,12 +55,16 @@ export function ScoreCard({ check, onClick, active }: ScoreCardProps) {
             className={`transition-all duration-700 ${ring}`}
           />
         </svg>
-        <span className={`absolute inset-0 flex items-center justify-center text-lg font-bold ${color}`}>
+        <span
+          className={`absolute inset-0 flex items-center justify-center text-lg font-bold ${color}`}
+        >
           {check.score}
         </span>
       </div>
       <div className="text-center">
-        <div className="text-sm font-semibold">{CATEGORY_ICONS[check.category]} {check.name}</div>
+        <div className="text-sm font-semibold">
+          {CATEGORY_ICONS[check.category]} {check.name}
+        </div>
         <div className="text-xs text-gray-500 mt-0.5">{check.toolsUsed.join(', ')}</div>
       </div>
       {check.issues.length > 0 && (
@@ -70,9 +85,7 @@ export function ScoreCard({ check, onClick, active }: ScoreCardProps) {
               </li>
             ))}
             {criticalIssues.length > 2 && (
-              <li className="text-xs text-gray-500">
-                +{criticalIssues.length - 2} more
-              </li>
+              <li className="text-xs text-gray-500">+{criticalIssues.length - 2} more</li>
             )}
           </ul>
         </div>

@@ -1,6 +1,14 @@
 import { execa } from 'execa';
+
+import {
+  timer,
+  isCommandAvailable,
+  fileExists,
+  coreLocalDir,
+  parseJsonOutput,
+} from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
-import { timer, isCommandAvailable, fileExists, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 /**

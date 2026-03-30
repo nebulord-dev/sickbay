@@ -44,15 +44,15 @@ The `fixtures/` directory is a separate pnpm workspace used for testing — it i
 
 ### Key files to know
 
-| File | What it does |
-|------|-------------|
-| `packages/core/src/types.ts` | All shared TypeScript interfaces (`SickbayReport`, `CheckResult`, `Issue`) |
-| `packages/core/src/runner.ts` | Orchestrates checks — register new runners here |
-| `packages/core/src/scoring.ts` | Weighted category scoring |
-| `packages/core/src/integrations/` | One file per check runner |
-| `packages/cli/src/index.ts` | CLI entry point (Commander flags) |
-| `packages/cli/src/components/App.tsx` | Root Ink component, UI phases |
-| `packages/web/src/App.tsx` | Web dashboard root, report loading |
+| File                                  | What it does                                                               |
+| ------------------------------------- | -------------------------------------------------------------------------- |
+| `packages/core/src/types.ts`          | All shared TypeScript interfaces (`SickbayReport`, `CheckResult`, `Issue`) |
+| `packages/core/src/runner.ts`         | Orchestrates checks — register new runners here                            |
+| `packages/core/src/scoring.ts`        | Weighted category scoring                                                  |
+| `packages/core/src/integrations/`     | One file per check runner                                                  |
+| `packages/cli/src/index.ts`           | CLI entry point (Commander flags)                                          |
+| `packages/cli/src/components/App.tsx` | Root Ink component, UI phases                                              |
+| `packages/web/src/App.tsx`            | Web dashboard root, report loading                                         |
 
 ---
 
@@ -107,13 +107,13 @@ export class MyCheckRunner extends BaseRunner {
       return {
         id: this.name,
         category: this.category,
-        name: 'My Check',           // human-readable display name
-        score,                       // 0–100
+        name: 'My Check', // human-readable display name
+        score, // 0–100
         status: score >= 80 ? 'pass' : score >= 60 ? 'warning' : 'fail',
         issues,
         toolsUsed: ['my-tool'],
         duration: elapsed(),
-        metadata: {},                // optional — any extra data for the web dashboard
+        metadata: {}, // optional — any extra data for the web dashboard
       };
     } catch (err) {
       return {
@@ -122,7 +122,9 @@ export class MyCheckRunner extends BaseRunner {
         name: 'My Check',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `my-check failed: ${err}`, reportedBy: [this.name] }],
+        issues: [
+          { severity: 'critical', message: `my-check failed: ${err}`, reportedBy: [this.name] },
+        ],
         toolsUsed: ['my-tool'],
         duration: elapsed(),
       };
@@ -144,6 +146,7 @@ applicableFrameworks = ['react', 'next', 'remix'] as const;
 ```
 
 Runtime is derived automatically from `detectContext()`:
+
 - Projects with no recognised UI framework → `runtime: 'node'`
 - Projects with React/Vue/Angular/etc. → `runtime: 'browser'`
 - Projects without a `package.json` → `runtime: 'unknown'` (all scoped runners silently skipped)
@@ -256,7 +259,7 @@ Test fixtures live in `fixtures/packages/`. They are intentionally flawed projec
 
 ---
 
-## How to Add a New Language *(stub for future contributors)*
+## How to Add a New Language _(stub for future contributors)_
 
 > This section will be fleshed out once the polyglot architecture is established in `core` (Phase 4). The short version of the plan:
 

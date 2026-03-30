@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { loadReport } from './load-report.js';
+
 import type { SickbayReport } from '@nebulord/sickbay-core';
 
 const mockReport: SickbayReport = {

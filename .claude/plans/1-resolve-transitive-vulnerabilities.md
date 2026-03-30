@@ -7,6 +7,7 @@ Read the lightweight spec at `docs/superpowers/specs/2026-03-28-resolve-transiti
 ## Kanban Task
 
 Move this task to Done when complete (update the description to reflect the actual vulnerabilities fixed):
+
 ```
 - `[Security]` `[Auto]` Resolve transitive `minimatch` ReDoS vulnerabilities before publishing
 ```
@@ -20,6 +21,7 @@ The current description references `minimatch` and `rollup` which are already re
 **Edit:** `package.json` (root)
 
 Add to the existing `pnpm.overrides` object:
+
 ```json
 "picomatch": ">=4.0.4",
 "brace-expansion": ">=5.0.5"

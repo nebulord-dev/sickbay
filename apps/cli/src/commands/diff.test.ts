@@ -5,7 +5,9 @@ vi.mock('child_process', () => ({
 }));
 
 import { execFileSync } from 'child_process';
+
 import { loadBaseReport, compareReports } from './diff.js';
+
 import type { SickbayReport, CheckResult } from '@nebulord/sickbay-core';
 
 const mockExecFileSync = vi.mocked(execFileSync);
@@ -185,17 +187,17 @@ describe('compareReports', () => {
     });
     const current = makeReport({
       checks: [
-        makeCheck({ id: 'a', name: 'A', score: 80 }),  // unchanged
-        makeCheck({ id: 'b', name: 'B', score: 90 }),  // improved
-        makeCheck({ id: 'c', name: 'C', score: 60 }),  // regressed
+        makeCheck({ id: 'a', name: 'A', score: 80 }), // unchanged
+        makeCheck({ id: 'b', name: 'B', score: 90 }), // improved
+        makeCheck({ id: 'c', name: 'C', score: 60 }), // regressed
       ],
     });
 
     const diff = compareReports(current, base, 'main');
 
-    expect(diff.checks[0].id).toBe('c');       // regressed first
-    expect(diff.checks[1].id).toBe('b');       // improved second
-    expect(diff.checks[2].id).toBe('a');       // unchanged last
+    expect(diff.checks[0].id).toBe('c'); // regressed first
+    expect(diff.checks[1].id).toBe('b'); // improved second
+    expect(diff.checks[2].id).toBe('a'); // unchanged last
   });
 
   it('calculates summary counts correctly', () => {
@@ -209,10 +211,10 @@ describe('compareReports', () => {
     });
     const current = makeReport({
       checks: [
-        makeCheck({ id: 'a', name: 'A', score: 90 }),  // improved
-        makeCheck({ id: 'b', name: 'B', score: 70 }),  // regressed
-        makeCheck({ id: 'c', name: 'C', score: 80 }),  // unchanged
-        makeCheck({ id: 'e', name: 'E', score: 85 }),  // new
+        makeCheck({ id: 'a', name: 'A', score: 90 }), // improved
+        makeCheck({ id: 'b', name: 'B', score: 70 }), // regressed
+        makeCheck({ id: 'c', name: 'C', score: 80 }), // unchanged
+        makeCheck({ id: 'e', name: 'E', score: 85 }), // new
       ],
     });
 

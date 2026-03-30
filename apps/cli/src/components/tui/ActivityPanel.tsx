@@ -1,15 +1,10 @@
-import React from "react";
-import { Box, Text } from "ink";
+import React from 'react';
+
+import { Box, Text } from 'ink';
 
 export interface ActivityEntry {
   timestamp: Date;
-  type:
-    | "scan-start"
-    | "scan-complete"
-    | "file-change"
-    | "git-change"
-    | "regression"
-    | "info";
+  type: 'scan-start' | 'scan-complete' | 'file-change' | 'git-change' | 'regression' | 'info';
   message: string;
 }
 
@@ -18,17 +13,17 @@ interface ActivityPanelProps {
   availableHeight: number;
 }
 
-const TYPE_COLOR: Record<ActivityEntry["type"], string> = {
-  "scan-start": "cyan",
-  "scan-complete": "green",
-  "file-change": "yellow",
-  "git-change": "magenta",
-  regression: "red",
-  info: "gray",
+const TYPE_COLOR: Record<ActivityEntry['type'], string> = {
+  'scan-start': 'cyan',
+  'scan-complete': 'green',
+  'file-change': 'yellow',
+  'git-change': 'magenta',
+  regression: 'red',
+  info: 'gray',
 };
 
 function formatTime(date: Date): string {
-  return date.toLocaleTimeString("en-US", { hour12: false });
+  return date.toLocaleTimeString('en-US', { hour12: false });
 }
 
 export function ActivityPanel({ entries, availableHeight }: ActivityPanelProps) {
@@ -40,14 +35,17 @@ export function ActivityPanel({ entries, availableHeight }: ActivityPanelProps) 
     );
   }
 
-  const visible = entries.slice(-(Math.max(1, availableHeight)));
+  const visible = entries.slice(-Math.max(1, availableHeight));
 
   return (
     <Box flexDirection="column">
       {visible.map((entry) => (
         <Box key={`${entry.timestamp.getTime()}-${entry.type}`}>
-          <Text dimColor>{formatTime(entry.timestamp)}{"  "}</Text>
-          <Text color={TYPE_COLOR[entry.type] || "white"}>{entry.message}</Text>
+          <Text dimColor>
+            {formatTime(entry.timestamp)}
+            {'  '}
+          </Text>
+          <Text color={TYPE_COLOR[entry.type] || 'white'}>{entry.message}</Text>
         </Box>
       ))}
     </Box>

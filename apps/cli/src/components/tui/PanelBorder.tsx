@@ -1,18 +1,26 @@
-import React from "react";
-import { Box, Text } from "ink";
+import React from 'react';
+
+import { Box, Text } from 'ink';
 
 interface PanelBorderProps {
   title: string;
   color: string;
   focused?: boolean;
   visible?: boolean;
-  flash?: "green" | "red";
+  flash?: 'green' | 'red';
   children: React.ReactNode;
 }
 
-export function PanelBorder({ title, color, focused, visible = true, flash, children }: PanelBorderProps) {
-  const borderColor = flash ?? (focused ? color : "gray");
-  const borderStyle = flash ? "double" : (focused ? "double" : "single");
+export function PanelBorder({
+  title,
+  color,
+  focused,
+  visible = true,
+  flash,
+  children,
+}: PanelBorderProps) {
+  const borderColor = flash ?? (focused ? color : 'gray');
+  const borderStyle = flash ? 'double' : focused ? 'double' : 'single';
 
   return (
     <Box

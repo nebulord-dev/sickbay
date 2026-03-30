@@ -6,6 +6,7 @@ vi.mock('fs', () => ({
 }));
 
 import { existsSync, readFileSync } from 'fs';
+
 import { detectProject, detectPackageManager, detectContext } from './detect-project.js';
 
 const mockExistsSync = vi.mocked(existsSync);
@@ -63,9 +64,7 @@ describe('detectProject', () => {
   });
 
   it('detects vite from vite devDep when no plugin-react', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ devDependencies: { vite: '^5.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ devDependencies: { vite: '^5.0.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.framework).toBe('vite');
   });
@@ -79,33 +78,25 @@ describe('detectProject', () => {
   });
 
   it('detects react from react dep', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ dependencies: { react: '^18.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { react: '^18.0.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.framework).toBe('react');
   });
 
   it('detects express framework', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ dependencies: { express: '^4.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { express: '^4.0.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.framework).toBe('express');
   });
 
   it('detects fastify framework', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ dependencies: { fastify: '^4.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { fastify: '^4.0.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.framework).toBe('fastify');
   });
 
   it('detects koa framework', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ dependencies: { koa: '^2.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { koa: '^2.0.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.framework).toBe('koa');
   });
@@ -119,16 +110,14 @@ describe('detectProject', () => {
   });
 
   it('returns node when no recognized framework found', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ dependencies: { lodash: '^4.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { lodash: '^4.0.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.framework).toBe('node');
   });
 
   it('detects TypeScript via tsconfig.json file', async () => {
-    mockExistsSync.mockImplementation((p) =>
-      String(p).endsWith('package.json') || String(p).endsWith('tsconfig.json'),
+    mockExistsSync.mockImplementation(
+      (p) => String(p).endsWith('package.json') || String(p).endsWith('tsconfig.json'),
     );
     const info = await detectProject('/project');
     expect(info.hasTypeScript).toBe(true);
@@ -143,41 +132,37 @@ describe('detectProject', () => {
   });
 
   it('detects ESLint via eslint.config.js', async () => {
-    mockExistsSync.mockImplementation((p) =>
-      String(p).endsWith('package.json') || String(p).endsWith('eslint.config.js'),
+    mockExistsSync.mockImplementation(
+      (p) => String(p).endsWith('package.json') || String(p).endsWith('eslint.config.js'),
     );
     const info = await detectProject('/project');
     expect(info.hasESLint).toBe(true);
   });
 
   it('detects ESLint via .eslintrc.json', async () => {
-    mockExistsSync.mockImplementation((p) =>
-      String(p).endsWith('package.json') || String(p).endsWith('.eslintrc.json'),
+    mockExistsSync.mockImplementation(
+      (p) => String(p).endsWith('package.json') || String(p).endsWith('.eslintrc.json'),
     );
     const info = await detectProject('/project');
     expect(info.hasESLint).toBe(true);
   });
 
   it('detects ESLint via eslint devDependency', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ devDependencies: { eslint: '^8.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ devDependencies: { eslint: '^8.0.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.hasESLint).toBe(true);
   });
 
   it('detects Prettier via .prettierrc file', async () => {
-    mockExistsSync.mockImplementation((p) =>
-      String(p).endsWith('package.json') || String(p).endsWith('.prettierrc'),
+    mockExistsSync.mockImplementation(
+      (p) => String(p).endsWith('package.json') || String(p).endsWith('.prettierrc'),
     );
     const info = await detectProject('/project');
     expect(info.hasPrettier).toBe(true);
   });
 
   it('detects Prettier via prettier devDependency', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ devDependencies: { prettier: '^3.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ devDependencies: { prettier: '^3.0.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.hasPrettier).toBe(true);
   });
@@ -194,8 +179,8 @@ describe('detectProject', () => {
   });
 
   it('returns packageManager from lock file detection', async () => {
-    mockExistsSync.mockImplementation((p) =>
-      String(p).endsWith('package.json') || String(p).endsWith('pnpm-lock.yaml'),
+    mockExistsSync.mockImplementation(
+      (p) => String(p).endsWith('package.json') || String(p).endsWith('pnpm-lock.yaml'),
     );
     const info = await detectProject('/project');
     expect(info.packageManager).toBe('pnpm');
@@ -210,17 +195,13 @@ describe('detectProject', () => {
   });
 
   it('returns npm overrides when overrides is present', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ overrides: { lodash: '^4.17.21' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ overrides: { lodash: '^4.17.21' } }) as never);
     const info = await detectProject('/project');
     expect(info.overrides).toEqual({ lodash: '^4.17.21' });
   });
 
   it('returns yarn resolutions when resolutions is present', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ resolutions: { webpack: '5.90.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ resolutions: { webpack: '5.90.0' } }) as never);
     const info = await detectProject('/project');
     expect(info.overrides).toEqual({ webpack: '5.90.0' });
   });
@@ -236,9 +217,9 @@ describe('detectProject', () => {
       '  - apps/*',
       '',
       'catalog:',
-      "  vitest: ^4.1.2",
+      '  vitest: ^4.1.2',
       "  '@types/react': ^19.2.14",
-      "  typescript: ^5.9.3",
+      '  typescript: ^5.9.3',
     ].join('\n');
 
     mockExistsSync.mockImplementation((p) => {
@@ -263,9 +244,7 @@ describe('detectProject', () => {
   });
 
   it('leaves catalog: unchanged when no workspace yaml is found', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ devDependencies: { vitest: 'catalog:' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ devDependencies: { vitest: 'catalog:' } }) as never);
     const info = await detectProject('/project');
     expect(info.devDependencies.vitest).toBe('catalog:');
   });
@@ -343,7 +322,9 @@ describe('detectContext', () => {
   });
 
   it('includes both react and next for a Next.js project', async () => {
-    mockReadFileSync.mockReturnValue(makePkg({ dependencies: { next: '^14.0.0', react: '^18.0.0' } }) as never);
+    mockReadFileSync.mockReturnValue(
+      makePkg({ dependencies: { next: '^14.0.0', react: '^18.0.0' } }) as never,
+    );
     const ctx = await detectContext('/project');
     expect(ctx.frameworks).toContain('react');
     expect(ctx.frameworks).toContain('next');
@@ -358,9 +339,7 @@ describe('detectContext', () => {
   });
 
   it('detects vitest as test framework', async () => {
-    mockReadFileSync.mockReturnValue(
-      makePkg({ devDependencies: { vitest: '^1.0.0' } }) as never,
-    );
+    mockReadFileSync.mockReturnValue(makePkg({ devDependencies: { vitest: '^1.0.0' } }) as never);
     const ctx = await detectContext('/project');
     expect(ctx.testFramework).toBe('vitest');
   });

@@ -1,6 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { Dashboard } from './Dashboard.js';
+
 import type { SickbayReport } from '@nebulord/sickbay-core';
 
 // Mock side-effectful components
@@ -71,8 +73,26 @@ describe('Dashboard', () => {
   it('lists each check in the sidebar nav', () => {
     const report = makeReport({
       checks: [
-        { id: 'eslint', name: 'ESLint', category: 'code-quality', score: 95, status: 'pass', toolsUsed: [], duration: 0, issues: [] },
-        { id: 'knip', name: 'Unused Code', category: 'dependencies', score: 70, status: 'warning', toolsUsed: [], duration: 0, issues: [] },
+        {
+          id: 'eslint',
+          name: 'ESLint',
+          category: 'code-quality',
+          score: 95,
+          status: 'pass',
+          toolsUsed: [],
+          duration: 0,
+          issues: [],
+        },
+        {
+          id: 'knip',
+          name: 'Unused Code',
+          category: 'dependencies',
+          score: 70,
+          status: 'warning',
+          toolsUsed: [],
+          duration: 0,
+          issues: [],
+        },
       ],
     });
     render(<Dashboard report={report} />);
@@ -84,8 +104,13 @@ describe('Dashboard', () => {
     const report = makeReport({
       checks: [
         {
-          id: 'eslint', name: 'ESLint', category: 'code-quality', score: 70,
-          status: 'warning', toolsUsed: [], duration: 0,
+          id: 'eslint',
+          name: 'ESLint',
+          category: 'code-quality',
+          score: 70,
+          status: 'warning',
+          toolsUsed: [],
+          duration: 0,
           issues: [{ severity: 'warning', message: 'Lint error', reportedBy: ['eslint'] }],
         },
       ],
@@ -96,13 +121,24 @@ describe('Dashboard', () => {
   });
 
   it('navigates to the dependencies view when "dependencies" is clicked', () => {
-    render(<Dashboard report={makeReport({
-      projectInfo: {
-        name: 'my-app', version: '1.0.0', framework: 'react', packageManager: 'npm',
-        totalDependencies: 1, dependencies: { react: '^18' }, devDependencies: {},
-        hasESLint: false, hasPrettier: false, hasTypeScript: false,
-      },
-    })} />);
+    render(
+      <Dashboard
+        report={makeReport({
+          projectInfo: {
+            name: 'my-app',
+            version: '1.0.0',
+            framework: 'react',
+            packageManager: 'npm',
+            totalDependencies: 1,
+            dependencies: { react: '^18' },
+            devDependencies: {},
+            hasESLint: false,
+            hasPrettier: false,
+            hasTypeScript: false,
+          },
+        })}
+      />,
+    );
     fireEvent.click(screen.getByRole('button', { name: 'dependencies' }));
     expect(screen.getByText('Dependencies')).toBeInTheDocument();
   });
@@ -111,8 +147,13 @@ describe('Dashboard', () => {
     const report = makeReport({
       checks: [
         {
-          id: 'eslint', name: 'ESLint', category: 'code-quality', score: 70,
-          status: 'warning', toolsUsed: [], duration: 0,
+          id: 'eslint',
+          name: 'ESLint',
+          category: 'code-quality',
+          score: 70,
+          status: 'warning',
+          toolsUsed: [],
+          duration: 0,
           issues: [{ severity: 'warning', message: 'Lint error', reportedBy: ['eslint'] }],
         },
       ],
@@ -127,13 +168,23 @@ describe('Dashboard', () => {
     const report = makeReport({
       checks: [
         {
-          id: 'eslint', name: 'ESLint', category: 'code-quality', score: 70,
-          status: 'warning', toolsUsed: [], duration: 0,
+          id: 'eslint',
+          name: 'ESLint',
+          category: 'code-quality',
+          score: 70,
+          status: 'warning',
+          toolsUsed: [],
+          duration: 0,
           issues: [{ severity: 'warning', message: 'ESLint warning', reportedBy: ['eslint'] }],
         },
         {
-          id: 'knip', name: 'Unused Code', category: 'dependencies', score: 95,
-          status: 'pass', toolsUsed: [], duration: 0,
+          id: 'knip',
+          name: 'Unused Code',
+          category: 'dependencies',
+          score: 95,
+          status: 'pass',
+          toolsUsed: [],
+          duration: 0,
           issues: [{ severity: 'info', message: 'Knip info', reportedBy: ['knip'] }],
         },
       ],
@@ -147,7 +198,7 @@ describe('Dashboard', () => {
 
   it('renders quote when present on report', () => {
     const report = makeReport({
-      quote: { text: "He's dead, Jim.", source: "Dr. McCoy", severity: "critical" },
+      quote: { text: "He's dead, Jim.", source: 'Dr. McCoy', severity: 'critical' },
     });
     render(<Dashboard report={report} />);
     expect(screen.getByText(/He's dead, Jim\./)).toBeInTheDocument();

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export function useTerminalSize() {
   const [size, setSize] = useState({
@@ -13,9 +13,9 @@ export function useTerminalSize() {
         rows: process.stdout.rows || 24,
       });
     };
-    process.stdout.on("resize", handler);
+    process.stdout.on('resize', handler);
     return () => {
-      process.stdout.off("resize", handler);
+      process.stdout.off('resize', handler);
     };
   }, []);
 

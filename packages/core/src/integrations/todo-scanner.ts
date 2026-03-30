@@ -1,8 +1,10 @@
-import { readFileSync, readdirSync, statSync, existsSync } from "fs";
-import { join, extname } from "path";
-import { BaseRunner } from "./base.js";
-import { timer } from "../utils/file-helpers.js";
-import type { CheckResult, Issue } from "../types.js";
+import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
+import { join, extname } from 'path';
+
+import { timer } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
+import type { CheckResult, Issue } from '../types.js';
 
 /**
  * This module analyzes the project's source code for TODO, FIXME, and HACK comments that indicate technical debt or areas needing attention.
@@ -16,16 +18,9 @@ const TODO_PATTERN = /\b(TODO|FIXME|HACK)\b[:\s]*(.*)/i;
 const STRING_LITERAL_RE = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g;
 
 function stripStringLiterals(line: string): string {
-  return line.replace(STRING_LITERAL_RE, (m) => " ".repeat(m.length));
+  return line.replace(STRING_LITERAL_RE, (m) => ' '.repeat(m.length));
 }
-const SOURCE_EXTENSIONS = new Set([
-  ".ts",
-  ".tsx",
-  ".js",
-  ".jsx",
-  ".mts",
-  ".cts",
-]);
+const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts']);
 
 interface TodoItem {
   file: string;
@@ -35,68 +30,62 @@ interface TodoItem {
 }
 
 export class TodoScannerRunner extends BaseRunner {
-  name = "todo-scanner";
-  category = "code-quality" as const;
+  name = 'todo-scanner';
+  category = 'code-quality' as const;
 
   async isApplicable(projectPath: string): Promise<boolean> {
-    return existsSync(join(projectPath, "src"));
+    return existsSync(join(projectPath, 'src'));
   }
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
 
     try {
-      const todos = scanDirectory(join(projectPath, "src"), projectPath);
+      const todos = scanDirectory(join(projectPath, 'src'), projectPath);
 
       const issues: Issue[] = todos.map((t) => ({
-        severity: (t.kind === "FIXME" || t.kind === "HACK"
-          ? "warning"
-          : "info") as Issue["severity"],
-        message: `${t.file}:${t.line} — ${t.kind}: ${t.text || "(no description)"}`,
-        reportedBy: ["todo-scanner"],
+        severity: (t.kind === 'FIXME' || t.kind === 'HACK'
+          ? 'warning'
+          : 'info') as Issue['severity'],
+        message: `${t.file}:${t.line} — ${t.kind}: ${t.text || '(no description)'}`,
+        reportedBy: ['todo-scanner'],
       }));
 
-      const fixmeCount = todos.filter(
-        (t) => t.kind === "FIXME" || t.kind === "HACK",
-      ).length;
+      const fixmeCount = todos.filter((t) => t.kind === 'FIXME' || t.kind === 'HACK').length;
       const score = Math.max(50, 100 - todos.length * 3);
 
       return {
-        id: "todo-scanner",
+        id: 'todo-scanner',
         category: this.category,
-        name: "Technical Debt",
+        name: 'Technical Debt',
         score,
         status:
-          todos.length === 0
-            ? "pass"
-            : fixmeCount > 5 || todos.length > 20
-              ? "warning"
-              : "pass",
+          todos.length === 0 ? 'pass' : fixmeCount > 5 || todos.length > 20 ? 'warning' : 'pass',
         issues,
-        toolsUsed: ["todo-scanner"],
+        toolsUsed: ['todo-scanner'],
         duration: elapsed(),
         metadata: {
           total: todos.length,
-          todo: todos.filter((t) => t.kind === "TODO").length,
+          todo: todos.filter((t) => t.kind === 'TODO').length,
           fixme: fixmeCount,
-          hack: todos.filter((t) => t.kind === "HACK").length,
+          hack: todos.filter((t) => t.kind === 'HACK').length,
         },
       };
     } catch (err) {
       return {
-        id: "todo-scanner",
+        id: 'todo-scanner',
         category: this.category,
-        name: "Technical Debt",
+        name: 'Technical Debt',
         score: 0,
-        status: "fail",
+        status: 'fail',
         issues: [
           {
-            severity: "critical",
+            severity: 'critical',
             message: `Todo scan failed: ${err}`,
-            reportedBy: ["todo-scanner"],
+            reportedBy: ['todo-scanner'],
           },
         ],
-        toolsUsed: ["todo-scanner"],
+        toolsUsed: ['todo-scanner'],
         duration: elapsed(),
       };
     }
@@ -104,13 +93,13 @@ export class TodoScannerRunner extends BaseRunner {
 }
 
 /** Files that reference TODO/FIXME/HACK as part of their implementation, not as tech debt */
-const SELF_REFERENCING_FILES = new Set(["todo-scanner.ts", "todo-scanner.test.ts"]);
+const SELF_REFERENCING_FILES = new Set(['todo-scanner.ts', 'todo-scanner.test.ts']);
 
 function scanDirectory(dir: string, projectRoot: string): TodoItem[] {
   const todos: TodoItem[] = [];
   try {
     for (const entry of readdirSync(dir)) {
-      if (entry.startsWith(".") || entry === "node_modules") continue;
+      if (entry.startsWith('.') || entry === 'node_modules') continue;
       if (SELF_REFERENCING_FILES.has(entry)) continue;
       const fullPath = join(dir, entry);
       const stat = statSync(fullPath);
@@ -129,8 +118,8 @@ function scanDirectory(dir: string, projectRoot: string): TodoItem[] {
 function scanFile(filePath: string, projectRoot: string): TodoItem[] {
   const todos: TodoItem[] = [];
   try {
-    const lines = readFileSync(filePath, "utf-8").split("\n");
-    const relPath = filePath.replace(projectRoot + "/", "");
+    const lines = readFileSync(filePath, 'utf-8').split('\n');
+    const relPath = filePath.replace(projectRoot + '/', '');
     for (let i = 0; i < lines.length; i++) {
       const match = stripStringLiterals(lines[i]).match(TODO_PATTERN);
       if (match) {

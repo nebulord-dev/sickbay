@@ -1,7 +1,9 @@
-import { readFileSync } from "fs";
-import { join } from "path";
-import { detectMonorepo } from "@nebulord/sickbay-core";
-import type { MonorepoInfo } from "@nebulord/sickbay-core";
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+import { detectMonorepo } from '@nebulord/sickbay-core';
+
+import type { MonorepoInfo } from '@nebulord/sickbay-core';
 
 export interface MonorepoResolution {
   isMonorepo: true;
@@ -30,9 +32,7 @@ export async function resolveProject(
 
   if (!monorepoInfo.isMonorepo) {
     if (packageName) {
-      process.stderr.write(
-        `--package flag used but "${projectPath}" is not a monorepo\n`,
-      );
+      process.stderr.write(`--package flag used but "${projectPath}" is not a monorepo\n`);
       process.exit(1);
     }
     return { isMonorepo: false, targetPath: projectPath };
@@ -41,7 +41,7 @@ export async function resolveProject(
   const packageNames = new Map<string, string>();
   for (const p of monorepoInfo.packagePaths) {
     try {
-      const pkg = JSON.parse(readFileSync(join(p, "package.json"), "utf-8"));
+      const pkg = JSON.parse(readFileSync(join(p, 'package.json'), 'utf-8'));
       packageNames.set(p, pkg.name ?? p);
     } catch {
       packageNames.set(p, p);
@@ -50,14 +50,12 @@ export async function resolveProject(
 
   if (packageName) {
     const targetPath = monorepoInfo.packagePaths.find((p) => {
-      const name = packageNames.get(p) ?? "";
+      const name = packageNames.get(p) ?? '';
       return name === packageName || name.endsWith(`/${packageName}`);
     });
 
     if (!targetPath) {
-      process.stderr.write(
-        `Package "${packageName}" not found in monorepo\n`,
-      );
+      process.stderr.write(`Package "${packageName}" not found in monorepo\n`);
       process.exit(1);
     }
 
@@ -80,6 +78,6 @@ export async function resolveProject(
 
 /** Get a short display name for a package (strip scope prefix). */
 export function shortName(fullName: string): string {
-  const slashIdx = fullName.lastIndexOf("/");
+  const slashIdx = fullName.lastIndexOf('/');
   return slashIdx >= 0 ? fullName.substring(slashIdx + 1) : fullName;
 }

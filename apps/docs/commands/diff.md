@@ -12,12 +12,12 @@ The `<branch>` argument is required. It specifies the branch to compare against 
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-p, --path <path>` | Project path to analyze | Current working directory |
-| `-c, --checks <checks>` | Comma-separated list of checks to run | All applicable checks |
-| `--json` | Output diff as JSON | `false` |
-| `--verbose` | Show verbose output | `false` |
+| Flag                    | Description                           | Default                   |
+| ----------------------- | ------------------------------------- | ------------------------- |
+| `-p, --path <path>`     | Project path to analyze               | Current working directory |
+| `-c, --checks <checks>` | Comma-separated list of checks to run | All applicable checks     |
+| `--json`                | Output diff as JSON                   | `false`                   |
+| `--verbose`             | Show verbose output                   | `false`                   |
 
 ## Examples
 

@@ -1,30 +1,38 @@
 import { relative } from 'path';
-import type { SickbayReport, CheckResult, ToolRunner, MonorepoReport, PackageReport } from './types.js';
-import { detectProject, detectContext } from './utils/detect-project.js';
-import { detectMonorepo } from './utils/detect-monorepo.js';
-import { calculateOverallScore, buildSummary } from './scoring.js';
-import { getQuote } from './quotes/index.js';
-import { KnipRunner } from './integrations/knip.js';
-import { OutdatedRunner } from './integrations/outdated.js';
-import { NpmAuditRunner } from './integrations/npm-audit.js';
-import { DepcheckRunner } from './integrations/depcheck.js';
-import { MadgeRunner } from './integrations/madge.js';
-import { SourceMapExplorerRunner } from './integrations/source-map-explorer.js';
-import { CoverageRunner } from './integrations/coverage.js';
-import { LicenseCheckerRunner } from './integrations/license-checker.js';
-import { JscpdRunner } from './integrations/jscpd.js';
-import { GitRunner } from './integrations/git.js';
-import { ESLintRunner } from './integrations/eslint.js';
-import { TypeScriptRunner } from './integrations/typescript.js';
-import { TodoScannerRunner } from './integrations/todo-scanner.js';
-import { ComplexityRunner } from './integrations/complexity.js';
-import { SecretsRunner } from './integrations/secrets.js';
-import { HeavyDepsRunner } from './integrations/heavy-deps.js';
-import { ReactPerfRunner } from './integrations/react-perf.js';
+
 import { AssetSizeRunner } from './integrations/asset-size.js';
-import { NodeSecurityRunner } from './integrations/node-security.js';
-import { NodeInputValidationRunner } from './integrations/node-input-validation.js';
+import { ComplexityRunner } from './integrations/complexity.js';
+import { CoverageRunner } from './integrations/coverage.js';
+import { DepcheckRunner } from './integrations/depcheck.js';
+import { ESLintRunner } from './integrations/eslint.js';
+import { GitRunner } from './integrations/git.js';
+import { HeavyDepsRunner } from './integrations/heavy-deps.js';
+import { JscpdRunner } from './integrations/jscpd.js';
+import { KnipRunner } from './integrations/knip.js';
+import { LicenseCheckerRunner } from './integrations/license-checker.js';
+import { MadgeRunner } from './integrations/madge.js';
 import { NodeAsyncErrorsRunner } from './integrations/node-async-errors.js';
+import { NodeInputValidationRunner } from './integrations/node-input-validation.js';
+import { NodeSecurityRunner } from './integrations/node-security.js';
+import { NpmAuditRunner } from './integrations/npm-audit.js';
+import { OutdatedRunner } from './integrations/outdated.js';
+import { ReactPerfRunner } from './integrations/react-perf.js';
+import { SecretsRunner } from './integrations/secrets.js';
+import { SourceMapExplorerRunner } from './integrations/source-map-explorer.js';
+import { TodoScannerRunner } from './integrations/todo-scanner.js';
+import { TypeScriptRunner } from './integrations/typescript.js';
+import { getQuote } from './quotes/index.js';
+import { calculateOverallScore, buildSummary } from './scoring.js';
+import { detectMonorepo } from './utils/detect-monorepo.js';
+import { detectProject, detectContext } from './utils/detect-project.js';
+
+import type {
+  SickbayReport,
+  CheckResult,
+  ToolRunner,
+  MonorepoReport,
+  PackageReport,
+} from './types.js';
 
 export interface RunnerOptions {
   projectPath?: string;
@@ -87,7 +95,7 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
       const result = await runner.run(projectPath, { verbose: options.verbose });
       options.onCheckComplete?.(result);
       return result;
-    })
+    }),
   );
 
   for (const result of results) {

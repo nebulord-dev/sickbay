@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
-import { render } from 'ink-testing-library';
+
 import { Text } from 'ink';
+import { render } from 'ink-testing-library';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock child_process before importing the hook
 vi.mock('child_process', () => ({
@@ -9,6 +10,7 @@ vi.mock('child_process', () => ({
 }));
 
 import { execFile } from 'child_process';
+
 import { useGitStatus } from './useGitStatus.js';
 
 const mockExecFile = vi.mocked(execFile);
@@ -54,9 +56,7 @@ beforeEach(() => {
  * by advancing timers. Returns lastFrame() for assertions.
  */
 async function renderAndWait(projectPath = '/project') {
-  const { lastFrame, unmount } = render(
-    React.createElement(GitStatusDisplay, { projectPath }),
-  );
+  const { lastFrame, unmount } = render(React.createElement(GitStatusDisplay, { projectPath }));
 
   // Flush all pending microtasks. The mock calls its callback synchronously so all
   // five git Promises resolve in microtask ticks; setImmediate drains them.
@@ -68,7 +68,7 @@ async function renderAndWait(projectPath = '/project') {
 describe('useGitStatus', () => {
   it('renders loading initially when git commands have not completed', () => {
     // Make execFile never call back so status stays null
-    mockExecFile.mockImplementation(() => ({ } as any));
+    mockExecFile.mockImplementation(() => ({}) as any);
 
     const { lastFrame } = render(
       React.createElement(GitStatusDisplay, { projectPath: '/project' }),

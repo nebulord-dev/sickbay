@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { ESLintRunner } from './eslint.js';
 
 vi.mock('execa', () => ({ execa: vi.fn() }));
@@ -15,17 +16,19 @@ vi.mock('../utils/file-helpers.js', () => ({
   },
 }));
 
-import { execa } from 'execa';
 import { existsSync } from 'fs';
+
+import { execa } from 'execa';
 
 const mockExeca = vi.mocked(execa);
 const mockExistsSync = vi.mocked(existsSync);
 
-const makeFile = (
-  filePath: string,
-  errorCount = 0,
-  warningCount = 0,
-) => ({ filePath, messages: [], errorCount, warningCount });
+const makeFile = (filePath: string, errorCount = 0, warningCount = 0) => ({
+  filePath,
+  messages: [],
+  errorCount,
+  warningCount,
+});
 
 describe('ESLintRunner', () => {
   let runner: ESLintRunner;

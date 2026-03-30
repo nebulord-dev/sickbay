@@ -7,22 +7,22 @@
     "type": "git",
     "url": "https://github.com/nebulord-dev/sickbay"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "type": "module",
   "bin": {
     "sickbay": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

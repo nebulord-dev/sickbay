@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import type { SickbayReport, CheckResult, Issue } from '@nebulord/sickbay-core';
 
 // We mock 'util' so that promisify returns our controlled async function.
@@ -21,6 +22,7 @@ vi.mock('child_process', () => ({
 }));
 
 import { collectFixableIssues, executeFix } from './fix.js';
+
 import type { FixableIssue } from './fix.js';
 
 function makeIssue(overrides: Partial<Issue> = {}): Issue {
@@ -102,7 +104,9 @@ describe('collectFixableIssues', () => {
   });
 
   it('includes issues that have a fix command', () => {
-    const issue = makeIssue({ fix: { command: 'npm audit fix', description: 'Fix vulnerabilities' } });
+    const issue = makeIssue({
+      fix: { command: 'npm audit fix', description: 'Fix vulnerabilities' },
+    });
     const report = makeReport([makeCheck('npm-audit', [issue])]);
     const result = collectFixableIssues(report);
     expect(result).toHaveLength(1);
@@ -111,8 +115,14 @@ describe('collectFixableIssues', () => {
   });
 
   it('deduplicates issues with the same fix command', () => {
-    const issue1 = makeIssue({ message: 'Issue 1', fix: { command: 'npm install', description: 'Install deps' } });
-    const issue2 = makeIssue({ message: 'Issue 2', fix: { command: 'npm install', description: 'Install deps' } });
+    const issue1 = makeIssue({
+      message: 'Issue 1',
+      fix: { command: 'npm install', description: 'Install deps' },
+    });
+    const issue2 = makeIssue({
+      message: 'Issue 2',
+      fix: { command: 'npm install', description: 'Install deps' },
+    });
     const report = makeReport([makeCheck('deps', [issue1, issue2])]);
     const result = collectFixableIssues(report);
     expect(result).toHaveLength(1);
@@ -121,10 +131,7 @@ describe('collectFixableIssues', () => {
   it('deduplicates across different checks', () => {
     const issue1 = makeIssue({ fix: { command: 'npm install', description: 'Install deps' } });
     const issue2 = makeIssue({ fix: { command: 'npm install', description: 'Install deps' } });
-    const report = makeReport([
-      makeCheck('check-a', [issue1]),
-      makeCheck('check-b', [issue2]),
-    ]);
+    const report = makeReport([makeCheck('check-a', [issue1]), makeCheck('check-b', [issue2])]);
     const result = collectFixableIssues(report);
     expect(result).toHaveLength(1);
   });
@@ -132,18 +139,24 @@ describe('collectFixableIssues', () => {
   it('collects unique commands from multiple checks', () => {
     const issue1 = makeIssue({ fix: { command: 'npm audit fix', description: 'Fix audits' } });
     const issue2 = makeIssue({ fix: { command: 'npm install', description: 'Install deps' } });
-    const report = makeReport([
-      makeCheck('check-a', [issue1]),
-      makeCheck('check-b', [issue2]),
-    ]);
+    const report = makeReport([makeCheck('check-a', [issue1]), makeCheck('check-b', [issue2])]);
     const result = collectFixableIssues(report);
     expect(result).toHaveLength(2);
   });
 
   it('sorts results with critical severity first', () => {
-    const infoIssue = makeIssue({ severity: 'info', fix: { command: 'cmd-info', description: 'info fix' } });
-    const criticalIssue = makeIssue({ severity: 'critical', fix: { command: 'cmd-critical', description: 'critical fix' } });
-    const warningIssue = makeIssue({ severity: 'warning', fix: { command: 'cmd-warning', description: 'warning fix' } });
+    const infoIssue = makeIssue({
+      severity: 'info',
+      fix: { command: 'cmd-info', description: 'info fix' },
+    });
+    const criticalIssue = makeIssue({
+      severity: 'critical',
+      fix: { command: 'cmd-critical', description: 'critical fix' },
+    });
+    const warningIssue = makeIssue({
+      severity: 'warning',
+      fix: { command: 'cmd-warning', description: 'warning fix' },
+    });
     const report = makeReport([makeCheck('multi', [infoIssue, criticalIssue, warningIssue])]);
     const result = collectFixableIssues(report);
     expect(result[0].issue.severity).toBe('critical');

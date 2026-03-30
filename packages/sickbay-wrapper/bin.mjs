@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-import("@nebulord/sickbay");
+import('@nebulord/sickbay');

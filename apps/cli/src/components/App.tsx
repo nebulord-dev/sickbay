@@ -1,15 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Text, useApp } from "ink";
-import Spinner from "ink-spinner";
-import Gradient from "ink-gradient";
-import type { SickbayReport, MonorepoReport, PackageReport } from "@nebulord/sickbay-core";
-import { runSickbay, runSickbayMonorepo } from "@nebulord/sickbay-core";
-import { Header } from "./Header.js";
-import { ProgressList } from "./ProgressList.js";
-import { CheckResultRow } from "./CheckResult.js";
-import { Summary } from "./Summary.js";
-import { QuickWins } from "./QuickWins.js";
-import { LOADING_MESSAGES } from "../lib/messages.js";
+import React, { useState, useEffect, useRef } from 'react';
+
+import { runSickbay, runSickbayMonorepo } from '@nebulord/sickbay-core';
+import { Box, Text, useApp } from 'ink';
+import Gradient from 'ink-gradient';
+import Spinner from 'ink-spinner';
+
+import { LOADING_MESSAGES } from '../lib/messages.js';
+import { CheckResultRow } from './CheckResult.js';
+import { Header } from './Header.js';
+import { ProgressList } from './ProgressList.js';
+import { QuickWins } from './QuickWins.js';
+import { Summary } from './Summary.js';
+
+import type { SickbayReport, MonorepoReport, PackageReport } from '@nebulord/sickbay-core';
 
 interface AppProps {
   projectPath: string;
@@ -21,17 +24,16 @@ interface AppProps {
   isMonorepo?: boolean;
 }
 
-type Phase = "loading" | "results" | "opening-web" | "error";
-
+type Phase = 'loading' | 'results' | 'opening-web' | 'error';
 
 interface ProgressItem {
   name: string;
-  status: "pending" | "running" | "done";
+  status: 'pending' | 'running' | 'done';
 }
 
 function scoreBar(score: number, width = 10): string {
   const filled = Math.round((score / 100) * width);
-  return "█".repeat(filled) + "░".repeat(width - filled);
+  return '█'.repeat(filled) + '░'.repeat(width - filled);
 }
 
 function formatDuration(ms: number): string {
@@ -53,7 +55,7 @@ export function App({
   isMonorepo,
 }: AppProps) {
   const { exit } = useApp();
-  const [phase, setPhase] = useState<Phase>("loading");
+  const [phase, setPhase] = useState<Phase>('loading');
   const [report, setReport] = useState<SickbayReport | null>(null);
   const [monorepoReport, setMonorepoReport] = useState<MonorepoReport | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -97,24 +99,26 @@ export function App({
 
           // Cache dependency tree for web dashboard
           try {
-            const { getDependencyTree } = await import("@nebulord/sickbay-core");
-            const { saveDepTree } = await import("../lib/history.js");
+            const { getDependencyTree } = await import('@nebulord/sickbay-core');
+            const { saveDepTree } = await import('../lib/history.js');
             const packages: Record<string, unknown> = {};
             for (const pkg of r.packages) {
               packages[pkg.name] = await getDependencyTree(pkg.path, r.packageManager);
             }
             saveDepTree(projectPath, { packages });
-          } catch { /* dep tree is optional */ }
+          } catch {
+            /* dep tree is optional */
+          }
 
           if (openWeb) {
-            setPhase("opening-web");
+            setPhase('opening-web');
             try {
-              const { serveWeb } = await import("../commands/web.js");
-              const { default: openBrowser } = await import("open");
+              const { serveWeb } = await import('../commands/web.js');
+              const { default: openBrowser } = await import('open');
 
               let aiService;
               if (enableAI && process.env.ANTHROPIC_API_KEY) {
-                const { createAIService } = await import("../services/ai.js");
+                const { createAIService } = await import('../services/ai.js');
                 aiService = createAIService(process.env.ANTHROPIC_API_KEY);
               }
 
@@ -123,17 +127,17 @@ export function App({
               await openBrowser(url);
             } catch (e) {
               setError(e instanceof Error ? e.message : String(e));
-              setPhase("error");
+              setPhase('error');
               setTimeout(() => exit(), 100);
             }
           } else {
-            setPhase("results");
+            setPhase('results');
             setTimeout(() => exit(), 100);
           }
         })
         .catch((err) => {
           setError(err.message ?? String(err));
-          setPhase("error");
+          setPhase('error');
           setTimeout(() => exit(err), 100);
         });
       return;
@@ -145,21 +149,17 @@ export function App({
       verbose,
       quotes,
       onRunnersReady: (names) => {
-        setProgress(names.map((name) => ({ name, status: "pending" as const })));
+        setProgress(names.map((name) => ({ name, status: 'pending' as const })));
       },
       onCheckStart: (name) => {
-        setProgress((prev) =>
-          prev.map((p) => (p.name === name ? { ...p, status: "running" } : p)),
-        );
+        setProgress((prev) => prev.map((p) => (p.name === name ? { ...p, status: 'running' } : p)));
       },
       onCheckComplete: (result) => {
-        if (result.status === "skipped") {
+        if (result.status === 'skipped') {
           setProgress((prev) => prev.filter((p) => p.name !== result.id));
         } else {
           setProgress((prev) =>
-            prev.map((p) =>
-              p.name === result.id ? { ...p, status: "done" } : p,
-            ),
+            prev.map((p) => (p.name === result.id ? { ...p, status: 'done' } : p)),
           );
         }
       },
@@ -171,7 +171,7 @@ export function App({
 
         // Auto-save to trend history and last-report snapshot
         try {
-          const { saveEntry, saveLastReport } = await import("../lib/history.js");
+          const { saveEntry, saveLastReport } = await import('../lib/history.js');
           saveEntry(r);
           saveLastReport(r);
         } catch {
@@ -180,22 +180,24 @@ export function App({
 
         // Cache dependency tree for web dashboard
         try {
-          const { getDependencyTree } = await import("@nebulord/sickbay-core");
-          const { saveDepTree } = await import("../lib/history.js");
+          const { getDependencyTree } = await import('@nebulord/sickbay-core');
+          const { saveDepTree } = await import('../lib/history.js');
           const tree = await getDependencyTree(projectPath, r.projectInfo.packageManager);
           saveDepTree(projectPath, tree);
-        } catch { /* dep tree is optional, don't break the scan */ }
+        } catch {
+          /* dep tree is optional, don't break the scan */
+        }
 
         if (openWeb) {
-          setPhase("opening-web");
+          setPhase('opening-web');
           try {
-            const { serveWeb } = await import("../commands/web.js");
-            const { default: openBrowser } = await import("open");
+            const { serveWeb } = await import('../commands/web.js');
+            const { default: openBrowser } = await import('open');
 
             // Create AI service if enabled and API key exists
             let aiService;
             if (enableAI && process.env.ANTHROPIC_API_KEY) {
-              const { createAIService } = await import("../services/ai.js");
+              const { createAIService } = await import('../services/ai.js');
               aiService = createAIService(process.env.ANTHROPIC_API_KEY);
             }
 
@@ -204,19 +206,19 @@ export function App({
             await openBrowser(url);
           } catch (e) {
             setError(e instanceof Error ? e.message : String(e));
-            setPhase("error");
+            setPhase('error');
             setTimeout(() => exit(), 100);
             return;
           }
           // Keep process alive — user closes with Ctrl+C
         } else {
-          setPhase("results");
+          setPhase('results');
           setTimeout(() => exit(), 100);
         }
       })
       .catch((err) => {
         setError(err.message ?? String(err));
-        setPhase("error");
+        setPhase('error');
         setTimeout(() => exit(err), 100);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -226,12 +228,14 @@ export function App({
     <Box flexDirection="column" padding={1}>
       <Header projectName={projectName} />
 
-      {phase === "loading" && (
+      {phase === 'loading' && (
         <Box flexDirection="column">
           {isMonorepo ? (
             <Box flexDirection="column">
               <Box>
-                <Text color="magenta"><Spinner type="dots" /></Text>
+                <Text color="magenta">
+                  <Spinner type="dots" />
+                </Text>
                 <Text dimColor> {LOADING_MESSAGES[loadingMsgIdx]}</Text>
               </Box>
               {scanningPackage && (
@@ -252,21 +256,23 @@ export function App({
         </Box>
       )}
 
-      {phase === "error" && (
+      {phase === 'error' && (
         <Box>
           <Text color="red">✗ Error: {error}</Text>
         </Box>
       )}
 
-      {phase === "results" && monorepoReport && (
+      {phase === 'results' && monorepoReport && (
         <MonorepoSummaryTable report={monorepoReport} scanDuration={scanDuration} />
       )}
 
-      {phase === "results" && report && (
+      {phase === 'results' && report && (
         <Box flexDirection="column">
-          {report.checks.filter((c) => c.status !== "skipped").map((check) => (
-            <CheckResultRow key={check.id} result={check} />
-          ))}
+          {report.checks
+            .filter((c) => c.status !== 'skipped')
+            .map((check) => (
+              <CheckResultRow key={check.id} result={check} />
+            ))}
           <Summary report={report} scanDuration={scanDuration} />
           <QuickWins report={report} />
           <Box marginTop={1}>
@@ -276,15 +282,17 @@ export function App({
         </Box>
       )}
 
-      {phase === "opening-web" && (monorepoReport ?? report) && (
+      {phase === 'opening-web' && (monorepoReport ?? report) && (
         <Box flexDirection="column">
           {monorepoReport ? (
             <MonorepoSummaryTable report={monorepoReport} scanDuration={scanDuration} />
           ) : report ? (
             <>
-              {report.checks.filter((c) => c.status !== "skipped").map((check) => (
-                <CheckResultRow key={check.id} result={check} />
-              ))}
+              {report.checks
+                .filter((c) => c.status !== 'skipped')
+                .map((check) => (
+                  <CheckResultRow key={check.id} result={check} />
+                ))}
               <Summary report={report} scanDuration={scanDuration} />
             </>
           ) : null}
@@ -299,10 +307,8 @@ export function App({
               <Text>
                 <Text color="magenta">
                   <Spinner type="dots" />
-                </Text>{" "}
-                <Gradient name="retro">
-                  Launching dashboard with AI insights...
-                </Gradient>
+                </Text>{' '}
+                <Gradient name="retro">Launching dashboard with AI insights...</Gradient>
               </Text>
             )}
           </Box>
@@ -312,9 +318,14 @@ export function App({
   );
 }
 
-function MonorepoSummaryTable({ report, scanDuration }: { report: MonorepoReport; scanDuration: number | null }) {
-  const scoreColor = (score: number) =>
-    score >= 80 ? "green" : score >= 60 ? "yellow" : "red";
+function MonorepoSummaryTable({
+  report,
+  scanDuration,
+}: {
+  report: MonorepoReport;
+  scanDuration: number | null;
+}) {
+  const scoreColor = (score: number) => (score >= 80 ? 'green' : score >= 60 ? 'yellow' : 'red');
 
   return (
     <Box flexDirection="column">
@@ -326,17 +337,19 @@ function MonorepoSummaryTable({ report, scanDuration }: { report: MonorepoReport
       {report.packages.map((pkg: PackageReport) => (
         <Box key={pkg.path} marginLeft={2} gap={1}>
           <Text color={scoreColor(pkg.score)}>{scoreBar(pkg.score)}</Text>
-          <Text bold color={scoreColor(pkg.score)}>{String(pkg.score).padStart(3)}</Text>
+          <Text bold color={scoreColor(pkg.score)}>
+            {String(pkg.score).padStart(3)}
+          </Text>
           <Text>{pkg.name}</Text>
           <Text dimColor>{pkg.framework}</Text>
-          {pkg.summary.critical > 0 && (
-            <Text color="red">  {pkg.summary.critical} critical</Text>
-          )}
+          {pkg.summary.critical > 0 && <Text color="red"> {pkg.summary.critical} critical</Text>}
         </Box>
       ))}
       <Box marginTop={1} gap={2}>
         <Text bold>Overall: </Text>
-        <Text color={scoreColor(report.overallScore)} bold>{report.overallScore}</Text>
+        <Text color={scoreColor(report.overallScore)} bold>
+          {report.overallScore}
+        </Text>
         <Text dimColor>· </Text>
         <Text color="red">{report.summary.critical} critical</Text>
         <Text dimColor>· </Text>
@@ -350,7 +363,9 @@ function MonorepoSummaryTable({ report, scanDuration }: { report: MonorepoReport
       </Box>
       {report.quote && (
         <Box marginTop={1}>
-          <Text italic dimColor>"{report.quote.text}"</Text>
+          <Text italic dimColor>
+            "{report.quote.text}"
+          </Text>
           <Text dimColor> — {report.quote.source}</Text>
         </Box>
       )}

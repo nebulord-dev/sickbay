@@ -7,6 +7,7 @@ npx sickbay --path ~/my-project
 ```
 
 Sickbay will:
+
 1. Detect your project type (React, Node, etc.)
 2. Run all applicable health checks in parallel
 3. Display animated progress in the terminal
@@ -15,6 +16,7 @@ Sickbay will:
 ## Read the Output
 
 Each check shows:
+
 - **Score** (0-100) with a color-coded bar (green 80+, yellow 60-79, red below 60)
 - **Issue count** by severity (critical, warning, info)
 - **Quick wins** — the most impactful fixes you can make right now
@@ -28,6 +30,7 @@ npx sickbay --path ~/my-project --web
 ```
 
 The `--web` flag starts a local server and opens a rich browser dashboard with:
+
 - Score cards for every check
 - Filterable and sortable issues list
 - Dependency graph visualization

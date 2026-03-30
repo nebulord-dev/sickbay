@@ -1,16 +1,24 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import { ChatDrawer } from './ChatDrawer.js';
+
 import type { SickbayReport } from '@nebulord/sickbay-core';
 
 const mockReport: SickbayReport = {
   timestamp: '2024-01-01T00:00:00.000Z',
   projectPath: '/test',
   projectInfo: {
-    name: 'test-project', version: '1.0.0', framework: 'react',
-    packageManager: 'npm', totalDependencies: 5,
-    dependencies: {}, devDependencies: {},
-    hasESLint: false, hasPrettier: false, hasTypeScript: true,
+    name: 'test-project',
+    version: '1.0.0',
+    framework: 'react',
+    packageManager: 'npm',
+    totalDependencies: 5,
+    dependencies: {},
+    devDependencies: {},
+    hasESLint: false,
+    hasPrettier: false,
+    hasTypeScript: true,
   },
   overallScore: 80,
   summary: { critical: 0, warnings: 0, info: 0 },

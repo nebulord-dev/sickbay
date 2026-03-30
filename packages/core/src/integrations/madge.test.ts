@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { MadgeRunner } from './madge.js';
 
 vi.mock('execa', () => ({
@@ -20,6 +21,7 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 import { execa } from 'execa';
+
 import { isCommandAvailable, fileExists } from '../utils/file-helpers.js';
 
 const mockExeca = vi.mocked(execa);
@@ -48,7 +50,11 @@ describe('MadgeRunner', () => {
     mockIsAvailable.mockResolvedValue(true);
     mockFileExists.mockReturnValue(false);
     mockExeca.mockResolvedValue({
-      stdout: JSON.stringify({ 'src/a.ts': ['src/b.ts'], 'src/b.ts': ['src/c.ts'], 'src/c.ts': [] }),
+      stdout: JSON.stringify({
+        'src/a.ts': ['src/b.ts'],
+        'src/b.ts': ['src/c.ts'],
+        'src/c.ts': [],
+      }),
     } as never);
 
     const result = await runner.run('/project');

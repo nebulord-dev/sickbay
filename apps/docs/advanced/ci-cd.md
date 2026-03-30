@@ -87,16 +87,16 @@ jobs:
 Use `sickbay diff` to compare the current branch against the main branch and catch regressions:
 
 ```yaml
-      - name: Compare against main
-        run: npx sickbay diff main --json > sickbay-diff.json
+- name: Compare against main
+  run: npx sickbay diff main --json > sickbay-diff.json
 
-      - name: Check for regressions
-        run: |
-          DELTA=$(jq '.scoreDelta' sickbay-diff.json)
-          if [ "$(echo "$DELTA < -5" | bc)" -eq 1 ]; then
-            echo "::error::Health score dropped by $DELTA points"
-            exit 1
-          fi
+- name: Check for regressions
+  run: |
+    DELTA=$(jq '.scoreDelta' sickbay-diff.json)
+    if [ "$(echo "$DELTA < -5" | bc)" -eq 1 ]; then
+      echo "::error::Health score dropped by $DELTA points"
+      exit 1
+    fi
 ```
 
 This scans the current working tree, then compares the result against the last report saved on the `main` branch.

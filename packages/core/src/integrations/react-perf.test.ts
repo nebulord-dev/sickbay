@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { ReactPerfRunner } from './react-perf.js';
 
 vi.mock('fs', () => ({
@@ -275,9 +276,7 @@ describe('ReactPerfRunner', () => {
       ].join('\n');
 
       // First readFileSync call is package.json, second is the component file
-      mockReadFileSync
-        .mockReturnValueOnce(pkg as never)
-        .mockReturnValue(content as never);
+      mockReadFileSync.mockReturnValueOnce(pkg as never).mockReturnValue(content as never);
       mockReaddirSync.mockReturnValue(['MyComponent.tsx'] as never);
       mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
 
@@ -300,9 +299,7 @@ describe('ReactPerfRunner', () => {
         '}',
       ].join('\n');
 
-      mockReadFileSync
-        .mockReturnValueOnce(pkg as never)
-        .mockReturnValue(content as never);
+      mockReadFileSync.mockReturnValueOnce(pkg as never).mockReturnValue(content as never);
       mockReaddirSync.mockReturnValue(['MyList.tsx'] as never);
       mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
 
@@ -321,9 +318,7 @@ describe('ReactPerfRunner', () => {
         'export function MyComponent() { return <div style={{ color: "red" }} />; }',
       ].join('\n');
 
-      mockReadFileSync
-        .mockReturnValueOnce(pkg as never)
-        .mockReturnValue(content as never);
+      mockReadFileSync.mockReturnValueOnce(pkg as never).mockReturnValue(content as never);
       mockReaddirSync.mockReturnValue(['MyComponent.tsx'] as never);
       mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
 

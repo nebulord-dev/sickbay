@@ -1,4 +1,5 @@
 import { execa } from 'execa';
+
 import type { ProjectInfo } from '../types.js';
 
 export interface DependencyTreeNode {
@@ -18,9 +19,7 @@ export interface MonorepoDependencyTree {
   packages: Record<string, DependencyTree>;
 }
 
-function normalizeDeps(
-  raw: Record<string, any> | undefined,
-): Record<string, DependencyTreeNode> {
+function normalizeDeps(raw: Record<string, any> | undefined): Record<string, DependencyTreeNode> {
   if (!raw) return {};
   const result: Record<string, DependencyTreeNode> = {};
   for (const [name, info] of Object.entries(raw)) {

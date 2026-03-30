@@ -1,6 +1,8 @@
-import React from "react";
-import { Box, Text } from "ink";
-import type { MonorepoReport, PackageReport } from "@nebulord/sickbay-core";
+import React from 'react';
+
+import { Box, Text } from 'ink';
+
+import type { MonorepoReport, PackageReport } from '@nebulord/sickbay-core';
 
 interface MonorepoPanelProps {
   report: MonorepoReport | null;
@@ -9,13 +11,13 @@ interface MonorepoPanelProps {
 
 function scoreBar(score: number, width = 8): string {
   const filled = Math.round((score / 100) * width);
-  return "█".repeat(filled) + "░".repeat(width - filled);
+  return '█'.repeat(filled) + '░'.repeat(width - filled);
 }
 
 function scoreColor(score: number): string {
-  if (score >= 80) return "green";
-  if (score >= 60) return "yellow";
-  return "red";
+  if (score >= 80) return 'green';
+  if (score >= 60) return 'yellow';
+  return 'red';
 }
 
 export function MonorepoPanel({ report, availableWidth }: MonorepoPanelProps) {
@@ -27,10 +29,7 @@ export function MonorepoPanel({ report, availableWidth }: MonorepoPanelProps) {
     );
   }
 
-  const nameWidth = Math.max(
-    12,
-    Math.min(20, (availableWidth ?? 36) - 22),
-  );
+  const nameWidth = Math.max(12, Math.min(20, (availableWidth ?? 36) - 22));
 
   return (
     <Box flexDirection="column">
@@ -46,12 +45,10 @@ export function MonorepoPanel({ report, availableWidth }: MonorepoPanelProps) {
       </Box>
 
       {report.packages.map((pkg: PackageReport) => {
-        const name = pkg.name.includes("/")
-          ? pkg.name.split("/").pop() ?? pkg.name
-          : pkg.name;
+        const name = pkg.name.includes('/') ? (pkg.name.split('/').pop() ?? pkg.name) : pkg.name;
         const truncatedName =
           name.length > nameWidth
-            ? name.slice(0, nameWidth - 1) + "\u2026"
+            ? name.slice(0, nameWidth - 1) + '\u2026'
             : name.padEnd(nameWidth);
 
         return (
@@ -61,9 +58,7 @@ export function MonorepoPanel({ report, availableWidth }: MonorepoPanelProps) {
               {String(pkg.score).padStart(3)}
             </Text>
             <Text>{truncatedName}</Text>
-            {pkg.summary.critical > 0 && (
-              <Text color="red"> ⚠</Text>
-            )}
+            {pkg.summary.critical > 0 && <Text color="red"> ⚠</Text>}
           </Box>
         );
       })}

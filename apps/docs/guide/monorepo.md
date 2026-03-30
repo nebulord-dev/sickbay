@@ -6,14 +6,14 @@ Sickbay has first-class support for JavaScript and TypeScript monorepos. When yo
 
 Sickbay detects monorepos by looking for workspace configuration files at the project root.
 
-| Tool | Detection File |
-|------|---------------|
-| **pnpm** | `pnpm-workspace.yaml` |
-| **npm** | `package.json` with `workspaces` field |
-| **Yarn** | `package.json` with `workspaces` field |
-| **Turbo** | `turbo.json` |
-| **Nx** | `nx.json` |
-| **Lerna** | `lerna.json` |
+| Tool      | Detection File                         |
+| --------- | -------------------------------------- |
+| **pnpm**  | `pnpm-workspace.yaml`                  |
+| **npm**   | `package.json` with `workspaces` field |
+| **Yarn**  | `package.json` with `workspaces` field |
+| **Turbo** | `turbo.json`                           |
+| **Nx**    | `nx.json`                              |
+| **Lerna** | `lerna.json`                           |
 
 If multiple workspace tools are present (e.g., pnpm workspaces + Turbo), Sickbay uses the package manager workspace config to discover packages and respects the build orchestrator for ordering.
 
@@ -26,6 +26,7 @@ sickbay --path ~/my-monorepo
 ```
 
 Sickbay will:
+
 1. Detect the workspace tool and enumerate all packages
 2. Run health checks against each package individually
 3. Aggregate results into a combined report
@@ -57,14 +58,14 @@ Package "web-app" not found in monorepo
 
 Every Sickbay subcommand works with monorepos out of the box. When run from a monorepo root without `--package`, each command operates across all packages:
 
-| Command | Monorepo Behavior |
-|---------|-------------------|
-| `sickbay` (scan) | Scans all packages, shows combined report |
-| `sickbay fix` | Offers fixes across all packages |
-| `sickbay stats` | Shows stats for each package |
-| `sickbay trend` | Displays trend data per package |
-| `sickbay doctor` | Diagnoses setup issues across all packages |
-| `sickbay badge` | Generates badge from overall monorepo score |
+| Command          | Monorepo Behavior                           |
+| ---------------- | ------------------------------------------- |
+| `sickbay` (scan) | Scans all packages, shows combined report   |
+| `sickbay fix`    | Offers fixes across all packages            |
+| `sickbay stats`  | Shows stats for each package                |
+| `sickbay trend`  | Displays trend data per package             |
+| `sickbay doctor` | Diagnoses setup issues across all packages  |
+| `sickbay badge`  | Generates badge from overall monorepo score |
 
 All of these accept `--package <name>` to scope to a single package.
 
@@ -77,6 +78,7 @@ sickbay --path ~/my-monorepo --web
 ```
 
 Dashboard features in monorepo mode:
+
 - **Package sidebar** — navigate between packages
 - **Aggregate overview** — combined score and issue counts
 - **Per-package drill-down** — individual scores, issues, and quick wins

@@ -4,36 +4,69 @@
     { "text": "I'm a doctor, not a miracle worker!", "source": "Dr. McCoy" },
     { "text": "It's worse than that. He's really dead, Jim.", "source": "Dr. McCoy" },
     { "text": "Please state the nature of the medical emergency.", "source": "The Doctor" },
-    { "text": "I swear, this project is held together with spit and baling wire.", "source": "Dr. McCoy" },
+    {
+      "text": "I swear, this project is held together with spit and baling wire.",
+      "source": "Dr. McCoy"
+    },
     { "text": "If we don't operate immediately, the patient will die.", "source": "Dr. Crusher" },
-    { "text": "I'm going to have to ask you to get the hell out of my sickbay.", "source": "T'Ana" },
-    { "text": "What you're describing is medically impossible, yet here we are.", "source": "Dr. Bashir" },
+    {
+      "text": "I'm going to have to ask you to get the hell out of my sickbay.",
+      "source": "T'Ana"
+    },
+    {
+      "text": "What you're describing is medically impossible, yet here we are.",
+      "source": "Dr. Bashir"
+    },
     { "text": "The patient is coding! Clear the area!", "source": "Dr. Crusher" },
     { "text": "This isn't a patient, it's a catastrophe with a pulse.", "source": "T'Ana" }
   ],
   "warning": [
     { "text": "I'm a doctor, not an engineer!", "source": "Dr. McCoy" },
     { "text": "You're not seriously going to deploy this, are you?", "source": "The Doctor" },
-    { "text": "I don't have a magic wand. I need time and proper resources.", "source": "Dr. Crusher" },
-    { "text": "I would advise caution, Captain. The readings are... concerning.", "source": "Dr. Bashir" },
+    {
+      "text": "I don't have a magic wand. I need time and proper resources.",
+      "source": "Dr. Crusher"
+    },
+    {
+      "text": "I would advise caution, Captain. The readings are... concerning.",
+      "source": "Dr. Bashir"
+    },
     { "text": "In my medical opinion, this needs bed rest. A lot of it.", "source": "Dr. McCoy" },
-    { "text": "The patient will survive, but I wouldn't call this thriving.", "source": "The Doctor" },
-    { "text": "Optimism is wonderful, but have you looked at these charts?", "source": "Dr. Phlox" },
+    {
+      "text": "The patient will survive, but I wouldn't call this thriving.",
+      "source": "The Doctor"
+    },
+    {
+      "text": "Optimism is wonderful, but have you looked at these charts?",
+      "source": "Dr. Phlox"
+    },
     { "text": "I've seen healthier-looking specimens in the morgue.", "source": "T'Ana" },
-    { "text": "The prognosis is guarded. I'd recommend close monitoring.", "source": "Dr. Crusher" },
-    { "text": "I must say, I've treated Klingon targs in better shape than this.", "source": "Dr. Bashir" }
+    {
+      "text": "The prognosis is guarded. I'd recommend close monitoring.",
+      "source": "Dr. Crusher"
+    },
+    {
+      "text": "I must say, I've treated Klingon targs in better shape than this.",
+      "source": "Dr. Bashir"
+    }
   ],
   "info": [
     { "text": "I'm a doctor, not a DevOps engineer.", "source": "Dr. McCoy" },
     { "text": "The prognosis is... acceptable.", "source": "The Doctor" },
     { "text": "A little suffering is good for the soul.", "source": "Dr. McCoy" },
-    { "text": "I've noticed some minor irregularities, but nothing life-threatening.", "source": "Dr. Crusher" },
+    {
+      "text": "I've noticed some minor irregularities, but nothing life-threatening.",
+      "source": "Dr. Crusher"
+    },
     { "text": "Fascinating. From a medical perspective, of course.", "source": "Dr. Bashir" },
     { "text": "I find the resilience of this organism quite remarkable!", "source": "Dr. Phlox" },
     { "text": "My diagnosis: mildly irritating, but you'll live.", "source": "T'Ana" },
     { "text": "I've noted some areas for improvement in my medical log.", "source": "The Doctor" },
     { "text": "You're in fair health, but don't let that go to your head.", "source": "Dr. McCoy" },
-    { "text": "The patient is stable, though I'd like to run a few more scans.", "source": "Dr. Phlox" }
+    {
+      "text": "The patient is stable, though I'd like to run a few more scans.",
+      "source": "Dr. Phlox"
+    }
   ],
   "allClear": [
     { "text": "Vital signs are stable. For now.", "source": "Dr. McCoy" },
@@ -41,10 +74,19 @@
     { "text": "I must say, I'm impressed. Don't let it happen again.", "source": "The Doctor" },
     { "text": "Well, would you look at that. A clean bill of health.", "source": "Dr. Crusher" },
     { "text": "I'm not sure what you did, but keep doing it.", "source": "T'Ana" },
-    { "text": "For once, I have nothing to complain about. Medically speaking.", "source": "Dr. McCoy" },
+    {
+      "text": "For once, I have nothing to complain about. Medically speaking.",
+      "source": "Dr. McCoy"
+    },
     { "text": "The patient is in remarkable condition. Textbook, even.", "source": "Dr. Bashir" },
-    { "text": "This calls for a celebration! Perhaps a nice Denobulan sausage.", "source": "Dr. Phlox" },
-    { "text": "All systems nominal. I almost don't know what to do with myself.", "source": "The Doctor" },
+    {
+      "text": "This calls for a celebration! Perhaps a nice Denobulan sausage.",
+      "source": "Dr. Phlox"
+    },
+    {
+      "text": "All systems nominal. I almost don't know what to do with myself.",
+      "source": "The Doctor"
+    },
     { "text": "Full marks. Now get out of my sickbay before something breaks.", "source": "T'Ana" }
   ]
 }

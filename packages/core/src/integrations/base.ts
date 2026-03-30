@@ -1,5 +1,13 @@
-import type { CheckResult, Framework, ProjectContext, Runtime, RunOptions, ToolRunner } from '../types.js';
 import { timer } from '../utils/file-helpers.js';
+
+import type {
+  CheckResult,
+  Framework,
+  ProjectContext,
+  Runtime,
+  RunOptions,
+  ToolRunner,
+} from '../types.js';
 
 export abstract class BaseRunner implements ToolRunner {
   abstract name: string;

@@ -1,5 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk";
-import type { SickbayReport } from "@nebulord/sickbay-core";
+import Anthropic from '@anthropic-ai/sdk';
+
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 /**
  * AIService provides methods to generate a natural language summary of the Sickbay report and to engage in a chat conversation about the report.
@@ -11,7 +12,7 @@ export interface AIService {
   chat(
     message: string,
     report: SickbayReport,
-    history: Array<{ role: "user" | "assistant"; content: string }>,
+    history: Array<{ role: 'user' | 'assistant'; content: string }>,
   ): Promise<string>;
 }
 
@@ -39,21 +40,19 @@ Report:
 ${JSON.stringify(report, null, 2)}`;
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 600,
-      messages: [{ role: "user", content: prompt }],
+      messages: [{ role: 'user', content: prompt }],
     });
 
-    const textBlock = response.content.find((block) => block.type === "text");
-    return textBlock && "text" in textBlock
-      ? textBlock.text
-      : "Unable to generate summary.";
+    const textBlock = response.content.find((block) => block.type === 'text');
+    return textBlock && 'text' in textBlock ? textBlock.text : 'Unable to generate summary.';
   }
 
   async function chat(
     message: string,
     report: SickbayReport,
-    history: Array<{ role: "user" | "assistant"; content: string }>,
+    history: Array<{ role: 'user' | 'assistant'; content: string }>,
   ): Promise<string> {
     const systemPrompt = `You are an expert code health assistant analyzing a project's Sickbay report.
 
@@ -69,23 +68,21 @@ Answer questions clearly and concisely. Reference specific checks, scores, and i
 
     const messages = [
       ...history.map((h) => ({
-        role: h.role as "user" | "assistant",
+        role: h.role as 'user' | 'assistant',
         content: h.content,
       })),
-      { role: "user" as const, content: message },
+      { role: 'user' as const, content: message },
     ];
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 1000,
       system: systemPrompt,
       messages,
     });
 
-    const textBlock = response.content.find((block) => block.type === "text");
-    return textBlock && "text" in textBlock
-      ? textBlock.text
-      : "Unable to generate response.";
+    const textBlock = response.content.find((block) => block.type === 'text');
+    return textBlock && 'text' in textBlock ? textBlock.text : 'Unable to generate response.';
   }
 
   return { generateSummary, chat };

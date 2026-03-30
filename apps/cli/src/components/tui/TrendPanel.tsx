@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Box, Text } from "ink";
-import { loadHistory } from "../../lib/history.js";
-import { sparkline, trendArrow } from "../../commands/trend.js";
+import React, { useState, useEffect } from 'react';
+
+import { Box, Text } from 'ink';
+
+import { sparkline, trendArrow } from '../../commands/trend.js';
+import { loadHistory } from '../../lib/history.js';
 
 interface TrendPanelProps {
   projectPath: string;
@@ -10,27 +12,23 @@ interface TrendPanelProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  overall: "white",
-  dependencies: "blue",
-  security: "green",
-  "code-quality": "yellow",
-  performance: "magenta",
-  git: "cyan",
+  overall: 'white',
+  dependencies: 'blue',
+  security: 'green',
+  'code-quality': 'yellow',
+  performance: 'magenta',
+  git: 'cyan',
 };
 
 const SHORT_LABELS: Record<string, string> = {
-  dependencies: "Deps",
-  security: "Security",
-  "code-quality": "Quality",
-  performance: "Perf",
-  git: "Git",
+  dependencies: 'Deps',
+  security: 'Security',
+  'code-quality': 'Quality',
+  performance: 'Perf',
+  git: 'Git',
 };
 
-export function TrendPanel({
-  projectPath,
-  lastScanTime,
-  availableHeight,
-}: TrendPanelProps) {
+export function TrendPanel({ projectPath, lastScanTime, availableHeight }: TrendPanelProps) {
   const [trends, setTrends] = useState<
     Array<{
       label: string;
@@ -54,11 +52,11 @@ export function TrendPanel({
 
     const result: typeof trends = [
       {
-        label: "Overall",
+        label: 'Overall',
         spark: sparkline(overallValues),
         latest: overallValues[overallValues.length - 1],
         arrow: overallArrow.label,
-        color: "white",
+        color: 'white',
       },
     ];
 
@@ -76,7 +74,7 @@ export function TrendPanel({
         spark: sparkline(values),
         latest: values[values.length - 1],
         arrow: arrow.label,
-        color: CATEGORY_COLORS[cat] || "white",
+        color: CATEGORY_COLORS[cat] || 'white',
       });
     }
 

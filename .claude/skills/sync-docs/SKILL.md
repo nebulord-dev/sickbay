@@ -28,19 +28,19 @@ If $ARGUMENTS specifies a commit range or number of commits, use that. Otherwise
 
 For each changed file or area, determine what kind of change it is:
 
-| Change type | Triggers doc update in... |
-|-------------|--------------------------|
-| New check runner added | `CONTRIBUTING.md` (pattern), `README.md` (check table), package `core/README.md` |
-| New CLI command or flag | `CONTRIBUTING.md`, `README.md` (CLI usage), `packages/cli/README.md` |
-| New fixture added | `fixtures/README.md`, `CONTRIBUTING.md` (if convention changed) |
-| Fixture restructured | `fixtures/README.md`, `CONTRIBUTING.md` |
-| New architectural pattern | `CLAUDE.md`, `CONTRIBUTING.md` |
-| Types changed (`types.ts`) | `packages/core/README.md` (API section) |
-| Scoring weights changed | `README.md` (scoring table), `packages/core/README.md` |
-| New web component or tab | `packages/web/README.md` |
-| New TUI panel or hotkey | `packages/cli/README.md` (TUI section) |
-| Build/tooling change | `CONTRIBUTING.md` (dev workflow), `README.md` |
-| New kanban tasks added | No doc update needed — kanban is self-documenting |
+| Change type                | Triggers doc update in...                                                        |
+| -------------------------- | -------------------------------------------------------------------------------- |
+| New check runner added     | `CONTRIBUTING.md` (pattern), `README.md` (check table), package `core/README.md` |
+| New CLI command or flag    | `CONTRIBUTING.md`, `README.md` (CLI usage), `packages/cli/README.md`             |
+| New fixture added          | `fixtures/README.md`, `CONTRIBUTING.md` (if convention changed)                  |
+| Fixture restructured       | `fixtures/README.md`, `CONTRIBUTING.md`                                          |
+| New architectural pattern  | `CLAUDE.md`, `CONTRIBUTING.md`                                                   |
+| Types changed (`types.ts`) | `packages/core/README.md` (API section)                                          |
+| Scoring weights changed    | `README.md` (scoring table), `packages/core/README.md`                           |
+| New web component or tab   | `packages/web/README.md`                                                         |
+| New TUI panel or hotkey    | `packages/cli/README.md` (TUI section)                                           |
+| Build/tooling change       | `CONTRIBUTING.md` (dev workflow), `README.md`                                    |
+| New kanban tasks added     | No doc update needed — kanban is self-documenting                                |
 
 ### Step 3: Read the Potentially Affected Docs
 

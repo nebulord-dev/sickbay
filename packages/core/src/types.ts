@@ -24,7 +24,18 @@ export interface ProjectInfo {
   hasTypeScript: boolean;
   hasESLint: boolean;
   hasPrettier: boolean;
-  framework: 'react' | 'next' | 'vite' | 'cra' | 'express' | 'fastify' | 'koa' | 'hapi' | 'node' | 'hono' | 'unknown';
+  framework:
+    | 'react'
+    | 'next'
+    | 'vite'
+    | 'cra'
+    | 'express'
+    | 'fastify'
+    | 'koa'
+    | 'hapi'
+    | 'node'
+    | 'hono'
+    | 'unknown';
   packageManager: 'npm' | 'pnpm' | 'yarn' | 'bun';
   totalDependencies: number;
   dependencies: Record<string, string>;
@@ -34,7 +45,13 @@ export interface ProjectInfo {
 
 export interface CheckResult {
   id: string;
-  category: 'dependencies' | 'performance' | 'code-quality' | 'security' | 'git' | 'unknown-category';
+  category:
+    | 'dependencies'
+    | 'performance'
+    | 'code-quality'
+    | 'security'
+    | 'git'
+    | 'unknown-category';
   name: string;
   score: number;
   status: 'pass' | 'warning' | 'fail' | 'skipped';

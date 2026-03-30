@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Box, Text, useApp } from "ink";
-import Spinner from "ink-spinner";
-import { Header } from "./Header.js";
-import { gatherStats, type ProjectStats } from "../commands/stats.js";
-import { shortName } from "../lib/resolve-package.js";
+import React, { useState, useEffect } from 'react';
+
+import { Box, Text, useApp } from 'ink';
+import Spinner from 'ink-spinner';
+
+import { gatherStats, type ProjectStats } from '../commands/stats.js';
+import { shortName } from '../lib/resolve-package.js';
+import { Header } from './Header.js';
 
 interface StatsAppProps {
   projectPath: string;
@@ -20,28 +22,20 @@ interface PackageStats {
 }
 
 const FRAMEWORK_LABELS: Record<string, string> = {
-  next: "Next.js",
-  vite: "Vite",
-  cra: "Create React App",
-  react: "React",
-  unknown: "Unknown",
+  next: 'Next.js',
+  vite: 'Vite',
+  cra: 'Create React App',
+  react: 'React',
+  unknown: 'Unknown',
 };
 
 const PM_LABELS: Record<string, string> = {
-  npm: "npm",
-  pnpm: "pnpm",
-  yarn: "Yarn",
+  npm: 'npm',
+  pnpm: 'pnpm',
+  yarn: 'Yarn',
 };
 
-function StatRow({
-  label,
-  value,
-  dimValue,
-}: {
-  label: string;
-  value: string;
-  dimValue?: string;
-}) {
+function StatRow({ label, value, dimValue }: { label: string; value: string; dimValue?: string }) {
   return (
     <Box>
       <Text dimColor>{label.padEnd(18)}</Text>
@@ -55,24 +49,24 @@ function formatExtBreakdown(byExtension: Record<string, number>): string {
   const sorted = Object.entries(byExtension)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6);
-  return sorted.map(([ext, count]) => `${ext}: ${count}`).join(", ");
+  return sorted.map(([ext, count]) => `${ext}: ${count}`).join(', ');
 }
 
-function ToolBadges({ project }: { project: ProjectStats["project"] }) {
+function ToolBadges({ project }: { project: ProjectStats['project'] }) {
   const badges: Array<{ label: string; active: boolean }> = [
-    { label: "TypeScript", active: project.hasTypeScript },
-    { label: "ESLint", active: project.hasESLint },
-    { label: "Prettier", active: project.hasPrettier },
+    { label: 'TypeScript', active: project.hasTypeScript },
+    { label: 'ESLint', active: project.hasESLint },
+    { label: 'Prettier', active: project.hasPrettier },
   ];
 
   return (
     <Box>
-      <Text dimColor>{"Tooling".padEnd(18)}</Text>
+      <Text dimColor>{'Tooling'.padEnd(18)}</Text>
       {badges.map((b, i) => (
         <React.Fragment key={b.label}>
           {i > 0 && <Text dimColor> </Text>}
-          <Text color={b.active ? "green" : "red"}>
-            {b.active ? "✓" : "✗"} {b.label}
+          <Text color={b.active ? 'green' : 'red'}>
+            {b.active ? '✓' : '✗'} {b.label}
           </Text>
         </React.Fragment>
       ))}
@@ -81,31 +75,16 @@ function ToolBadges({ project }: { project: ProjectStats["project"] }) {
 }
 
 function SingleProjectStats({ stats }: { stats: ProjectStats }) {
-  const {
-    project,
-    files,
-    lines,
-    components,
-    dependencies,
-    git,
-    testFiles,
-    sourceSize,
-  } = stats;
+  const { project, files, lines, components, dependencies, git, testFiles, sourceSize } = stats;
 
-  const frameworkLabel =
-    FRAMEWORK_LABELS[project.framework] ?? project.framework;
+  const frameworkLabel = FRAMEWORK_LABELS[project.framework] ?? project.framework;
   const techStack = [frameworkLabel];
   if (project.hasTypeScript) {
-    const tsVersion = { ...project.dependencies, ...project.devDependencies }[
-      "typescript"
-    ];
-    techStack.push(
-      `TypeScript${tsVersion ? ` ${tsVersion.replace("^", "")}` : ""}`,
-    );
+    const tsVersion = { ...project.dependencies, ...project.devDependencies }['typescript'];
+    techStack.push(`TypeScript${tsVersion ? ` ${tsVersion.replace('^', '')}` : ''}`);
   }
 
-  const reactVersion =
-    project.dependencies["react"] ?? project.devDependencies["react"];
+  const reactVersion = project.dependencies['react'] ?? project.devDependencies['react'];
 
   return (
     <Box flexDirection="column">
@@ -113,11 +92,7 @@ function SingleProjectStats({ stats }: { stats: ProjectStats }) {
         <StatRow
           label="Framework"
           value={frameworkLabel}
-          dimValue={
-            reactVersion
-              ? `(React ${reactVersion.replace("^", "")})`
-              : undefined
-          }
+          dimValue={reactVersion ? `(React ${reactVersion.replace('^', '')})` : undefined}
         />
         <StatRow
           label="Package Manager"
@@ -127,7 +102,7 @@ function SingleProjectStats({ stats }: { stats: ProjectStats }) {
       </Box>
 
       <Box marginTop={1} marginLeft={2} flexDirection="column">
-        <Text dimColor>{"━".repeat(48)}</Text>
+        <Text dimColor>{'━'.repeat(48)}</Text>
       </Box>
 
       <Box flexDirection="column" marginTop={1} marginLeft={2}>
@@ -149,7 +124,7 @@ function SingleProjectStats({ stats }: { stats: ProjectStats }) {
           <StatRow
             label="Components"
             value={`${components.total}`}
-            dimValue={`(${components.functional} functional${components.classBased > 0 ? `, ${components.classBased} class` : ""})`}
+            dimValue={`(${components.functional} functional${components.classBased > 0 ? `, ${components.classBased} class` : ''})`}
           />
         </Box>
       )}
@@ -174,14 +149,14 @@ function SingleProjectStats({ stats }: { stats: ProjectStats }) {
       {git && (
         <>
           <Box marginTop={1} marginLeft={2} flexDirection="column">
-            <Text dimColor>{"━".repeat(48)}</Text>
+            <Text dimColor>{'━'.repeat(48)}</Text>
           </Box>
           <Box flexDirection="column" marginTop={1} marginLeft={2}>
             <StatRow label="Git Branch" value={git.branch} />
             <StatRow
               label="Commits"
               value={`${git.commits}`}
-              dimValue={`by ${git.contributors} contributor${git.contributors !== 1 ? "s" : ""}`}
+              dimValue={`by ${git.contributors} contributor${git.contributors !== 1 ? 's' : ''}`}
             />
             <StatRow label="Project Age" value={git.age} />
           </Box>
@@ -223,7 +198,7 @@ export function StatsApp({
               path: p.path,
               stats: p.stats,
             }));
-            process.stdout.write(JSON.stringify(output, null, 2) + "\n");
+            process.stdout.write(JSON.stringify(output, null, 2) + '\n');
           }
 
           setTimeout(() => exit(), 100);
@@ -240,7 +215,7 @@ export function StatsApp({
           setLoading(false);
 
           if (jsonOutput) {
-            process.stdout.write(JSON.stringify(s, null, 2) + "\n");
+            process.stdout.write(JSON.stringify(s, null, 2) + '\n');
           }
 
           setTimeout(() => exit(), 100);
@@ -261,9 +236,9 @@ export function StatsApp({
         <Text>
           <Text color="green">
             <Spinner type="dots" />
-          </Text>{" "}
+          </Text>{' '}
           Scanning project
-          {isMonorepo ? ` (${packagePaths?.length} packages)` : ""}...
+          {isMonorepo ? ` (${packagePaths?.length} packages)` : ''}...
         </Text>
       </Box>
     );
@@ -296,43 +271,35 @@ export function StatsApp({
       <Box flexDirection="column" padding={1}>
         <Header />
         <Text bold>Monorepo Overview</Text>
-        <Text dimColor>
-          {packageStats.length} packages
-        </Text>
+        <Text dimColor>{packageStats.length} packages</Text>
 
         <Box flexDirection="column" marginTop={1} marginLeft={2}>
           <Box>
-            <Text bold>{"Package".padEnd(36)}</Text>
-            <Text bold>{"Framework".padEnd(14)}</Text>
-            <Text bold>{"Files".padEnd(8)}</Text>
-            <Text bold>{"LOC".padEnd(10)}</Text>
-            <Text bold>{"Deps".padEnd(8)}</Text>
+            <Text bold>{'Package'.padEnd(36)}</Text>
+            <Text bold>{'Framework'.padEnd(14)}</Text>
+            <Text bold>{'Files'.padEnd(8)}</Text>
+            <Text bold>{'LOC'.padEnd(10)}</Text>
+            <Text bold>{'Deps'.padEnd(8)}</Text>
             <Text bold>Tests</Text>
           </Box>
-          <Text dimColor>{"━".repeat(84)}</Text>
+          <Text dimColor>{'━'.repeat(84)}</Text>
           {packageStats.map((pkg) => {
-            const fw =
-              FRAMEWORK_LABELS[pkg.stats.project.framework] ??
-              pkg.stats.project.framework;
+            const fw = FRAMEWORK_LABELS[pkg.stats.project.framework] ?? pkg.stats.project.framework;
             return (
               <Box key={pkg.path}>
-                <Text color="cyan">
-                  {shortName(pkg.name).padEnd(36)}
-                </Text>
+                <Text color="cyan">{shortName(pkg.name).padEnd(36)}</Text>
                 <Text>{fw.padEnd(14)}</Text>
                 <Text>{String(pkg.stats.files.total).padEnd(8)}</Text>
-                <Text>
-                  {pkg.stats.lines.total.toLocaleString().padEnd(10)}
-                </Text>
+                <Text>{pkg.stats.lines.total.toLocaleString().padEnd(10)}</Text>
                 <Text>{String(pkg.stats.dependencies.total).padEnd(8)}</Text>
                 <Text>{pkg.stats.testFiles}</Text>
               </Box>
             );
           })}
-          <Text dimColor>{"━".repeat(84)}</Text>
+          <Text dimColor>{'━'.repeat(84)}</Text>
           <Box>
-            <Text bold>{"Total".padEnd(36)}</Text>
-            <Text>{"".padEnd(14)}</Text>
+            <Text bold>{'Total'.padEnd(36)}</Text>
+            <Text>{''.padEnd(14)}</Text>
             <Text bold>{String(totals.files).padEnd(8)}</Text>
             <Text bold>{totals.lines.toLocaleString().padEnd(10)}</Text>
             <Text bold>{String(totals.deps).padEnd(8)}</Text>

@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
 import { createHash } from 'crypto';
 import { resolve } from 'path';
+
+import { describe, it, expect } from 'vitest';
+
 import { projectHash } from './project-hash.js';
 
 describe('projectHash', () => {

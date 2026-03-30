@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Box, Text, useApp } from "ink";
-import Spinner from "ink-spinner";
-import { Header } from "./Header.js";
-import { runDiagnostics, type DiagnosticResult } from "../commands/doctor.js";
-import { shortName } from "../lib/resolve-package.js";
+import React, { useState, useEffect } from 'react';
+
+import { Box, Text, useApp } from 'ink';
+import Spinner from 'ink-spinner';
+
+import { runDiagnostics, type DiagnosticResult } from '../commands/doctor.js';
+import { shortName } from '../lib/resolve-package.js';
+import { Header } from './Header.js';
 
 interface DoctorAppProps {
   projectPath: string;
@@ -21,9 +23,9 @@ interface PackageDiagnostics {
 }
 
 const STATUS_CONFIG = {
-  pass: { icon: "✓", color: "green" as const },
-  fail: { icon: "✗", color: "red" as const },
-  warn: { icon: "⚠", color: "yellow" as const },
+  pass: { icon: '✓', color: 'green' as const },
+  fail: { icon: '✗', color: 'red' as const },
+  warn: { icon: '⚠', color: 'yellow' as const },
 };
 
 function DiagnosticsList({ results }: { results: DiagnosticResult[] }) {
@@ -35,16 +37,16 @@ function DiagnosticsList({ results }: { results: DiagnosticResult[] }) {
           <Box key={r.id} flexDirection="column">
             <Box>
               <Text color={color}>{icon} </Text>
-              <Text bold={r.status !== "pass"}>{r.label}</Text>
+              <Text bold={r.status !== 'pass'}>{r.label}</Text>
               <Text dimColor> — {r.message}</Text>
             </Box>
-            {r.status !== "pass" && r.fixCommand && (
+            {r.status !== 'pass' && r.fixCommand && (
               <Box marginLeft={4}>
                 <Text dimColor>fix: </Text>
                 <Text color="cyan">{r.fixCommand}</Text>
               </Box>
             )}
-            {r.status !== "pass" && !r.fixCommand && r.fixDescription && (
+            {r.status !== 'pass' && !r.fixCommand && r.fixDescription && (
               <Box marginLeft={4}>
                 <Text dimColor>→ {r.fixDescription}</Text>
               </Box>
@@ -57,9 +59,9 @@ function DiagnosticsList({ results }: { results: DiagnosticResult[] }) {
 }
 
 function DiagnosticsSummary({ results }: { results: DiagnosticResult[] }) {
-  const passed = results.filter((r) => r.status === "pass").length;
-  const warned = results.filter((r) => r.status === "warn").length;
-  const failed = results.filter((r) => r.status === "fail").length;
+  const passed = results.filter((r) => r.status === 'pass').length;
+  const warned = results.filter((r) => r.status === 'warn').length;
+  const failed = results.filter((r) => r.status === 'fail').length;
 
   return (
     <Box>
@@ -80,9 +82,7 @@ export function DoctorApp({
 }: DoctorAppProps) {
   const { exit } = useApp();
   const [results, setResults] = useState<DiagnosticResult[]>([]);
-  const [packageResults, setPackageResults] = useState<PackageDiagnostics[]>(
-    [],
-  );
+  const [packageResults, setPackageResults] = useState<PackageDiagnostics[]>([]);
   const [running, setRunning] = useState(true);
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export function DoctorApp({
               path: p.path,
               results: p.results,
             }));
-            process.stdout.write(JSON.stringify(output, null, 2) + "\n");
+            process.stdout.write(JSON.stringify(output, null, 2) + '\n');
           }
 
           setTimeout(() => exit(), 100);
@@ -112,13 +112,13 @@ export function DoctorApp({
         .catch((err) => {
           setPackageResults([
             {
-              name: "error",
+              name: 'error',
               path: projectPath,
               results: [
                 {
-                  id: "error",
-                  label: "Doctor",
-                  status: "fail",
+                  id: 'error',
+                  label: 'Doctor',
+                  status: 'fail',
                   message: `Failed: ${err instanceof Error ? err.message : String(err)}`,
                 },
               ],
@@ -134,7 +134,7 @@ export function DoctorApp({
           setRunning(false);
 
           if (jsonOutput) {
-            process.stdout.write(JSON.stringify(r, null, 2) + "\n");
+            process.stdout.write(JSON.stringify(r, null, 2) + '\n');
           }
 
           setTimeout(() => exit(), 100);
@@ -142,9 +142,9 @@ export function DoctorApp({
         .catch((err) => {
           setResults([
             {
-              id: "error",
-              label: "Doctor",
-              status: "fail",
+              id: 'error',
+              label: 'Doctor',
+              status: 'fail',
               message: `Failed: ${err instanceof Error ? err.message : String(err)}`,
             },
           ]);
@@ -162,9 +162,9 @@ export function DoctorApp({
         <Text>
           <Text color="green">
             <Spinner type="dots" />
-          </Text>{" "}
+          </Text>{' '}
           Running project diagnostics
-          {isMonorepo ? ` across ${packagePaths?.length} packages` : ""}...
+          {isMonorepo ? ` across ${packagePaths?.length} packages` : ''}...
         </Text>
       </Box>
     );
@@ -191,7 +191,7 @@ export function DoctorApp({
         ))}
 
         <Box marginTop={1}>
-          <Text dimColor>{"━".repeat(52)}</Text>
+          <Text dimColor>{'━'.repeat(52)}</Text>
         </Box>
         <DiagnosticsSummary results={allResults} />
       </Box>
@@ -208,7 +208,7 @@ export function DoctorApp({
       </Box>
 
       <Box marginTop={1}>
-        <Text dimColor>{"━".repeat(52)}</Text>
+        <Text dimColor>{'━'.repeat(52)}</Text>
       </Box>
       <Box marginTop={1}>
         <DiagnosticsSummary results={results} />

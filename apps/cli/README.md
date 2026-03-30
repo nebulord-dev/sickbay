@@ -3,6 +3,7 @@
 The terminal interface for Sickbay. Built with [Ink](https://github.com/vadimdemedes/ink) (React for terminals) and [Commander](https://github.com/tj/commander.js).
 
 ## Quickstart
+
 ```bash
 # Terminal
 npx sickbay
@@ -24,8 +25,8 @@ sickbay [options]
 
 | Command            | Description                                                        |
 | ------------------ | ------------------------------------------------------------------ |
-| `init [options]`   | Scaffold `.sickbay/`, run baseline scan, seed history               |
-| `fix [options]`    | Interactively fix issues found by sickbay scan                      |
+| `init [options]`   | Scaffold `.sickbay/`, run baseline scan, seed history              |
+| `fix [options]`    | Interactively fix issues found by sickbay scan                     |
 | `trend [options]`  | Show score history and trends over time                            |
 | `stats [options]`  | Show a quick codebase overview and project summary                 |
 | `doctor [options]` | Diagnose project setup and configuration issues                    |
@@ -108,13 +109,13 @@ It scaffolds the `.sickbay/` data folder, saves a `baseline.json` snapshot of th
 
 Each scan automatically appends an entry to `.sickbay/history.json`, so your score trend builds up over time without any extra steps. The History tab in the web dashboard (`sickbay --web`) reads from this file.
 
-|                           | First time    | Ongoing        |
-| ------------------------- | ------------- | -------------- |
-| Command                   | `sickbay init` | `sickbay`       |
-| Creates `.sickbay/`        | ✓             | ✓ (if missing) |
-| Saves `baseline.json`     | ✓             | ✗              |
-| Updates root `.gitignore` | ✓             | ✗              |
-| Appends to `history.json` | ✓             | ✓              |
+|                           | First time     | Ongoing        |
+| ------------------------- | -------------- | -------------- |
+| Command                   | `sickbay init` | `sickbay`      |
+| Creates `.sickbay/`       | ✓              | ✓ (if missing) |
+| Saves `baseline.json`     | ✓              | ✗              |
+| Updates root `.gitignore` | ✓              | ✗              |
+| Appends to `history.json` | ✓              | ✓              |
 
 > If you skip `sickbay init` and go straight to `sickbay`, history will still accumulate — you just won't have a baseline snapshot or gitignore entries for `.sickbay/`. But you can always ignore it manually.
 

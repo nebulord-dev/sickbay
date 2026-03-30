@@ -10,8 +10,8 @@ sickbay init [options]
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
+| Flag                | Description                | Default                   |
+| ------------------- | -------------------------- | ------------------------- |
 | `-p, --path <path>` | Project path to initialize | Current working directory |
 
 ## What It Creates
@@ -45,12 +45,12 @@ sickbay init --path ~/my-project
 
 After initialization, several features become available:
 
-| Feature | Command | Requires Init |
-|---------|---------|---------------|
-| **Trend tracking** | `sickbay trend` | Yes — reads from `history.json` |
-| **Branch diff** | `sickbay diff <branch>` | Yes — compares against `.sickbay/last-report.json` |
-| **Badge generation** | `sickbay badge` | No, but uses `last-report.json` to avoid re-scanning |
-| **Auto-save** | `sickbay` (scan) | Directory must exist |
+| Feature              | Command                 | Requires Init                                        |
+| -------------------- | ----------------------- | ---------------------------------------------------- |
+| **Trend tracking**   | `sickbay trend`         | Yes — reads from `history.json`                      |
+| **Branch diff**      | `sickbay diff <branch>` | Yes — compares against `.sickbay/last-report.json`   |
+| **Badge generation** | `sickbay badge`         | No, but uses `last-report.json` to avoid re-scanning |
+| **Auto-save**        | `sickbay` (scan)        | Directory must exist                                 |
 
 ## Monorepo Usage
 

@@ -10,11 +10,11 @@ sickbay stats [options]
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-p, --path <path>` | Project path to analyze | Current working directory |
-| `--package <name>` | Scope to a single package (monorepo only) | — |
-| `--json` | Output stats as JSON | `false` |
+| Flag                | Description                               | Default                   |
+| ------------------- | ----------------------------------------- | ------------------------- |
+| `-p, --path <path>` | Project path to analyze                   | Current working directory |
+| `--package <name>`  | Scope to a single package (monorepo only) | —                         |
+| `--json`            | Output stats as JSON                      | `false`                   |
 
 ## Examples
 
@@ -40,16 +40,16 @@ sickbay stats --path ~/my-monorepo --package @acme/web-app
 
 The stats command displays the following information:
 
-| Metric | Description |
-|--------|-------------|
-| **Framework** | Detected framework (React, Next.js, Remix, etc.) |
-| **Runtime** | `browser` or `node` based on project dependencies |
-| **Package manager** | pnpm, npm, or yarn |
-| **Dependency count** | Number of production and dev dependencies |
-| **File count** | Total source files in the project |
-| **Lines of code** | Total LOC across source files |
-| **Test count** | Number of detected test files |
-| **Last score** | Most recent health score from `.sickbay/last-report.json` |
+| Metric               | Description                                               |
+| -------------------- | --------------------------------------------------------- |
+| **Framework**        | Detected framework (React, Next.js, Remix, etc.)          |
+| **Runtime**          | `browser` or `node` based on project dependencies         |
+| **Package manager**  | pnpm, npm, or yarn                                        |
+| **Dependency count** | Number of production and dev dependencies                 |
+| **File count**       | Total source files in the project                         |
+| **Lines of code**    | Total LOC across source files                             |
+| **Test count**       | Number of detected test files                             |
+| **Last score**       | Most recent health score from `.sickbay/last-report.json` |
 
 The last score field is only populated if you have previously run a scan with `sickbay init` set up.
 

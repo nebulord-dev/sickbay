@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
+
 import { calculateOverallScore, buildSummary, getScoreColor, getScoreEmoji } from './scoring.js';
+
 import type { CheckResult, Issue } from './types.js';
 
 describe('calculateOverallScore', () => {

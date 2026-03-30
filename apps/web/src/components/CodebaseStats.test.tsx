@@ -1,7 +1,10 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+
 import { CodebaseStats } from './CodebaseStats.js';
+
 import type { SickbayReport, CheckResult } from '@nebulord/sickbay-core';
 
 // Mock DependencyGraph to avoid ReactFlow in tests
@@ -14,10 +17,16 @@ function makeReport(checks: CheckResult[] = []): SickbayReport {
     timestamp: '2024-01-01T00:00:00.000Z',
     projectPath: '/test',
     projectInfo: {
-      name: 'test-project', version: '1.0.0', framework: 'react',
-      packageManager: 'npm', totalDependencies: 5,
-      dependencies: {}, devDependencies: {},
-      hasESLint: false, hasPrettier: false, hasTypeScript: true,
+      name: 'test-project',
+      version: '1.0.0',
+      framework: 'react',
+      packageManager: 'npm',
+      totalDependencies: 5,
+      dependencies: {},
+      devDependencies: {},
+      hasESLint: false,
+      hasPrettier: false,
+      hasTypeScript: true,
     },
     overallScore: 80,
     summary: { critical: 0, warnings: 0, info: 0 },
@@ -27,9 +36,15 @@ function makeReport(checks: CheckResult[] = []): SickbayReport {
 
 function makeCheck(id: string, metadata: Record<string, unknown>): CheckResult {
   return {
-    id, name: id, category: 'code-quality', score: 80,
-    status: 'pass', toolsUsed: [id], duration: 0,
-    issues: [], metadata,
+    id,
+    name: id,
+    category: 'code-quality',
+    score: 80,
+    status: 'pass',
+    toolsUsed: [id],
+    duration: 0,
+    issues: [],
+    metadata,
   };
 }
 
@@ -137,8 +152,19 @@ describe('CodebaseStats', () => {
 
   it('renders multiple sections together', () => {
     const report = makeReport([
-      makeCheck('complexity', { totalFiles: 10, totalLines: 1000, avgLines: 100, oversizedCount: 0, topFiles: [] }),
-      makeCheck('git', { commitCount: 50, contributorCount: 2, remoteBranches: 3, lastCommit: '1d ago' }),
+      makeCheck('complexity', {
+        totalFiles: 10,
+        totalLines: 1000,
+        avgLines: 100,
+        oversizedCount: 0,
+        topFiles: [],
+      }),
+      makeCheck('git', {
+        commitCount: 50,
+        contributorCount: 2,
+        remoteBranches: 3,
+        lastCommit: '1d ago',
+      }),
     ]);
     render(<CodebaseStats report={report} />);
     expect(screen.getByText('Codebase')).toBeInTheDocument();
@@ -147,7 +173,13 @@ describe('CodebaseStats', () => {
 
   it('collapses a section when its header is clicked', () => {
     const report = makeReport([
-      makeCheck('complexity', { totalFiles: 42, totalLines: 5000, avgLines: 119, oversizedCount: 3, topFiles: [] }),
+      makeCheck('complexity', {
+        totalFiles: 42,
+        totalLines: 5000,
+        avgLines: 119,
+        oversizedCount: 3,
+        topFiles: [],
+      }),
     ]);
     render(<CodebaseStats report={report} />);
     expect(screen.getByText('42')).toBeInTheDocument();
@@ -157,7 +189,13 @@ describe('CodebaseStats', () => {
 
   it('re-expands a section when its header is clicked again', () => {
     const report = makeReport([
-      makeCheck('complexity', { totalFiles: 42, totalLines: 5000, avgLines: 119, oversizedCount: 3, topFiles: [] }),
+      makeCheck('complexity', {
+        totalFiles: 42,
+        totalLines: 5000,
+        avgLines: 119,
+        oversizedCount: 3,
+        topFiles: [],
+      }),
     ]);
     render(<CodebaseStats report={report} />);
     fireEvent.click(screen.getByText('Codebase'));
@@ -168,8 +206,19 @@ describe('CodebaseStats', () => {
 
   it('collapses sections independently', () => {
     const report = makeReport([
-      makeCheck('complexity', { totalFiles: 10, totalLines: 1000, avgLines: 100, oversizedCount: 0, topFiles: [] }),
-      makeCheck('git', { commitCount: 50, contributorCount: 2, remoteBranches: 3, lastCommit: '1d ago' }),
+      makeCheck('complexity', {
+        totalFiles: 10,
+        totalLines: 1000,
+        avgLines: 100,
+        oversizedCount: 0,
+        topFiles: [],
+      }),
+      makeCheck('git', {
+        commitCount: 50,
+        contributorCount: 2,
+        remoteBranches: 3,
+        lastCommit: '1d ago',
+      }),
     ]);
     render(<CodebaseStats report={report} />);
     fireEvent.click(screen.getByText('Git Activity'));

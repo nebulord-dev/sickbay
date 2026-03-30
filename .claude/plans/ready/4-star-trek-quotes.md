@@ -7,6 +7,7 @@ Read the full design spec at `docs/superpowers/specs/2026-03-28-star-trek-quotes
 ## Kanban Task
 
 Move this task to Done when complete:
+
 ```
 - `[Feature]` `[Auto]` Star Trek doctor rotating quotes (default theme)
 ```
@@ -65,6 +66,7 @@ Write 8-10 quotes per severity tier across 6 Trek doctors (McCoy, Crusher, The D
 ```
 
 **Tier vibes:**
+
 - `critical` (score < 60) — dire, alarmed, dramatic
 - `warning` (score 60-79) — concerned, cautious, irritated
 - `info` (score 80-89) — mild, cantankerous, wry
@@ -103,16 +105,20 @@ Distribute so no single doctor dominates — aim for 2-3 quotes per doctor sprea
 - Add `quotes` prop to `<App>` component rendering
 
 **Edit:** `apps/cli/src/components/App.tsx`
+
 - Accept `quotes` prop, pass through to `runSickbay` options
 
 **Edit:** The `tui` subcommand setup (in `index.ts` or wherever the tui command is defined)
+
 - Add `--no-quotes` option to the `tui` command
 - Thread through to `TuiApp` and `useSickbayRunner`
 
 **Edit:** `apps/cli/src/components/tui/TuiApp.tsx`
+
 - Accept `quotes` prop, pass to `useSickbayRunner`
 
 **Edit:** `apps/cli/src/components/tui/hooks/useSickbayRunner.ts`
+
 - Accept `quotes` option, pass to `runSickbay`
 
 ### 9. Render quotes in CLI
@@ -120,13 +126,18 @@ Distribute so no single doctor dominates — aim for 2-3 quotes per doctor sprea
 **Edit:** `apps/cli/src/components/Summary.tsx`
 
 After the existing summary output, conditionally render:
+
 ```tsx
-{report.quote && (
-  <Box marginTop={1}>
-    <Text italic dimColor>"{report.quote.text}"</Text>
-    <Text dimColor> — {report.quote.source}</Text>
-  </Box>
-)}
+{
+  report.quote && (
+    <Box marginTop={1}>
+      <Text italic dimColor>
+        "{report.quote.text}"
+      </Text>
+      <Text dimColor> — {report.quote.source}</Text>
+    </Box>
+  );
+}
 ```
 
 ### 10. Render quotes in TUI
@@ -134,12 +145,17 @@ After the existing summary output, conditionally render:
 **Edit:** `apps/cli/src/components/tui/ScorePanel.tsx`
 
 Below the score display:
+
 ```tsx
-{report?.quote && (
-  <Box>
-    <Text italic dimColor>"{report.quote.text}" — {report.quote.source}</Text>
-  </Box>
-)}
+{
+  report?.quote && (
+    <Box>
+      <Text italic dimColor>
+        "{report.quote.text}" — {report.quote.source}
+      </Text>
+    </Box>
+  );
+}
 ```
 
 ### 11. Render quotes in web
@@ -147,12 +163,15 @@ Below the score display:
 **Edit:** `apps/web/src/components/Dashboard.tsx` (or `ScoreCard.tsx` — wherever the overall score is displayed)
 
 Near the overall score:
+
 ```tsx
-{report.quote && (
-  <p className="text-sm italic text-gray-400 mt-2">
-    "{report.quote.text}" <span className="not-italic">— {report.quote.source}</span>
-  </p>
-)}
+{
+  report.quote && (
+    <p className="text-sm italic text-gray-400 mt-2">
+      "{report.quote.text}" <span className="not-italic">— {report.quote.source}</span>
+    </p>
+  );
+}
 ```
 
 **IMPORTANT:** Only use `import type` from `@sickbay/core` in the web package. The quote data is already on the report object — no value imports needed.
@@ -193,6 +212,7 @@ Fix any failures.
 ### 14. Dispatch monorepo-architect agent
 
 Run the monorepo-architect agent to verify:
+
 - No value imports from core in web
 - Quote logic lives entirely in core
 - Rendering logic is in the correct consumer packages

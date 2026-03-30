@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Box, Text } from "ink";
-import { LOADING_MESSAGES } from "../../lib/messages.js";
-import type { CheckResult } from "@nebulord/sickbay-core";
+import React, { useState, useEffect } from 'react';
+
+import { Box, Text } from 'ink';
+
+import { LOADING_MESSAGES } from '../../lib/messages.js';
+
+import type { CheckResult } from '@nebulord/sickbay-core';
 
 interface HealthPanelProps {
   checks: CheckResult[];
@@ -12,32 +15,32 @@ interface HealthPanelProps {
 }
 
 function scoreColor(score: number): string {
-  if (score >= 80) return "green";
-  if (score >= 60) return "yellow";
-  return "red";
+  if (score >= 80) return 'green';
+  if (score >= 60) return 'yellow';
+  return 'red';
 }
 
 function scoreBar(score: number, width = 10): string {
   const filled = Math.round((score / 100) * width);
-  return "\u2588".repeat(filled) + "\u2591".repeat(width - filled);
+  return '\u2588'.repeat(filled) + '\u2591'.repeat(width - filled);
 }
 
 function truncate(str: string, maxLen: number): string {
-  return str.length > maxLen ? str.slice(0, maxLen - 1) + "\u2026" : str;
+  return str.length > maxLen ? str.slice(0, maxLen - 1) + '\u2026' : str;
 }
 
 function statusIcon(status: string): string {
   switch (status) {
-    case "pass":
-      return "\u2713";
-    case "fail":
-      return "\u2717";
-    case "warning":
-      return "\u26A0";
-    case "skipped":
-      return "\u25CB";
+    case 'pass':
+      return '\u2713';
+    case 'fail':
+      return '\u2717';
+    case 'warning':
+      return '\u26A0';
+    case 'skipped':
+      return '\u25CB';
     default:
-      return "?";
+      return '?';
   }
 }
 
@@ -71,19 +74,9 @@ export function HealthPanel({
         {progress.map((p) => (
           <Box key={p.name}>
             <Text
-              color={
-                p.status === "done"
-                  ? "green"
-                  : p.status === "running"
-                    ? "yellow"
-                    : "gray"
-              }
+              color={p.status === 'done' ? 'green' : p.status === 'running' ? 'yellow' : 'gray'}
             >
-              {p.status === "done"
-                ? "\u2713"
-                : p.status === "running"
-                  ? "\u25CC"
-                  : "\u25CB"}
+              {p.status === 'done' ? '\u2713' : p.status === 'running' ? '\u25CC' : '\u25CB'}
             </Text>
             <Text> {p.name}</Text>
           </Box>
@@ -111,13 +104,7 @@ export function HealthPanel({
       {visible.map((check) => (
         <Box key={check.id}>
           <Text
-            color={
-              check.status === "pass"
-                ? "green"
-                : check.status === "fail"
-                  ? "red"
-                  : "yellow"
-            }
+            color={check.status === 'pass' ? 'green' : check.status === 'fail' ? 'red' : 'yellow'}
           >
             {statusIcon(check.status)}
           </Text>
@@ -127,19 +114,16 @@ export function HealthPanel({
           </Box>
           <Text> </Text>
           <Text color={scoreColor(check.score)}>{scoreBar(check.score)}</Text>
-          <Text color={scoreColor(check.score)}>
-            {" "}
-            {String(check.score).padStart(3)}
-          </Text>
+          <Text color={scoreColor(check.score)}> {String(check.score).padStart(3)}</Text>
         </Box>
       ))}
       {hasMore && (
         <Text dimColor>
-          {"  \u25BC "}
+          {'  \u25BC '}
           {checks.length - scrollOffset - maxVisible} more below
         </Text>
       )}
-      {isScanning && <Text color="yellow">{"  \u25CC Re-scanning..."}</Text>}
+      {isScanning && <Text color="yellow">{'  \u25CC Re-scanning...'}</Text>}
     </Box>
   );
 }

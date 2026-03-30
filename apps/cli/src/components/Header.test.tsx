@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
 import React from 'react';
+
 import { render } from 'ink-testing-library';
+import { describe, it, expect } from 'vitest';
+
 import { Header } from './Header.js';
 
 describe('Header', () => {

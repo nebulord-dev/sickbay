@@ -19,11 +19,7 @@
       ]
     }
   },
-  "ignore": [
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/dist/**"
-  ],
+  "ignore": ["**/*.test.ts", "**/*.test.tsx", "**/dist/**"],
   "ignoreDependencies": [
     "@nebulord/sickbay-core",
     "@nebulord/sickbay",

@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import { execFile } from "child_process";
-import { promisify } from "util";
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+
+import { useState, useEffect, useRef } from 'react';
 
 const exec = promisify(execFile);
 
@@ -18,29 +19,26 @@ export interface GitStatus {
 
 async function git(args: string[], cwd: string): Promise<string> {
   try {
-    const { stdout } = await exec("git", args, { cwd, timeout: 5000 });
+    const { stdout } = await exec('git', args, { cwd, timeout: 5000 });
     return stdout.trim();
   } catch {
-    return "";
+    return '';
   }
 }
 
 async function fetchGitStatus(projectPath: string): Promise<GitStatus> {
   const [branch, porcelain, revList, stashList, logLine] = await Promise.all([
-    git(["branch", "--show-current"], projectPath),
-    git(["status", "--porcelain"], projectPath),
-    git(
-      ["rev-list", "--left-right", "--count", "HEAD...@{upstream}"],
-      projectPath,
-    ),
-    git(["stash", "list"], projectPath),
-    git(["log", "-1", "--format=%s|%cr"], projectPath),
+    git(['branch', '--show-current'], projectPath),
+    git(['status', '--porcelain'], projectPath),
+    git(['rev-list', '--left-right', '--count', 'HEAD...@{upstream}'], projectPath),
+    git(['stash', 'list'], projectPath),
+    git(['log', '-1', '--format=%s|%cr'], projectPath),
   ]);
 
-  const lines = porcelain ? porcelain.split("\n") : [];
+  const lines = porcelain ? porcelain.split('\n') : [];
   const staged = lines.filter((l) => /^[MADRC]/.test(l)).length;
   const modified = lines.filter((l) => /^.[MD]/.test(l)).length;
-  const untracked = lines.filter((l) => l.startsWith("??")).length;
+  const untracked = lines.filter((l) => l.startsWith('??')).length;
 
   let ahead = 0;
   let behind = 0;
@@ -50,27 +48,25 @@ async function fetchGitStatus(projectPath: string): Promise<GitStatus> {
     behind = parseInt(parts[1], 10) || 0;
   }
 
-  const stashes = stashList ? stashList.split("\n").filter(Boolean).length : 0;
-  const [lastCommit, lastCommitTime] = logLine.split("|");
+  const stashes = stashList ? stashList.split('\n').filter(Boolean).length : 0;
+  const [lastCommit, lastCommitTime] = logLine.split('|');
 
   return {
-    branch: branch || "unknown",
+    branch: branch || 'unknown',
     modified,
     staged,
     untracked,
     ahead,
     behind,
     stashes,
-    lastCommit: lastCommit || "",
-    lastCommitTime: lastCommitTime || "",
+    lastCommit: lastCommit || '',
+    lastCommitTime: lastCommitTime || '',
   };
 }
 
 export function useGitStatus(projectPath: string, pollInterval = 10000) {
   const [status, setStatus] = useState<GitStatus | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
-    undefined,
-  );
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   useEffect(() => {
     fetchGitStatus(projectPath).then(setStatus);

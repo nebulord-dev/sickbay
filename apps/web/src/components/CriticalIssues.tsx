@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import type { SickbayReport } from "@nebulord/sickbay-core";
+import { useState, useEffect } from 'react';
+
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 interface CriticalIssuesProps {
   report: SickbayReport;
@@ -9,24 +10,19 @@ interface CriticalIssuesProps {
 export function CriticalIssues({ report, onCheckClick }: CriticalIssuesProps) {
   // Collapse state with localStorage persistence - must be at top level
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    const stored = localStorage.getItem("sickbay-critical-issues-collapsed");
-    return stored !== "false";
+    const stored = localStorage.getItem('sickbay-critical-issues-collapsed');
+    return stored !== 'false';
   });
 
   useEffect(() => {
-    localStorage.setItem(
-      "sickbay-critical-issues-collapsed",
-      String(isCollapsed),
-    );
+    localStorage.setItem('sickbay-critical-issues-collapsed', String(isCollapsed));
   }, [isCollapsed]);
 
   // Aggregate all critical issues by check
   const checksWithCriticals = report.checks
     .map((check) => ({
       ...check,
-      criticalIssues: check.issues.filter(
-        (issue) => issue.severity === "critical",
-      ),
+      criticalIssues: check.issues.filter((issue) => issue.severity === 'critical'),
     }))
     .filter((check) => check.criticalIssues.length > 0);
 
@@ -49,7 +45,7 @@ export function CriticalIssues({ report, onCheckClick }: CriticalIssuesProps) {
         <h2 className="text-lg font-semibold text-red-400">Critical Issues</h2>
         <span className="text-sm text-gray-400">({totalCriticals} total)</span>
         <span
-          className={`ml-auto text-gray-500 transition-transform ${isCollapsed ? "" : "rotate-180"}`}
+          className={`ml-auto text-gray-500 transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
         >
           ▼
         </span>

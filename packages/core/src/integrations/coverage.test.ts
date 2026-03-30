@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { CoverageRunner } from './coverage.js';
 
 vi.mock('execa', () => ({ execa: vi.fn() }));
@@ -17,8 +18,10 @@ vi.mock('../utils/detect-project.js', () => ({
   detectPackageManager: vi.fn(() => 'npm'),
 }));
 
-import { execa } from 'execa';
 import { existsSync, readFileSync } from 'fs';
+
+import { execa } from 'execa';
+
 import { readPackageJson } from '../utils/file-helpers.js';
 
 const mockExeca = vi.mocked(execa);
@@ -107,15 +110,20 @@ describe('CoverageRunner', () => {
 
   it('runs vitest and returns pass with good coverage', async () => {
     mockReadPackageJson.mockReturnValue({ devDependencies: { vitest: '^1.0.0' } });
-    mockExistsSync.mockImplementation((p) =>
-      String(p).includes('@vitest/coverage-v8') ||
-      String(p).includes('sickbay-test-') ||
-      String(p).endsWith('coverage-summary.json'),
+    mockExistsSync.mockImplementation(
+      (p) =>
+        String(p).includes('@vitest/coverage-v8') ||
+        String(p).includes('sickbay-test-') ||
+        String(p).endsWith('coverage-summary.json'),
     );
     mockExeca.mockResolvedValue({} as never);
     mockReadFileSync.mockImplementation((p) => {
       if (String(p).includes('sickbay-test-'))
-        return JSON.stringify({ numTotalTests: 10, numPassedTests: 10, numFailedTests: 0 }) as never;
+        return JSON.stringify({
+          numTotalTests: 10,
+          numPassedTests: 10,
+          numFailedTests: 0,
+        }) as never;
       return JSON.stringify(goodCoverage) as never;
     });
 
@@ -144,10 +152,11 @@ describe('CoverageRunner', () => {
 
   it('warns about low line coverage', async () => {
     mockReadPackageJson.mockReturnValue({ devDependencies: { vitest: '^1.0.0' } });
-    mockExistsSync.mockImplementation((p) =>
-      String(p).includes('@vitest/coverage-v8') ||
-      String(p).includes('sickbay-test-') ||
-      String(p).endsWith('coverage-summary.json'),
+    mockExistsSync.mockImplementation(
+      (p) =>
+        String(p).includes('@vitest/coverage-v8') ||
+        String(p).includes('sickbay-test-') ||
+        String(p).endsWith('coverage-summary.json'),
     );
     mockExeca.mockResolvedValue({} as never);
     mockReadFileSync.mockImplementation((p) => {

@@ -1,7 +1,10 @@
-import { describe, it, expect } from 'vitest';
 import React from 'react';
+
 import { render } from 'ink-testing-library';
+import { describe, it, expect } from 'vitest';
+
 import { CheckResultRow } from './CheckResult.js';
+
 import type { CheckResult } from '@nebulord/sickbay-core';
 
 function makeResult(overrides: Partial<CheckResult> = {}): CheckResult {

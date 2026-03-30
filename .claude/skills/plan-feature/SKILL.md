@@ -1,5 +1,5 @@
 ---
-description: "Create a comprehensive implementation plan for a Sickbay feature before writing any code"
+description: 'Create a comprehensive implementation plan for a Sickbay feature before writing any code'
 ---
 
 # Plan a Feature
@@ -177,9 +177,9 @@ So that <benefit/value>
 \`\`\`typescript
 // Mirror this pattern from knip.ts or npm-audit.ts
 export class MyCheckRunner extends BaseRunner {
-  name = 'my-check';
-  category = 'code-quality' as const;
-  async run(projectPath: string): Promise<CheckResult> { ... }
+name = 'my-check';
+category = 'code-quality' as const;
+async run(projectPath: string): Promise<CheckResult> { ... }
 }
 \`\`\`
 
@@ -205,6 +205,7 @@ import type { SickbayReport } from '@sickbay/core';
 <Changes to `types.ts` or other shared interfaces — do this first so consumers can build>
 
 **Tasks:**
+
 - Update `packages/core/src/types.ts` with new fields/interfaces
 - Add any new category or check name constants
 
@@ -213,6 +214,7 @@ import type { SickbayReport } from '@sickbay/core';
 <The main logic — new runner, scoring changes, etc.>
 
 **Tasks:**
+
 - Implement runner in `packages/core/src/integrations/<name>.ts`
 - Register in `packages/core/src/runner.ts` `ALL_RUNNERS` array
 - Export from `packages/core/src/index.ts` if needed
@@ -223,6 +225,7 @@ import type { SickbayReport } from '@sickbay/core';
 <Terminal UI changes — new flags, updated components>
 
 **Tasks:**
+
 - Add flag to `packages/cli/src/index.ts` (if new CLI option)
 - Update relevant Ink component(s) in `packages/cli/src/components/`
 
@@ -231,6 +234,7 @@ import type { SickbayReport } from '@sickbay/core';
 <Dashboard changes — new components, updated data display>
 
 **Tasks:**
+
 - Add/update component in `packages/web/src/components/`
 - Update `packages/web/src/components/Dashboard.tsx` if layout changes
 - Only use `import type` from `@sickbay/core`
@@ -238,6 +242,7 @@ import type { SickbayReport } from '@sickbay/core';
 ### Phase 5: Tests
 
 **Tasks:**
+
 - Write runner unit tests (colocated: `<name>.test.ts`)
 - Write component tests if new UI added
 - Verify existing tests still pass
@@ -249,6 +254,7 @@ import type { SickbayReport } from '@sickbay/core';
 Execute in order. Each task is atomic and independently testable.
 
 ### Task keywords
+
 - **CREATE**: New file
 - **UPDATE**: Modify existing file
 - **ADD**: Insert into existing code
@@ -274,28 +280,32 @@ Execute in order. Each task is atomic and independently testable.
 Run all of these before considering the feature complete.
 
 ### Level 1: Type checking and linting
+
 \`\`\`bash
-pnpm --filter @sickbay/core build          # catches type errors in core
-pnpm --filter @sickbay/cli build           # catches type errors in cli
-pnpm --filter @sickbay/web build           # catches type errors in web
-pnpm lint                                  # ESLint across all packages
+pnpm --filter @sickbay/core build # catches type errors in core
+pnpm --filter @sickbay/cli build # catches type errors in cli
+pnpm --filter @sickbay/web build # catches type errors in web
+pnpm lint # ESLint across all packages
 \`\`\`
 
 ### Level 2: Unit tests
+
 \`\`\`bash
-pnpm --filter @sickbay/core test           # core unit tests
-pnpm --filter @sickbay/cli test            # cli unit tests
-pnpm --filter @sickbay/web test            # web unit tests
+pnpm --filter @sickbay/core test # core unit tests
+pnpm --filter @sickbay/cli test # cli unit tests
+pnpm --filter @sickbay/web test # web unit tests
 \`\`\`
 
 ### Level 3: Full build and manual validation
+
 \`\`\`bash
-pnpm build                                 # full turbo build in dependency order
+pnpm build # full turbo build in dependency order
 node packages/cli/dist/index.js --path <test-project-path>
 node packages/cli/dist/index.js --path <test-project-path> --web
 \`\`\`
 
 ### Level 4: Manual spot checks
+
 <Feature-specific things to verify visually — terminal output, web dashboard, etc.>
 
 ---

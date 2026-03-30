@@ -17,7 +17,9 @@ vi.mock('./detect-project.js', () => ({
 }));
 
 import { existsSync, readFileSync } from 'fs';
+
 import { globby } from 'globby';
+
 import { detectMonorepo } from './detect-monorepo.js';
 
 const mockExistsSync = vi.mocked(existsSync);
@@ -42,13 +44,13 @@ describe('detectMonorepo', () => {
     it('detects pnpm workspace from pnpm-workspace.yaml', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/pnpm-workspace.yaml` ||
-               s === `${ROOT}/packages/pkg-a/package.json` ||
-               s === `${ROOT}/packages/pkg-b/package.json`;
+        return (
+          s === `${ROOT}/pnpm-workspace.yaml` ||
+          s === `${ROOT}/packages/pkg-a/package.json` ||
+          s === `${ROOT}/packages/pkg-b/package.json`
+        );
       });
-      mockReadFileSync.mockReturnValue(
-        'packages:\n  - packages/*\n' as never,
-      );
+      mockReadFileSync.mockReturnValue('packages:\n  - packages/*\n' as never);
       setupGlobby([`${ROOT}/packages/pkg-a`, `${ROOT}/packages/pkg-b`]);
 
       const result = await detectMonorepo(ROOT);
@@ -63,8 +65,7 @@ describe('detectMonorepo', () => {
     it('falls back to default patterns when pnpm-workspace.yaml has no packages key', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/pnpm-workspace.yaml` ||
-               s === `${ROOT}/packages/a/package.json`;
+        return s === `${ROOT}/pnpm-workspace.yaml` || s === `${ROOT}/packages/a/package.json`;
       });
       mockReadFileSync.mockReturnValue('catalog:\n  react: ^18\n' as never);
       setupGlobby([`${ROOT}/packages/a`]);
@@ -76,19 +77,16 @@ describe('detectMonorepo', () => {
     it('parses quoted glob patterns in pnpm-workspace.yaml', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/pnpm-workspace.yaml` ||
-               s === `${ROOT}/apps/web/package.json`;
+        return s === `${ROOT}/pnpm-workspace.yaml` || s === `${ROOT}/apps/web/package.json`;
       });
-      mockReadFileSync.mockReturnValue(
-        "packages:\n  - 'packages/*'\n  - 'apps/*'\n" as never,
-      );
+      mockReadFileSync.mockReturnValue("packages:\n  - 'packages/*'\n  - 'apps/*'\n" as never);
       setupGlobby([`${ROOT}/apps/web`]);
 
       const result = await detectMonorepo(ROOT);
       expect(result.isMonorepo).toBe(true);
       if (!result.isMonorepo) return;
       expect(mockGlobby).toHaveBeenCalledWith(
-        expect.arrayContaining(["packages/*", "apps/*"]),
+        expect.arrayContaining(['packages/*', 'apps/*']),
         expect.any(Object),
       );
     });
@@ -98,12 +96,9 @@ describe('detectMonorepo', () => {
     it('detects npm workspaces', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/package.json` ||
-               s === `${ROOT}/packages/core/package.json`;
+        return s === `${ROOT}/package.json` || s === `${ROOT}/packages/core/package.json`;
       });
-      mockReadFileSync.mockReturnValue(
-        JSON.stringify({ workspaces: ['packages/*'] }) as never,
-      );
+      mockReadFileSync.mockReturnValue(JSON.stringify({ workspaces: ['packages/*'] }) as never);
       setupGlobby([`${ROOT}/packages/core`]);
 
       const result = await detectMonorepo(ROOT);
@@ -115,13 +110,13 @@ describe('detectMonorepo', () => {
     it('detects yarn workspaces', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/package.json` ||
-               s === `${ROOT}/yarn.lock` ||
-               s === `${ROOT}/packages/core/package.json`;
+        return (
+          s === `${ROOT}/package.json` ||
+          s === `${ROOT}/yarn.lock` ||
+          s === `${ROOT}/packages/core/package.json`
+        );
       });
-      mockReadFileSync.mockReturnValue(
-        JSON.stringify({ workspaces: ['packages/*'] }) as never,
-      );
+      mockReadFileSync.mockReturnValue(JSON.stringify({ workspaces: ['packages/*'] }) as never);
       setupGlobby([`${ROOT}/packages/core`]);
 
       const result = await detectMonorepo(ROOT);
@@ -133,13 +128,13 @@ describe('detectMonorepo', () => {
     it('detects turbo when turbo.json is present alongside workspaces', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/package.json` ||
-               s === `${ROOT}/turbo.json` ||
-               s === `${ROOT}/packages/a/package.json`;
+        return (
+          s === `${ROOT}/package.json` ||
+          s === `${ROOT}/turbo.json` ||
+          s === `${ROOT}/packages/a/package.json`
+        );
       });
-      mockReadFileSync.mockReturnValue(
-        JSON.stringify({ workspaces: ['packages/*'] }) as never,
-      );
+      mockReadFileSync.mockReturnValue(JSON.stringify({ workspaces: ['packages/*'] }) as never);
       setupGlobby([`${ROOT}/packages/a`]);
 
       const result = await detectMonorepo(ROOT);
@@ -151,8 +146,7 @@ describe('detectMonorepo', () => {
     it('handles workspaces.packages object form', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/package.json` ||
-               s === `${ROOT}/packages/a/package.json`;
+        return s === `${ROOT}/package.json` || s === `${ROOT}/packages/a/package.json`;
       });
       mockReadFileSync.mockReturnValue(
         JSON.stringify({ workspaces: { packages: ['packages/*'] } }) as never,
@@ -168,8 +162,7 @@ describe('detectMonorepo', () => {
     it('detects lerna monorepo', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/lerna.json` ||
-               s === `${ROOT}/packages/alpha/package.json`;
+        return s === `${ROOT}/lerna.json` || s === `${ROOT}/packages/alpha/package.json`;
       });
       mockReadFileSync.mockReturnValue(
         JSON.stringify({ version: '1.0.0', packages: ['packages/*'] }) as never,
@@ -187,8 +180,7 @@ describe('detectMonorepo', () => {
     it('detects turbo without package.json workspaces', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/turbo.json` ||
-               s === `${ROOT}/packages/a/package.json`;
+        return s === `${ROOT}/turbo.json` || s === `${ROOT}/packages/a/package.json`;
       });
       setupGlobby([`${ROOT}/packages/a`]);
 
@@ -201,8 +193,7 @@ describe('detectMonorepo', () => {
     it('detects nx without package.json workspaces', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/nx.json` ||
-               s === `${ROOT}/libs/shared/package.json`;
+        return s === `${ROOT}/nx.json` || s === `${ROOT}/libs/shared/package.json`;
       });
       setupGlobby([`${ROOT}/libs/shared`]);
 
@@ -247,9 +238,11 @@ describe('detectMonorepo', () => {
     it('excludes the root itself from package paths', async () => {
       mockExistsSync.mockImplementation((p) => {
         const s = String(p);
-        return s === `${ROOT}/pnpm-workspace.yaml` ||
-               s === `${ROOT}/package.json` ||
-               s === `${ROOT}/packages/a/package.json`;
+        return (
+          s === `${ROOT}/pnpm-workspace.yaml` ||
+          s === `${ROOT}/package.json` ||
+          s === `${ROOT}/packages/a/package.json`
+        );
       });
       mockReadFileSync.mockReturnValue('packages:\n  - packages/*\n' as never);
       // globby returns root + a subpackage

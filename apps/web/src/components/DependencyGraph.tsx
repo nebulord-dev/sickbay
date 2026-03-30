@@ -1,13 +1,8 @@
-import { useMemo, useCallback } from "react";
-import {
-  ReactFlow,
-  Background,
-  type Node,
-  type Edge,
-  Position,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import dagre from "dagre";
+import { useMemo, useCallback } from 'react';
+
+import { ReactFlow, Background, type Node, type Edge, Position } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import dagre from 'dagre';
 
 interface DependencyGraphProps {
   graph: Record<string, string[]>;
@@ -15,33 +10,33 @@ interface DependencyGraphProps {
 }
 
 const DIR_COLORS: Record<string, string> = {
-  components: "#3b82f6", // blue
-  hooks: "#10b981", // green
-  utils: "#a855f7", // purple
-  lib: "#a855f7",
-  services: "#f59e0b", // amber
-  api: "#f59e0b",
-  pages: "#ec4899", // pink
-  views: "#ec4899",
-  routes: "#ec4899",
-  store: "#ef4444", // red
-  context: "#ef4444",
-  styles: "#06b6d4", // cyan
-  assets: "#06b6d4",
-  types: "#6b7280", // gray
+  components: '#3b82f6', // blue
+  hooks: '#10b981', // green
+  utils: '#a855f7', // purple
+  lib: '#a855f7',
+  services: '#f59e0b', // amber
+  api: '#f59e0b',
+  pages: '#ec4899', // pink
+  views: '#ec4899',
+  routes: '#ec4899',
+  store: '#ef4444', // red
+  context: '#ef4444',
+  styles: '#06b6d4', // cyan
+  assets: '#06b6d4',
+  types: '#6b7280', // gray
 };
 
 function getNodeColor(filePath: string): string {
-  const parts = filePath.split("/");
+  const parts = filePath.split('/');
   for (const part of parts) {
     const lower = part.toLowerCase();
     if (DIR_COLORS[lower]) return DIR_COLORS[lower];
   }
-  return "#6b7280"; // default gray
+  return '#6b7280'; // default gray
 }
 
 function getFileName(filePath: string): string {
-  const parts = filePath.split("/");
+  const parts = filePath.split('/');
   return parts[parts.length - 1];
 }
 
@@ -82,13 +77,10 @@ function findCircularEdges(graph: Record<string, string[]>): Set<string> {
   return circularEdges;
 }
 
-function layoutGraph(
-  nodes: Node[],
-  edges: Edge[],
-): { nodes: Node[]; edges: Edge[] } {
+function layoutGraph(nodes: Node[], edges: Edge[]): { nodes: Node[]; edges: Edge[] } {
   const g = new dagre.graphlib.Graph();
   g.setDefaultEdgeLabel(() => ({}));
-  g.setGraph({ rankdir: "LR", nodesep: 30, ranksep: 80 });
+  g.setGraph({ rankdir: 'LR', nodesep: 30, ranksep: 80 });
 
   for (const node of nodes) {
     g.setNode(node.id, { width: 160, height: 36 });
@@ -142,13 +134,13 @@ export function DependencyGraph({ graph }: DependencyGraphProps) {
         sourcePosition: Position.Right,
         targetPosition: Position.Left,
         style: {
-          background: "#1a1a2e",
-          color: "#e2e8f0",
+          background: '#1a1a2e',
+          color: '#e2e8f0',
           border: `1.5px solid ${color}`,
-          borderRadius: "6px",
-          fontSize: "11px",
-          padding: "6px 10px",
-          fontFamily: "monospace",
+          borderRadius: '6px',
+          fontSize: '11px',
+          padding: '6px 10px',
+          fontFamily: 'monospace',
           width: 160,
         },
       };
@@ -163,17 +155,15 @@ export function DependencyGraph({ graph }: DependencyGraphProps) {
           source: file,
           target: dep,
           style: {
-            stroke: isCircular ? "#ef4444" : "#374151",
+            stroke: isCircular ? '#ef4444' : '#374151',
             strokeWidth: isCircular ? 2 : 1,
           },
           animated: isCircular,
-          label: isCircular ? "circular" : undefined,
+          label: isCircular ? 'circular' : undefined,
           labelStyle: isCircular
-            ? { fill: "#ef4444", fontSize: "9px", fontWeight: 600 }
+            ? { fill: '#ef4444', fontSize: '9px', fontWeight: 600 }
             : undefined,
-          labelBgStyle: isCircular
-            ? { fill: "#1a1a2e", fillOpacity: 0.9 }
-            : undefined,
+          labelBgStyle: isCircular ? { fill: '#1a1a2e', fillOpacity: 0.9 } : undefined,
         });
       }
     }
@@ -190,7 +180,7 @@ export function DependencyGraph({ graph }: DependencyGraphProps) {
   return (
     <div
       className="rounded-lg border border-border overflow-hidden"
-      style={{ height: "calc(100vh - 120px)" }}
+      style={{ height: 'calc(100vh - 120px)' }}
     >
       <ReactFlow
         nodes={nodes}
@@ -200,7 +190,7 @@ export function DependencyGraph({ graph }: DependencyGraphProps) {
         minZoom={0.1}
         maxZoom={2}
         proOptions={{ hideAttribution: true }}
-        style={{ background: "#0a0a0a" }}
+        style={{ background: '#0a0a0a' }}
       >
         <Background color="#1e1e2e" gap={20} />
       </ReactFlow>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import type { SickbayReport } from '@nebulord/sickbay-core';
 
 interface DependencyStatus {
@@ -32,10 +33,13 @@ function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
       if (missingMatch) missing.add(missingMatch[1].trim());
 
       // outdated: "react: 17.0.2 → 18.0.0 (major)" or legacy "react: 17.0.2 → 18.0.0"
-      const ncuMatch = msg.match(/^([^:]+):\s*([^\s]+)\s*→\s*([^\s]+?)(?:\s*\((major|minor|patch)\))?$/);
+      const ncuMatch = msg.match(
+        /^([^:]+):\s*([^\s]+)\s*→\s*([^\s]+?)(?:\s*\((major|minor|patch)\))?$/,
+      );
       if (ncuMatch) {
         const [, pkgName, , to, type] = ncuMatch;
-        const updateType = (type as 'major' | 'minor' | 'patch') ??
+        const updateType =
+          (type as 'major' | 'minor' | 'patch') ??
           (issue.severity === 'warning' ? 'major' : 'minor');
         outdated.set(pkgName.trim(), { to: to.trim(), updateType });
       }
@@ -46,7 +50,9 @@ function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
   for (const [name, version] of Object.entries(dependencies)) {
     const od = outdated.get(name);
     statuses.push({
-      name, version, dev: false,
+      name,
+      version,
+      dev: false,
       unused: unused.has(name),
       missing: missing.has(name),
       outdatedTo: od?.to,
@@ -56,7 +62,9 @@ function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
   for (const [name, version] of Object.entries(devDependencies)) {
     const od = outdated.get(name);
     statuses.push({
-      name, version, dev: true,
+      name,
+      version,
+      dev: true,
       unused: unused.has(name),
       missing: missing.has(name),
       outdatedTo: od?.to,
@@ -161,7 +169,7 @@ interface Props {
 
 export function DependencyList({ report }: Props) {
   const deps = buildDependencyStatuses(report);
-  const issueCount = deps.filter(d => d.unused || d.missing || d.outdatedTo).length;
+  const issueCount = deps.filter((d) => d.unused || d.missing || d.outdatedTo).length;
   return (
     <div>
       <UpdateTotalsBanner deps={deps} />
@@ -173,9 +181,7 @@ export function DependencyList({ report }: Props) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-white">
           Dependencies
-          <span className="ml-2 text-sm font-normal text-gray-400">
-            {deps.length} total
-          </span>
+          <span className="ml-2 text-sm font-normal text-gray-400">{deps.length} total</span>
         </h2>
         {issueCount > 0 && (
           <div className="relative group inline-flex">
@@ -185,7 +191,9 @@ export function DependencyList({ report }: Props) {
             </span>
             <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-56 z-10">
               <div className="bg-gray-900 text-gray-200 text-xs rounded-sm px-3 py-2 shadow-lg border border-gray-700">
-                Dependencies that are <strong className="text-yellow-400">unused</strong>, <strong className="text-red-400">missing</strong>, or <strong className="text-blue-400">outdated</strong>
+                Dependencies that are <strong className="text-yellow-400">unused</strong>,{' '}
+                <strong className="text-red-400">missing</strong>, or{' '}
+                <strong className="text-blue-400">outdated</strong>
                 <div className="absolute top-full right-4 -mt-1 w-2 h-2 bg-gray-900 border-r border-b border-gray-700 transform rotate-45"></div>
               </div>
             </div>
@@ -221,12 +229,12 @@ export function DependencyList({ report }: Props) {
                 </td>
                 <td className="px-4 py-2.5 font-mono text-gray-300">
                   {dep.version}
-                  {dep.outdatedTo && (
-                    <span className="ml-2 text-gray-500">→ {dep.outdatedTo}</span>
-                  )}
+                  {dep.outdatedTo && <span className="ml-2 text-gray-500">→ {dep.outdatedTo}</span>}
                 </td>
                 <td className="px-4 py-2.5">
-                  <span className={`text-xs px-1.5 py-0.5 rounded-sm ${dep.dev ? 'bg-gray-700 text-gray-400' : 'bg-gray-800 text-gray-500'}`}>
+                  <span
+                    className={`text-xs px-1.5 py-0.5 rounded-sm ${dep.dev ? 'bg-gray-700 text-gray-400' : 'bg-gray-800 text-gray-500'}`}
+                  >
                     {dep.dev ? 'dev' : 'prod'}
                   </span>
                 </td>
@@ -249,8 +257,8 @@ export function DependencyList({ report }: Props) {
             className="text-blue-400 hover:text-blue-300 hover:underline"
           >
             Node Modules Inspector
-          </a>
-          {' '}— run{' '}
+          </a>{' '}
+          — run{' '}
           <code className="px-1.5 py-0.5 rounded bg-gray-800 text-green-400 text-xs">
             npx node-modules-inspector
           </code>
@@ -265,40 +273,57 @@ function StatusBadges({ dep }: { dep: DependencyStatus }) {
 
   if (dep.missing) {
     badges.push(
-      <span key="missing" className="text-xs px-2 py-0.5 rounded-full bg-red-900/50 text-red-400 border border-red-800">
+      <span
+        key="missing"
+        className="text-xs px-2 py-0.5 rounded-full bg-red-900/50 text-red-400 border border-red-800"
+      >
         missing
-      </span>
+      </span>,
     );
   }
   if (dep.unused) {
     badges.push(
-      <span key="unused" className="text-xs px-2 py-0.5 rounded-full bg-yellow-900/40 text-yellow-500 border border-yellow-800">
+      <span
+        key="unused"
+        className="text-xs px-2 py-0.5 rounded-full bg-yellow-900/40 text-yellow-500 border border-yellow-800"
+      >
         unused
-      </span>
+      </span>,
     );
   }
   if (dep.updateType === 'major') {
     badges.push(
-      <span key="outdated" className="text-xs px-2 py-0.5 rounded-full bg-orange-900/40 text-orange-400 border border-orange-800">
+      <span
+        key="outdated"
+        className="text-xs px-2 py-0.5 rounded-full bg-orange-900/40 text-orange-400 border border-orange-800"
+      >
         major update
-      </span>
+      </span>,
     );
   } else if (dep.updateType === 'minor') {
     badges.push(
-      <span key="outdated" className="text-xs px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-800">
+      <span
+        key="outdated"
+        className="text-xs px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-400 border border-blue-800"
+      >
         minor update
-      </span>
+      </span>,
     );
   } else if (dep.updateType === 'patch') {
     badges.push(
-      <span key="outdated" className="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">
+      <span
+        key="outdated"
+        className="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700"
+      >
         patch update
-      </span>
+      </span>,
     );
   }
   if (badges.length === 0) {
     badges.push(
-      <span key="ok" className="text-xs text-gray-600">✓</span>
+      <span key="ok" className="text-xs text-gray-600">
+        ✓
+      </span>,
     );
   }
 

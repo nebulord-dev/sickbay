@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { KnipRunner } from './knip.js';
 
 vi.mock('execa', () => ({
@@ -23,6 +24,7 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 import { execa } from 'execa';
+
 import { isCommandAvailable } from '../utils/file-helpers.js';
 
 const mockExeca = vi.mocked(execa);
@@ -60,10 +62,12 @@ describe('KnipRunner', () => {
   it('reports unused files as warning issues', async () => {
     mockIsAvailable.mockResolvedValue(true);
     mockExeca.mockResolvedValue({
-      stdout: JSON.stringify({ issues: [
-        { file: 'src/old.ts', files: [{ name: 'src/old.ts' }] },
-        { file: 'src/dead.ts', files: [{ name: 'src/dead.ts' }] },
-      ] }),
+      stdout: JSON.stringify({
+        issues: [
+          { file: 'src/old.ts', files: [{ name: 'src/old.ts' }] },
+          { file: 'src/dead.ts', files: [{ name: 'src/dead.ts' }] },
+        ],
+      }),
     } as never);
 
     const result = await runner.run('/project');

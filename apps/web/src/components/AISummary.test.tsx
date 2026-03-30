@@ -1,16 +1,24 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import { AISummary } from './AISummary.js';
+
 import type { SickbayReport } from '@nebulord/sickbay-core';
 
 const mockReport: SickbayReport = {
   timestamp: '2024-01-01T00:00:00.000Z',
   projectPath: '/test',
   projectInfo: {
-    name: 'test-project', version: '1.0.0', framework: 'react',
-    packageManager: 'npm', totalDependencies: 5,
-    dependencies: {}, devDependencies: {},
-    hasESLint: false, hasPrettier: false, hasTypeScript: true,
+    name: 'test-project',
+    version: '1.0.0',
+    framework: 'react',
+    packageManager: 'npm',
+    totalDependencies: 5,
+    dependencies: {},
+    devDependencies: {},
+    hasESLint: false,
+    hasPrettier: false,
+    hasTypeScript: true,
   },
   overallScore: 80,
   summary: { critical: 0, warnings: 1, info: 2 },
@@ -29,7 +37,7 @@ afterEach(() => {
 describe('AISummary', () => {
   it('renders nothing when isOpen is false', () => {
     const { container } = render(
-      <AISummary report={mockReport} isOpen={false} onToggle={vi.fn()} />
+      <AISummary report={mockReport} isOpen={false} onToggle={vi.fn()} />,
     );
     expect(container.firstChild).toBeNull();
   });
@@ -57,7 +65,8 @@ describe('AISummary', () => {
   });
 
   it('renders sections from a successful summary response', async () => {
-    const summary = '**Health Assessment**\nYour project is in good shape.\n**Next Steps**\nFix vulnerabilities.';
+    const summary =
+      '**Health Assessment**\nYour project is in good shape.\n**Next Steps**\nFix vulnerabilities.';
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ summary }),

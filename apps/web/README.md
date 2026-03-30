@@ -5,6 +5,7 @@ The web dashboard for Sickbay. Built with Vite + React + TailwindCSS.
 ## Usage
 
 The web dashboard is typically launched automatically via `sickbay --web`, which:
+
 - Builds the web app (requires `pnpm build` first)
 - Starts a local HTTP server serving `dist/`
 - Injects the scan report via `/sickbay-report.json`

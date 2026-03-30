@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from "react";
-import type { SickbayReport } from "@nebulord/sickbay-core";
-import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+import type { SickbayReport } from '@nebulord/sickbay-core';
 
 interface ChatDrawerProps {
   report: SickbayReport;
@@ -10,86 +12,78 @@ interface ChatDrawerProps {
 }
 
 interface Message {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
 }
 
 function MarkdownMessage({ content }: { content: string }) {
   return (
     <div className="prose prose-invert prose-sm max-w-none">
-    <ReactMarkdown
-      components={{
-        code({
-          className,
-          children,
-          ...props
-        }: {
-          className?: string;
-          children?: React.ReactNode;
-        }) {
-          const match = /language-(\w+)/.exec(className || "");
-          return match ? (
-            <SyntaxHighlighter
-              style={vscDarkPlus}
-              language={match[1]}
-              PreTag="div"
-              className="rounded-md bg-black/30! mt-2! mb-2!"
-              customStyle={{ margin: 0, padding: "0.75rem" }}
-              {...props}
-            >
-              {String(children).replace(/\n$/, "")}
-            </SyntaxHighlighter>
-          ) : (
-            <code
-              className="bg-black/30 px-1.5 py-0.5 rounded-sm text-accent font-mono text-xs"
-              {...props}
-            >
-              {children}
-            </code>
-          );
-        },
-        p({ children }) {
-          return <p className="mb-2 last:mb-0">{children}</p>;
-        },
-        ul({ children }) {
-          return (
-            <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>
-          );
-        },
-        ol({ children }) {
-          return (
-            <ol className="list-decimal list-inside mb-2 space-y-1">
-              {children}
-            </ol>
-          );
-        },
-        li({ children }) {
-          return <li className="text-sm">{children}</li>;
-        },
-        strong({ children }) {
-          return (
-            <strong className="font-semibold text-white">{children}</strong>
-          );
-        },
-        em({ children }) {
-          return <em className="italic text-gray-200">{children}</em>;
-        },
-        a({ href, children }) {
-          return (
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent hover:underline"
-            >
-              {children}
-            </a>
-          );
-        },
-      }}
-    >
-      {content}
-    </ReactMarkdown>
+      <ReactMarkdown
+        components={{
+          code({
+            className,
+            children,
+            ...props
+          }: {
+            className?: string;
+            children?: React.ReactNode;
+          }) {
+            const match = /language-(\w+)/.exec(className || '');
+            return match ? (
+              <SyntaxHighlighter
+                style={vscDarkPlus}
+                language={match[1]}
+                PreTag="div"
+                className="rounded-md bg-black/30! mt-2! mb-2!"
+                customStyle={{ margin: 0, padding: '0.75rem' }}
+                {...props}
+              >
+                {String(children).replace(/\n$/, '')}
+              </SyntaxHighlighter>
+            ) : (
+              <code
+                className="bg-black/30 px-1.5 py-0.5 rounded-sm text-accent font-mono text-xs"
+                {...props}
+              >
+                {children}
+              </code>
+            );
+          },
+          p({ children }) {
+            return <p className="mb-2 last:mb-0">{children}</p>;
+          },
+          ul({ children }) {
+            return <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>;
+          },
+          ol({ children }) {
+            return <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>;
+          },
+          li({ children }) {
+            return <li className="text-sm">{children}</li>;
+          },
+          strong({ children }) {
+            return <strong className="font-semibold text-white">{children}</strong>;
+          },
+          em({ children }) {
+            return <em className="italic text-gray-200">{children}</em>;
+          },
+          a({ href, children }) {
+            return (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent hover:underline"
+              >
+                {children}
+              </a>
+            );
+          },
+        }}
+      >
+        {content}
+      </ReactMarkdown>
     </div>
   );
 }
@@ -98,13 +92,13 @@ export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Check if AI is available
-    fetch("/ai/summary", { method: "HEAD" })
+    fetch('/ai/summary', { method: 'HEAD' })
       .then((res) => setIsAvailable(res.ok))
       .catch(() => setIsAvailable(false));
   }, []);
@@ -116,24 +110,24 @@ export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
   }, [packageName]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
 
-    const userMessage: Message = { role: "user", content: input };
+    const userMessage: Message = { role: 'user', content: input };
     setMessages((prev) => [...prev, userMessage]);
-    setInput("");
+    setInput('');
     setLoading(true);
 
     try {
       const chatUrl = packageName
         ? `/ai/chat?package=${encodeURIComponent(packageName)}`
-        : "/ai/chat";
+        : '/ai/chat';
       const response = await fetch(chatUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: input,
           history: messages,
@@ -143,21 +137,21 @@ export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
       if (response.ok) {
         const data = await response.json();
         const assistantMessage: Message = {
-          role: "assistant",
+          role: 'assistant',
           content: data.response,
         };
         setMessages((prev) => [...prev, assistantMessage]);
       } else {
         const errorMessage: Message = {
-          role: "assistant",
-          content: "Sorry, I encountered an error. Please try again.",
+          role: 'assistant',
+          content: 'Sorry, I encountered an error. Please try again.',
         };
         setMessages((prev) => [...prev, errorMessage]);
       }
     } catch {
       const errorMessage: Message = {
-        role: "assistant",
-        content: "Sorry, I encountered an error. Please try again.",
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -189,12 +183,7 @@ export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
               <span className="text-lg">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                   <path
                     fill="none"
                     stroke="currentColor"
@@ -219,24 +208,23 @@ export function ChatDrawer({ report: _report, packageName }: ChatDrawerProps) {
               <div className="text-sm text-gray-500 text-center py-8">
                 Ask me anything about your project health!
                 <div className="mt-2 text-xs text-gray-600">
-                  Try: "What should I fix first?" or "Explain the security
-                  issues"
+                  Try: "What should I fix first?" or "Explain the security issues"
                 </div>
               </div>
             )}
             {messages.map((msg, i) => (
               <div
                 key={`${msg.role}-${i}`}
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
                   className={`max-w-[80%] px-3 py-2 rounded-lg text-sm ${
-                    msg.role === "user"
-                      ? "bg-accent text-black font-medium"
-                      : "bg-card text-gray-300"
+                    msg.role === 'user'
+                      ? 'bg-accent text-black font-medium'
+                      : 'bg-card text-gray-300'
                   }`}
                 >
-                  {msg.role === "assistant" ? (
+                  {msg.role === 'assistant' ? (
                     <MarkdownMessage content={msg.content} />
                   ) : (
                     msg.content

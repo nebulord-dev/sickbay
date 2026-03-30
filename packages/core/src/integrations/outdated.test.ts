@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { OutdatedRunner } from './outdated.js';
 
 vi.mock('execa', () => ({ execa: vi.fn() }));
@@ -12,6 +13,7 @@ vi.mock('../utils/detect-project.js', () => ({
 }));
 
 import { execa } from 'execa';
+
 import { detectPackageManager } from '../utils/detect-project.js';
 
 const mockExeca = vi.mocked(execa);

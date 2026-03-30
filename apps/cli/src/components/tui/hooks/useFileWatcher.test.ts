@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import React from 'react';
-import { render } from 'ink-testing-library';
-import { Text } from 'ink';
 import { EventEmitter } from 'events';
+
+import React from 'react';
+
+import { Text } from 'ink';
+import { render } from 'ink-testing-library';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock chokidar (the hook imports it dynamically)
 vi.mock('chokidar', () => ({
@@ -10,6 +12,7 @@ vi.mock('chokidar', () => ({
 }));
 
 import * as chokidar from 'chokidar';
+
 import { useFileWatcher } from './useFileWatcher.js';
 
 const mockWatch = vi.mocked(chokidar.watch);
@@ -62,9 +65,7 @@ describe('useFileWatcher', () => {
   });
 
   it('does not call watch when enabled is false', async () => {
-    render(
-      React.createElement(WatcherDisplay, { projectPath: '/project', enabled: false }),
-    );
+    render(React.createElement(WatcherDisplay, { projectPath: '/project', enabled: false }));
 
     await vi.runAllTimersAsync();
 
@@ -75,9 +76,7 @@ describe('useFileWatcher', () => {
     const fakeWatcher = makeFakeWatcher();
     mockWatch.mockReturnValue(fakeWatcher as any);
 
-    render(
-      React.createElement(WatcherDisplay, { projectPath: '/project', enabled: true }),
-    );
+    render(React.createElement(WatcherDisplay, { projectPath: '/project', enabled: true }));
 
     await vi.runAllTimersAsync();
 
@@ -88,9 +87,7 @@ describe('useFileWatcher', () => {
     const fakeWatcher = makeFakeWatcher();
     mockWatch.mockReturnValue(fakeWatcher as any);
 
-    render(
-      React.createElement(WatcherDisplay, { projectPath: '/my/custom/path', enabled: true }),
-    );
+    render(React.createElement(WatcherDisplay, { projectPath: '/my/custom/path', enabled: true }));
 
     await vi.runAllTimersAsync();
 
@@ -216,9 +213,7 @@ describe('useFileWatcher', () => {
 
     // Should not propagate any error
     expect(() =>
-      render(
-        React.createElement(WatcherDisplay, { projectPath: '/project', enabled: true }),
-      ),
+      render(React.createElement(WatcherDisplay, { projectPath: '/project', enabled: true })),
     ).not.toThrow();
   });
 });

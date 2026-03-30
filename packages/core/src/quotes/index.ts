@@ -1,5 +1,6 @@
-import type { Quote } from '../types.js';
 import startrekQuotes from './startrek.json';
+
+import type { Quote } from '../types.js';
 
 export type SeverityTier = 'critical' | 'warning' | 'info' | 'allClear';
 

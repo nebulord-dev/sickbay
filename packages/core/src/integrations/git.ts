@@ -1,6 +1,8 @@
 import { execa } from 'execa';
-import { BaseRunner } from './base.js';
+
 import { timer, fileExists } from '../utils/file-helpers.js';
+import { BaseRunner } from './base.js';
+
 import type { CheckResult, Issue } from '../types.js';
 
 /**
@@ -33,20 +35,29 @@ export class GitRunner extends BaseRunner {
       const hasRemote = remotesResult.stdout.trim().length > 0;
       let remoteBranches = 0;
       if (hasRemote) {
-        const branchResult = await execa('git', ['branch', '-r'], { cwd: projectPath, reject: false });
+        const branchResult = await execa('git', ['branch', '-r'], {
+          cwd: projectPath,
+          reject: false,
+        });
         remoteBranches = branchResult.stdout.trim().split('\n').filter(Boolean).length;
       }
 
-      const lastCommit = lastCommitResult.status === 'fulfilled' ? lastCommitResult.value.stdout.trim() : 'unknown';
-      const commitCount = logCountResult.status === 'fulfilled' ? parseInt(logCountResult.value.stdout.trim(), 10) : 0;
-      const contributorCount = contributorsResult.status === 'fulfilled'
-        ? contributorsResult.value.stdout.trim().split('\n').filter(Boolean).length
-        : 0;
+      const lastCommit =
+        lastCommitResult.status === 'fulfilled' ? lastCommitResult.value.stdout.trim() : 'unknown';
+      const commitCount =
+        logCountResult.status === 'fulfilled'
+          ? parseInt(logCountResult.value.stdout.trim(), 10)
+          : 0;
+      const contributorCount =
+        contributorsResult.status === 'fulfilled'
+          ? contributorsResult.value.stdout.trim().split('\n').filter(Boolean).length
+          : 0;
 
       const issues: Issue[] = [];
 
       // Check if repo is stale (last commit > 6 months ago)
-      const isStale = lastCommit.includes('year') || (lastCommit.includes('month') && parseInt(lastCommit) > 6);
+      const isStale =
+        lastCommit.includes('year') || (lastCommit.includes('month') && parseInt(lastCommit) > 6);
       if (isStale) {
         issues.push({
           severity: 'warning',
@@ -82,7 +93,9 @@ export class GitRunner extends BaseRunner {
         name: 'Git Health',
         score: 0,
         status: 'fail',
-        issues: [{ severity: 'critical', message: `git analysis failed: ${err}`, reportedBy: ['git'] }],
+        issues: [
+          { severity: 'critical', message: `git analysis failed: ${err}`, reportedBy: ['git'] },
+        ],
         toolsUsed: ['git'],
         duration: elapsed(),
       };

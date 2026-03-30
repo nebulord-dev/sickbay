@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { SourceMapExplorerRunner } from './source-map-explorer.js';
 
 vi.mock('execa', () => ({ execa: vi.fn() }));
@@ -18,9 +19,11 @@ vi.mock('../utils/file-helpers.js', () => ({
   },
 }));
 
+import { statSync, readFileSync } from 'fs';
+
 import { execa } from 'execa';
 import { globby } from 'globby';
-import { statSync, readFileSync } from 'fs';
+
 import { fileExists, isCommandAvailable } from '../utils/file-helpers.js';
 
 const mockExeca = vi.mocked(execa);
@@ -40,7 +43,9 @@ describe('SourceMapExplorerRunner', () => {
     runner = new SourceMapExplorerRunner();
     vi.clearAllMocks();
     // Default: no index.html — falls back to total bundle measurement
-    mockReadFileSync.mockImplementation(() => { throw new Error('ENOENT'); });
+    mockReadFileSync.mockImplementation(() => {
+      throw new Error('ENOENT');
+    });
   });
 
   it('only applies to browser runtime', () => {
@@ -118,13 +123,13 @@ describe('SourceMapExplorerRunner', () => {
       mockGlobby
         .mockResolvedValueOnce([]) // no source maps
         .mockResolvedValueOnce([
-          '/project/dist/assets/index-abc.js',   // entry chunk (200KB)
+          '/project/dist/assets/index-abc.js', // entry chunk (200KB)
           '/project/dist/assets/documents-xyz.js', // lazy chunk (900KB)
         ]);
 
       // index.html references only the entry chunk
       mockReadFileSync.mockReturnValue(
-        '<script type="module" src="/assets/index-abc.js"></script>'
+        '<script type="module" src="/assets/index-abc.js"></script>',
       );
 
       mockStatSync.mockImplementation((file: unknown) => {
@@ -154,7 +159,7 @@ describe('SourceMapExplorerRunner', () => {
         ]);
 
       mockReadFileSync.mockReturnValue(
-        '<script type="module" src="/assets/index-abc.js"></script>'
+        '<script type="module" src="/assets/index-abc.js"></script>',
       );
 
       mockStatSync.mockImplementation((file: unknown) => {
@@ -177,7 +182,7 @@ describe('SourceMapExplorerRunner', () => {
         .mockResolvedValueOnce(['/project/dist/assets/index-abc.js']);
 
       mockReadFileSync.mockReturnValue(
-        '<script type="module" src="/assets/index-abc.js"></script>'
+        '<script type="module" src="/assets/index-abc.js"></script>',
       );
 
       mockStatSync.mockReturnValue({ size: 1.5 * MB } as never);
@@ -190,9 +195,7 @@ describe('SourceMapExplorerRunner', () => {
     });
 
     it('falls back to total bundle when index.html has no script tags', async () => {
-      mockGlobby
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce(['/project/dist/main.js']);
+      mockGlobby.mockResolvedValueOnce([]).mockResolvedValueOnce(['/project/dist/main.js']);
 
       // HTML with no script src tags
       mockReadFileSync.mockReturnValue('<html><body></body></html>');
@@ -215,7 +218,13 @@ describe('SourceMapExplorerRunner', () => {
       mockIsCommandAvailable.mockResolvedValue(true);
 
       const smeOutput = JSON.stringify({
-        results: [{ bundleName: 'dist/main.js', totalBytes: 200 * KB, files: { 'src/index.js': { size: 200 * KB } } }],
+        results: [
+          {
+            bundleName: 'dist/main.js',
+            totalBytes: 200 * KB,
+            files: { 'src/index.js': { size: 200 * KB } },
+          },
+        ],
       });
       mockExeca.mockResolvedValue({ stdout: smeOutput } as never);
 
@@ -232,7 +241,13 @@ describe('SourceMapExplorerRunner', () => {
       mockIsCommandAvailable.mockResolvedValue(true);
 
       const smeOutput = JSON.stringify({
-        results: [{ bundleName: 'dist/main.js', totalBytes: 700 * KB, files: { 'src/index.js': { size: 700 * KB } } }],
+        results: [
+          {
+            bundleName: 'dist/main.js',
+            totalBytes: 700 * KB,
+            files: { 'src/index.js': { size: 700 * KB } },
+          },
+        ],
       });
       mockExeca.mockResolvedValue({ stdout: smeOutput } as never);
 
@@ -249,7 +264,13 @@ describe('SourceMapExplorerRunner', () => {
       mockIsCommandAvailable.mockResolvedValue(true);
 
       const smeOutput = JSON.stringify({
-        results: [{ bundleName: 'dist/main.js', totalBytes: 1.2 * MB, files: { 'src/index.js': { size: 1.2 * MB } } }],
+        results: [
+          {
+            bundleName: 'dist/main.js',
+            totalBytes: 1.2 * MB,
+            files: { 'src/index.js': { size: 1.2 * MB } },
+          },
+        ],
       });
       mockExeca.mockResolvedValue({ stdout: smeOutput } as never);
 

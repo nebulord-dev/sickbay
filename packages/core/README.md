@@ -20,7 +20,7 @@ import { runSickbay } from '@nebulord/sickbay-core';
 
 const report = await runSickbay({
   projectPath: '/path/to/project',
-  checks: ['knip', 'npm-audit'],   // optional — runs all if omitted
+  checks: ['knip', 'npm-audit'], // optional — runs all if omitted
   verbose: false,
   onCheckStart: (name) => console.log(`Starting ${name}`),
   onCheckComplete: (result) => console.log(`Done: ${result.id}`),
@@ -29,13 +29,13 @@ const report = await runSickbay({
 
 **Options:**
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `projectPath` | `string` | Absolute path to the project root |
-| `checks` | `string[]` | Subset of check IDs to run (default: all) |
-| `verbose` | `boolean` | Pass through tool output |
-| `onCheckStart` | `(name: string) => void` | Called when a check begins |
-| `onCheckComplete` | `(result: CheckResult) => void` | Called when a check finishes |
+| Option            | Type                            | Description                               |
+| ----------------- | ------------------------------- | ----------------------------------------- |
+| `projectPath`     | `string`                        | Absolute path to the project root         |
+| `checks`          | `string[]`                      | Subset of check IDs to run (default: all) |
+| `verbose`         | `boolean`                       | Pass through tool output                  |
+| `onCheckStart`    | `(name: string) => void`        | Called when a check begins                |
+| `onCheckComplete` | `(result: CheckResult) => void` | Called when a check finishes              |
 
 ### Key Types
 
@@ -53,11 +53,11 @@ interface CheckResult {
   id: string;
   category: 'dependencies' | 'performance' | 'code-quality' | 'security' | 'git';
   name: string;
-  score: number;           // 0–100
+  score: number; // 0–100
   status: 'pass' | 'warning' | 'fail' | 'skipped';
   issues: Issue[];
   toolsUsed: string[];
-  duration: number;        // milliseconds
+  duration: number; // milliseconds
   metadata?: Record<string, unknown>;
 }
 
@@ -74,18 +74,18 @@ interface Issue {
 
 Each check lives in `src/integrations/` and extends `BaseRunner`:
 
-| File | Check ID | External tool |
-|------|----------|---------------|
-| `knip.ts` | `knip` | `knip` |
-| `depcheck.ts` | `depcheck` | `depcheck` |
-| `npm-check-updates.ts` | `npm-check-updates` | `ncu` |
-| `npm-audit.ts` | `npm-audit` | `npm` |
-| `license-checker.ts` | `license-checker` | `license-checker` |
-| `madge.ts` | `madge` | `madge` |
-| `jscpd.ts` | `jscpd` | `jscpd` |
-| `coverage.ts` | `coverage` | *(auto-runs vitest/jest)* |
-| `source-map-explorer.ts` | `source-map-explorer` | `source-map-explorer` |
-| `git.ts` | `git` | `git` |
+| File                     | Check ID              | External tool             |
+| ------------------------ | --------------------- | ------------------------- |
+| `knip.ts`                | `knip`                | `knip`                    |
+| `depcheck.ts`            | `depcheck`            | `depcheck`                |
+| `npm-check-updates.ts`   | `npm-check-updates`   | `ncu`                     |
+| `npm-audit.ts`           | `npm-audit`           | `npm`                     |
+| `license-checker.ts`     | `license-checker`     | `license-checker`         |
+| `madge.ts`               | `madge`               | `madge`                   |
+| `jscpd.ts`               | `jscpd`               | `jscpd`                   |
+| `coverage.ts`            | `coverage`            | _(auto-runs vitest/jest)_ |
+| `source-map-explorer.ts` | `source-map-explorer` | `source-map-explorer`     |
+| `git.ts`                 | `git`                 | `git`                     |
 
 ### Adding a new check
 
@@ -120,7 +120,7 @@ export class MyCheckRunner extends BaseRunner {
 
 ```typescript
 const CATEGORY_WEIGHTS = {
-  security: 0.30,
+  security: 0.3,
   dependencies: 0.25,
   'code-quality': 0.25,
   performance: 0.15,

@@ -14,11 +14,17 @@
 }
 
 /* Monospace headings — terminal/hacker aesthetic */
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .VPHero .name,
 .VPHero .text,
 .VPHero .tagline {
-  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', ui-monospace, monospace !important;
+  font-family:
+    'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', ui-monospace, monospace !important;
 }
 
 /* Hero name gradient — teal to match brand */

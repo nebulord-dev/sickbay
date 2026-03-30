@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { NpmAuditRunner } from './npm-audit.js';
 
 vi.mock('execa', () => ({ execa: vi.fn() }));
@@ -71,7 +72,14 @@ describe('NpmAuditRunner', () => {
   it('returns warning for only moderate vulnerabilities', async () => {
     mockExeca.mockResolvedValue({
       stdout: makeAuditOutput(
-        { axios: { name: 'axios', severity: 'moderate', via: [{ title: 'SSRF' }], fixAvailable: false } },
+        {
+          axios: {
+            name: 'axios',
+            severity: 'moderate',
+            via: [{ title: 'SSRF' }],
+            fixAvailable: false,
+          },
+        },
         { moderate: 1 },
       ),
     } as never);
@@ -85,7 +93,14 @@ describe('NpmAuditRunner', () => {
   it('sets npm audit fix command when fix is available as object', async () => {
     mockExeca.mockResolvedValue({
       stdout: makeAuditOutput(
-        { pkg: { name: 'pkg', severity: 'high', via: [{ title: 'RCE' }], fixAvailable: { name: 'pkg', version: '2.0.0' } } },
+        {
+          pkg: {
+            name: 'pkg',
+            severity: 'high',
+            via: [{ title: 'RCE' }],
+            fixAvailable: { name: 'pkg', version: '2.0.0' },
+          },
+        },
         { high: 1 },
       ),
     } as never);
@@ -126,7 +141,14 @@ describe('NpmAuditRunner', () => {
   it('includes url from via object as file field', async () => {
     mockExeca.mockResolvedValue({
       stdout: makeAuditOutput(
-        { pkg: { name: 'pkg', severity: 'moderate', via: [{ title: 'Vuln', url: 'https://nvd.example.com' }], fixAvailable: false } },
+        {
+          pkg: {
+            name: 'pkg',
+            severity: 'moderate',
+            via: [{ title: 'Vuln', url: 'https://nvd.example.com' }],
+            fixAvailable: false,
+          },
+        },
         { moderate: 1 },
       ),
     } as never);
@@ -235,7 +257,10 @@ describe('NpmAuditRunner', () => {
 
     const result = await runner.run('/project');
 
-    const vp = (result.metadata as Record<string, unknown>).vulnerablePackages as Record<string, number>;
+    const vp = (result.metadata as Record<string, unknown>).vulnerablePackages as Record<
+      string,
+      number
+    >;
     // string-only via: falls back to Math.max(0, 1) = 1
     expect(vp['nested-dep']).toBe(1);
     // one advisory object in mixed via

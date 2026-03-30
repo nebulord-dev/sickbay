@@ -10,13 +10,13 @@ sickbay tui [options]
 
 ## Options
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `-p, --path <path>` | Project path to monitor | Current working directory |
-| `-c, --checks <checks>` | Comma-separated list of checks to run | All applicable checks |
-| `--no-watch` | Disable file-watching auto-refresh | Watch enabled |
-| `--no-quotes` | Suppress personality quotes in output | Quotes enabled |
-| `--refresh <seconds>` | Auto-refresh interval in seconds | `300` |
+| Flag                    | Description                           | Default                   |
+| ----------------------- | ------------------------------------- | ------------------------- |
+| `-p, --path <path>`     | Project path to monitor               | Current working directory |
+| `-c, --checks <checks>` | Comma-separated list of checks to run | All applicable checks     |
+| `--no-watch`            | Disable file-watching auto-refresh    | Watch enabled             |
+| `--no-quotes`           | Suppress personality quotes in output | Quotes enabled            |
+| `--refresh <seconds>`   | Auto-refresh interval in seconds      | `300`                     |
 
 ## Examples
 
@@ -48,30 +48,30 @@ sickbay tui --path ~/my-project --checks knip,eslint,npm-audit
 
 The TUI displays six panels that you can navigate between:
 
-| Panel | Content |
-|-------|---------|
-| **Health** | Overall health score with per-category breakdown |
-| **Score** | Detailed per-check scores with status indicators |
-| **Trend** | Score history chart (requires `sickbay init`) |
-| **Git** | Git-related health info — coverage, commit hygiene |
-| **Quick Wins** | Top actionable fixes ranked by impact |
-| **Activity** | Recent scan activity and file change events |
+| Panel          | Content                                            |
+| -------------- | -------------------------------------------------- |
+| **Health**     | Overall health score with per-category breakdown   |
+| **Score**      | Detailed per-check scores with status indicators   |
+| **Trend**      | Score history chart (requires `sickbay init`)      |
+| **Git**        | Git-related health info — coverage, commit hygiene |
+| **Quick Wins** | Top actionable fixes ranked by impact              |
+| **Activity**   | Recent scan activity and file change events        |
 
 ## Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `?` | Toggle help overlay |
-| `h` | Focus Health panel |
-| `g` | Focus Git panel |
-| `t` | Focus Trend panel |
-| `q` | Focus Quick Wins panel |
-| `a` | Focus Activity panel |
-| `f` | Expand the currently focused panel to full screen |
-| `Escape` | Close expanded panel or help overlay |
-| `r` | Trigger a manual re-scan |
-| `w` | Open the web dashboard in a browser |
-| `W` | Open the web dashboard with AI features enabled |
+| Key      | Action                                            |
+| -------- | ------------------------------------------------- |
+| `?`      | Toggle help overlay                               |
+| `h`      | Focus Health panel                                |
+| `g`      | Focus Git panel                                   |
+| `t`      | Focus Trend panel                                 |
+| `q`      | Focus Quick Wins panel                            |
+| `a`      | Focus Activity panel                              |
+| `f`      | Expand the currently focused panel to full screen |
+| `Escape` | Close expanded panel or help overlay              |
+| `r`      | Trigger a manual re-scan                          |
+| `w`      | Open the web dashboard in a browser               |
+| `W`      | Open the web dashboard with AI features enabled   |
 
 ## File Watching
 
