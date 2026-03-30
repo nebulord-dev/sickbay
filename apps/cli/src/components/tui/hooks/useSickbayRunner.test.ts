@@ -109,9 +109,12 @@ describe('useSickbayRunner', () => {
 
     // Kick off scan (don't await — it's still pending)
     scanRef.current?.();
-    // React 18 batches and schedules re-renders via its internal scheduler.
-    // setTimeout(0) runs after React's scheduler has flushed the pending render.
-    await new Promise((r) => setTimeout(r, 0));
+    // React batches and schedules re-renders via its internal scheduler.
+    // Flush multiple ticks to ensure the render has completed on slower CI runners.
+    for (let i = 0; i < 5; i++) {
+      await new Promise((r) => setTimeout(r, 0));
+      if (lastFrame()?.includes('scanning:true')) break;
+    }
 
     expect(lastFrame()).toContain('scanning:true');
 

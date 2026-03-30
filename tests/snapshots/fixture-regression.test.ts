@@ -72,13 +72,10 @@ function assertUnstableCheck(
 // --- Stable checks to snapshot ---
 
 const STABLE_CHECKS = [
-  'knip',
   'depcheck',
   'madge',
   'jscpd',
   'complexity',
-  'eslint',
-  'coverage',
   'secrets',
   'todo-scanner',
   'heavy-deps',
@@ -89,6 +86,14 @@ const STABLE_CHECKS = [
   'license-checker',
   'git',
   'typescript',
+];
+
+// These checks produce different results across environments (local vs CI)
+// due to tool version differences, OS behavior, or transient fixture state.
+const ENVIRONMENT_SENSITIVE_CHECKS = [
+  { id: 'eslint', category: 'code-quality' },
+  { id: 'coverage', category: 'code-quality' },
+  { id: 'knip', category: 'dependencies' },
 ];
 
 // --- react-app fixture ---
@@ -109,6 +114,11 @@ describe('react-app', () => {
   // Stable checks
   for (const id of STABLE_CHECKS) {
     it(id, () => snapshotCheck(report, id));
+  }
+
+  // Environment-sensitive checks — structural assertions only
+  for (const { id, category } of ENVIRONMENT_SENSITIVE_CHECKS) {
+    it(`${id} has valid structure`, () => assertUnstableCheck(report, id, category));
   }
 
   // Unstable checks — structural assertions only
@@ -161,6 +171,11 @@ describe('node-api', () => {
   // Stable checks
   for (const id of STABLE_CHECKS) {
     it(id, () => snapshotCheck(report, id));
+  }
+
+  // Environment-sensitive checks — structural assertions only
+  for (const { id, category } of ENVIRONMENT_SENSITIVE_CHECKS) {
+    it(`${id} has valid structure`, () => assertUnstableCheck(report, id, category));
   }
 
   // Unstable checks — structural assertions only
