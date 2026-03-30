@@ -21,7 +21,7 @@ pnpm install
 pnpm build
 
 # Link the CLI globally so you can run `sickbay` anywhere
-cd packages/cli && pnpm link --global
+cd apps/cli && pnpm link --global
 ```
 
 ---
@@ -44,15 +44,15 @@ The `fixtures/` directory is a separate pnpm workspace used for testing — it i
 
 ### Key files to know
 
-| File                                  | What it does                                                               |
-| ------------------------------------- | -------------------------------------------------------------------------- |
-| `packages/core/src/types.ts`          | All shared TypeScript interfaces (`SickbayReport`, `CheckResult`, `Issue`) |
-| `packages/core/src/runner.ts`         | Orchestrates checks — register new runners here                            |
-| `packages/core/src/scoring.ts`        | Weighted category scoring                                                  |
-| `packages/core/src/integrations/`     | One file per check runner                                                  |
-| `packages/cli/src/index.ts`           | CLI entry point (Commander flags)                                          |
-| `packages/cli/src/components/App.tsx` | Root Ink component, UI phases                                              |
-| `packages/web/src/App.tsx`            | Web dashboard root, report loading                                         |
+| File                              | What it does                                                               |
+| --------------------------------- | -------------------------------------------------------------------------- |
+| `packages/core/src/types.ts`      | All shared TypeScript interfaces (`SickbayReport`, `CheckResult`, `Issue`) |
+| `packages/core/src/runner.ts`     | Orchestrates checks — register new runners here                            |
+| `packages/core/src/scoring.ts`    | Weighted category scoring                                                  |
+| `packages/core/src/integrations/` | One file per check runner                                                  |
+| `apps/cli/src/index.ts`           | CLI entry point (Commander flags)                                          |
+| `apps/cli/src/components/App.tsx` | Root Ink component, UI phases                                              |
+| `apps/web/src/App.tsx`            | Web dashboard root, report loading                                         |
 
 ---
 
@@ -284,24 +284,44 @@ pnpm --filter @nebulord/sickbay-core dev
 pnpm --filter @nebulord/sickbay dev
 
 # Terminal 3 — test against a fixture
-node packages/cli/dist/index.js --path fixtures/packages/node-api
-node packages/cli/dist/index.js --path fixtures/packages/react-app --web
+node apps/cli/dist/index.js --path fixtures/packages/node-api
+node apps/cli/dist/index.js --path fixtures/packages/react-app --web
 ```
 
 ### Iterating on the terminal UI
 
 ```bash
 pnpm --filter @nebulord/sickbay dev
-node packages/cli/dist/index.js --path fixtures/packages/react-app
+node apps/cli/dist/index.js --path fixtures/packages/react-app
 ```
 
 ### Iterating on the web dashboard
 
 ```bash
 # Generate a report from a fixture and start the dev server
-node packages/cli/dist/index.js --path fixtures/packages/react-app --json > packages/web/public/sickbay-report.json
+node apps/cli/dist/index.js --path fixtures/packages/react-app --json > apps/web/public/sickbay-report.json
 pnpm --filter @nebulord/sickbay-web dev
 ```
+
+---
+
+## Using Claude Code
+
+This project is set up for [Claude Code](https://claude.ai/claude-code) with custom skills, and plans. If you have Claude Code installed, start your session with:
+
+```
+/prime
+```
+
+This loads the full project context — architecture, file locations, domain model, and gotchas — so Claude can assist effectively from the first prompt.
+
+Other useful entry points:
+
+- `/plan-feature` — create an implementation plan before writing code
+- `/review-project` — scan the project for issues
+- `/sync-docs` — check if docs need updating after recent changes
+
+Project-specific configuration lives in `CLAUDE.md` and `.claude/`.
 
 ---
 
@@ -317,9 +337,10 @@ test: add coverage runner integration test
 refactor: extract shared score calculation into util
 ```
 
-Run lint and tests before submitting a PR:
+Run lint, format check, and tests before submitting a PR:
 
 ```bash
-pnpm lint
+pnpm lint          # oxlint
+pnpm format:check  # oxfmt
 pnpm test
 ```
