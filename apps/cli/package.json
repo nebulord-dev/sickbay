@@ -30,8 +30,6 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui --coverage",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix",
     "clean": "rm -rf dist"
   },
   "dependencies": {
