@@ -11,7 +11,7 @@ hero:
       link: /guide/introduction
     - theme: alt
       text: View on GitHub
-      link: https://www.npmjs.com/package/sickbay
+      link: https://github.com/nebulord-dev/sickbay
 
 features:
   - title: 21 Health Checks

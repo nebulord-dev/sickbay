@@ -56,7 +56,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/nebulord/sickbay' },
+      { icon: 'github', link: 'https://github.com/nebulord-dev/sickbay' },
       { icon: 'npm', link: 'https://www.npmjs.com/package/sickbay' },
     ],
 
