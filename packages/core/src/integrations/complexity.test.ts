@@ -55,10 +55,10 @@ describe("ComplexityRunner", () => {
 
   it("returns pass with score 100 when all files are small", async () => {
     mockExistsSync.mockReturnValue(true);
-    mockReaddirSync.mockReturnValue(["index.ts"] as any);
-    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReaddirSync.mockReturnValue(["index.ts"] as unknown as ReturnType<typeof readdirSync>);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<typeof statSync>);
     // 50 lines — well under WARN_LINES (400)
-    mockReadFileSync.mockReturnValue(makeLines(50) as any);
+    mockReadFileSync.mockReturnValue(makeLines(50) as unknown as ReturnType<typeof readFileSync>);
 
     const result = await runner.run("/project");
 
@@ -70,9 +70,9 @@ describe("ComplexityRunner", () => {
 
   it("returns warning status and info severity for a file with 450 lines (>=WARN_LINES, <CRITICAL_LINES)", async () => {
     mockExistsSync.mockReturnValue(true);
-    mockReaddirSync.mockReturnValue(["big.ts"] as any);
-    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(makeLines(450) as any);
+    mockReaddirSync.mockReturnValue(["big.ts"] as unknown as ReturnType<typeof readdirSync>);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<typeof statSync>);
+    mockReadFileSync.mockReturnValue(makeLines(450) as unknown as ReturnType<typeof readFileSync>);
 
     const result = await runner.run("/project");
 
@@ -85,9 +85,9 @@ describe("ComplexityRunner", () => {
 
   it("returns warning status and warning severity for a file with 600 lines (>=CRITICAL_LINES)", async () => {
     mockExistsSync.mockReturnValue(true);
-    mockReaddirSync.mockReturnValue(["massive.ts"] as any);
-    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(makeLines(600) as any);
+    mockReaddirSync.mockReturnValue(["massive.ts"] as unknown as ReturnType<typeof readdirSync>);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<typeof statSync>);
+    mockReadFileSync.mockReturnValue(makeLines(600) as unknown as ReturnType<typeof readFileSync>);
 
     const result = await runner.run("/project");
 

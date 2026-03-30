@@ -76,11 +76,13 @@ function makeFixableIssue(overrides: Partial<FixableIssue> = {}): FixableIssue {
 }
 
 async function renderAndFlush(element: React.ReactElement) {
-  let result!: ReturnType<typeof render>;
+  const result = render(element);
+  // Flush enough ticks for useEffect + async runSickbay().then() chains to settle
   await act(async () => {
-    result = render(element);
-    await Promise.resolve();
-    await Promise.resolve();
+    await new Promise((r) => setTimeout(r, 0));
+  });
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 0));
   });
   return result;
 }
@@ -116,7 +118,7 @@ describe("FixApp", () => {
       <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
     );
 
-    expect(result.lastFrame()).toContain("No fixable issues found");
+    expect(result.lastFrame()).toContain("No auto-fixable issues found");
   });
 
   it("shows selection phase heading when issues exist and applyAll is false", async () => {
@@ -379,9 +381,11 @@ describe("FixApp", () => {
   });
 
   describe("guidance-only issues", () => {
-    it("renders guidance-only items with info icon and dimmed text", async () => {
+    it("excludes guidance-only items from the selection list", async () => {
       mockRunSickbay.mockResolvedValue(makeReport() as never);
       mockCollectFixableIssues.mockReturnValue([
+        // One actionable fix so we reach the selecting phase
+        makeFixableIssue(),
         makeFixableIssue({
           command: undefined,
           issue: {
@@ -398,10 +402,10 @@ describe("FixApp", () => {
       );
 
       const output = result.lastFrame()!;
-      expect(output).toContain("ℹ");
-      expect(output).toContain("Remove unused file");
-      // Should not contain checkbox
-      expect(output).not.toContain("[✓]");
+      // Only 1 actionable fix should appear in the selection list
+      expect(output).toContain("1 available");
+      // Guidance-only item should not appear
+      expect(output).not.toContain("Remove unused file");
     });
   });
 
@@ -499,7 +503,7 @@ describe("FixApp", () => {
         />,
       );
 
-      expect(result.lastFrame()).toContain("No fixable issues found");
+      expect(result.lastFrame()).toContain("No auto-fixable issues found");
       expect(result.lastFrame()).toContain("across any package");
     });
 

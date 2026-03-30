@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { render } from 'ink-testing-library';
 import { Text } from 'ink';
 import type { SickbayReport } from '@nebulord/sickbay-core';
@@ -53,7 +53,6 @@ function RunnerDisplay({
   projectPath,
   checks,
   scanRef,
-  onScanComplete,
 }: {
   projectPath: string;
   checks?: string[];
@@ -285,18 +284,16 @@ describe('useSickbayRunner', () => {
     mockRunSickbay.mockResolvedValue(report as any);
 
     const scanRef = React.createRef<(() => Promise<SickbayReport | null>) | null>() as React.MutableRefObject<(() => Promise<SickbayReport | null>) | null>;
-    let returnedReport: SickbayReport | null | undefined = undefined;
-
     render(
       React.createElement(RunnerDisplay, {
         projectPath: '/test/project',
         scanRef,
-        onScanComplete: (r) => { returnedReport = r; },
+        onScanComplete: () => {},
       }),
     );
 
     await new Promise((r) => setImmediate(r));
-    returnedReport = await scanRef.current?.() ?? null;
+    const returnedReport = await scanRef.current?.() ?? null;
     await new Promise((r) => setImmediate(r));
 
     expect(returnedReport).toMatchObject({ overallScore: 99 });
