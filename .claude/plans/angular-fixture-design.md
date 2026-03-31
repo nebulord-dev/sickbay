@@ -85,9 +85,11 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 - For each route object found, classify as lazy (`loadComponent:`) or static (`component:`)
 - Emit one `warning` per static route
 
-**Scoring:** based on ratio of lazy routes
-- All lazy → 100
-- No lazy routes → `max(20, 100 - staticCount * 20)`
+**Scoring:** ratio-based — `max(20, Math.round((lazyCount / totalCount) * 100))`
+- All lazy (4/4) → 100
+- Mixed (2/4 lazy) → 50
+- No lazy routes (0/4) → 20 (floor)
+- If no routes are found at all → score 100, status `pass` (nothing to check)
 
 **Fix description:** "Replace `component: MyComponent` with `loadComponent: () => import('./my.component').then(m => m.MyComponent)` to enable route-level code splitting."
 
@@ -117,6 +119,8 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 - `strictTemplates`: "Enable `strictTemplates: true` in `angularCompilerOptions` to catch template type errors at build time."
 - `strictInjectionParameters`: "Enable `strictInjectionParameters: true` in `angularCompilerOptions` to catch missing injection token errors."
 
+**Known limitations:** The runner reads only the project-level `tsconfig.json` and does not resolve the `extends` chain. Projects that inherit `strict: true` or Angular compiler options from a parent config (a common CLI-generated pattern) will generate false-positive warnings. Issue messages should say "could not confirm strict mode is enabled — verify your `tsconfig.json` or any parent config referenced via `extends`."
+
 ---
 
 ### 4. `angular-subscriptions.ts`
@@ -137,6 +141,8 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 - 5+ leaky → 20 (floor)
 
 **Fix description:** "Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or call `.unsubscribe()` in `ngOnDestroy` to prevent memory leaks."
+
+**Known limitations (static analysis):** The check uses string matching per file. It will not detect cases where `takeUntil()` is used with a Subject that is never completed (a common misuse). Issue messages should say "possible unguarded subscription" rather than asserting a definite leak. A component that stores a subscription and unsubscribes in a *different* file is also a known false positive gap.
 
 ---
 
@@ -159,11 +165,13 @@ The About page already renders checks dynamically from `report.checks` grouped b
 
 Add an `angular-app` case to `tests/snapshots/fixture-regression.test.ts` using **structural assertions only** (no score snapshots — Angular's npm ecosystem changes too frequently):
 
-- Report has `checks` array
-- All 4 Angular check IDs are present
-- Each Angular check has `status !== 'skipped'`
-- React-specific checks (`react-perf`) are absent or `skipped`
-- Node-specific checks (`node-security`, `node-async-errors`, `node-input-validation`) are absent or `skipped`
+- `projectInfo` — structural assertion using `normalizeProjectInfo` (same helper used by other fixture cases)
+- `overall score is in expected range` — `expect(report.overallScore).toBeGreaterThanOrEqual(20)` and `expect(report.overallScore).toBeLessThanOrEqual(85)` (fixture has intentional issues; shouldn't be near-perfect)
+- `summary shape` — `toMatchObject({ critical: expect.any(Number), warnings: expect.any(Number), info: expect.any(Number) })`
+- `checks` array exists
+- All 4 Angular check IDs are present with `status !== 'skipped'`
+- `react-perf` is absent or has `status === 'skipped'`
+- `node-security`, `node-async-errors`, `node-input-validation` are absent or have `status === 'skipped'`
 
 ---
 
