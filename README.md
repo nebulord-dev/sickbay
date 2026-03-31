@@ -30,6 +30,22 @@ A zero-config health check CLI for JavaScript and TypeScript projects. Run `sick
 
 ---
 
+## Framework Support
+
+| Framework / Runtime | Status | Framework-specific checks |
+| ------------------- | ------ | ------------------------- |
+| **React** | ✅ Supported | `react-perf`, `asset-size` |
+| **Next.js** | ✅ Supported | `next-images`, `next-link`, `next-fonts`, `next-missing-boundaries`, `next-security-headers`, `next-client-components` |
+| **Angular** | ✅ Supported | `angular-change-detection`, `angular-lazy-routes`, `angular-strict`, `angular-subscriptions` |
+| **Node.js** | ✅ Supported | `node-security`, `node-input-validation`, `node-async-errors` |
+| **TypeScript** | ✅ Supported | `typescript` (type error reporting) |
+| **Vue** | 🔜 Coming Soon | — |
+| **Remix** | 🔜 Coming Soon | — |
+
+All projects also get the full suite of universal checks regardless of framework: dependencies, security, code quality, git, and complexity.
+
+---
+
 ## Installation
 
 ```bash
@@ -329,9 +345,11 @@ pnpm --filter @nebulord/sickbay-web dev      # Vite dev server on :3030
 The `fixtures/` directory is a separate pnpm workspace with two packages for testing Sickbay locally:
 
 ```bash
-sickbay --path fixtures/packages/react-app   # moderately healthy React app
-sickbay --path fixtures/packages/node-api    # deliberately broken Node API
-sickbay --path fixtures/                     # full monorepo (tests monorepo detection)
+sickbay --path fixtures/packages/react-app    # moderately healthy React app
+sickbay --path fixtures/packages/node-api     # deliberately broken Node API
+sickbay --path fixtures/packages/angular-app  # Angular app with intentional issues
+sickbay --path fixtures/packages/next-app     # Next.js app with intentional issues
+sickbay --path fixtures/                      # full monorepo (tests monorepo detection)
 ```
 
 See [`fixtures/README.md`](fixtures/README.md) for the full list of intentional issues and how to add new fixtures.
