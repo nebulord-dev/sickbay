@@ -5,6 +5,10 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
+    "@nebulord/sickbay#build": {
+      "dependsOn": ["@nebulord/sickbay-web#build", "^build"],
+      "outputs": ["dist/**"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

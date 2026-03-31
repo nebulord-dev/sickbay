@@ -24,11 +24,11 @@ const MIME_TYPES: Record<string, string> = {
 };
 
 function findWebDist(): string | null {
-  // Resolve relative to this file's location: apps/cli/dist/index.js → apps/web/dist
+  // Resolve relative to this file's location
   const thisFile = fileURLToPath(import.meta.url);
   const candidates = [
-    join(thisFile, '..', '..', '..', '..', '..', 'web', 'dist'), // from dist/commands/
-    join(thisFile, '..', '..', '..', 'web', 'dist'), // from src/commands/
+    join(thisFile, '..', 'web'), // published: dist/web/ (embedded at build time)
+    join(thisFile, '..', '..', '..', 'web', 'dist'), // monorepo dev: apps/web/dist/
   ];
   for (const p of candidates) {
     if (existsSync(join(p, 'index.html'))) return p;
@@ -80,7 +80,7 @@ export async function serveWeb(
 ): Promise<string> {
   const distDir = findWebDist();
   if (!distDir) {
-    throw new Error('Web dashboard not built. Run: pnpm --filter @nebulord/sickbay-web build');
+    throw new Error('Web dashboard assets not found. Try reinstalling: npx sickbay@latest --web');
   }
 
   const reportJson = JSON.stringify(report);
