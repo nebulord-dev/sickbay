@@ -92,8 +92,11 @@ function findComponentFiles(dir: string, projectRoot: string, isRoot = true): Fi
       }
     }
   } catch (err) {
-    if (isRoot) throw err;
-    /* subdirectory doesn't exist or unreadable — skip */
+    if (isRoot) {
+      const code = (err as NodeJS.ErrnoException).code;
+      if (code !== 'ENOENT' && code !== 'ENOTDIR') throw err;
+    }
+    /* directory doesn't exist or unreadable — skip */
   }
   return files;
 }

@@ -118,7 +118,7 @@ describe('AngularChangeDetectionRunner', () => {
     mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
     mockReadFileSync.mockReturnValue(content as never);
     const result = await runner.run('/project');
-    expect(result.issues[0].message).toContain('app.component.ts');
+    expect(result.issues[0].message).toContain('src/app.component.ts');
   });
 
   it('returns fail status when an unexpected error is thrown', async () => {
