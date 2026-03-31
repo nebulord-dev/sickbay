@@ -6,6 +6,10 @@ vi.mock('execa', () => ({
   execa: vi.fn(),
 }));
 
+vi.mock('fs', () => ({
+  existsSync: vi.fn(),
+}));
+
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
   isCommandAvailable: vi.fn(),
@@ -20,6 +24,8 @@ vi.mock('../utils/file-helpers.js', () => ({
   },
 }));
 
+import { existsSync } from 'fs';
+
 import { execa } from 'execa';
 
 import { isCommandAvailable, fileExists } from '../utils/file-helpers.js';
@@ -27,6 +33,7 @@ import { isCommandAvailable, fileExists } from '../utils/file-helpers.js';
 const mockExeca = vi.mocked(execa);
 const mockIsAvailable = vi.mocked(isCommandAvailable);
 const mockFileExists = vi.mocked(fileExists);
+const mockExistsSync = vi.mocked(existsSync);
 
 describe('MadgeRunner', () => {
   let runner: MadgeRunner;
@@ -34,6 +41,8 @@ describe('MadgeRunner', () => {
   beforeEach(() => {
     runner = new MadgeRunner();
     vi.clearAllMocks();
+    // Default: src/ exists, app/ and lib/ do not
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
   });
 
   it('returns a skipped result when madge is not installed', async () => {
@@ -240,6 +249,22 @@ describe('MadgeRunner', () => {
     expect(result.status).toBe('fail');
     expect(result.score).toBe(0);
     expect(result.issues[0].severity).toBe('critical');
+  });
+
+  it('scans app/ when src/ does not exist (Next.js App Router)', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/app'));
+    mockIsAvailable.mockResolvedValue(true);
+    mockFileExists.mockReturnValue(false);
+    mockExeca.mockResolvedValue({
+      stdout: JSON.stringify({ 'app/page.tsx': [], 'app/layout.tsx': ['app/page.tsx'] }),
+    } as never);
+
+    const result = await runner.run('/project');
+
+    expect(result.status).toBe('pass');
+    expect(result.metadata?.graph).toHaveProperty('app/page.tsx');
+    const call = mockExeca.mock.calls[0];
+    expect(call[1]).toContain('app');
   });
 
   it('includes graph and circularCount in metadata', async () => {

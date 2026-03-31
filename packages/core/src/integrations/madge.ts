@@ -1,3 +1,6 @@
+import { existsSync } from 'fs';
+import { join } from 'path';
+
 import { execa } from 'execa';
 
 import {
@@ -82,9 +85,11 @@ export class MadgeRunner extends BaseRunner {
           ? 'tsconfig.json'
           : null;
 
+      const sourceDir = ['src', 'app', 'lib'].find((d) => existsSync(join(projectPath, d))) ?? 'src';
+
       const args = ['--json', '--extensions', 'ts,tsx,js,jsx'];
       if (tsConfig) args.push('--ts-config', tsConfig);
-      args.push('src');
+      args.push(sourceDir);
 
       const { stdout } = await execa('madge', args, {
         cwd: projectPath,
