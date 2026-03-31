@@ -41,6 +41,7 @@
     "coverage/**",
     "build/**",
     "fixtures/**",
-    "pnpm-lock.yaml"
+    "pnpm-lock.yaml",
+    ".changeset/**"
   ]
 }
