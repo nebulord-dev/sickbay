@@ -102,7 +102,7 @@ describe('TypeScriptRunner', () => {
     const result = await runner.run('/project');
 
     expect(result.issues[0].message).toBe(
-      "src/index.ts: TS2345: Argument of type 'string' is not assignable.",
+      "src/index.ts:10: TS2345: Argument of type 'string' is not assignable.",
     );
   });
 

@@ -47,10 +47,10 @@ export class TypeScriptRunner extends BaseRunner {
       const count = errorLines.length;
 
       const issues: Issue[] = errorLines.slice(0, 25).map((line) => {
-        const match = line.match(/^(.+)\(\d+,\d+\): error (TS\d+: .+)$/);
+        const match = line.match(/^(.+)\((\d+),\d+\): error (TS\d+: .+)$/);
         return {
           severity: 'warning' as const,
-          message: match ? `${match[1]}: ${match[2]}` : line,
+          message: match ? `${match[1]}:${match[2]}: ${match[3]}` : line,
           reportedBy: ['tsc'],
         };
       });
