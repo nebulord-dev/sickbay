@@ -49,6 +49,18 @@ const CHECK_DESCRIPTIONS: Record<string, string> = {
   'angular-strict': 'Verifies strict TypeScript and Angular compiler settings in tsconfig.json.',
   'angular-subscriptions':
     'Detects RxJS subscriptions in components that are never unsubscribed.',
+  'next-images':
+    'Detects raw image elements that should use next/image for automatic optimization and lazy loading.',
+  'next-link':
+    'Finds raw anchor tags used for internal navigation that should use next/link for client-side routing.',
+  'next-fonts':
+    'Detects Google Fonts loaded via HTML link tags instead of next/font/google for self-hosting and performance.',
+  'next-missing-boundaries':
+    'Checks App Router route segments for missing loading.tsx and error.tsx boundary files.',
+  'next-security-headers':
+    'Verifies that next.config.js defines security response headers (CSP, X-Frame-Options, etc.).',
+  'next-client-components':
+    'Flags components with "use client" but no hooks or event handlers that may not need client rendering.',
 };
 
 function ScoreRing({ score }: { score: number }) {

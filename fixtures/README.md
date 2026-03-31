@@ -73,6 +73,21 @@ A modern Angular app using standalone components. Has intentional issues to veri
 | `angular-strict` | `strict: false` in tsconfig; no `angularCompilerOptions` block |
 | `angular-subscriptions` | `user-list` and `product-card` subscribe without cleanup |
 
+### `next-app` — Next.js 14 App Router
+
+A Next.js 14 App Router project with intentional issues to verify Next.js-specific checks fire correctly.
+
+**Expect:** warnings on raw image elements, raw anchor tags, external Google Fonts, missing route boundaries, absent security headers, and unnecessary client components.
+
+| Check | What's broken |
+| --- | --- |
+| `next-images` | `app/page.tsx` uses raw image elements instead of next/image component |
+| `next-link` | `app/page.tsx` uses raw anchor tags for internal navigation instead of next/link |
+| `next-fonts` | `app/layout.tsx` loads Google Fonts via an external stylesheet link |
+| `next-missing-boundaries` | `app/about/` and `app/dashboard/` route segments have no loading or error boundary files |
+| `next-security-headers` | `next.config.js` has no response header customization |
+| `next-client-components` | `app/components/StaticHeader.tsx` has use-client directive but no hooks or event handlers |
+
 ---
 
 ## Adding a New Fixture
