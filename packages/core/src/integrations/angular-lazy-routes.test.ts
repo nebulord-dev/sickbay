@@ -39,6 +39,22 @@ describe('AngularLazyRoutesRunner', () => {
     expect(result.score).toBe(100);
     expect(result.issues).toHaveLength(0);
     expect(result.metadata?.routeFiles).toBe(0);
+    expect(result.id).toBe('angular-lazy-routes');
+  });
+
+  it('returns pass when route file exists but contains no route entries', async () => {
+    const content = `
+      // Empty routes file
+      export const routes: Routes = [];
+    `;
+    mockReaddirSync.mockReturnValue(['app.routes.ts'] as never);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
+    mockReadFileSync.mockReturnValue(content as never);
+    const result = await runner.run('/project');
+    expect(result.status).toBe('pass');
+    expect(result.score).toBe(100);
+    expect(result.metadata?.routeFiles).toBe(1);
+    expect(result.metadata?.totalRoutes).toBe(0);
   });
 
   it('returns pass when all routes are lazy (loadComponent:)', async () => {
