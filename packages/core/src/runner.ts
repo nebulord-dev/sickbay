@@ -1,5 +1,9 @@
 import { relative } from 'path';
 
+import { AngularChangeDetectionRunner } from './integrations/angular-change-detection.js';
+import { AngularLazyRoutesRunner } from './integrations/angular-lazy-routes.js';
+import { AngularStrictRunner } from './integrations/angular-strict.js';
+import { AngularSubscriptionsRunner } from './integrations/angular-subscriptions.js';
 import { AssetSizeRunner } from './integrations/asset-size.js';
 import { ComplexityRunner } from './integrations/complexity.js';
 import { CoverageRunner } from './integrations/coverage.js';
@@ -11,6 +15,12 @@ import { JscpdRunner } from './integrations/jscpd.js';
 import { KnipRunner } from './integrations/knip.js';
 import { LicenseCheckerRunner } from './integrations/license-checker.js';
 import { MadgeRunner } from './integrations/madge.js';
+import { NextClientComponentsRunner } from './integrations/next-client-components.js';
+import { NextFontsRunner } from './integrations/next-fonts.js';
+import { NextImagesRunner } from './integrations/next-images.js';
+import { NextLinkRunner } from './integrations/next-link.js';
+import { NextMissingBoundariesRunner } from './integrations/next-missing-boundaries.js';
+import { NextSecurityHeadersRunner } from './integrations/next-security-headers.js';
 import { NodeAsyncErrorsRunner } from './integrations/node-async-errors.js';
 import { NodeInputValidationRunner } from './integrations/node-input-validation.js';
 import { NodeSecurityRunner } from './integrations/node-security.js';
@@ -68,6 +78,16 @@ const ALL_RUNNERS: ToolRunner[] = [
   new NodeSecurityRunner(),
   new NodeInputValidationRunner(),
   new NodeAsyncErrorsRunner(),
+  new AngularChangeDetectionRunner(),
+  new AngularLazyRoutesRunner(),
+  new AngularStrictRunner(),
+  new AngularSubscriptionsRunner(),
+  new NextClientComponentsRunner(),
+  new NextFontsRunner(),
+  new NextImagesRunner(),
+  new NextLinkRunner(),
+  new NextMissingBoundariesRunner(),
+  new NextSecurityHeadersRunner(),
 ];
 
 export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayReport> {

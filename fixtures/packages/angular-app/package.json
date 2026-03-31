@@ -1,0 +1,17 @@
+{
+  "name": "angular-app",
+  "version": "0.0.1",
+  "description": "Angular test fixture for Sickbay — intentionally unhealthy",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@angular/common": "^17.3.0",
+    "@angular/core": "^17.3.0",
+    "@angular/platform-browser": "^17.3.0",
+    "@angular/router": "^17.3.0",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.4.0"
+  }
+}

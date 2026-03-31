@@ -10,7 +10,9 @@ fixtures/
 ├── package.json
 └── packages/
     ├── react-app/     — Vite + React + TypeScript app (moderately healthy)
-    └── node-api/      — Express REST API (intentionally broken)
+    ├── node-api/      — Express REST API (intentionally broken)
+    ├── angular-app/   — Angular v17+ standalone components (intentionally broken)
+    └── next-app/      — Next.js 14 App Router (intentionally broken)
 ```
 
 ## Running Sickbay Against the Fixtures
@@ -24,6 +26,12 @@ sickbay --path fixtures/packages/react-app
 
 # Standalone Node API (expect a low score)
 sickbay --path fixtures/packages/node-api
+
+# Standalone Angular app (expect Angular-specific warnings)
+sickbay --path fixtures/packages/angular-app
+
+# Standalone Next.js app (expect Next.js-specific warnings)
+sickbay --path fixtures/packages/next-app
 
 # With web dashboard
 sickbay --path fixtures/packages/node-api --web
@@ -59,6 +67,34 @@ A deliberately broken Node.js REST API. Used to verify that Sickbay catches a br
 | `heavy-deps`      | `moment`, `lodash`, `mongoose`                                                 |
 
 **Expect:** a low overall score with failures across most categories.
+
+### `angular-app` — Angular v17+ Standalone
+
+A modern Angular app using standalone components. Has intentional issues to verify Angular-specific checks fire correctly.
+
+**Expect:** warnings on missing OnPush, static routes, disabled strict mode, and unguarded subscriptions; passes on generic code quality checks.
+
+| Check | What's broken |
+| --- | --- |
+| `angular-change-detection` | All 4 components omit `ChangeDetectionStrategy.OnPush` |
+| `angular-lazy-routes` | All routes use `component:` (static), none use `loadComponent:` |
+| `angular-strict` | `strict: false` in tsconfig; no `angularCompilerOptions` block |
+| `angular-subscriptions` | `user-list` and `product-card` subscribe without cleanup |
+
+### `next-app` — Next.js 14 App Router
+
+A Next.js 14 App Router project with intentional issues to verify Next.js-specific checks fire correctly.
+
+**Expect:** warnings on raw image elements, raw anchor tags, external Google Fonts, missing route boundaries, absent security headers, and unnecessary client components.
+
+| Check | What's broken |
+| --- | --- |
+| `next-images` | `app/page.tsx` uses raw image elements instead of next/image component |
+| `next-link` | `app/page.tsx` uses raw anchor tags for internal navigation instead of next/link |
+| `next-fonts` | `app/layout.tsx` loads Google Fonts via an external stylesheet link |
+| `next-missing-boundaries` | `app/about/` and `app/dashboard/` route segments have no loading or error boundary files |
+| `next-security-headers` | `next.config.js` has no response header customization |
+| `next-client-components` | `app/components/StaticHeader.tsx` has use-client directive but no hooks or event handlers |
 
 ---
 

@@ -204,3 +204,220 @@ describe('node-api', () => {
     });
   });
 });
+
+// --- angular-app fixture ---
+
+describe('angular-app', () => {
+  let report: SickbayReport;
+
+  beforeAll(async () => {
+    report = await runSickbay({
+      projectPath: resolve(FIXTURES_DIR, 'angular-app'),
+    });
+  }, 120_000);
+
+  it('projectInfo', () => {
+    expect(normalizeProjectInfo(report.projectInfo)).toMatchSnapshot();
+  });
+
+  // Angular-specific checks — structural assertions (scores vary with ecosystem)
+  const ANGULAR_CHECKS = [
+    { id: 'angular-change-detection', category: 'performance' },
+    { id: 'angular-lazy-routes', category: 'performance' },
+    { id: 'angular-strict', category: 'code-quality' },
+    { id: 'angular-subscriptions', category: 'code-quality' },
+  ];
+
+  for (const { id, category } of ANGULAR_CHECKS) {
+    it(`${id} runs and is not skipped`, () => {
+      const check = report.checks.find((c) => c.id === id);
+      expect(check).toBeDefined();
+      expect(check?.status).not.toBe('skipped');
+      expect(check?.category).toBe(category);
+      expect(check?.score).toBeGreaterThanOrEqual(0);
+      expect(check?.score).toBeLessThanOrEqual(100);
+    });
+  }
+
+  // Angular checks should produce warnings on our intentionally broken fixture
+  it('angular-change-detection reports missing OnPush', () => {
+    const check = report.checks.find((c) => c.id === 'angular-change-detection');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('angular-lazy-routes reports static routes', () => {
+    const check = report.checks.find((c) => c.id === 'angular-lazy-routes');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('angular-strict reports missing strict settings', () => {
+    const check = report.checks.find((c) => c.id === 'angular-strict');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('angular-subscriptions reports unguarded subscriptions', () => {
+    const check = report.checks.find((c) => c.id === 'angular-subscriptions');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  // React/Node-specific checks should not run on Angular
+  it('react-perf is absent or skipped', () => {
+    const check = report.checks.find((c) => c.id === 'react-perf');
+    if (check) expect(check.status).toBe('skipped');
+  });
+
+  it('node-security is absent or skipped', () => {
+    const check = report.checks.find((c) => c.id === 'node-security');
+    if (check) expect(check.status).toBe('skipped');
+  });
+
+  it('node-async-errors is absent or skipped', () => {
+    const check = report.checks.find((c) => c.id === 'node-async-errors');
+    if (check) expect(check.status).toBe('skipped');
+  });
+
+  it('node-input-validation is absent or skipped', () => {
+    const check = report.checks.find((c) => c.id === 'node-input-validation');
+    if (check) expect(check.status).toBe('skipped');
+  });
+
+  // Environment-sensitive checks
+  for (const { id, category } of ENVIRONMENT_SENSITIVE_CHECKS) {
+    it(`${id} has valid structure`, () => assertUnstableCheck(report, id, category));
+  }
+
+  // Overall report
+  it('overall score is in expected range', () => {
+    expect(report.overallScore).toBeGreaterThanOrEqual(20);
+    expect(report.overallScore).toBeLessThanOrEqual(95);
+  });
+
+  it('summary shape', () => {
+    expect(report.summary).toMatchObject({
+      critical: expect.any(Number),
+      warnings: expect.any(Number),
+      info: expect.any(Number),
+    });
+  });
+
+  it('checks array exists', () => {
+    expect(Array.isArray(report.checks)).toBe(true);
+    expect(report.checks.length).toBeGreaterThan(0);
+  });
+});
+
+// --- next-app fixture ---
+
+describe('next-app', () => {
+  let report: SickbayReport;
+
+  beforeAll(async () => {
+    report = await runSickbay({
+      projectPath: resolve(FIXTURES_DIR, 'next-app'),
+    });
+  }, 120_000);
+
+  it('projectInfo', () => {
+    expect(normalizeProjectInfo(report.projectInfo)).toMatchSnapshot();
+  });
+
+  const NEXT_CHECKS = [
+    { id: 'next-images', category: 'performance' },
+    { id: 'next-link', category: 'performance' },
+    { id: 'next-fonts', category: 'performance' },
+    { id: 'next-missing-boundaries', category: 'code-quality' },
+    { id: 'next-security-headers', category: 'security' },
+    { id: 'next-client-components', category: 'performance' },
+  ];
+
+  for (const { id, category } of NEXT_CHECKS) {
+    it(`${id} runs and is not skipped`, () => {
+      const check = report.checks.find((c) => c.id === id);
+      expect(check).toBeDefined();
+      expect(check?.status).not.toBe('skipped');
+      expect(check?.category).toBe(category);
+      expect(check?.score).toBeGreaterThanOrEqual(0);
+      expect(check?.score).toBeLessThanOrEqual(100);
+    });
+  }
+
+  it('next-images reports raw image elements', () => {
+    const check = report.checks.find((c) => c.id === 'next-images');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('next-link reports raw anchor tags for internal links', () => {
+    const check = report.checks.find((c) => c.id === 'next-link');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('next-fonts reports external font stylesheet', () => {
+    const check = report.checks.find((c) => c.id === 'next-fonts');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('next-missing-boundaries reports route segments without boundaries', () => {
+    const check = report.checks.find((c) => c.id === 'next-missing-boundaries');
+    expect(check?.status).not.toBe('pass');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('next-security-headers reports missing security config', () => {
+    const check = report.checks.find((c) => c.id === 'next-security-headers');
+    expect(check?.status).not.toBe('pass');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('next-client-components reports unnecessary use-client directives', () => {
+    const check = report.checks.find((c) => c.id === 'next-client-components');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  // Framework exclusions — Angular and Node-specific checks should not run on Next.js
+  it('angular-change-detection is absent or skipped', () => {
+    const check = report.checks.find((c) => c.id === 'angular-change-detection');
+    if (check) expect(check.status).toBe('skipped');
+  });
+
+  it('node-security is absent or skipped', () => {
+    const check = report.checks.find((c) => c.id === 'node-security');
+    if (check) expect(check.status).toBe('skipped');
+  });
+
+  it('node-async-errors is absent or skipped', () => {
+    const check = report.checks.find((c) => c.id === 'node-async-errors');
+    if (check) expect(check.status).toBe('skipped');
+  });
+
+  // Environment-sensitive checks — structural assertions only
+  for (const { id, category } of ENVIRONMENT_SENSITIVE_CHECKS) {
+    it(`${id} has valid structure`, () => assertUnstableCheck(report, id, category));
+  }
+
+  // Overall report
+  it('overall score is in expected range', () => {
+    expect(report.overallScore).toBeGreaterThanOrEqual(20);
+    expect(report.overallScore).toBeLessThanOrEqual(90);
+  });
+
+  it('summary shape', () => {
+    expect(report.summary).toMatchObject({
+      critical: expect.any(Number),
+      warnings: expect.any(Number),
+      info: expect.any(Number),
+    });
+  });
+
+  it('checks array exists', () => {
+    expect(Array.isArray(report.checks)).toBe(true);
+    expect(report.checks.length).toBeGreaterThan(0);
+  });
+});

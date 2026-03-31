@@ -9,8 +9,10 @@ coverage/
 .worktrees/
 .superpowers/
 .sickbay/
+.serena/
 
 wallaby.cjs
 
 # ignore plans Claude makes using plugins
 docs/*
+.worktrees/

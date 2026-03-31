@@ -1,5 +1,31 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`angular-app > projectInfo 1`] = `
+{
+  "framework": "node",
+  "hasESLint": false,
+  "hasPrettier": false,
+  "hasTypeScript": true,
+  "name": "angular-app",
+  "overrides": undefined,
+  "packageManager": "pnpm",
+  "version": "0.0.1",
+}
+`;
+
+exports[`next-app > projectInfo 1`] = `
+{
+  "framework": "next",
+  "hasESLint": false,
+  "hasPrettier": false,
+  "hasTypeScript": true,
+  "name": "next-app",
+  "overrides": undefined,
+  "packageManager": "pnpm",
+  "version": "0.0.1",
+}
+`;
+
 exports[`node-api > complexity 1`] = `
 {
   "category": "code-quality",

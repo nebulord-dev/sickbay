@@ -17,7 +17,7 @@ A zero-config health check CLI for JavaScript and TypeScript projects. Run `sick
 
 ## Features
 
-- **21 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
+- **30 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
 - **Framework-aware** — automatically detects React, Next, Express, Fastify, Koa, Hapi, and more; runs only relevant checks
 - **Monorepo support** — auto-detects pnpm/npm/yarn/turbo/nx/lerna workspaces; per-package scoring and reporting
 - **Animated terminal UI** built with Ink (React for terminals)
@@ -27,6 +27,22 @@ A zero-config health check CLI for JavaScript and TypeScript projects. Run `sick
 - **Zero config** — all tools are bundled; no global installs required
 - **Structured JSON output** for CI/CD integration
 - **Star Trek doctor quotes** — severity-based personality quotes from Trek's finest medical officers
+
+---
+
+## Framework Support
+
+| Framework / Runtime | Status         | Framework-specific checks                                                                                              |
+| ------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **React**           | ✅ Supported   | `react-perf`, `asset-size`                                                                                             |
+| **Next.js**         | ✅ Supported   | `next-images`, `next-link`, `next-fonts`, `next-missing-boundaries`, `next-security-headers`, `next-client-components` |
+| **Angular**         | ✅ Supported   | `angular-change-detection`, `angular-lazy-routes`, `angular-strict`, `angular-subscriptions`                           |
+| **Node.js**         | ✅ Supported   | `node-security`, `node-input-validation`, `node-async-errors`                                                          |
+| **TypeScript**      | ✅ Supported   | `typescript` (type error reporting)                                                                                    |
+| **Vue**             | 🔜 Coming Soon | —                                                                                                                      |
+| **Remix**           | 🔜 Coming Soon | —                                                                                                                      |
+
+All projects also get the full suite of universal checks regardless of framework: dependencies, security, code quality, git, and complexity.
 
 ---
 
@@ -205,52 +221,19 @@ Without the API key, the dashboard still works — you just won't see the AI ins
 
 ## Available Checks
 
-Sickbay automatically detects your project type and runs only applicable checks. React-specific checks won't run on a Node API, and vice versa.
+Sickbay automatically detects your project type and runs only applicable checks. Framework-specific checks are silently skipped when not relevant.
 
-### Dependencies (4 checks)
+**Universal (15):** `knip` · `depcheck` · `outdated` · `heavy-deps` · `npm-audit` · `license-checker` · `secrets` · `eslint` · `typescript` · `madge` · `jscpd` · `coverage` · `todo-scanner` · `complexity` · `git`
 
-| Check        | What it does                                           | Scope |
-| ------------ | ------------------------------------------------------ | ----- |
-| `knip`       | Unused files, dependencies, and exports                | All   |
-| `depcheck`   | Missing dependencies (cross-refs with knip for unused) | All   |
-| `outdated`   | Outdated package versions (uses pnpm/npm/yarn)         | All   |
-| `heavy-deps` | Detects heavy dependencies (moment, lodash, etc.)      | All   |
+**React:** `react-perf` · `asset-size`
 
-### Security (4 checks)
+**Angular:** `angular-change-detection` · `angular-lazy-routes` · `angular-strict` · `angular-subscriptions`
 
-| Check             | What it does                                      | Scope         |
-| ----------------- | ------------------------------------------------- | ------------- |
-| `npm-audit`       | Known vulnerability scan                          | All           |
-| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.)      | All           |
-| `secrets`         | Detects exposed API keys, tokens, and credentials | All           |
-| `node-security`   | Helmet, CORS, rate limiting checks                | Node (server) |
+**Next.js:** `next-images` · `next-link` · `next-fonts` · `next-missing-boundaries` · `next-security-headers` · `next-client-components`
 
-### Code Quality (8 checks)
+**Node.js:** `node-security` · `node-input-validation` · `node-async-errors`
 
-| Check                   | What it does                                    | Scope         |
-| ----------------------- | ----------------------------------------------- | ------------- |
-| `eslint`                | Linting errors and warnings                     | All           |
-| `typescript`            | Type errors and issues                          | All           |
-| `madge`                 | Circular module dependencies                    | All           |
-| `jscpd`                 | Copy-paste duplication detection                | All           |
-| `coverage`              | Test coverage % and test counts (vitest/jest)   | All           |
-| `todo-scanner`          | TODO/FIXME comments (technical debt tracker)    | All           |
-| `complexity`            | High cyclomatic complexity files                | All           |
-| `node-input-validation` | Input validation library usage (zod, joi, etc.) | Node (server) |
-
-### Performance (3 checks)
-
-| Check               | What it does                               | Scope         |
-| ------------------- | ------------------------------------------ | ------------- |
-| `react-perf`        | React performance anti-patterns            | React         |
-| `asset-size`        | Oversized images, fonts, and static assets | React         |
-| `node-async-errors` | Async error handling in route handlers     | Node (server) |
-
-### Git (1 check)
-
-| Check | What it does                                 | Scope |
-| ----- | -------------------------------------------- | ----- |
-| `git` | Commit history, staleness, contributor count | All   |
+→ [Full check reference with scoring formulas and thresholds](https://nebulord-dev.github.io/sickbay/guide/health-checks)
 
 ---
 
@@ -329,9 +312,11 @@ pnpm --filter @nebulord/sickbay-web dev      # Vite dev server on :3030
 The `fixtures/` directory is a separate pnpm workspace with two packages for testing Sickbay locally:
 
 ```bash
-sickbay --path fixtures/packages/react-app   # moderately healthy React app
-sickbay --path fixtures/packages/node-api    # deliberately broken Node API
-sickbay --path fixtures/                     # full monorepo (tests monorepo detection)
+sickbay --path fixtures/packages/react-app    # moderately healthy React app
+sickbay --path fixtures/packages/node-api     # deliberately broken Node API
+sickbay --path fixtures/packages/angular-app  # Angular app with intentional issues
+sickbay --path fixtures/packages/next-app     # Next.js app with intentional issues
+sickbay --path fixtures/                      # full monorepo (tests monorepo detection)
 ```
 
 See [`fixtures/README.md`](fixtures/README.md) for the full list of intentional issues and how to add new fixtures.

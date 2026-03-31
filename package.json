@@ -24,6 +24,7 @@
     "docs:dev": "pnpm --filter @nebulord/sickbay-docs docs:dev",
     "docs:build": "pnpm --filter @nebulord/sickbay-docs docs:build",
     "clean": "turbo run clean && rm -rf node_modules",
+    "all-checks": "pnpm build && pnpm test && pnpm test:snapshots && pnpm lint && pnpm format:check",
     "changeset": "changeset",
     "version-packages": "changeset version"
   },

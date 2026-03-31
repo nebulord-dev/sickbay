@@ -2,6 +2,15 @@
 
 ## Run Your First Scan
 
+Open a terminal in your project directory and run:
+
+```bash
+npx sickbay           # terminal
+npx sickbay --web     # web
+```
+
+Or point it at a project from anywhere:
+
 ```bash
 npx sickbay --path ~/my-project
 ```
@@ -59,3 +68,13 @@ npx sickbay init --path ~/my-project
 ```
 
 Creates a `.sickbay/` folder with a baseline scan. Subsequent scans are recorded in `.sickbay/history.json`, enabling the `sickbay trend` command and the History tab in the web dashboard.
+
+## What's Next
+
+Run `sickbay -h` at any time to see all available flags and subcommands:
+
+```bash
+sickbay -h
+```
+
+For detailed documentation on every command and option, see the [Commands](/commands/scan) reference.

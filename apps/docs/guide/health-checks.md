@@ -1,6 +1,10 @@
 # Health Checks
 
-Sickbay includes 21 checks across 5 categories. Each check is framework-aware — only checks relevant to your project type will run.
+Sickbay includes 30 checks across 5 categories. Each check is framework-aware — only checks relevant to your project type will run.
+
+**Supported frameworks:** React · Next.js · Angular · Node.js · TypeScript — Vue and Remix coming soon.
+
+The first 15 checks below are **universal** and run on every project. The Angular and Next.js sections at the bottom contain framework-specific checks.
 
 ## How Applicability Works
 
@@ -136,14 +140,14 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 ### Technical Debt
 
 - **Tool:** Built-in comment scanner
-- **Applies to:** Projects with a `src/` directory
+- **Applies to:** Projects with a `src/`, `app/`, or `lib/` directory
 - **What it detects:** `TODO`, `FIXME`, and `HACK` comments in source files, categorized by type.
 - **Scoring:** `max(50, 100 - count * 3)`. Score floor of 50. Warning if >5 FIXMEs/HACKs or >20 total comments. FIXME/HACK are `warning` severity; TODO is `info`.
 
 ### File Complexity
 
 - **Tool:** Built-in line counter
-- **Applies to:** Projects with a `src/` directory
+- **Applies to:** Projects with a `src/`, `app/`, or `lib/` directory
 - **What it detects:** Source files with high line counts that indicate complexity and maintenance challenges. Files >= 400 non-blank lines trigger `info`; >= 600 lines trigger `warning`.
 - **Scoring:** `max(0, 100 - oversizedFiles * 10)`. Test files are excluded.
 
@@ -224,3 +228,91 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 - **Applies to:** Repositories with a `.git` directory
 - **What it detects:** Repository activity and hygiene -- last commit date, total commit count, contributor count, and remote branch count. Flags stale repos (last commit > 6 months ago) and excessive remote branches (> 20).
 - **Scoring:** 100 if no issues, 80 if any issues found. Stale repo is `warning` severity; excessive branches is `info`.
+
+---
+
+## Angular <Badge type="info" text="framework-specific" />
+
+### Change Detection
+
+- **Tool:** Built-in component scanner
+- **Applies to:** Angular projects
+- **Category:** Performance
+- **What it detects:** Angular components missing `ChangeDetectionStrategy.OnPush`. Without it, Angular re-evaluates the component on every change detection cycle regardless of whether its inputs changed.
+- **Scoring:** `max(20, 100 - missingCount * 15)`. All findings are `warning` severity.
+
+### Lazy Routes
+
+- **Tool:** Built-in route file scanner
+- **Applies to:** Angular projects
+- **Category:** Performance
+- **What it detects:** Route definitions in `.routes.ts` and `app.config.ts` that use static `component:` imports instead of `loadComponent:`. Static imports bundle every route upfront rather than splitting them for on-demand loading.
+- **Scoring:** `totalRoutes === 0 ? 100 : max(20, round(lazyRoutes / totalRoutes * 100))`. All findings are `warning` severity.
+
+### Strict Mode
+
+- **Tool:** Built-in tsconfig analyzer
+- **Applies to:** Angular projects with a `tsconfig.json`
+- **Category:** Code Quality
+- **What it detects:** Missing strictness flags in `tsconfig.json` -- TypeScript's `strict`, Angular's `strictTemplates`, and Angular's `strictInjectionParameters`. These flags catch a broad class of type errors at build time.
+- **Scoring:** `max(20, 100 - issueCount * 27)`. All findings are `warning` severity.
+
+### Subscriptions
+
+- **Tool:** Built-in component scanner
+- **Applies to:** Angular projects
+- **Category:** Code Quality
+- **What it detects:** Component files that call `.subscribe()` without any observable cleanup pattern: `takeUntilDestroyed`, `takeUntil`, `DestroyRef`, `ngOnDestroy`, or `.unsubscribe()`. Unmanaged subscriptions are a common source of memory leaks in Angular apps.
+- **Scoring:** `max(20, 100 - leakyCount * 20)`. All findings are `warning` severity.
+
+---
+
+## Next.js <Badge type="info" text="framework-specific" />
+
+### Image Optimization
+
+- **Tool:** Built-in JSX scanner
+- **Applies to:** Next.js projects
+- **Category:** Performance
+- **What it detects:** Raw `<img>` elements in `.tsx` and `.jsx` files under `app/` and `src/`. The `next/image` component provides automatic optimization, lazy loading, responsive sizing, and Core Web Vitals improvements.
+- **Scoring:** `max(20, 100 - violations * 10)`. All findings are `warning` severity.
+
+### Link Component
+
+- **Tool:** Built-in JSX scanner
+- **Applies to:** Next.js projects
+- **Category:** Performance
+- **What it detects:** Raw `<a>` anchor tags used for internal navigation instead of `next/link`, which enables client-side transitions and automatic prefetching.
+- **Scoring:** `max(20, 100 - violations * 15)`. All findings are `warning` severity.
+
+### Font Optimization
+
+- **Tool:** Built-in layout scanner
+- **Applies to:** Next.js projects
+- **Category:** Performance
+- **What it detects:** External Google Fonts stylesheet links in `layout.tsx` / `layout.jsx`. Next.js provides `next/font/google` which self-hosts fonts at build time, eliminating the external network request and preventing layout shift.
+- **Scoring:** `max(40, 100 - found * 30)`. All findings are `warning` severity.
+
+### Missing Boundaries
+
+- **Tool:** Built-in App Router directory scanner
+- **Applies to:** Next.js projects
+- **Category:** Code Quality
+- **What it detects:** App Router route segments (directories with a `page.tsx`) that lack `loading.tsx` (Suspense boundary for streaming) or `error.tsx` (error boundary for graceful degradation).
+- **Scoring:** `max(20, 100 - issues * 15)`. All findings are `info` severity.
+
+### Security Headers
+
+- **Tool:** Built-in `next.config.js` analyzer
+- **Applies to:** Next.js projects
+- **Category:** Security
+- **What it detects:** Missing security response headers in `next.config.js`. Checks for the presence of an `async headers()` function and four specific headers: `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, and `Referrer-Policy`.
+- **Scoring:** 0 if no `next.config.js`; 30 if `headers()` function is missing entirely; `max(40, 100 - missingHeaders * 15)` if the function exists but headers are absent. Missing `headers()` is `warning`; missing individual headers are `info`.
+
+### Client Components
+
+- **Tool:** Built-in JSX scanner
+- **Applies to:** Next.js projects
+- **Category:** Performance
+- **What it detects:** Files marked `'use client'` that don't appear to need client-side rendering -- no React hooks (`useState`, `useEffect`, `useRef`, etc.) or event handlers (`onClick`, `onChange`, etc.) are detected. Unnecessary client boundaries prevent React Server Component optimizations.
+- **Scoring:** `max(20, 100 - unnecessary * 15)`. All findings are `warning` severity.

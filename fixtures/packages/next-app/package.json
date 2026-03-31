@@ -1,0 +1,16 @@
+{
+  "name": "next-app",
+  "version": "0.0.1",
+  "description": "Next.js test fixture for Sickbay — intentionally unhealthy",
+  "private": true,
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "~5.4.0"
+  }
+}
