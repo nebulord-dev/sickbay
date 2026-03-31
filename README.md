@@ -223,85 +223,17 @@ Without the API key, the dashboard still works — you just won't see the AI ins
 
 Sickbay automatically detects your project type and runs only applicable checks. Framework-specific checks are silently skipped when not relevant.
 
-### Universal Checks (15)
+**Universal (15):** `knip` · `depcheck` · `outdated` · `heavy-deps` · `npm-audit` · `license-checker` · `secrets` · `eslint` · `typescript` · `madge` · `jscpd` · `coverage` · `todo-scanner` · `complexity` · `git`
 
-Run on every project regardless of framework or runtime.
+**React:** `react-perf` · `asset-size`
 
-#### Dependencies
+**Angular:** `angular-change-detection` · `angular-lazy-routes` · `angular-strict` · `angular-subscriptions`
 
-| Check        | What it does                                           |
-| ------------ | ------------------------------------------------------ |
-| `knip`       | Unused files, dependencies, and exports                |
-| `depcheck`   | Missing dependencies (cross-refs with knip for unused) |
-| `outdated`   | Outdated package versions (uses pnpm/npm/yarn)         |
-| `heavy-deps` | Detects heavy dependencies (moment, lodash, etc.)      |
+**Next.js:** `next-images` · `next-link` · `next-fonts` · `next-missing-boundaries` · `next-security-headers` · `next-client-components`
 
-#### Security
+**Node.js:** `node-security` · `node-input-validation` · `node-async-errors`
 
-| Check             | What it does                                      |
-| ----------------- | ------------------------------------------------- |
-| `npm-audit`       | Known vulnerability scan                          |
-| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.)      |
-| `secrets`         | Detects exposed API keys, tokens, and credentials |
-
-#### Code Quality
-
-| Check          | What it does                                  |
-| -------------- | --------------------------------------------- |
-| `eslint`       | Linting errors and warnings                   |
-| `typescript`   | Type errors and issues                        |
-| `madge`        | Circular module dependencies                  |
-| `jscpd`        | Copy-paste duplication detection              |
-| `coverage`     | Test coverage % and test counts (vitest/jest) |
-| `todo-scanner` | TODO/FIXME comments (technical debt tracker)  |
-| `complexity`   | Oversized files and high line counts          |
-
-#### Git
-
-| Check | What it does                                 |
-| ----- | -------------------------------------------- |
-| `git` | Commit history, staleness, contributor count |
-
----
-
-### Framework-Specific Checks (15)
-
-Only run when the relevant framework is detected.
-
-#### React
-
-| Check        | What it does                               |
-| ------------ | ------------------------------------------ |
-| `react-perf` | React performance anti-patterns            |
-| `asset-size` | Oversized images, fonts, and static assets |
-
-#### Angular
-
-| Check                        | What it does                                              |
-| ---------------------------- | --------------------------------------------------------- |
-| `angular-change-detection`   | Components missing `ChangeDetectionStrategy.OnPush`       |
-| `angular-lazy-routes`        | Routes using static `component:` instead of `loadComponent:` |
-| `angular-strict`             | TypeScript strict mode and Angular compiler options       |
-| `angular-subscriptions`      | Subscriptions without `takeUntil` or `async` pipe cleanup |
-
-#### Next.js
-
-| Check                       | What it does                                                  |
-| --------------------------- | ------------------------------------------------------------- |
-| `next-images`               | Raw `<img>` tags instead of `next/image`                      |
-| `next-link`                 | Raw `<a>` tags for internal navigation instead of `next/link` |
-| `next-fonts`                | Google Fonts loaded via external stylesheet instead of `next/font` |
-| `next-missing-boundaries`   | Route segments missing `loading.tsx` or `error.tsx`           |
-| `next-security-headers`     | Missing security headers in `next.config.js`                  |
-| `next-client-components`    | Unnecessary `"use client"` directives                         |
-
-#### Node.js (server)
-
-| Check                   | What it does                                    |
-| ----------------------- | ----------------------------------------------- |
-| `node-security`         | Helmet, CORS, rate limiting checks              |
-| `node-input-validation` | Input validation library usage (zod, joi, etc.) |
-| `node-async-errors`     | Async error handling in route handlers          |
+→ [Full check reference with scoring formulas and thresholds](https://nebulord-dev.github.io/sickbay/guide/health-checks)
 
 ---
 

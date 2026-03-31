@@ -5,6 +5,7 @@ export default defineConfig({
   description: 'Zero-config health checks for TypeScript, React, and Node projects',
   base: '/sickbay/',
   appearance: 'dark',
+  lastUpdated: true,
 
   head: [
     [
@@ -19,52 +20,54 @@ export default defineConfig({
 
   themeConfig: {
     nav: [
-      { text: 'Guide', link: '/guide/introduction' },
-      { text: 'Commands', link: '/commands/scan' },
-      { text: 'Advanced', link: '/advanced/ci-cd' },
+      {
+        text: 'Changelog',
+        link: 'https://github.com/nebulord-dev/sickbay/blob/main/apps/cli/CHANGELOG.md',
+      },
+      {
+        text: 'Contributing',
+        link: 'https://github.com/nebulord-dev/sickbay/blob/main/CONTRIBUTING.md',
+      },
     ],
 
-    sidebar: {
-      '/guide/': [
-        {
-          text: 'Guide',
-          items: [
-            { text: 'Introduction', link: '/guide/introduction' },
-            { text: 'Installation', link: '/guide/installation' },
-            { text: 'Quick Start', link: '/guide/quick-start' },
-            { text: 'Scoring System', link: '/guide/scoring' },
-            { text: 'Health Checks', link: '/guide/health-checks' },
-            { text: 'Monorepo Support', link: '/guide/monorepo' },
-          ],
-        },
-      ],
-      '/commands/': [
-        {
-          text: 'Commands',
-          items: [
-            { text: 'sickbay (scan)', link: '/commands/scan' },
-            { text: 'sickbay init', link: '/commands/init' },
-            { text: 'sickbay fix', link: '/commands/fix' },
-            { text: 'sickbay tui', link: '/commands/tui' },
-            { text: 'sickbay doctor', link: '/commands/doctor' },
-            { text: 'sickbay trend', link: '/commands/trend' },
-            { text: 'sickbay stats', link: '/commands/stats' },
-            { text: 'sickbay badge', link: '/commands/badge' },
-            { text: 'sickbay diff', link: '/commands/diff' },
-          ],
-        },
-      ],
-      '/advanced/': [
-        {
-          text: 'Advanced',
-          items: [
-            { text: 'CI/CD Integration', link: '/advanced/ci-cd' },
-            { text: 'JSON Output', link: '/advanced/json-output' },
-            { text: 'AI Features', link: '/advanced/ai-features' },
-          ],
-        },
-      ],
-    },
+    sidebar: [
+      {
+        text: 'Guide',
+        collapsed: false,
+        items: [
+          { text: 'Introduction', link: '/guide/introduction' },
+          { text: 'Installation', link: '/guide/installation' },
+          { text: 'Quick Start', link: '/guide/quick-start' },
+          { text: 'Scoring System', link: '/guide/scoring' },
+          { text: 'Health Checks', link: '/guide/health-checks' },
+          { text: 'Monorepo Support', link: '/guide/monorepo' },
+        ],
+      },
+      {
+        text: 'Commands',
+        collapsed: false,
+        items: [
+          { text: 'sickbay (scan)', link: '/commands/scan' },
+          { text: 'sickbay init', link: '/commands/init' },
+          { text: 'sickbay fix', link: '/commands/fix' },
+          { text: 'sickbay tui', link: '/commands/tui' },
+          { text: 'sickbay doctor', link: '/commands/doctor' },
+          { text: 'sickbay trend', link: '/commands/trend' },
+          { text: 'sickbay stats', link: '/commands/stats' },
+          { text: 'sickbay badge', link: '/commands/badge' },
+          { text: 'sickbay diff', link: '/commands/diff' },
+        ],
+      },
+      {
+        text: 'Advanced',
+        collapsed: false,
+        items: [
+          { text: 'CI/CD Integration', link: '/advanced/ci-cd' },
+          { text: 'JSON Output', link: '/advanced/json-output' },
+          { text: 'AI Features', link: '/advanced/ai-features' },
+        ],
+      },
+    ],
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/nebulord-dev/sickbay' },
@@ -75,10 +78,10 @@ export default defineConfig({
       provider: 'local',
     },
 
-    editLink: {
-      pattern: 'https://github.com/nebulord/sickbay/edit/main/apps/docs/:path',
-      text: 'Edit this page on GitHub',
-    },
+    // editLink: {
+    //   pattern: 'https://github.com/nebulord/sickbay/edit/main/apps/docs/:path',
+    //   text: 'Edit this page on GitHub',
+    // },
 
     footer: {
       message: 'Released under the MIT License.',
