@@ -35,7 +35,9 @@ export class ComplexityRunner extends BaseRunner {
 
     try {
       const files = SOURCE_DIRS.flatMap((dir) =>
-        existsSync(join(projectPath, dir)) ? scanDirectory(join(projectPath, dir), projectPath) : [],
+        existsSync(join(projectPath, dir))
+          ? scanDirectory(join(projectPath, dir), projectPath)
+          : [],
       );
 
       const oversized = files.filter((f) => f.lines >= WARN_LINES);

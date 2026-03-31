@@ -18,15 +18,15 @@ Sickbay is a zero-config health check CLI for JavaScript and TypeScript projects
 
 ## Framework Support
 
-| Framework | Status | Framework-specific checks |
-| --------- | ------ | ------------------------- |
-| **React** | ✅ Supported | `react-perf`, `asset-size` |
-| **Next.js** | ✅ Supported | `next-images`, `next-link`, `next-fonts`, `next-missing-boundaries`, `next-security-headers`, `next-client-components` |
-| **Angular** | ✅ Supported | `angular-change-detection`, `angular-lazy-routes`, `angular-strict`, `angular-subscriptions` |
-| **Node.js** | ✅ Supported | `node-security`, `node-input-validation`, `node-async-errors` |
-| **TypeScript** | ✅ Supported | `typescript` (type error reporting) |
-| **Vue** | 🔜 Coming Soon | — |
-| **Remix** | 🔜 Coming Soon | — |
+| Framework      | Status         | Framework-specific checks                                                                                              |
+| -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **React**      | ✅ Supported   | `react-perf`, `asset-size`                                                                                             |
+| **Next.js**    | ✅ Supported   | `next-images`, `next-link`, `next-fonts`, `next-missing-boundaries`, `next-security-headers`, `next-client-components` |
+| **Angular**    | ✅ Supported   | `angular-change-detection`, `angular-lazy-routes`, `angular-strict`, `angular-subscriptions`                           |
+| **Node.js**    | ✅ Supported   | `node-security`, `node-input-validation`, `node-async-errors`                                                          |
+| **TypeScript** | ✅ Supported   | `typescript` (type error reporting)                                                                                    |
+| **Vue**        | 🔜 Coming Soon | —                                                                                                                      |
+| **Remix**      | 🔜 Coming Soon | —                                                                                                                      |
 
 All projects also get the full suite of 15 universal checks regardless of framework: dependencies, security, code quality, git, and complexity.
 
