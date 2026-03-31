@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { DataService } from '../services/data.service';
 
-// Intentional: missing ChangeDetectionStrategy.OnPush (triggers angular-change-detection)
+// Intentional: change detection strategy not set (triggers angular-change-detection check)
 // Intentional: .subscribe() with no takeUntilDestroyed / ngOnDestroy (triggers angular-subscriptions)
 @Component({
   selector: 'app-user-list',

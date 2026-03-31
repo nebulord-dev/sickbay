@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgFor, CurrencyPipe } from '@angular/common';
 import { DataService } from '../services/data.service';
 
-// Intentional: missing ChangeDetectionStrategy.OnPush (triggers angular-change-detection)
+// Intentional: change detection strategy not set (triggers angular-change-detection check)
 // Intentional: .subscribe() with no cleanup (triggers angular-subscriptions)
 @Component({
   selector: 'app-product-card',

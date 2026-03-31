@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-// Intentional: missing ChangeDetectionStrategy.OnPush
+// Intentional: change detection strategy not set (triggers angular-change-detection check)
 @Component({
   selector: 'app-header',
   standalone: true,

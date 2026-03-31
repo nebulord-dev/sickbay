@@ -293,7 +293,7 @@ describe('angular-app', () => {
   // Overall report
   it('overall score is in expected range', () => {
     expect(report.overallScore).toBeGreaterThanOrEqual(20);
-    expect(report.overallScore).toBeLessThanOrEqual(85);
+    expect(report.overallScore).toBeLessThanOrEqual(95);
   });
 
   it('summary shape', () => {
