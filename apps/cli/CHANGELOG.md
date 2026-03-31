@@ -1,3 +1,10 @@
+## @nebulord/sickbay [1.3.1](https://github.com/nebulord-dev/sickbay/compare/@nebulord/sickbay@1.3.0...@nebulord/sickbay@1.3.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* ensure web builds are part of the published package ([#15](https://github.com/nebulord-dev/sickbay/issues/15)) ([799fd32](https://github.com/nebulord-dev/sickbay/commit/799fd324afdf60b479cb51d3e7bedd9d96d4e441))
+
 # @nebulord/sickbay
 
 ## 1.3.0
