@@ -6,6 +6,15 @@ import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue } from '../types.js';
 
+/**
+ * Checks Angular components for missing OnPush change detection strategy.
+ * Components without OnPush can cause unnecessary re-renders and performance issues.
+ * This runner scans for .component.ts files, looks for @Component decorators,
+ * and checks if they include `changeDetection: ChangeDetectionStrategy.OnPush`.
+ * It reports warnings for any components that are missing this optimization.
+ *
+ * Note: This check is a heuristic and may not be 100% accurate, but it can help identify potential performance improvements.
+ */
 export class AngularChangeDetectionRunner extends BaseRunner {
   name = 'angular-change-detection';
   category = 'performance' as const;
