@@ -10,7 +10,9 @@ fixtures/
 ├── package.json
 └── packages/
     ├── react-app/     — Vite + React + TypeScript app (moderately healthy)
-    └── node-api/      — Express REST API (intentionally broken)
+    ├── node-api/      — Express REST API (intentionally broken)
+    ├── angular-app/   — Angular v17+ standalone components (intentionally broken)
+    └── next-app/      — Next.js 14 App Router (intentionally broken)
 ```
 
 ## Running Sickbay Against the Fixtures
@@ -24,6 +26,12 @@ sickbay --path fixtures/packages/react-app
 
 # Standalone Node API (expect a low score)
 sickbay --path fixtures/packages/node-api
+
+# Standalone Angular app (expect Angular-specific warnings)
+sickbay --path fixtures/packages/angular-app
+
+# Standalone Next.js app (expect Next.js-specific warnings)
+sickbay --path fixtures/packages/next-app
 
 # With web dashboard
 sickbay --path fixtures/packages/node-api --web
