@@ -44,11 +44,11 @@ release, and NPM publish. Conventional commits drive version bumps. No manual st
 
 Only these three packages publish to NPM:
 
-| Package | Path | NPM name |
-|---------|------|----------|
-| `@nebulord/sickbay-core` | `packages/core/` | core analysis engine |
-| `@nebulord/sickbay` | `apps/cli/` | CLI tool |
-| `sickbay` | `packages/sickbay-wrapper/` | thin wrapper (re-exports CLI) |
+| Package                  | Path                        | NPM name                      |
+| ------------------------ | --------------------------- | ----------------------------- |
+| `@nebulord/sickbay-core` | `packages/core/`            | core analysis engine          |
+| `@nebulord/sickbay`      | `apps/cli/`                 | CLI tool                      |
+| `sickbay`                | `packages/sickbay-wrapper/` | thin wrapper (re-exports CLI) |
 
 `@nebulord/sickbay-web` is already `"private": true` — `multi-semantic-release` skips it automatically.
 `apps/docs` is also private — skipped automatically.
@@ -140,14 +140,20 @@ are bundled with `semantic-release` core — no need to install separately.
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    ["@semantic-release/changelog", {
-      "changelogFile": "CHANGELOG.md"
-    }],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
     "@semantic-release/npm",
-    ["@semantic-release/git", {
-      "assets": ["CHANGELOG.md", "package.json"],
-      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-    }],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md", "package.json"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
     "@semantic-release/github"
   ]
 }
@@ -169,14 +175,20 @@ package directory (not the repo root).
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    ["@semantic-release/changelog", {
-      "changelogFile": "CHANGELOG.md"
-    }],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
     "@semantic-release/npm",
-    ["@semantic-release/git", {
-      "assets": ["CHANGELOG.md", "package.json"],
-      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-    }],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md", "package.json"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
     "@semantic-release/github"
   ]
 }
@@ -258,6 +270,7 @@ jobs:
 ```
 
 **Critical differences from the old workflow:**
+
 - `fetch-depth: 0` — semantic-release needs the **full git history** to determine version bumps.
   Without this, it can't see past commits and may fail or release incorrectly.
 - `persist-credentials: false` — required so the `@semantic-release/git` plugin can use the PAT
@@ -269,11 +282,13 @@ jobs:
 ### Phase 7: Remove Changesets
 
 **DELETE** the entire `.changeset/` directory:
+
 ```bash
 rm -rf .changeset
 ```
 
 **UPDATE** root `package.json` — remove:
+
 - `"changeset": "changeset"` from scripts
 - `"version-packages": "changeset version"` from scripts
 - `"@changesets/cli": "^2.30.0"` from devDependencies
