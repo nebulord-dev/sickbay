@@ -43,6 +43,12 @@ const CHECK_DESCRIPTIONS: Record<string, string> = {
   'react-perf':
     'Analyzes React components for performance anti-patterns like inline objects and index as key.',
   'asset-size': 'Checks static asset sizes (images, fonts, SVGs) and flags oversized files.',
+  'angular-change-detection':
+    'Scans Angular components for missing OnPush change detection strategy.',
+  'angular-lazy-routes': 'Checks Angular routes for lazy loading via loadComponent().',
+  'angular-strict': 'Verifies strict TypeScript and Angular compiler settings in tsconfig.json.',
+  'angular-subscriptions':
+    'Detects RxJS subscriptions in components that are never unsubscribed.',
 };
 
 function ScoreRing({ score }: { score: number }) {

@@ -1,5 +1,9 @@
 import { relative } from 'path';
 
+import { AngularChangeDetectionRunner } from './integrations/angular-change-detection.js';
+import { AngularLazyRoutesRunner } from './integrations/angular-lazy-routes.js';
+import { AngularStrictRunner } from './integrations/angular-strict.js';
+import { AngularSubscriptionsRunner } from './integrations/angular-subscriptions.js';
 import { AssetSizeRunner } from './integrations/asset-size.js';
 import { ComplexityRunner } from './integrations/complexity.js';
 import { CoverageRunner } from './integrations/coverage.js';
@@ -68,6 +72,10 @@ const ALL_RUNNERS: ToolRunner[] = [
   new NodeSecurityRunner(),
   new NodeInputValidationRunner(),
   new NodeAsyncErrorsRunner(),
+  new AngularChangeDetectionRunner(),
+  new AngularLazyRoutesRunner(),
+  new AngularStrictRunner(),
+  new AngularSubscriptionsRunner(),
 ];
 
 export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayReport> {
