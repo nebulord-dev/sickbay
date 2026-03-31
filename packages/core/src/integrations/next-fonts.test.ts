@@ -42,7 +42,7 @@ describe('NextFontsRunner', () => {
   it('returns pass when layout file exists but has no font domain', async () => {
     mockExistsSync.mockReturnValue(true);
     mockReadFileSync.mockReturnValue(
-      'export default function RootLayout() { return <html><body>Content</body></html>; }'
+      'export default function RootLayout() { return <html><body>Content</body></html>; }',
     );
     const result = await runner.run('/project');
     expect(result.status).toBe('pass');
@@ -53,7 +53,7 @@ describe('NextFontsRunner', () => {
   it('returns warning when fonts.googleapis.com found in app/layout.tsx', async () => {
     mockExistsSync.mockImplementation((path) => path === '/project/app/layout.tsx');
     mockReadFileSync.mockReturnValue(
-      '<link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet" />'
+      '<link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet" />',
     );
     const result = await runner.run('/project');
     expect(result.status).toBe('warning');
@@ -67,7 +67,7 @@ describe('NextFontsRunner', () => {
   it('returns warning when fonts.gstatic.com found in layout file', async () => {
     mockExistsSync.mockImplementation((path) => path === '/project/src/app/layout.tsx');
     mockReadFileSync.mockReturnValue(
-      '<link href="https://fonts.gstatic.com/s/roboto/v30/..." rel="stylesheet" />'
+      '<link href="https://fonts.gstatic.com/s/roboto/v30/..." rel="stylesheet" />',
     );
     const result = await runner.run('/project');
     expect(result.status).toBe('warning');
@@ -83,7 +83,7 @@ describe('NextFontsRunner', () => {
       return callCount <= 2; // first 2 calls return true
     });
     mockReadFileSync.mockReturnValue(
-      '<link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet" />'
+      '<link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet" />',
     );
     const result = await runner.run('/project');
     expect(result.issues).toHaveLength(2);
@@ -112,7 +112,7 @@ describe('NextFontsRunner', () => {
   it('includes reportedBy field in issues', async () => {
     mockExistsSync.mockReturnValue(true);
     mockReadFileSync.mockReturnValue(
-      '<link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet" />'
+      '<link href="https://fonts.googleapis.com/css2?family=Roboto" rel="stylesheet" />',
     );
     const result = await runner.run('/project');
     expect(result.issues[0].reportedBy).toEqual(['next-fonts']);

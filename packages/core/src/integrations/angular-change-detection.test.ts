@@ -78,7 +78,11 @@ describe('AngularChangeDetectionRunner', () => {
   it('scores: 1 missing → 85, 4 missing → 40, 7 missing → 20 (floor)', async () => {
     const missing = `@Component({ selector: 'x', template: '' }) export class C {}`;
 
-    for (const [count, expected] of [[1, 85], [4, 40], [7, 20]] as [number, number][]) {
+    for (const [count, expected] of [
+      [1, 85],
+      [4, 40],
+      [7, 20],
+    ] as [number, number][]) {
       vi.clearAllMocks();
       const files = Array.from({ length: count }, (_, i) => `comp${i}.component.ts`);
       mockReaddirSync.mockReturnValue(files as never);
@@ -122,7 +126,9 @@ describe('AngularChangeDetectionRunner', () => {
   });
 
   it('returns fail status when an unexpected error is thrown', async () => {
-    mockReaddirSync.mockImplementation(() => { throw new Error('disk error'); });
+    mockReaddirSync.mockImplementation(() => {
+      throw new Error('disk error');
+    });
     const result = await runner.run('/project');
     expect(result.status).toBe('fail');
     expect(result.score).toBe(0);

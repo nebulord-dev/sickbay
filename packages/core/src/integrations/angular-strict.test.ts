@@ -41,13 +41,15 @@ describe('AngularStrictRunner', () => {
 
   it('returns pass when all three strict settings are enabled', async () => {
     mockExistsSync.mockReturnValue(true as never);
-    mockReadFileSync.mockReturnValue(JSON.stringify({
-      compilerOptions: { strict: true },
-      angularCompilerOptions: {
-        strictTemplates: true,
-        strictInjectionParameters: true,
-      },
-    }) as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({
+        compilerOptions: { strict: true },
+        angularCompilerOptions: {
+          strictTemplates: true,
+          strictInjectionParameters: true,
+        },
+      }) as never,
+    );
     const result = await runner.run('/project');
     expect(result.status).toBe('pass');
     expect(result.score).toBe(100);
@@ -59,9 +61,11 @@ describe('AngularStrictRunner', () => {
 
   it('emits a warning for each missing strict setting', async () => {
     mockExistsSync.mockReturnValue(true as never);
-    mockReadFileSync.mockReturnValue(JSON.stringify({
-      compilerOptions: { strict: false },
-    }) as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({
+        compilerOptions: { strict: false },
+      }) as never,
+    );
     const result = await runner.run('/project');
     expect(result.status).toBe('warning');
     expect(result.issues).toHaveLength(3);
@@ -69,27 +73,33 @@ describe('AngularStrictRunner', () => {
     // Each issue should mention its setting
     expect(result.issues.find((i) => i.message.includes('strict mode'))).toBeDefined();
     expect(result.issues.find((i) => i.message.includes('strictTemplates'))).toBeDefined();
-    expect(result.issues.find((i) => i.message.includes('strictInjectionParameters'))).toBeDefined();
+    expect(
+      result.issues.find((i) => i.message.includes('strictInjectionParameters')),
+    ).toBeDefined();
   });
 
   it('scores: 0 missing → 100, 1 missing → 73, 2 missing → 46, 3 missing → 20', async () => {
     mockExistsSync.mockReturnValue(true as never);
 
     // 1 missing (no strict)
-    mockReadFileSync.mockReturnValue(JSON.stringify({
-      compilerOptions: {},
-      angularCompilerOptions: { strictTemplates: true, strictInjectionParameters: true },
-    }) as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({
+        compilerOptions: {},
+        angularCompilerOptions: { strictTemplates: true, strictInjectionParameters: true },
+      }) as never,
+    );
     let result = await runner.run('/project');
     expect(result.score).toBe(73);
 
     // 2 missing
     vi.clearAllMocks();
     mockExistsSync.mockReturnValue(true as never);
-    mockReadFileSync.mockReturnValue(JSON.stringify({
-      compilerOptions: {},
-      angularCompilerOptions: { strictTemplates: true },
-    }) as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({
+        compilerOptions: {},
+        angularCompilerOptions: { strictTemplates: true },
+      }) as never,
+    );
     result = await runner.run('/project');
     expect(result.score).toBe(46);
 

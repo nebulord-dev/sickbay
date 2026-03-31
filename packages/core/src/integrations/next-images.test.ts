@@ -49,9 +49,7 @@ describe('NextImagesRunner', () => {
       }
     `;
     // Mock for app/ directory (no files), then src/ directory (has page.tsx)
-    mockReaddirSync
-      .mockReturnValueOnce([] as never)
-      .mockReturnValueOnce(['page.tsx'] as never);
+    mockReaddirSync.mockReturnValueOnce([] as never).mockReturnValueOnce(['page.tsx'] as never);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
     mockReadFileSync.mockReturnValue(content as never);
     const result = await runner.run('/project');
@@ -63,9 +61,7 @@ describe('NextImagesRunner', () => {
   it('returns warning when file contains <img >', async () => {
     const content = `<img src="pic.jpg" alt="test" />`;
     // Mock for app/ (no files), then src/ (one file with img)
-    mockReaddirSync
-      .mockReturnValueOnce([] as never)
-      .mockReturnValueOnce(['page.tsx'] as never);
+    mockReaddirSync.mockReturnValueOnce([] as never).mockReturnValueOnce(['page.tsx'] as never);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
     mockReadFileSync.mockReturnValue(content as never);
     const result = await runner.run('/project');
@@ -78,9 +74,7 @@ describe('NextImagesRunner', () => {
 
   it('returns warning when file contains <img>', async () => {
     const content = `<img>`;
-    mockReaddirSync
-      .mockReturnValueOnce([] as never)
-      .mockReturnValueOnce(['page.tsx'] as never);
+    mockReaddirSync.mockReturnValueOnce([] as never).mockReturnValueOnce(['page.tsx'] as never);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
     mockReadFileSync.mockReturnValue(content as never);
     const result = await runner.run('/project');
@@ -92,13 +86,15 @@ describe('NextImagesRunner', () => {
   it('scores: 1 violation → 90, 5 violations → 50, 9 violations → 20 (floor)', async () => {
     const withImg = `<img src="pic.jpg" />`;
 
-    for (const [count, expected] of [[1, 90], [5, 50], [9, 20]] as [number, number][]) {
+    for (const [count, expected] of [
+      [1, 90],
+      [5, 50],
+      [9, 20],
+    ] as [number, number][]) {
       vi.clearAllMocks();
       const files = Array.from({ length: count }, (_, i) => `file${i}.tsx`);
       // app/ gets empty, src/ gets the files
-      mockReaddirSync
-        .mockReturnValueOnce([] as never)
-        .mockReturnValueOnce(files as never);
+      mockReaddirSync.mockReturnValueOnce([] as never).mockReturnValueOnce(files as never);
       mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
       mockReadFileSync.mockReturnValue(withImg as never);
       const result = await runner.run('/project');

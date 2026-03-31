@@ -42,7 +42,7 @@ export class AngularSubscriptionsRunner extends BaseRunner {
         file,
         fix: {
           description:
-            "Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or call `.unsubscribe()` in `ngOnDestroy` to prevent memory leaks.",
+            'Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or call `.unsubscribe()` in `ngOnDestroy` to prevent memory leaks.',
         },
         reportedBy: ['angular-subscriptions'],
       }));

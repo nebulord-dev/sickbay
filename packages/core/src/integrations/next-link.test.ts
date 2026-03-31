@@ -48,7 +48,7 @@ describe('NextLinkRunner', () => {
       }
     `;
     mockReaddirSync
-      .mockReturnValueOnce([] as never)       // app/ — empty
+      .mockReturnValueOnce([] as never) // app/ — empty
       .mockReturnValueOnce(['page.tsx'] as never); // src/ — one file
     mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
     mockReadFileSync.mockReturnValue(content as never);
@@ -124,7 +124,11 @@ describe('NextLinkRunner', () => {
   it('scores: 1 violation → 85, 3 violations → 55, 6 violations → 20 (floor)', async () => {
     const violatingContent = `<a href="/page">Link</a>`;
 
-    for (const [count, expected] of [[1, 85], [3, 55], [6, 20]] as [number, number][]) {
+    for (const [count, expected] of [
+      [1, 85],
+      [3, 55],
+      [6, 20],
+    ] as [number, number][]) {
       vi.clearAllMocks();
       const files = Array.from({ length: count }, (_, i) => `page${i}.tsx`);
       mockReaddirSync

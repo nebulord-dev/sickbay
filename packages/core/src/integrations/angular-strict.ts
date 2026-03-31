@@ -43,7 +43,8 @@ export class AngularStrictRunner extends BaseRunner {
           message:
             'TypeScript strict mode is disabled — could not confirm strict mode is enabled (check parent configs if using extends)',
           fix: {
-            description: 'Enable `strict: true` in `compilerOptions` for full TypeScript strict mode.',
+            description:
+              'Enable `strict: true` in `compilerOptions` for full TypeScript strict mode.',
           },
           reportedBy: ['angular-strict'],
         });

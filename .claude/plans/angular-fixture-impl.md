@@ -17,6 +17,7 @@
 ### Task 1: Create the Angular fixture package
 
 **Files:**
+
 - Create: `fixtures/packages/angular-app/package.json`
 - Create: `fixtures/packages/angular-app/tsconfig.json`
 - Create: `fixtures/packages/angular-app/src/main.ts`
@@ -267,12 +268,12 @@ A modern Angular app using standalone components. Has intentional issues to veri
 
 **Expect:** warnings on missing OnPush, static routes, disabled strict mode, and unguarded subscriptions; passes on generic code quality checks.
 
-| Check | What's broken |
-| --- | --- |
-| `angular-change-detection` | All 4 components omit `ChangeDetectionStrategy.OnPush` |
-| `angular-lazy-routes` | All routes use `component:` (static), none use `loadComponent:` |
-| `angular-strict` | `strict: false` in tsconfig; no `angularCompilerOptions` block |
-| `angular-subscriptions` | `user-list` and `product-card` subscribe without cleanup |
+| Check                      | What's broken                                                   |
+| -------------------------- | --------------------------------------------------------------- |
+| `angular-change-detection` | All 4 components omit `ChangeDetectionStrategy.OnPush`          |
+| `angular-lazy-routes`      | All routes use `component:` (static), none use `loadComponent:` |
+| `angular-strict`           | `strict: false` in tsconfig; no `angularCompilerOptions` block  |
+| `angular-subscriptions`    | `user-list` and `product-card` subscribe without cleanup        |
 ```
 
 - [ ] **Step 13: Commit the fixture**
@@ -289,6 +290,7 @@ git commit -m "feat: add angular-app test fixture with intentional issues"
 ### Task 2: angular-change-detection runner
 
 **Files:**
+
 - Create: `packages/core/src/integrations/angular-change-detection.ts`
 - Create: `packages/core/src/integrations/angular-change-detection.test.ts`
 
@@ -376,7 +378,11 @@ describe('AngularChangeDetectionRunner', () => {
   it('scores: 1 missing → 85, 4 missing → 40, 7 missing → 20 (floor)', async () => {
     const missing = `@Component({ selector: 'x', template: '' }) export class C {}`;
 
-    for (const [count, expected] of [[1, 85], [4, 40], [7, 20]] as [number, number][]) {
+    for (const [count, expected] of [
+      [1, 85],
+      [4, 40],
+      [7, 20],
+    ] as [number, number][]) {
       vi.clearAllMocks();
       const files = Array.from({ length: count }, (_, i) => `comp${i}.component.ts`);
       mockReaddirSync.mockReturnValue(files as never);
@@ -420,7 +426,9 @@ describe('AngularChangeDetectionRunner', () => {
   });
 
   it('returns fail status when an unexpected error is thrown', async () => {
-    mockReaddirSync.mockImplementation(() => { throw new Error('disk error'); });
+    mockReaddirSync.mockImplementation(() => {
+      throw new Error('disk error');
+    });
     const result = await runner.run('/project');
     expect(result.status).toBe('fail');
     expect(result.score).toBe(0);
@@ -560,6 +568,7 @@ git commit -m "feat(core): add angular-change-detection runner"
 ### Task 3: angular-lazy-routes runner
 
 **Files:**
+
 - Create: `packages/core/src/integrations/angular-lazy-routes.ts`
 - Create: `packages/core/src/integrations/angular-lazy-routes.test.ts`
 
@@ -703,7 +712,9 @@ describe('AngularLazyRoutesRunner', () => {
   });
 
   it('returns fail status when an unexpected error is thrown', async () => {
-    mockReaddirSync.mockImplementation(() => { throw new Error('disk error'); });
+    mockReaddirSync.mockImplementation(() => {
+      throw new Error('disk error');
+    });
     const result = await runner.run('/project');
     expect(result.status).toBe('fail');
   });
@@ -866,6 +877,7 @@ git commit -m "feat(core): add angular-lazy-routes runner"
 ### Task 4: angular-strict runner
 
 **Files:**
+
 - Create: `packages/core/src/integrations/angular-strict.ts`
 - Create: `packages/core/src/integrations/angular-strict.test.ts`
 
@@ -915,13 +927,15 @@ describe('AngularStrictRunner', () => {
 
   it('returns pass when all three strict settings are enabled', async () => {
     mockExistsSync.mockReturnValue(true as never);
-    mockReadFileSync.mockReturnValue(JSON.stringify({
-      compilerOptions: { strict: true },
-      angularCompilerOptions: {
-        strictTemplates: true,
-        strictInjectionParameters: true,
-      },
-    }) as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({
+        compilerOptions: { strict: true },
+        angularCompilerOptions: {
+          strictTemplates: true,
+          strictInjectionParameters: true,
+        },
+      }) as never,
+    );
     const result = await runner.run('/project');
     expect(result.status).toBe('pass');
     expect(result.score).toBe(100);
@@ -933,9 +947,11 @@ describe('AngularStrictRunner', () => {
 
   it('emits a warning for each missing strict setting', async () => {
     mockExistsSync.mockReturnValue(true as never);
-    mockReadFileSync.mockReturnValue(JSON.stringify({
-      compilerOptions: { strict: false },
-    }) as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({
+        compilerOptions: { strict: false },
+      }) as never,
+    );
     const result = await runner.run('/project');
     expect(result.status).toBe('warning');
     expect(result.issues).toHaveLength(3);
@@ -943,27 +959,33 @@ describe('AngularStrictRunner', () => {
     // Each issue should mention its setting
     expect(result.issues.find((i) => i.message.includes('strict mode'))).toBeDefined();
     expect(result.issues.find((i) => i.message.includes('strictTemplates'))).toBeDefined();
-    expect(result.issues.find((i) => i.message.includes('strictInjectionParameters'))).toBeDefined();
+    expect(
+      result.issues.find((i) => i.message.includes('strictInjectionParameters')),
+    ).toBeDefined();
   });
 
   it('scores: 0 missing → 100, 1 missing → 73, 2 missing → 46, 3 missing → 20', async () => {
     mockExistsSync.mockReturnValue(true as never);
 
     // 1 missing (no strict)
-    mockReadFileSync.mockReturnValue(JSON.stringify({
-      compilerOptions: {},
-      angularCompilerOptions: { strictTemplates: true, strictInjectionParameters: true },
-    }) as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({
+        compilerOptions: {},
+        angularCompilerOptions: { strictTemplates: true, strictInjectionParameters: true },
+      }) as never,
+    );
     let result = await runner.run('/project');
     expect(result.score).toBe(73);
 
     // 2 missing
     vi.clearAllMocks();
     mockExistsSync.mockReturnValue(true as never);
-    mockReadFileSync.mockReturnValue(JSON.stringify({
-      compilerOptions: {},
-      angularCompilerOptions: { strictTemplates: true },
-    }) as never);
+    mockReadFileSync.mockReturnValue(
+      JSON.stringify({
+        compilerOptions: {},
+        angularCompilerOptions: { strictTemplates: true },
+      }) as never,
+    );
     result = await runner.run('/project');
     expect(result.score).toBe(46);
 
@@ -1049,7 +1071,8 @@ export class AngularStrictRunner extends BaseRunner {
           message:
             'TypeScript strict mode is disabled — could not confirm strict mode is enabled (check parent configs if using extends)',
           fix: {
-            description: 'Enable `strict: true` in `compilerOptions` for full TypeScript strict mode.',
+            description:
+              'Enable `strict: true` in `compilerOptions` for full TypeScript strict mode.',
           },
           reportedBy: ['angular-strict'],
         });
@@ -1140,6 +1163,7 @@ git commit -m "feat(core): add angular-strict runner"
 ### Task 5: angular-subscriptions runner
 
 **Files:**
+
 - Create: `packages/core/src/integrations/angular-subscriptions.ts`
 - Create: `packages/core/src/integrations/angular-subscriptions.test.ts`
 
@@ -1274,7 +1298,11 @@ describe('AngularSubscriptionsRunner', () => {
 
     vi.clearAllMocks();
     mockReaddirSync.mockReturnValue([
-      'a.component.ts', 'b.component.ts', 'c.component.ts', 'd.component.ts', 'e.component.ts',
+      'a.component.ts',
+      'b.component.ts',
+      'c.component.ts',
+      'd.component.ts',
+      'e.component.ts',
     ] as never);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
     mockReadFileSync.mockReturnValue(leaky as never);
@@ -1291,7 +1319,9 @@ describe('AngularSubscriptionsRunner', () => {
   });
 
   it('returns fail status when an unexpected error is thrown', async () => {
-    mockReaddirSync.mockImplementation(() => { throw new Error('disk error'); });
+    mockReaddirSync.mockImplementation(() => {
+      throw new Error('disk error');
+    });
     const result = await runner.run('/project');
     expect(result.status).toBe('fail');
   });
@@ -1354,7 +1384,7 @@ export class AngularSubscriptionsRunner extends BaseRunner {
         file,
         fix: {
           description:
-            "Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or call `.unsubscribe()` in `ngOnDestroy` to prevent memory leaks.",
+            'Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or call `.unsubscribe()` in `ngOnDestroy` to prevent memory leaks.',
         },
         reportedBy: ['angular-subscriptions'],
       }));
@@ -1440,6 +1470,7 @@ git commit -m "feat(core): add angular-subscriptions runner"
 ### Task 6: Register runners and update About page
 
 **Files:**
+
 - Modify: `packages/core/src/runner.ts`
 - Modify: `apps/web/src/components/About.tsx`
 
@@ -1508,6 +1539,7 @@ git commit -m "feat: register Angular runners and add About page descriptions"
 ### Task 7: Snapshot tests for angular-app fixture
 
 **Files:**
+
 - Modify: `tests/snapshots/fixture-regression.test.ts`
 
 - [ ] **Step 1: Add the angular-app describe block**
@@ -1660,6 +1692,7 @@ node apps/cli/dist/index.js --path fixtures/packages/angular-app
 ```
 
 Expected output:
+
 - Header shows project name `angular-app`
 - Angular-specific checks appear in results (angular-change-detection, angular-lazy-routes, angular-strict, angular-subscriptions) — all `warning`
 - `react-perf` does NOT appear

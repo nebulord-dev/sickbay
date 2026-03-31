@@ -158,7 +158,11 @@ describe('NextClientComponentsRunner', () => {
       }
     `;
 
-    for (const [count, expected] of [[1, 85], [3, 55], [6, 20]] as [number, number][]) {
+    for (const [count, expected] of [
+      [1, 85],
+      [3, 55],
+      [6, 20],
+    ] as [number, number][]) {
       vi.clearAllMocks();
       const files = Array.from({ length: count }, (_, i) => `comp${i}.tsx`);
       mockReaddirSync.mockReturnValueOnce(files as never); // app/

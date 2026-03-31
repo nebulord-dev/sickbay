@@ -47,8 +47,7 @@ const CHECK_DESCRIPTIONS: Record<string, string> = {
     'Scans Angular components for missing OnPush change detection strategy.',
   'angular-lazy-routes': 'Checks Angular routes for lazy loading via loadComponent().',
   'angular-strict': 'Verifies strict TypeScript and Angular compiler settings in tsconfig.json.',
-  'angular-subscriptions':
-    'Detects RxJS subscriptions in components that are never unsubscribed.',
+  'angular-subscriptions': 'Detects RxJS subscriptions in components that are never unsubscribed.',
   'next-images':
     'Detects raw image elements that should use next/image for automatic optimization and lazy loading.',
   'next-link':

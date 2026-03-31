@@ -114,9 +114,15 @@ interface FileEntry {
 
 function findRouteFiles(dir: string, projectRoot: string, topLevel = true): FileEntry[] {
   const files: FileEntry[] = [];
-  const entries = topLevel ? readdirSync(dir) : (() => {
-    try { return readdirSync(dir); } catch { return []; }
-  })();
+  const entries = topLevel
+    ? readdirSync(dir)
+    : (() => {
+        try {
+          return readdirSync(dir);
+        } catch {
+          return [];
+        }
+      })();
   for (const entry of entries) {
     if (entry.startsWith('.') || entry === 'node_modules') continue;
     const fullPath = join(dir, entry);

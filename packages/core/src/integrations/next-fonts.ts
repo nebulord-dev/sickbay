@@ -33,10 +33,7 @@ export class NextFontsRunner extends BaseRunner {
         const fullPath = join(projectPath, layoutPath);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf-8');
-          if (
-            content.includes('fonts.googleapis.com') ||
-            content.includes('fonts.gstatic.com')
-          ) {
+          if (content.includes('fonts.googleapis.com') || content.includes('fonts.gstatic.com')) {
             found.push(layoutPath);
           }
         }

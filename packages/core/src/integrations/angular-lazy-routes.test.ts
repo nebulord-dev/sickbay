@@ -150,7 +150,9 @@ describe('AngularLazyRoutesRunner', () => {
   });
 
   it('returns fail status when an unexpected error is thrown', async () => {
-    mockReaddirSync.mockImplementation(() => { throw new Error('disk error'); });
+    mockReaddirSync.mockImplementation(() => {
+      throw new Error('disk error');
+    });
     const result = await runner.run('/project');
     expect(result.status).toBe('fail');
   });

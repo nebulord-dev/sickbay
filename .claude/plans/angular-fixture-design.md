@@ -39,12 +39,12 @@ angular-app/
 
 ### Intentional Issues
 
-| Check | Violation |
-|---|---|
-| `angular-change-detection` | All 4 components omit `changeDetection: ChangeDetectionStrategy.OnPush` |
-| `angular-lazy-routes` | All routes use `component: SomeComponent` (static import), none use `loadComponent:` |
-| `angular-strict` | `tsconfig.json` has `strict: false`; no `angularCompilerOptions` block |
-| `angular-subscriptions` | `user-list.component.ts` and `product-card.component.ts` call `.subscribe()` with no `takeUntilDestroyed()`, `takeUntil()`, `DestroyRef`, or `ngOnDestroy` cleanup |
+| Check                      | Violation                                                                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `angular-change-detection` | All 4 components omit `changeDetection: ChangeDetectionStrategy.OnPush`                                                                                            |
+| `angular-lazy-routes`      | All routes use `component: SomeComponent` (static import), none use `loadComponent:`                                                                               |
+| `angular-strict`           | `tsconfig.json` has `strict: false`; no `angularCompilerOptions` block                                                                                             |
+| `angular-subscriptions`    | `user-list.component.ts` and `product-card.component.ts` call `.subscribe()` with no `takeUntilDestroyed()`, `takeUntil()`, `DestroyRef`, or `ngOnDestroy` cleanup |
 
 ### Framework Detection
 
@@ -62,11 +62,13 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 **Tool:** `angular-change-detection` (static analysis, no external tool)
 
 **Logic:**
+
 - Glob `**/*.component.ts` under `src/`
 - For each file containing `@Component(`, check whether the decorator body includes `ChangeDetectionStrategy.OnPush`
 - Emit one `warning` issue per component missing OnPush
 
 **Scoring:** `max(20, 100 - missingCount * 15)`
+
 - 0 missing → 100
 - 4 missing → 40
 - 7+ missing → 20 (floor)
@@ -81,11 +83,13 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 **Tool:** `angular-lazy-routes` (static analysis, no external tool)
 
 **Logic:**
+
 - Scan for files containing `Routes` type annotation or `provideRouter(` (typically `app.routes.ts`, `app.config.ts`)
 - For each route object found, classify as lazy (`loadComponent:`) or static (`component:`)
 - Emit one `warning` per static route
 
 **Scoring:** ratio-based — `max(20, Math.round((lazyCount / totalCount) * 100))`
+
 - All lazy (4/4) → 100
 - Mixed (2/4 lazy) → 50
 - No lazy routes (0/4) → 20 (floor)
@@ -101,6 +105,7 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 **Tool:** `angular-strict` (static analysis, no external tool)
 
 **Logic:**
+
 - Read `tsconfig.json`
 - Check three settings independently:
   1. `compilerOptions.strict === true`
@@ -109,12 +114,14 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 - Emit one `warning` per missing setting
 
 **Scoring:** `max(20, 100 - missingCount * 27)`
+
 - 0 missing → 100 (rounds to ~100 with `100 - 0 * 27`)
 - 1 missing → 73
 - 2 missing → 46
 - 3 missing → 20 (floor applied)
 
 **Fix descriptions (per setting):**
+
 - `strict`: "Enable `strict: true` in `compilerOptions` for full TypeScript strict mode."
 - `strictTemplates`: "Enable `strictTemplates: true` in `angularCompilerOptions` to catch template type errors at build time."
 - `strictInjectionParameters`: "Enable `strictInjectionParameters: true` in `angularCompilerOptions` to catch missing injection token errors."
@@ -129,6 +136,7 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 **Tool:** `angular-subscriptions` (static analysis, no external tool)
 
 **Logic:**
+
 - Glob `**/*.component.ts` under `src/`
 - For each file containing `.subscribe(`:
   - Check for any of: `takeUntilDestroyed(`, `takeUntil(`, `DestroyRef`, `ngOnDestroy`, `.unsubscribe(`
@@ -136,13 +144,14 @@ All four runners live in `packages/core/src/integrations/` and are registered in
 - Emit one `warning` per leaky component
 
 **Scoring:** `max(20, 100 - leakyCount * 20)`
+
 - 0 leaky → 100
 - 2 leaky → 60
 - 5+ leaky → 20 (floor)
 
 **Fix description:** "Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or call `.unsubscribe()` in `ngOnDestroy` to prevent memory leaks."
 
-**Known limitations (static analysis):** The check uses string matching per file. It will not detect cases where `takeUntil()` is used with a Subject that is never completed (a common misuse). Issue messages should say "possible unguarded subscription" rather than asserting a definite leak. A component that stores a subscription and unsubscribes in a *different* file is also a known false positive gap.
+**Known limitations (static analysis):** The check uses string matching per file. It will not detect cases where `takeUntil()` is used with a Subject that is never completed (a common misuse). Issue messages should say "possible unguarded subscription" rather than asserting a definite leak. A component that stores a subscription and unsubscribes in a _different_ file is also a known false positive gap.
 
 ---
 
@@ -177,14 +186,14 @@ Add an `angular-app` case to `tests/snapshots/fixture-regression.test.ts` using 
 
 ## Files Changed
 
-| File | Change |
-|---|---|
-| `fixtures/packages/angular-app/` | New fixture (all files) |
-| `fixtures/README.md` | Document angular-app |
-| `packages/core/src/integrations/angular-change-detection.ts` | New runner |
-| `packages/core/src/integrations/angular-lazy-routes.ts` | New runner |
-| `packages/core/src/integrations/angular-strict.ts` | New runner |
-| `packages/core/src/integrations/angular-subscriptions.ts` | New runner |
-| `packages/core/src/runner.ts` | Register 4 new runners in `ALL_RUNNERS` |
-| `apps/web/src/components/About.tsx` | Add 4 entries to `CHECK_DESCRIPTIONS` |
-| `tests/snapshots/fixture-regression.test.ts` | Add angular-app structural assertions |
+| File                                                         | Change                                  |
+| ------------------------------------------------------------ | --------------------------------------- |
+| `fixtures/packages/angular-app/`                             | New fixture (all files)                 |
+| `fixtures/README.md`                                         | Document angular-app                    |
+| `packages/core/src/integrations/angular-change-detection.ts` | New runner                              |
+| `packages/core/src/integrations/angular-lazy-routes.ts`      | New runner                              |
+| `packages/core/src/integrations/angular-strict.ts`           | New runner                              |
+| `packages/core/src/integrations/angular-subscriptions.ts`    | New runner                              |
+| `packages/core/src/runner.ts`                                | Register 4 new runners in `ALL_RUNNERS` |
+| `apps/web/src/components/About.tsx`                          | Add 4 entries to `CHECK_DESCRIPTIONS`   |
+| `tests/snapshots/fixture-regression.test.ts`                 | Add angular-app structural assertions   |

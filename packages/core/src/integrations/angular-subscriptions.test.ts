@@ -155,7 +155,11 @@ describe('AngularSubscriptionsRunner', () => {
 
     vi.clearAllMocks();
     mockReaddirSync.mockReturnValue([
-      'a.component.ts', 'b.component.ts', 'c.component.ts', 'd.component.ts', 'e.component.ts',
+      'a.component.ts',
+      'b.component.ts',
+      'c.component.ts',
+      'd.component.ts',
+      'e.component.ts',
     ] as never);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
     mockReadFileSync.mockReturnValue(leaky as never);
@@ -172,7 +176,9 @@ describe('AngularSubscriptionsRunner', () => {
   });
 
   it('returns fail status when an unexpected error is thrown', async () => {
-    mockReaddirSync.mockImplementation(() => { throw new Error('disk error'); });
+    mockReaddirSync.mockImplementation(() => {
+      throw new Error('disk error');
+    });
     const result = await runner.run('/project');
     expect(result.status).toBe('fail');
   });

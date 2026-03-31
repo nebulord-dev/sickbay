@@ -16,10 +16,7 @@ export class NextMissingBoundariesRunner extends BaseRunner {
 
     try {
       // Check both app/ and src/app/ paths
-      const appPaths = [
-        join(projectPath, 'app'),
-        join(projectPath, 'src', 'app'),
-      ];
+      const appPaths = [join(projectPath, 'app'), join(projectPath, 'src', 'app')];
 
       let pageDirs: string[] = [];
       for (const appPath of appPaths) {
@@ -36,14 +33,17 @@ export class NextMissingBoundariesRunner extends BaseRunner {
         const relDir = pageDir.replace(projectPath + '/', '');
 
         // Check for missing loading.tsx/jsx
-        if (!existsSync(join(pageDir, 'loading.tsx')) && !existsSync(join(pageDir, 'loading.jsx'))) {
+        if (
+          !existsSync(join(pageDir, 'loading.tsx')) &&
+          !existsSync(join(pageDir, 'loading.jsx'))
+        ) {
           missingLoading++;
           issues.push({
             severity: 'info' as const,
             message: `${relDir} — missing loading.tsx (Suspense boundary for this route segment)`,
             fix: {
               description:
-                'Add loading.tsx to show a skeleton UI while this route\'s data loads (App Router Suspense boundary).',
+                "Add loading.tsx to show a skeleton UI while this route's data loads (App Router Suspense boundary).",
             },
             reportedBy: ['next-missing-boundaries'],
           });
@@ -57,7 +57,7 @@ export class NextMissingBoundariesRunner extends BaseRunner {
             message: `${relDir} — missing error.tsx (error boundary for this route segment)`,
             fix: {
               description:
-                'Add error.tsx with \'use client\' to gracefully handle errors in this route segment.',
+                "Add error.tsx with 'use client' to gracefully handle errors in this route segment.",
             },
             reportedBy: ['next-missing-boundaries'],
           });

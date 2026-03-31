@@ -39,9 +39,7 @@ export class NextClientComponentsRunner extends BaseRunner {
 
         // Check for hooks
         const hasHooks =
-          /\b(useState|useEffect|useRef|useCallback|useMemo|useContext|useReducer)\b/.test(
-            content
-          );
+          /\b(useState|useEffect|useRef|useCallback|useMemo|useContext|useReducer)\b/.test(content);
 
         // Check for event handlers: /\bon[A-Z][a-zA-Z]*\s*=\s*\{/
         const hasEventHandlers = /\bon[A-Z][a-zA-Z]*\s*=\s*\{/.test(content);

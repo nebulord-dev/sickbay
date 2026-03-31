@@ -53,6 +53,7 @@ know every best-practice detail.
 ### New Files to Create
 
 **Runners (6):**
+
 - `packages/core/src/integrations/next-images.ts`
 - `packages/core/src/integrations/next-link.ts`
 - `packages/core/src/integrations/next-fonts.ts`
@@ -61,6 +62,7 @@ know every best-practice detail.
 - `packages/core/src/integrations/next-client-components.ts`
 
 **Tests (6):**
+
 - `packages/core/src/integrations/next-images.test.ts`
 - `packages/core/src/integrations/next-link.test.ts`
 - `packages/core/src/integrations/next-fonts.test.ts`
@@ -69,6 +71,7 @@ know every best-practice detail.
 - `packages/core/src/integrations/next-client-components.test.ts`
 
 **Fixture:**
+
 - `fixtures/packages/next-app/package.json`
 - `fixtures/packages/next-app/tsconfig.json`
 - `fixtures/packages/next-app/next.config.js`
@@ -81,6 +84,7 @@ know every best-practice detail.
 ### Patterns to Follow
 
 **Runner structure:**
+
 ```typescript
 import { readdirSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
@@ -91,23 +95,32 @@ import type { CheckResult, Issue } from '../types.js';
 export class NextImagesRunner extends BaseRunner {
   name = 'next-images';
   category = 'performance' as const;
-  applicableFrameworks = ['next'] as const;   // ← 'next', not 'react'
+  applicableFrameworks = ['next'] as const; // ← 'next', not 'react'
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
     try {
       // ... logic ...
     } catch (err) {
-      return { id: this.name, category: this.category, name: 'Next.js Images',
-        score: 0, status: 'fail', issues: [{ severity: 'critical',
-          message: `Check failed: ${err}`, reportedBy: [this.name] }],
-        toolsUsed: [this.name], duration: elapsed() };
+      return {
+        id: this.name,
+        category: this.category,
+        name: 'Next.js Images',
+        score: 0,
+        status: 'fail',
+        issues: [
+          { severity: 'critical', message: `Check failed: ${err}`, reportedBy: [this.name] },
+        ],
+        toolsUsed: [this.name],
+        duration: elapsed(),
+      };
     }
   }
 }
 ```
 
 **File walker (ENOENT-safe, statSync-guarded):**
+
 ```typescript
 function findTsxFiles(dir: string, projectRoot: string, isRoot = true): FileEntry[] {
   const files: FileEntry[] = [];
@@ -116,7 +129,11 @@ function findTsxFiles(dir: string, projectRoot: string, isRoot = true): FileEntr
       if (entry.startsWith('.') || entry === 'node_modules') continue;
       const fullPath = join(dir, entry);
       let stat;
-      try { stat = statSync(fullPath); } catch { continue; }
+      try {
+        stat = statSync(fullPath);
+      } catch {
+        continue;
+      }
       if (stat.isDirectory()) {
         files.push(...findTsxFiles(fullPath, projectRoot, false));
       } else if (entry.endsWith('.tsx') || entry.endsWith('.jsx')) {
@@ -134,6 +151,7 @@ function findTsxFiles(dir: string, projectRoot: string, isRoot = true): FileEntr
 ```
 
 **Test structure:**
+
 ```typescript
 vi.mock('fs', () => ({ readdirSync: vi.fn(), statSync: vi.fn(), readFileSync: vi.fn() }));
 vi.mock('../utils/file-helpers.js', () => ({ timer: vi.fn(() => () => 100) }));
@@ -188,6 +206,7 @@ No type changes needed. All runners are pure file analysis, no external tools.
 **What it checks:** Google Fonts loaded via HTML `<link>` tags in layout files, instead of `next/font/google`.
 
 **Detection:** Look for the string `fonts.googleapis.com` OR `fonts.gstatic.com` in a targeted list of layout files:
+
 - `app/layout.tsx`, `app/layout.jsx`
 - `src/app/layout.tsx`, `src/app/layout.jsx`
 - `pages/_document.tsx`, `pages/_document.jsx`, `pages/_document.js`
@@ -209,6 +228,7 @@ Use `Math.max(40, 100 - found.length * 30)`.
 **What it checks:** App Router route segments (directories containing `page.tsx`) that are missing `loading.tsx` and/or `error.tsx` siblings.
 
 **Detection:**
+
 1. Walk `app/` directory (or `src/app/`)
 2. For each subdirectory (not the root `app/` itself) that contains `page.tsx` or `page.jsx`:
    - Check for `loading.tsx` or `loading.jsx` in the same dir
@@ -237,11 +257,12 @@ Actually — walk all depths but skip root level. The "root level" is the `app/`
 **Detection (step 2):** If config file exists but has no `async headers(` pattern: score 30, issue "Missing `headers()` config — security headers (CSP, X-Frame-Options, etc.) are not set."
 
 **Detection (step 3):** If `headers()` is present, check for specific header names in the content:
+
 - `Content-Security-Policy`
 - `X-Frame-Options`
 - `X-Content-Type-Options`
 - `Referrer-Policy`
-Score: `Math.max(40, 100 - missingHeaders.length * 15)`
+  Score: `Math.max(40, 100 - missingHeaders.length * 15)`
 
 **Pattern for detecting headers() function:** `/async\s+headers\s*\(\s*\)/` — requires `async` keyword + `headers` + `()`. A comment like `// no security headers config` does NOT match.
 
@@ -254,6 +275,7 @@ Score: `Math.max(40, 100 - missingHeaders.length * 15)`
 **What it checks:** Files with `"use client"` directive but no hooks or event handlers — meaning they don't actually need to be client components.
 
 **Detection:**
+
 1. Walk `app/` and `src/` for `.tsx`/`.jsx` files
 2. Read content; trim it
 3. Check if trimmed content starts with `"use client"` or `'use client'` (the directive MUST be first statement)
@@ -286,6 +308,7 @@ import { NextSecurityHeadersRunner } from './integrations/next-security-headers.
 ```
 
 **ADD** to `ALL_RUNNERS` array after the Angular runners:
+
 ```typescript
 new NextImagesRunner(),
 new NextLinkRunner(),
@@ -317,6 +340,7 @@ new NextClientComponentsRunner(),
 All files go in `fixtures/packages/next-app/`. The `fixtures/pnpm-workspace.yaml` already uses `packages/*` glob — no changes needed there.
 
 #### `fixtures/packages/next-app/package.json`
+
 ```json
 {
   "name": "next-app",
@@ -339,7 +363,9 @@ All files go in `fixtures/packages/next-app/`. The `fixtures/pnpm-workspace.yaml
 **Note:** After creating the fixture, run `pnpm install` from `fixtures/` to update the lockfile and create `node_modules`.
 
 #### `fixtures/packages/next-app/tsconfig.json`
+
 Standard Next.js tsconfig:
+
 ```json
 {
   "compilerOptions": {
@@ -365,6 +391,7 @@ Standard Next.js tsconfig:
 ```
 
 #### `fixtures/packages/next-app/next.config.js`
+
 ```js
 // Intentional: no response header customization is configured.
 // This triggers the next-security-headers check.
@@ -377,6 +404,7 @@ module.exports = nextConfig;
 ```
 
 #### `fixtures/packages/next-app/app/layout.tsx`
+
 ```tsx
 // Intentional: Google Fonts loaded via external stylesheet link.
 // This triggers the next-fonts check.
@@ -397,6 +425,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ```
 
 #### `fixtures/packages/next-app/app/page.tsx`
+
 ```tsx
 // Intentional issues:
 // 1. Raw image element used instead of the optimized image component — triggers next-images.
@@ -416,6 +445,7 @@ export default function HomePage() {
 ```
 
 #### `fixtures/packages/next-app/app/about/page.tsx`
+
 ```tsx
 // Intentional: route segment has no loading or error boundary files.
 // This triggers the next-missing-boundaries check.
@@ -425,6 +455,7 @@ export default function AboutPage() {
 ```
 
 #### `fixtures/packages/next-app/app/dashboard/page.tsx`
+
 ```tsx
 // Intentional: route segment has no loading or error boundary files.
 // This triggers the next-missing-boundaries check.
@@ -434,8 +465,9 @@ export default function DashboardPage() {
 ```
 
 #### `fixtures/packages/next-app/app/components/StaticHeader.tsx`
+
 ```tsx
-"use client";
+'use client';
 
 // Intentional: this component has no hooks and no event handlers.
 // Marking it as a client-only module is unnecessary — triggers next-client-components.
@@ -577,51 +609,62 @@ describe('next-app', () => {
 Execute in order.
 
 ### CREATE `packages/core/src/integrations/next-images.ts`
+
 - **IMPLEMENT**: Walk `app/` and `src/` dirs for `.tsx`/`.jsx`; detect `/<img[\s>]/` in file content
 - **PATTERN**: `angular-change-detection.ts` — ENOENT-safe walker with `isRoot` flag and `statSync` in try/catch
 - **SCORING**: `Math.max(20, 100 - violations.length * 10)`
 - **GOTCHA**: Fixture comment in `app/page.tsx` must say "raw image element" NOT contain `<img`
 
 ### CREATE `packages/core/src/integrations/next-images.test.ts`
+
 - **IMPLEMENT**: Mock `fs` + `file-helpers`; test applicableFrameworks, pass/warning/scoring/error cases
 - **PATTERN**: `angular-change-detection.test.ts` — same vi.mock structure
 
 ### CREATE `packages/core/src/integrations/next-link.ts`
+
 - **IMPLEMENT**: Walk same dirs; detect `/<a\s[^>]*href=["'](\/|\.\/)/` (internal hrefs only)
 - **SCORING**: `Math.max(20, 100 - violations.length * 15)`
 - **GOTCHA**: Do NOT flag external links (`http://`, `https://`)
 
 ### CREATE `packages/core/src/integrations/next-link.test.ts`
+
 - Test internal link detection; verify external links are NOT flagged
 
 ### CREATE `packages/core/src/integrations/next-fonts.ts`
+
 - **IMPLEMENT**: Check a fixed list of layout file paths for `fonts.googleapis.com` or `fonts.gstatic.com`
 - **PATTERN**: No file walker needed — check specific known paths with `existsSync` + `readFileSync`
 - **SCORING**: `Math.max(40, 100 - found.length * 30)`
 - **GOTCHA**: Fixture comment must NOT mention the font domain strings
 
 ### CREATE `packages/core/src/integrations/next-fonts.test.ts`
+
 - Test with mock `existsSync` and `readFileSync`; pass when no font links; warning when found
 
 ### CREATE `packages/core/src/integrations/next-missing-boundaries.ts`
+
 - **IMPLEMENT**: Walk `app/` and `src/app/` dirs; for each non-root subdir containing `page.tsx`/`page.jsx`, check for `loading.tsx`/`loading.jsx` and `error.tsx`/`error.jsx` siblings
 - **SCORING**: `Math.max(20, 100 - missingCount * 15)`
 - **SEVERITY**: `info`
 - **GOTCHA**: Skip the root `app/` level itself; only check subdirectories
 
 ### CREATE `packages/core/src/integrations/next-missing-boundaries.test.ts`
+
 - Test: segment with both boundaries → pass; segment missing loading → issue; segment missing error → issue; root level not flagged
 
 ### CREATE `packages/core/src/integrations/next-security-headers.ts`
+
 - **IMPLEMENT**: Try reading `next.config.js`, `next.config.mjs`, `next.config.ts` in order; check for `/async\s+headers\s*\(\s*\)/` pattern; if present also check for 4 header name strings
 - **PATTERN**: `existsSync` checks, `readFileSync` on first found config file
 - **SCORING**: 30 if headers() absent; `Math.max(40, 100 - missing * 15)` if headers() present but specific headers missing
 - **GOTCHA**: Pattern must be `/async\s+headers\s*\(\s*\)/` — NOT just `headers` — to avoid false positive from comments
 
 ### CREATE `packages/core/src/integrations/next-security-headers.test.ts`
+
 - Mock `fs`; test: no config file → fail; config without headers() → warning; config with headers() + all headers → pass; partial headers → warning
 
 ### CREATE `packages/core/src/integrations/next-client-components.ts`
+
 - **IMPLEMENT**: Walk `app/` and `src/`; for each `.tsx`/`.jsx`, check if `content.trim()` starts with `"use client"` or `'use client'`; if so check for absence of hooks/handlers
 - **HOOKS to check**: `useState`, `useEffect`, `useRef`, `useCallback`, `useMemo`, `useContext`, `useReducer`
 - **HANDLERS to check**: `/\bon[A-Z][a-zA-Z]*=\{/`
@@ -629,24 +672,30 @@ Execute in order.
 - **GOTCHA**: Fixture `StaticHeader.tsx` MUST have `"use client"` as the very first line (before any comments)
 
 ### CREATE `packages/core/src/integrations/next-client-components.test.ts`
+
 - Test: no use-client files → pass; file with use-client + useState → pass (has hooks); file with use-client + no hooks/handlers → warning; issue message uses "may not need" wording
 
 ### UPDATE `packages/core/src/runner.ts`
+
 - **ADD** 6 imports in the Angular runner block (keep alphabetical by runner name within next group)
 - **ADD** 6 instances to `ALL_RUNNERS` array after Angular runners
 
 ### CREATE fixture files
+
 - Execute in order: `package.json`, `tsconfig.json`, `next.config.js`, `app/layout.tsx`, `app/page.tsx`, `app/about/page.tsx`, `app/dashboard/page.tsx`, `app/components/StaticHeader.tsx`
 - **VALIDATE**: `pnpm install` from `fixtures/` directory
 
 ### UPDATE `tests/snapshots/fixture-regression.test.ts`
+
 - **ADD** `describe('next-app', ...)` block at end of file
 
 ### UPDATE `apps/web/src/components/About.tsx`
+
 - **ADD** 6 entries to `CHECK_DESCRIPTIONS`
 - **VALIDATE**: No value imports from core added
 
 ### UPDATE `fixtures/README.md`
+
 - **ADD** `next-app` section with fixture description, intentional issues table, expected score range
 
 ---
