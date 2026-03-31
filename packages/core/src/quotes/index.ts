@@ -4,6 +4,11 @@ import type { Quote } from '../types.js';
 
 export type SeverityTier = 'critical' | 'warning' | 'info' | 'allClear';
 
+/**
+ * Retrieves a quote based on the overall score. The quote's severity is determined by the score, and a random quote from the corresponding severity tier is returned.
+ * @param overallScore
+ * @returns
+ */
 export function getQuote(overallScore: number): Quote {
   const severity = scoreToTier(overallScore);
   const pool = startrekQuotes[severity];
