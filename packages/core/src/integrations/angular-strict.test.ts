@@ -105,7 +105,7 @@ describe('AngularStrictRunner', () => {
     mockExistsSync.mockReturnValue(true as never);
     mockReadFileSync.mockReturnValue(JSON.stringify({ compilerOptions: {} }) as never);
     const result = await runner.run('/project');
-    expect(result.issues[0].message).toContain('extends');
+    expect(result.issues.every((i) => i.message.includes('extends'))).toBe(true);
   });
 
   it('returns fail status when tsconfig is malformed JSON', async () => {

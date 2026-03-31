@@ -51,7 +51,7 @@ export class AngularLazyRoutesRunner extends BaseRunner {
 
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i].trim();
-          if (line.startsWith('//') || line.startsWith('*')) continue;
+          if (line.startsWith('//') || line.startsWith('*') || line.startsWith('/*')) continue;
 
           if (/\bloadComponent\s*:/.test(line)) {
             lazyRoutes++;
@@ -120,7 +120,12 @@ function findRouteFiles(dir: string, projectRoot: string, topLevel = true): File
   for (const entry of entries) {
     if (entry.startsWith('.') || entry === 'node_modules') continue;
     const fullPath = join(dir, entry);
-    const stat = statSync(fullPath);
+    let stat;
+    try {
+      stat = statSync(fullPath);
+    } catch {
+      continue;
+    }
     if (stat.isDirectory()) {
       files.push(...findRouteFiles(fullPath, projectRoot, false));
     } else if (entry.endsWith('.routes.ts') || entry === 'app.config.ts') {
