@@ -60,6 +60,19 @@ A deliberately broken Node.js REST API. Used to verify that Sickbay catches a br
 
 **Expect:** a low overall score with failures across most categories.
 
+### `angular-app` — Angular v17+ Standalone
+
+A modern Angular app using standalone components. Has intentional issues to verify Angular-specific checks fire correctly.
+
+**Expect:** warnings on missing OnPush, static routes, disabled strict mode, and unguarded subscriptions; passes on generic code quality checks.
+
+| Check | What's broken |
+| --- | --- |
+| `angular-change-detection` | All 4 components omit `ChangeDetectionStrategy.OnPush` |
+| `angular-lazy-routes` | All routes use `component:` (static), none use `loadComponent:` |
+| `angular-strict` | `strict: false` in tsconfig; no `angularCompilerOptions` block |
+| `angular-subscriptions` | `user-list` and `product-card` subscribe without cleanup |
+
 ---
 
 ## Adding a New Fixture
