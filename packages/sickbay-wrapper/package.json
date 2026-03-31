@@ -27,6 +27,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@nebulord/sickbay": "0.1.0"
+    "@nebulord/sickbay": "workspace:*"
   }
 }
