@@ -70,7 +70,7 @@ describe('serveWeb', () => {
     it('throws an error when index.html does not exist in any candidate dir', async () => {
       mockExistsSync.mockReturnValue(false);
 
-      await expect(serveWeb(makeReport(), 0)).rejects.toThrow(/web dashboard not built/i);
+      await expect(serveWeb(makeReport(), 0)).rejects.toThrow(/web dashboard assets not found/i);
     });
   });
 
