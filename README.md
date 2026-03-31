@@ -17,7 +17,7 @@ A zero-config health check CLI for JavaScript and TypeScript projects. Run `sick
 
 ## Features
 
-- **21 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
+- **30 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
 - **Framework-aware** — automatically detects React, Next, Express, Fastify, Koa, Hapi, and more; runs only relevant checks
 - **Monorepo support** — auto-detects pnpm/npm/yarn/turbo/nx/lerna workspaces; per-package scoring and reporting
 - **Animated terminal UI** built with Ink (React for terminals)
@@ -221,52 +221,87 @@ Without the API key, the dashboard still works — you just won't see the AI ins
 
 ## Available Checks
 
-Sickbay automatically detects your project type and runs only applicable checks. React-specific checks won't run on a Node API, and vice versa.
+Sickbay automatically detects your project type and runs only applicable checks. Framework-specific checks are silently skipped when not relevant.
 
-### Dependencies (4 checks)
+### Universal Checks (15)
 
-| Check        | What it does                                           | Scope |
-| ------------ | ------------------------------------------------------ | ----- |
-| `knip`       | Unused files, dependencies, and exports                | All   |
-| `depcheck`   | Missing dependencies (cross-refs with knip for unused) | All   |
-| `outdated`   | Outdated package versions (uses pnpm/npm/yarn)         | All   |
-| `heavy-deps` | Detects heavy dependencies (moment, lodash, etc.)      | All   |
+Run on every project regardless of framework or runtime.
 
-### Security (4 checks)
+#### Dependencies
 
-| Check             | What it does                                      | Scope         |
-| ----------------- | ------------------------------------------------- | ------------- |
-| `npm-audit`       | Known vulnerability scan                          | All           |
-| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.)      | All           |
-| `secrets`         | Detects exposed API keys, tokens, and credentials | All           |
-| `node-security`   | Helmet, CORS, rate limiting checks                | Node (server) |
+| Check        | What it does                                           |
+| ------------ | ------------------------------------------------------ |
+| `knip`       | Unused files, dependencies, and exports                |
+| `depcheck`   | Missing dependencies (cross-refs with knip for unused) |
+| `outdated`   | Outdated package versions (uses pnpm/npm/yarn)         |
+| `heavy-deps` | Detects heavy dependencies (moment, lodash, etc.)      |
 
-### Code Quality (8 checks)
+#### Security
 
-| Check                   | What it does                                    | Scope         |
-| ----------------------- | ----------------------------------------------- | ------------- |
-| `eslint`                | Linting errors and warnings                     | All           |
-| `typescript`            | Type errors and issues                          | All           |
-| `madge`                 | Circular module dependencies                    | All           |
-| `jscpd`                 | Copy-paste duplication detection                | All           |
-| `coverage`              | Test coverage % and test counts (vitest/jest)   | All           |
-| `todo-scanner`          | TODO/FIXME comments (technical debt tracker)    | All           |
-| `complexity`            | High cyclomatic complexity files                | All           |
-| `node-input-validation` | Input validation library usage (zod, joi, etc.) | Node (server) |
+| Check             | What it does                                      |
+| ----------------- | ------------------------------------------------- |
+| `npm-audit`       | Known vulnerability scan                          |
+| `license-checker` | Flags problematic licenses (GPL, AGPL, etc.)      |
+| `secrets`         | Detects exposed API keys, tokens, and credentials |
 
-### Performance (3 checks)
+#### Code Quality
 
-| Check               | What it does                               | Scope         |
-| ------------------- | ------------------------------------------ | ------------- |
-| `react-perf`        | React performance anti-patterns            | React         |
-| `asset-size`        | Oversized images, fonts, and static assets | React         |
-| `node-async-errors` | Async error handling in route handlers     | Node (server) |
+| Check          | What it does                                  |
+| -------------- | --------------------------------------------- |
+| `eslint`       | Linting errors and warnings                   |
+| `typescript`   | Type errors and issues                        |
+| `madge`        | Circular module dependencies                  |
+| `jscpd`        | Copy-paste duplication detection              |
+| `coverage`     | Test coverage % and test counts (vitest/jest) |
+| `todo-scanner` | TODO/FIXME comments (technical debt tracker)  |
+| `complexity`   | Oversized files and high line counts          |
 
-### Git (1 check)
+#### Git
 
-| Check | What it does                                 | Scope |
-| ----- | -------------------------------------------- | ----- |
-| `git` | Commit history, staleness, contributor count | All   |
+| Check | What it does                                 |
+| ----- | -------------------------------------------- |
+| `git` | Commit history, staleness, contributor count |
+
+---
+
+### Framework-Specific Checks (15)
+
+Only run when the relevant framework is detected.
+
+#### React
+
+| Check        | What it does                               |
+| ------------ | ------------------------------------------ |
+| `react-perf` | React performance anti-patterns            |
+| `asset-size` | Oversized images, fonts, and static assets |
+
+#### Angular
+
+| Check                        | What it does                                              |
+| ---------------------------- | --------------------------------------------------------- |
+| `angular-change-detection`   | Components missing `ChangeDetectionStrategy.OnPush`       |
+| `angular-lazy-routes`        | Routes using static `component:` instead of `loadComponent:` |
+| `angular-strict`             | TypeScript strict mode and Angular compiler options       |
+| `angular-subscriptions`      | Subscriptions without `takeUntil` or `async` pipe cleanup |
+
+#### Next.js
+
+| Check                       | What it does                                                  |
+| --------------------------- | ------------------------------------------------------------- |
+| `next-images`               | Raw `<img>` tags instead of `next/image`                      |
+| `next-link`                 | Raw `<a>` tags for internal navigation instead of `next/link` |
+| `next-fonts`                | Google Fonts loaded via external stylesheet instead of `next/font` |
+| `next-missing-boundaries`   | Route segments missing `loading.tsx` or `error.tsx`           |
+| `next-security-headers`     | Missing security headers in `next.config.js`                  |
+| `next-client-components`    | Unnecessary `"use client"` directives                         |
+
+#### Node.js (server)
+
+| Check                   | What it does                                    |
+| ----------------------- | ----------------------------------------------- |
+| `node-security`         | Helmet, CORS, rate limiting checks              |
+| `node-input-validation` | Input validation library usage (zod, joi, etc.) |
+| `node-async-errors`     | Async error handling in route handlers          |
 
 ---
 
