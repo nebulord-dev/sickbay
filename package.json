@@ -24,7 +24,8 @@
     "docs:dev": "pnpm --filter @nebulord/sickbay-docs docs:dev",
     "docs:build": "pnpm --filter @nebulord/sickbay-docs docs:build",
     "clean": "turbo run clean && rm -rf node_modules",
-    "all-checks": "pnpm build && pnpm test && pnpm test:snapshots && pnpm lint && pnpm format"
+    "all-checks": "pnpm build && pnpm test && pnpm test:snapshots && pnpm lint && pnpm format",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -33,6 +34,8 @@
     "@semantic-release/github": "^12.0.6",
     "@types/node": "^25.5.0",
     "@vitest/coverage-v8": "catalog:",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "multi-semantic-release": "^3.1.0",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0",
@@ -41,6 +44,15 @@
     "turbo": "^2.8.21",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs}": [
+      "oxlint --fix",
+      "oxfmt"
+    ],
+    "*.{json,md,css,html}": [
+      "oxfmt"
+    ]
   },
   "engines": {
     "node": ">=18.0.0",
