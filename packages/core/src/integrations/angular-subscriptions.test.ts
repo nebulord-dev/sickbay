@@ -96,6 +96,35 @@ describe('AngularSubscriptionsRunner', () => {
     expect(result.status).toBe('pass');
   });
 
+  it('returns pass when component injects DestroyRef', async () => {
+    const content = `
+      export class MyComponent {
+        constructor(private destroyRef: DestroyRef) {
+          this.svc.data$.subscribe(d => this.data = d);
+        }
+      }
+    `;
+    mockReaddirSync.mockReturnValue(['my.component.ts'] as never);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
+    mockReadFileSync.mockReturnValue(content as never);
+    const result = await runner.run('/project');
+    expect(result.status).toBe('pass');
+  });
+
+  it('returns pass when subscription is explicitly unsubscribed', async () => {
+    const content = `
+      export class MyComponent {
+        private sub = this.svc.data$.subscribe(d => this.data = d);
+        cleanup() { this.sub.unsubscribe(); }
+      }
+    `;
+    mockReaddirSync.mockReturnValue(['my.component.ts'] as never);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as never);
+    mockReadFileSync.mockReturnValue(content as never);
+    const result = await runner.run('/project');
+    expect(result.status).toBe('pass');
+  });
+
   it('returns warning when subscription has no cleanup', async () => {
     const content = `
       export class UserListComponent implements OnInit {

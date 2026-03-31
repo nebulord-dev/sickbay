@@ -92,7 +92,12 @@ function findComponentFiles(dir: string, projectRoot: string, isRoot = true): Fi
     for (const entry of readdirSync(dir)) {
       if (entry.startsWith('.') || entry === 'node_modules') continue;
       const fullPath = join(dir, entry);
-      const stat = statSync(fullPath);
+      let stat;
+      try {
+        stat = statSync(fullPath);
+      } catch {
+        continue;
+      }
       if (stat.isDirectory()) {
         files.push(...findComponentFiles(fullPath, projectRoot, false));
       } else if (entry.endsWith('.component.ts')) {
