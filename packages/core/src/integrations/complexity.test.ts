@@ -37,7 +37,7 @@ describe('ComplexityRunner', () => {
     vi.clearAllMocks();
   });
 
-  it('returns false for isApplicable when src dir does not exist', async () => {
+  it('returns false for isApplicable when no source dir exists', async () => {
     mockExistsSync.mockReturnValue(false);
 
     const result = await runner.isApplicable('/project');
@@ -46,7 +46,15 @@ describe('ComplexityRunner', () => {
   });
 
   it('returns true for isApplicable when src dir exists', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+
+    const result = await runner.isApplicable('/project');
+
+    expect(result).toBe(true);
+  });
+
+  it('returns true for isApplicable when app dir exists (Next.js App Router)', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/app'));
 
     const result = await runner.isApplicable('/project');
 
@@ -54,7 +62,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('returns pass with score 100 when all files are small', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['index.ts'] as unknown as ReturnType<typeof readdirSync>);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<
       typeof statSync
@@ -71,7 +79,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('returns warning status and info severity for a file with 450 lines (>=WARN_LINES, <CRITICAL_LINES)', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['big.ts'] as unknown as ReturnType<typeof readdirSync>);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<
       typeof statSync
@@ -88,7 +96,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('returns warning status and warning severity for a file with 600 lines (>=CRITICAL_LINES)', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['massive.ts'] as unknown as ReturnType<typeof readdirSync>);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<
       typeof statSync
@@ -104,7 +112,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('calculates score as 100 - oversized.length * 10', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     // 3 files, each 350 lines
     mockReaddirSync.mockReturnValue(['a.ts', 'b.ts', 'c.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
@@ -117,7 +125,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('does not let score drop below 0', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     // 11 oversized files: 100 - 11*10 = -10 → capped at 0
     const files = Array.from({ length: 11 }, (_, i) => `file${i}.ts`);
     mockReaddirSync.mockReturnValue(files as any);
@@ -130,7 +138,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('skips test files when scanning', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['app.test.ts', 'app.spec.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
     mockReadFileSync.mockReturnValue(makeLines(600) as any);
@@ -143,7 +151,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('recurses into subdirectories', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync
       .mockReturnValueOnce(['components'] as any)
       .mockReturnValueOnce(['HugeComponent.tsx'] as any);
@@ -159,7 +167,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('reports correct metadata', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['index.ts', 'utils.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
     // First file: 100 lines, second file: 350 lines
@@ -175,8 +183,20 @@ describe('ComplexityRunner', () => {
     expect(result.metadata?.avgLines).toBe(275);
   });
 
+  it('scans app/ directory when src/ does not exist (Next.js App Router)', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/app'));
+    mockReaddirSync.mockReturnValue(['page.tsx'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(makeLines(50) as any);
+
+    const result = await runner.run('/project');
+
+    expect(result.status).toBe('pass');
+    expect(result.metadata?.totalFiles).toBe(1);
+  });
+
   it('returns pass with no issues when src dir is empty', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue([] as any);
 
     const result = await runner.run('/project');
@@ -187,7 +207,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('includes fix description in oversized file issues', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['bigfile.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
     mockReadFileSync.mockReturnValue(makeLines(450) as any);
@@ -198,7 +218,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('returns id and category correctly', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue([] as any);
 
     const result = await runner.run('/project');
@@ -208,7 +228,7 @@ describe('ComplexityRunner', () => {
   });
 
   it('counts only non-empty lines', async () => {
-    mockExistsSync.mockReturnValue(true);
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['sparse.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
     // 400 real lines plus 200 blank lines — total non-empty should be 400 (>=WARN_LINES)

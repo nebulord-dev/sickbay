@@ -20,19 +20,23 @@ interface FileStats {
   lines: number;
 }
 
+const SOURCE_DIRS = ['src', 'app', 'lib'];
+
 export class ComplexityRunner extends BaseRunner {
   name = 'complexity';
   category = 'code-quality' as const;
 
   async isApplicable(projectPath: string): Promise<boolean> {
-    return existsSync(join(projectPath, 'src'));
+    return SOURCE_DIRS.some((dir) => existsSync(join(projectPath, dir)));
   }
 
   async run(projectPath: string): Promise<CheckResult> {
     const elapsed = timer();
 
     try {
-      const files = scanDirectory(join(projectPath, 'src'), projectPath);
+      const files = SOURCE_DIRS.flatMap((dir) =>
+        existsSync(join(projectPath, dir)) ? scanDirectory(join(projectPath, dir), projectPath) : [],
+      );
 
       const oversized = files.filter((f) => f.lines >= WARN_LINES);
       const issues: Issue[] = oversized.map((f) => ({
