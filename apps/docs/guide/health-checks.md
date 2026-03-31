@@ -2,6 +2,10 @@
 
 Sickbay includes 30 checks across 5 categories. Each check is framework-aware — only checks relevant to your project type will run.
 
+**Supported frameworks:** React · Next.js · Angular · Node.js · TypeScript — Vue and Remix coming soon.
+
+The first 15 checks below are **universal** and run on every project. The Angular and Next.js sections at the bottom contain framework-specific checks.
+
 ## How Applicability Works
 
 Before running, each check is filtered in two phases:
