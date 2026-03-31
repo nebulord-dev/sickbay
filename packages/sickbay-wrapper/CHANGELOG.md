@@ -1,14 +1,12 @@
 ## sickbay [1.0.1](https://github.com/nebulord-dev/sickbay/compare/sickbay@1.0.0...sickbay@1.0.1) (2026-03-31)
 
-
 ### Bug Fixes
 
-* test semantic release process ([#17](https://github.com/nebulord-dev/sickbay/issues/17)) ([bbdc8e5](https://github.com/nebulord-dev/sickbay/commit/bbdc8e5bde0bbe3d5dd678b84398ec3d80aa7e7e))
-
+- test semantic release process ([#17](https://github.com/nebulord-dev/sickbay/issues/17)) ([bbdc8e5](https://github.com/nebulord-dev/sickbay/commit/bbdc8e5bde0bbe3d5dd678b84398ec3d80aa7e7e))
 
 ### Dependencies
 
-* **@nebulord/sickbay:** upgraded to 1.3.2
+- **@nebulord/sickbay:** upgraded to 1.3.2
 
 # sickbay 1.0.0 (2026-03-31)
 
