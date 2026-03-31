@@ -4,4 +4,4 @@
 "@nebulord/sickbay-core": minor
 ---
 
-Add support for Angular and Nextjs scanning
+# Add support for Angular and Nextjs scanning
