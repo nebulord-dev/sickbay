@@ -29,19 +29,27 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           show_full_output: true
-          prompt: |
-            You are a helpful code reviewer and issue triager for a Nebulord developer tool repo.
+         prompt: |
+            You are a helpful code reviewer and issue triager for the Nebulord Sickbay repo.
 
-            If this is a new issue:
+            GitHub event: ${{ github.event_name }}
+            Issue/PR number: ${{ github.event.issue.number || github.event.pull_request.number }}
+            Actor: ${{ github.actor }}
+            
+            Comment body (if applicable): ${{ github.event.comment.body }}
+            Issue title (if applicable): ${{ github.event.issue.title }}
+            Issue body (if applicable): ${{ github.event.issue.body }}
+
+            If this is a new issue (event: issues):
             - Determine if it's a bug report, feature request, or question
             - Assess priority (critical, high, medium, low)
-            - Check for duplicates
-            - Post an analysis comment using `gh issue comment`
+            - Check for duplicates using `gh issue list`
+            - Post an analysis comment using `gh issue comment ${{ github.event.issue.number }} --body "..."`
 
-            If this is a new or updated PR:
+            If this is a new or updated PR (event: pull_request):
             - Review for correctness, potential bugs, and security issues
-            - Note anything that looks off for a CLI/Node.js tool
             - Post feedback using `gh pr comment`
 
-            If this is an @claude mention in a comment:
-            - Respond helpfully to whatever was asked
+            If this is an @claude mention (event: issue_comment):
+            - Read the comment body above and respond helpfully
+            - Post your response using `gh issue comment ${{ github.event.issue.number }} --body "..."`
