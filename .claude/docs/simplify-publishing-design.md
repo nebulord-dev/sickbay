@@ -12,11 +12,11 @@ Replace `multi-semantic-release` with plain `semantic-release`. Publish a single
 
 The current setup publishes three npm packages via `multi-semantic-release`:
 
-| Package | npm name | Version (npm) | Version (repo) |
-|---|---|---|---|
-| `packages/core/` | `@nebulord/sickbay-core` | 1.3.1 | 1.3.0 |
-| `apps/cli/` | `@nebulord/sickbay` | 1.3.2 | 1.3.1 |
-| `packages/sickbay-wrapper/` | `sickbay` | 1.0.1 | 1.0.0 |
+| Package                     | npm name                 | Version (npm) | Version (repo) |
+| --------------------------- | ------------------------ | ------------- | -------------- |
+| `packages/core/`            | `@nebulord/sickbay-core` | 1.3.1         | 1.3.0          |
+| `apps/cli/`                 | `@nebulord/sickbay`      | 1.3.2         | 1.3.1          |
+| `packages/sickbay-wrapper/` | `sickbay`                | 1.0.1         | 1.0.0          |
 
 (npm versions are slightly ahead because semantic-release bumps and publishes before the git commit lands back.)
 
@@ -131,6 +131,7 @@ Replace with a configuration that publishes from `apps/cli/`:
 ```
 
 Key differences from current config:
+
 - `tagFormat: "v${version}"` — clean tags like `v2.0.0` instead of `@nebulord/sickbay@1.3.2`
 - `pkgRoot: "apps/cli"` — tells `@semantic-release/npm` to publish from the CLI directory where `package.json` with `"name": "sickbay"` lives
 - `assets` includes `apps/cli/package.json` — so the version bump gets committed back
@@ -210,9 +211,7 @@ In `index.ts`, declare and use it:
 ```typescript
 declare const __VERSION__: string;
 
-program
-  .name('sickbay')
-  .version(__VERSION__)
+program.name('sickbay').version(__VERSION__);
 ```
 
 This is already the established pattern in the codebase — no `createRequire` needed, no runtime file reads, and it works correctly with tsup bundling.
@@ -220,6 +219,7 @@ This is already the established pattern in the codebase — no `createRequire` n
 ### 10. Clean up stale changelogs
 
 Delete per-package changelogs that are no longer maintained:
+
 - `packages/core/CHANGELOG.md` — core is no longer published
 - `packages/sickbay-wrapper/CHANGELOG.md` — already deleted with the wrapper directory
 - `apps/cli/CHANGELOG.md` — the root `CHANGELOG.md` is now the single source of truth
@@ -251,22 +251,22 @@ This shows a deprecation warning to anyone who tries to install the old names.
 
 The `sickbay` package on npm is currently at `1.0.1`. Semantic-release determines the next version from the latest git tag matching `tagFormat`. Since existing tags use the old format (`@nebulord/sickbay@1.3.2`) and the new `tagFormat` is `v${version}`, semantic-release will find no matching tags.
 
-**Important:** When semantic-release finds no previous tags, it treats it as a first release and starts at `1.0.0` — even with a `BREAKING CHANGE` footer (breaking changes bump from a *previous* version; with no previous version, there's nothing to bump from).
+**Important:** When semantic-release finds no previous tags, it treats it as a first release and starts at `1.0.0` — even with a `BREAKING CHANGE` footer (breaking changes bump from a _previous_ version; with no previous version, there's nothing to bump from).
 
 **To give semantic-release the correct baseline**, manually create a git tag before the first release:
 
 ```bash
-git tag v1.0.1   # matches the current npm version of the sickbay package
-git push origin v1.0.1
+git tag v1.3.0   # matches the latest npm version of the sickbay package
+git push origin v1.3.0
 ```
 
-Then a `feat:` commit will bump from `1.0.1` → `1.1.0`:
+Then a `feat:` commit will bump from `1.3.0` → `1.4.0`:
 
 ```
 feat: simplify publishing to single sickbay package
 ```
 
-Since the project is in alpha with no external consumers, there's no need for a major version bump — `1.1.0` is appropriate.
+Note: The wrapper package was silently bumped to `1.3.0` by `multi-semantic-release` even though the repo's `package.json` stayed at `1.0.0` (version bumps were committed back with `[skip ci]`). The baseline tag must match the latest _npm_ version, not the repo version.
 
 ## What Doesn't Change
 
