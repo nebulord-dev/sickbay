@@ -22,7 +22,7 @@
     "react-syntax-highlighter": "^16.1.1"
   },
   "devDependencies": {
-    "@nebulord/sickbay-core": "1.3.0",
+    "@nebulord/sickbay-core": "workspace:*",
     "@rolldown/plugin-babel": "^0.2.2",
     "@tailwindcss/vite": "^4.2.2",
     "@testing-library/jest-dom": "catalog:",

@@ -10,7 +10,7 @@
       "project": ["src/**/*.ts", "src/**/*.tsx"],
       "ignoreDependencies": [
         "@nebulord/sickbay-core",
-        "@nebulord/sickbay",
+        "sickbay",
         "@nebulord/sickbay-web",
         "tsup",
         "eslint-config-prettier",
@@ -22,7 +22,7 @@
   "ignore": ["**/*.test.ts", "**/*.test.tsx", "**/dist/**"],
   "ignoreDependencies": [
     "@nebulord/sickbay-core",
-    "@nebulord/sickbay",
+    "sickbay",
     "@nebulord/sickbay-web",
     "tsup",
     "eslint-config-prettier",

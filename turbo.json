@@ -5,7 +5,7 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "@nebulord/sickbay#build": {
+    "sickbay#build": {
       "dependsOn": ["@nebulord/sickbay-web#build", "^build"],
       "outputs": ["dist/**"]
     },
