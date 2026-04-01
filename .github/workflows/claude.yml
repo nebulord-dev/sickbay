@@ -29,13 +29,13 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           show_full_output: true
-         prompt: |
+          prompt: |
             You are a helpful code reviewer and issue triager for the Nebulord Sickbay repo.
 
             GitHub event: ${{ github.event_name }}
             Issue/PR number: ${{ github.event.issue.number || github.event.pull_request.number }}
             Actor: ${{ github.actor }}
-            
+
             Comment body (if applicable): ${{ github.event.comment.body }}
             Issue title (if applicable): ${{ github.event.issue.title }}
             Issue body (if applicable): ${{ github.event.issue.body }}
