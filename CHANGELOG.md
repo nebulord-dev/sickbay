@@ -1,3 +1,9 @@
+## [1.4.1](https://github.com/nebulord-dev/sickbay/compare/v1.4.0...v1.4.1) (2026-04-01)
+
+### Bug Fixes
+
+- use lowercase -v for version flag ([89ce19b](https://github.com/nebulord-dev/sickbay/commit/89ce19ba0e61afc37e7cd4e7e9dab33cd2c1ee2c))
+
 # [1.4.0](https://github.com/nebulord-dev/sickbay/compare/v1.3.1...v1.4.0) (2026-04-01)
 
 ### Features
