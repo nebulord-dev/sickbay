@@ -1,3 +1,9 @@
+## [1.4.2](https://github.com/nebulord-dev/sickbay/compare/v1.4.1...v1.4.2) (2026-04-01)
+
+### Bug Fixes
+
+- show both npx and global install commands in update notice ([572daee](https://github.com/nebulord-dev/sickbay/commit/572daeedb84bffc5a87f4a9af6f5ee59f84207f2))
+
 ## [1.4.1](https://github.com/nebulord-dev/sickbay/compare/v1.4.0...v1.4.1) (2026-04-01)
 
 ### Bug Fixes
