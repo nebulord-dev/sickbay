@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/nebulord-dev/sickbay/compare/v1.3.1...v1.4.0) (2026-04-01)
+
+### Features
+
+- add update check logic with npm registry fetch and caching ([853a28d](https://github.com/nebulord-dev/sickbay/commit/853a28df56ad13d26e85bd2ac647215532637503))
+- add UpdateNotice Ink component ([520bc64](https://github.com/nebulord-dev/sickbay/commit/520bc64dddc87ce4177a4300386042806fb952d5))
+- wire update notification into default scan ([dab5d04](https://github.com/nebulord-dev/sickbay/commit/dab5d04bda6bb8ef55089a1eb9c40b5b0f6e389e))
+- wire update notification into TUI dashboard ([61661cc](https://github.com/nebulord-dev/sickbay/commit/61661cc81b627e5be4571e367582740297f9c68c))
+
 ## [1.3.1](https://github.com/nebulord-dev/sickbay/compare/v1.3.0...v1.3.1) (2026-04-01)
 
 ### Bug Fixes
