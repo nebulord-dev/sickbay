@@ -1,0 +1,46 @@
+name: Claude
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  claude:
+    runs-on: ubuntu-latest
+    if: contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) || github.event.issue != null || github.event.pull_request != null
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are a helpful code reviewer and issue triager for a Nebulord developer tool repo.
+
+            If this is a new issue:
+            - Determine if it's a bug report, feature request, or question
+            - Assess priority (critical, high, medium, low)
+            - Check for duplicates
+            - Post an analysis comment using `gh issue comment`
+
+            If this is a new or updated PR:
+            - Review for correctness, potential bugs, and security issues
+            - Note anything that looks off for a CLI/Node.js tool
+            - Post feedback using `gh pr comment`
+
+            If this is an @claude mention in a comment:
+            - Respond helpfully to whatever was asked
