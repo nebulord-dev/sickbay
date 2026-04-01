@@ -54,10 +54,10 @@ When any `fix:` or `feat:` commit lands on `main`:
 1. **CI runs** — builds, tests pass
 2. **Semantic-release analyzes commits** since the last git tag
 3. **Version is calculated** — patch for `fix:`, minor for `feat:`, major for breaking
-4. **Packages publish to NPM** in dependency order: `core` → `cli` → `sickbay` wrapper
-5. **`CHANGELOG.md` is updated** in each package with the new release notes
+4. **`sickbay` publishes to NPM** — single package, no dependency-order orchestration needed
+5. **`CHANGELOG.md` is updated** with the new release notes
 6. **GitHub Release is created** with the same notes
-7. **Git tag is created** — e.g. `@nebulord/sickbay-core@1.3.1`
+7. **Git tag is created** — e.g. `v1.1.0`
 
 Total time: ~2-3 minutes.
 
@@ -65,7 +65,7 @@ Total time: ~2-3 minutes.
 
 ## The Changelog
 
-`CHANGELOG.md` in each package is auto-generated and looks like this:
+`CHANGELOG.md` in `apps/cli/` is auto-generated and looks like this:
 
 ```markdown
 ## [1.4.0] - 2026-04-15
@@ -82,7 +82,7 @@ Total time: ~2-3 minutes.
 
 Only `feat:` and `fix:` commits appear. Everything else (`chore:`, `ci:`, `docs:`) is excluded.
 
-The same content appears on the **GitHub Releases page** for each package.
+The same content appears on the **GitHub Releases page**.
 
 ---
 
@@ -108,22 +108,21 @@ If you push to `main` and no release fires, it means all commits since the last 
 You can check what semantic-release sees locally:
 
 ```bash
-pnpm exec multi-semantic-release --dry-run
+pnpm exec semantic-release --dry-run
 ```
 
 ---
 
 ## What Gets Published
 
-| Package                     | NPM name                 | Published? |
-| --------------------------- | ------------------------ | ---------- |
-| `packages/core/`            | `@nebulord/sickbay-core` | ✅         |
-| `apps/cli/`                 | `@nebulord/sickbay`      | ✅         |
-| `packages/sickbay-wrapper/` | `sickbay`                | ✅         |
-| `apps/web/`                 | —                        | ❌ private |
-| `apps/docs/`                | —                        | ❌ private |
+| Package          | NPM name                 | Published?    |
+| ---------------- | ------------------------ | ------------- |
+| `apps/cli/`      | `sickbay`                | ✅            |
+| `packages/core/` | `@nebulord/sickbay-core` | ❌ private    |
+| `apps/web/`      | `@nebulord/sickbay-web`  | ❌ private    |
+| `apps/docs/`     | `@nebulord/sickbay-docs` | ❌ not on npm |
 
-All three publishable packages release together whenever any of them has releasable commits. If only `core` has `fix:` commits, only `core` bumps — but the CLI and wrapper will also get a patch bump because their dependency on core changed.
+Core is bundled into the CLI at build time — users install `sickbay` and get everything they need.
 
 ---
 

@@ -48,7 +48,7 @@ This is a **pnpm workspace** monorepo managed with **Turbo**. The packages have 
 ```
 @nebulord/sickbay-core (foundation)
     ↓
-@nebulord/sickbay (depends on core)
+sickbay (depends on core)
     ↓
 @nebulord/sickbay-web (independent, but served by CLI)
 ```
@@ -229,7 +229,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 1. Edit components in `apps/cli/src/components/`
 2. Use Ink hooks (`useEffect`, `useState`) and components (`<Box>`, `<Text>`)
-3. Test with: `pnpm --filter @nebulord/sickbay dev` + `node apps/cli/dist/index.js --path <test-project>`
+3. Test with: `pnpm --filter sickbay dev` + `node apps/cli/dist/index.js --path <test-project>`
 
 ### Updating the Web Dashboard
 
@@ -364,12 +364,12 @@ pnpm clean        # Remove dist/ and node_modules
 
 # Per-package
 pnpm --filter @nebulord/sickbay-core build
-pnpm --filter @nebulord/sickbay build
+pnpm --filter sickbay build
 pnpm --filter @nebulord/sickbay-web build
 
 # Development
 pnpm --filter @nebulord/sickbay-core dev      # Watch mode
-pnpm --filter @nebulord/sickbay dev           # Watch mode
+pnpm --filter sickbay dev           # Watch mode
 pnpm --filter @nebulord/sickbay-web dev       # Vite dev server :3030
 ```
 
