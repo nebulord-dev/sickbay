@@ -11,6 +11,8 @@ import { render } from 'ink';
 
 import { App } from './components/App.js';
 
+declare const __VERSION__: string;
+
 /**
  * Entry point for the Sickbay CLI application.
  * This script sets up the command-line interface using Commander, loads environment variables, and renders the appropriate Ink components based on user commands.
@@ -32,7 +34,7 @@ const program = new Command();
 program
   .name('sickbay')
   .description('React project health check CLI')
-  .version('0.0.1')
+  .version(__VERSION__)
   .enablePositionalOptions()
   .passThroughOptions()
   .option('-p, --path <path>', 'project path to analyze', process.cwd())
