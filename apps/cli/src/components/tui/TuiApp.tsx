@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 import { Box, Text, useInput } from 'ink';
 
+import { checkForUpdate } from '../../lib/update-check.js';
+import { UpdateNotice } from '../UpdateNotice.js';
 import { ActivityPanel, type ActivityEntry } from './ActivityPanel.js';
 import { GitPanel } from './GitPanel.js';
 import { HealthPanel } from './HealthPanel.js';
@@ -16,7 +18,10 @@ import { QuickWinsPanel } from './QuickWinsPanel.js';
 import { ScorePanel } from './ScorePanel.js';
 import { TrendPanel } from './TrendPanel.js';
 
+import type { UpdateInfo } from '../../lib/update-check.js';
 import type { SickbayReport, MonorepoReport } from '@nebulord/sickbay-core';
+
+declare const __VERSION__: string;
 
 interface TuiAppProps {
   projectPath: string;
@@ -50,6 +55,7 @@ export function TuiApp({
   const [activityLog, setActivityLog] = useState<ActivityEntry[]>([]);
   const [healthScrollOffset, setHealthScrollOffset] = useState(0);
   const [scoreFlash, setScoreFlash] = useState<'green' | 'red' | undefined>();
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const ALL_PANELS = new Set(['health', 'score', 'trend', 'git', 'quickwins', 'activity']);
   const [visiblePanels, setVisiblePanels] = useState<Set<string>>(
     animateOnMount ? new Set() : ALL_PANELS,
@@ -72,6 +78,12 @@ export function TuiApp({
       }, delay),
     );
     return () => timers.forEach(clearTimeout);
+  }, []);
+
+  useEffect(() => {
+    checkForUpdate(__VERSION__).then((info) => {
+      if (info) setUpdateInfo(info);
+    });
   }, []);
 
   const reportRef = useRef<SickbayReport | null>(null);
@@ -352,6 +364,12 @@ export function TuiApp({
 
   return (
     <Box flexDirection="column" width={columns} height={rows}>
+      {updateInfo && (
+        <UpdateNotice
+          currentVersion={updateInfo.currentVersion}
+          latestVersion={updateInfo.latestVersion}
+        />
+      )}
       {/* Project header */}
       <Box paddingX={1} justifyContent="space-between">
         <Box gap={1}>
