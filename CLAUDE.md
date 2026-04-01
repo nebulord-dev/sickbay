@@ -62,6 +62,21 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 - **TypeScript**: Shared `tsconfig.base.json` at root
 - **Bundler**: tsup for core/cli, Vite for web
 
+### Tooling & Quality
+
+- **Linter**: oxlint (Rust-based, from oxc project) — NOT ESLint. Config at root.
+- **Formatter**: oxfmt (from oxc) — NOT prettier.
+- **Pre-commit**: husky + lint-staged runs oxlint + oxfmt on staged files
+- **Testing**: Vitest across all packages (`pnpm test`, `pnpm test:snapshots`)
+- **PR titles**: Must follow conventional commit format (enforced by CI)
+
+### CI/CD
+
+- **GitHub Actions** handles CI
+- **Semantic-release** for automated versioning and NPM publishing (replaced changesets)
+- pnpm quirks: use `--filter` not `-F` for scripting; lockfile changes require `pnpm install --no-frozen-lockfile` in CI if deps changed
+- The `fixtures/` workspace is separate from the Turbo pipeline — it has its own `pnpm-lock.yaml` and won't be built by `pnpm build` at root
+
 ## Package Breakdown
 
 > **Note**: Each package has its own detailed README with current implementation specifics:
