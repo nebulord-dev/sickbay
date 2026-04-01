@@ -54,6 +54,16 @@ program
       }
     }
 
+    // Non-blocking update check
+    const updatePromise = (async () => {
+      try {
+        const { checkForUpdate } = await import('./lib/update-check.js');
+        return await checkForUpdate(__VERSION__);
+      } catch {
+        return null;
+      }
+    })();
+
     const checks = options.checks
       ? options.checks.split(',').map((s: string) => s.trim())
       : undefined;
@@ -98,6 +108,7 @@ program
           enableAI: options.ai !== false,
           verbose: options.verbose,
           quotes: options.quotes,
+          updatePromise,
         }),
       );
       return;
@@ -154,6 +165,7 @@ program
         verbose: options.verbose,
         quotes: options.quotes,
         isMonorepo: monorepoInfo.isMonorepo,
+        updatePromise,
       }),
     );
   });

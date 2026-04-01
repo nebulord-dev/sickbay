@@ -11,7 +11,9 @@ import { Header } from './Header.js';
 import { ProgressList } from './ProgressList.js';
 import { QuickWins } from './QuickWins.js';
 import { Summary } from './Summary.js';
+import { UpdateNotice } from './UpdateNotice.js';
 
+import type { UpdateInfo } from '../lib/update-check.js';
 import type { SickbayReport, MonorepoReport, PackageReport } from '@nebulord/sickbay-core';
 
 interface AppProps {
@@ -22,6 +24,7 @@ interface AppProps {
   verbose?: boolean;
   quotes?: boolean;
   isMonorepo?: boolean;
+  updatePromise?: Promise<UpdateInfo | null>;
 }
 
 type Phase = 'loading' | 'results' | 'opening-web' | 'error';
@@ -53,6 +56,7 @@ export function App({
   verbose,
   quotes,
   isMonorepo,
+  updatePromise,
 }: AppProps) {
   const { exit } = useApp();
   const [phase, setPhase] = useState<Phase>('loading');
@@ -65,6 +69,7 @@ export function App({
   const [scanningPackage, setScanningPackage] = useState<string | undefined>();
   const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
   const [scanDuration, setScanDuration] = useState<number | null>(null);
+  const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const hasRun = useRef(false);
   const scanStartTime = useRef<number>(0);
 
@@ -75,6 +80,14 @@ export function App({
     }, 4000);
     return () => clearInterval(id);
   }, [isMonorepo]);
+
+  useEffect(() => {
+    if (updatePromise) {
+      updatePromise.then((info) => {
+        if (info) setUpdateInfo(info);
+      });
+    }
+  }, [updatePromise]);
 
   useEffect(() => {
     // Prevent double execution (React 18+ can run effects twice in dev/certain conditions)
@@ -227,6 +240,13 @@ export function App({
   return (
     <Box flexDirection="column" padding={1}>
       <Header projectName={projectName} />
+
+      {updateInfo && (
+        <UpdateNotice
+          currentVersion={updateInfo.currentVersion}
+          latestVersion={updateInfo.latestVersion}
+        />
+      )}
 
       {phase === 'loading' && (
         <Box flexDirection="column">
