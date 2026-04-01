@@ -9,8 +9,9 @@ interface UpdateNoticeProps {
 
 export function UpdateNotice({ currentVersion, latestVersion }: UpdateNoticeProps) {
   const line1 = `Update available: ${currentVersion} → ${latestVersion}`;
-  const line2 = 'Run "npx sickbay@latest" to upgrade';
-  const maxLength = Math.max(line1.length, line2.length);
+  const line2 = 'npx sickbay@latest      (one-time run)';
+  const line3 = 'npm i -g sickbay@latest (global install)';
+  const maxLength = Math.max(line1.length, line2.length, line3.length);
   const padding = 2;
   const boxWidth = maxLength + padding * 2;
 
@@ -27,6 +28,11 @@ export function UpdateNotice({ currentVersion, latestVersion }: UpdateNoticeProp
       <Box paddingX={padding}>
         <Text color="yellow" dimColor>
           {line2}
+        </Text>
+      </Box>
+      <Box paddingX={padding}>
+        <Text color="yellow" dimColor>
+          {line3}
         </Text>
       </Box>
       <Text color="yellow" dimColor>

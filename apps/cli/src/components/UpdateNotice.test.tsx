@@ -12,6 +12,7 @@ describe('UpdateNotice', () => {
     expect(output).toContain('1.3.1');
     expect(output).toContain('1.4.0');
     expect(output).toContain('npx sickbay@latest');
+    expect(output).toContain('npm i -g sickbay@latest');
   });
 
   it('renders box border characters', () => {
