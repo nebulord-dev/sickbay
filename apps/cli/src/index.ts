@@ -34,7 +34,7 @@ const program = new Command();
 program
   .name('sickbay')
   .description('React project health check CLI')
-  .version(__VERSION__)
+  .version(__VERSION__, '-v, --version')
   .enablePositionalOptions()
   .passThroughOptions()
   .option('-p, --path <path>', 'project path to analyze', process.cwd())
