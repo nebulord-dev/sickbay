@@ -13,7 +13,12 @@ on:
 jobs:
   claude:
     runs-on: ubuntu-latest
-    if: contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) || github.event.issue != null || github.event.pull_request != null
+    if: |
+      github.actor != 'claude[bot]' && (
+        contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) ||
+        github.event.issue != null ||
+        github.event.pull_request != null
+      )
     permissions:
       contents: read
       issues: write
