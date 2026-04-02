@@ -6,16 +6,12 @@
 npx sickbay --path ~/my-project
 ```
 
-This downloads and runs Sickbay without installing it globally. The thin `sickbay` wrapper package on npm delegates to `@nebulord/sickbay`.
+This downloads and runs Sickbay without installing it globally.
 
 ## Global Install
 
 ```bash
-# Via the wrapper (recommended — shorter command)
 npm install -g sickbay
-
-# Or install the scoped package directly
-npm install -g @nebulord/sickbay
 ```
 
 Once installed globally, run from any directory:

@@ -54,9 +54,6 @@ npx sickbay --path ~/my-project
 
 # Install globally
 npm install -g sickbay
-
-# Or install the scoped package directly
-npm install -g @nebulord/sickbay
 ```
 
 ---
