@@ -1,7 +1,8 @@
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 
-import { timer, WARN_LINES } from '../utils/file-helpers.js';
+import { timer } from '../utils/file-helpers.js';
+import { getThresholds } from '../utils/file-types.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue } from '../types.js';
@@ -160,11 +161,12 @@ function analyzeFile(relPath: string, fullPath: string, lineCount: number): Find
     const lines = content.split('\n');
 
     // Check for large component files
-    if (lineCount > WARN_LINES) {
+    const { warn } = getThresholds(relPath);
+    if (lineCount > warn) {
       findings.push({
         file: relPath,
         line: 0,
-        pattern: `Large component file (${lineCount} lines) — consider splitting`,
+        pattern: `Large component file (${lineCount} lines, threshold: ${warn}) — consider splitting`,
         severity: 'info',
       });
     }

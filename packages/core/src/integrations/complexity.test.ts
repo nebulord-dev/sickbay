@@ -12,12 +12,32 @@ vi.mock('fs', () => ({
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
   fileExists: vi.fn(),
-  WARN_LINES: 400,
+}));
+
+vi.mock('../utils/file-types.js', () => ({
+  getThresholds: vi.fn((filePath: string) => {
+    // Default: return general thresholds
+    if (filePath.includes('use') && filePath.endsWith('.ts'))
+      return { warn: 150, critical: 250, fileType: 'custom-hook' };
+    if (filePath.endsWith('.tsx') || filePath.endsWith('.jsx'))
+      return { warn: 300, critical: 500, fileType: 'react-component' };
+    if (filePath.includes('.service.'))
+      return { warn: 500, critical: 800, fileType: 'node-service' };
+    return { warn: 400, critical: 600, fileType: 'general' };
+  }),
+  getFileTypeLabel: vi.fn((fileType: string) => {
+    const labels: Record<string, string> = {
+      'react-component': 'React component',
+      'custom-hook': 'custom hook',
+      'node-service': 'service',
+      'ts-utility': 'utility',
+      general: 'file',
+    };
+    return labels[fileType] ?? 'file';
+  }),
 }));
 
 import { existsSync, readdirSync, statSync, readFileSync } from 'fs';
-
-import { WARN_LINES } from '../constants.js';
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReaddirSync = vi.mocked(readdirSync);
@@ -67,7 +87,6 @@ describe('ComplexityRunner', () => {
     mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<
       typeof statSync
     >);
-    // 50 lines — well under WARN_LINES (400)
     mockReadFileSync.mockReturnValue(makeLines(50) as unknown as ReturnType<typeof readFileSync>);
 
     const result = await runner.run('/project');
@@ -78,12 +97,13 @@ describe('ComplexityRunner', () => {
     expect(result.id).toBe('complexity');
   });
 
-  it('returns warning status and info severity for a file with 450 lines (>=WARN_LINES, <CRITICAL_LINES)', async () => {
+  it('returns warning with info severity for file exceeding warn threshold but below critical', async () => {
     mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['big.ts'] as unknown as ReturnType<typeof readdirSync>);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<
       typeof statSync
     >);
+    // 450 lines — above general warn (400), below general critical (600)
     mockReadFileSync.mockReturnValue(makeLines(450) as unknown as ReturnType<typeof readFileSync>);
 
     const result = await runner.run('/project');
@@ -95,12 +115,13 @@ describe('ComplexityRunner', () => {
     expect(result.score).toBe(90); // 100 - 1*10
   });
 
-  it('returns warning status and warning severity for a file with 600 lines (>=CRITICAL_LINES)', async () => {
+  it('returns warning severity for file exceeding critical threshold', async () => {
     mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['massive.ts'] as unknown as ReturnType<typeof readdirSync>);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as unknown as ReturnType<
       typeof statSync
     >);
+    // 600 lines — at general critical (600)
     mockReadFileSync.mockReturnValue(makeLines(600) as unknown as ReturnType<typeof readFileSync>);
 
     const result = await runner.run('/project');
@@ -111,9 +132,8 @@ describe('ComplexityRunner', () => {
     expect(result.issues[0].message).toContain('600 lines');
   });
 
-  it('calculates score as 100 - oversized.length * 10', async () => {
+  it('calculates score as 100 - oversizedCount * 10', async () => {
     mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
-    // 3 files, each 350 lines
     mockReaddirSync.mockReturnValue(['a.ts', 'b.ts', 'c.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
     mockReadFileSync.mockReturnValue(makeLines(450) as any);
@@ -126,7 +146,6 @@ describe('ComplexityRunner', () => {
 
   it('does not let score drop below 0', async () => {
     mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
-    // 11 oversized files: 100 - 11*10 = -10 → capped at 0
     const files = Array.from({ length: 11 }, (_, i) => `file${i}.ts`);
     mockReaddirSync.mockReturnValue(files as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
@@ -158,19 +177,19 @@ describe('ComplexityRunner', () => {
     mockStatSync
       .mockReturnValueOnce({ isDirectory: () => true } as any)
       .mockReturnValueOnce({ isDirectory: () => false } as any);
-    mockReadFileSync.mockReturnValue(makeLines(400) as any);
+    // 300 lines — at react-component warn threshold
+    mockReadFileSync.mockReturnValue(makeLines(300) as any);
 
     const result = await runner.run('/project');
 
     expect(result.issues).toHaveLength(1);
-    expect(result.issues[0].message).toContain('400 lines');
+    expect(result.issues[0].message).toContain('300 lines');
   });
 
   it('reports correct metadata', async () => {
     mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['index.ts', 'utils.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    // First file: 100 lines, second file: 350 lines
     mockReadFileSync
       .mockReturnValueOnce(makeLines(100) as any)
       .mockReturnValueOnce(makeLines(450) as any);
@@ -231,15 +250,96 @@ describe('ComplexityRunner', () => {
     mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
     mockReaddirSync.mockReturnValue(['sparse.ts'] as any);
     mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
-    // 400 real lines plus 200 blank lines — total non-empty should be 400 (>=WARN_LINES)
-    const content = Array.from({ length: WARN_LINES }, (_, i) => `const x${i} = ${i};`).join(
-      '\n\n',
-    );
+    // 400 real lines plus blank lines — total non-empty should be 400 (>= general warn)
+    const content = Array.from({ length: 400 }, (_, i) => `const x${i} = ${i};`).join('\n\n');
     mockReadFileSync.mockReturnValue(content as any);
 
     const result = await runner.run('/project');
 
     expect(result.issues).toHaveLength(1);
     expect(result.issues[0].message).toContain('400 lines');
+  });
+
+  // --- File-type-specific threshold tests ---
+
+  it('flags a hook file at 180 lines (above hook warn threshold of 150)', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+    mockReaddirSync.mockReturnValue(['useAuth.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(makeLines(180) as any);
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(1);
+    expect(result.issues[0].severity).toBe('info');
+    expect(result.issues[0].message).toContain('custom hook');
+    expect(result.issues[0].message).toContain('180 lines');
+    expect(result.issues[0].message).toContain('threshold: 150');
+  });
+
+  it('flags a hook file at 260 lines as warning (above hook critical threshold of 250)', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+    mockReaddirSync.mockReturnValue(['useData.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(makeLines(260) as any);
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(1);
+    expect(result.issues[0].severity).toBe('warning');
+  });
+
+  it('does NOT flag a general .ts file at 350 lines (below general warn of 400)', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+    mockReaddirSync.mockReturnValue(['helpers.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(makeLines(350) as any);
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(0);
+    expect(result.score).toBe(100);
+  });
+
+  it('flags a component at 310 lines (above component warn of 300)', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+    mockReaddirSync.mockReturnValue(['Button.tsx'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(makeLines(310) as any);
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(1);
+    expect(result.issues[0].message).toContain('React component');
+    expect(result.issues[0].message).toContain('threshold: 300');
+  });
+
+  it('includes file type and threshold in issue messages', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+    mockReaddirSync.mockReturnValue(['big.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue(makeLines(450) as any);
+
+    const result = await runner.run('/project');
+
+    expect(result.issues[0].message).toMatch(/\(file\).*450 lines.*threshold: 400/);
+  });
+
+  it('handles mixed file types with different thresholds in one scan', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+    // Hook at 180 (over 150 warn), component at 250 (under 300 warn), utility at 450 (over 400 warn)
+    mockReaddirSync.mockReturnValue(['useAuth.ts', 'Button.tsx', 'helpers.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync
+      .mockReturnValueOnce(makeLines(180) as any) // hook — over 150, flagged
+      .mockReturnValueOnce(makeLines(250) as any) // component — under 300, safe
+      .mockReturnValueOnce(makeLines(450) as any); // general — over 400, flagged
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(2);
+    expect(result.score).toBe(80); // 100 - 2*10
+    expect(result.issues[0].message).toContain('custom hook');
+    expect(result.issues[1].message).toContain('file');
   });
 });

@@ -103,6 +103,39 @@ describe('CodebaseStats', () => {
     expect(screen.getByText('components/Big.tsx')).toBeInTheDocument();
   });
 
+  it('colors bars using per-file thresholds from metadata', () => {
+    const report = makeReport([
+      makeCheck('complexity', {
+        totalFiles: 2,
+        totalLines: 550,
+        avgLines: 275,
+        oversizedCount: 1,
+        topFiles: [
+          {
+            path: 'src/hooks/useAuth.ts',
+            lines: 200,
+            fileType: 'custom-hook',
+            warn: 150,
+            critical: 250,
+          },
+          {
+            path: 'src/utils/helpers.ts',
+            lines: 350,
+            fileType: 'ts-utility',
+            warn: 600,
+            critical: 1000,
+          },
+        ],
+      }),
+    ]);
+    const { container } = render(<CodebaseStats report={report} />);
+    const bars = container.querySelectorAll('.rounded-full.flex');
+    // useAuth.ts (200 lines) — above hook warn (150) but below critical (250) → yellow
+    expect(bars[0].className).toContain('bg-yellow-400');
+    // helpers.ts (350 lines) — below utility warn (600) → green
+    expect(bars[1].className).toContain('bg-green-400');
+  });
+
   it('renders the git section when git metadata is present', () => {
     const report = makeReport([
       makeCheck('git', {

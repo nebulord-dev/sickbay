@@ -1,7 +1,5 @@
 import React, { lazy, Suspense, useState } from 'react';
 
-import { WARN_LINES, CRITICAL_LINES } from '../lib/constants.js';
-
 import type { SickbayReport } from '@nebulord/sickbay-core';
 
 // Lazy load heavy graph visualization
@@ -91,7 +89,9 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
   const coverage = getMeta(report, 'coverage');
 
   const topFiles =
-    (complexity.topFiles as Array<{ path: string; lines: number }> | undefined) ?? [];
+    (complexity.topFiles as
+      | Array<{ path: string; lines: number; fileType?: string; warn?: number; critical?: number }>
+      | undefined) ?? [];
   const maxLines = topFiles[0]?.lines ?? 1;
 
   const madge = getMeta(report, 'madge');
@@ -124,7 +124,7 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
                 <StatCard
                   label="oversized files"
                   value={complexity.oversizedCount as number}
-                  sub="> 400 lines"
+                  sub="over threshold"
                 />
               </div>
 
@@ -132,25 +132,34 @@ export function CodebaseStats({ report }: CodebaseStatsProps) {
                 <div className="bg-card rounded-lg p-4">
                   <div className="text-xs text-gray-500 mb-3">largest files</div>
                   <div className="space-y-2">
-                    {topFiles.slice(0, 10).map((f) => (
-                      <div key={f.path} className="flex items-center gap-3">
-                        <div
-                          className="w-48 text-xs font-mono text-gray-400 truncate shrink-0"
-                          title={f.path}
-                        >
-                          {f.path.split('/').slice(-2).join('/')}
-                        </div>
-                        <div className="flex-1 bg-surface rounded-full h-4 overflow-hidden">
+                    {topFiles.slice(0, 10).map((f) => {
+                      const warn = f.warn ?? 400;
+                      const critical = f.critical ?? 600;
+                      const barColor =
+                        f.lines >= critical
+                          ? 'bg-red-400'
+                          : f.lines >= warn
+                            ? 'bg-yellow-400'
+                            : 'bg-green-400';
+                      return (
+                        <div key={f.path} className="flex items-center gap-3">
                           <div
-                            className={`h-4 rounded-full flex items-center justify-end pr-2 text-xs font-mono text-black font-semibold
-                              ${f.lines >= CRITICAL_LINES ? 'bg-red-400' : f.lines >= WARN_LINES ? 'bg-yellow-400' : 'bg-green-400'}`}
-                            style={{ width: `${Math.max(8, (f.lines / maxLines) * 100)}%` }}
+                            className="w-72 text-xs font-mono text-gray-400 truncate shrink-0"
+                            title={f.path}
                           >
-                            {f.lines}
+                            {f.path.split('/').slice(-2).join('/')}
+                          </div>
+                          <div className="flex-1 bg-surface rounded-full h-4 overflow-hidden">
+                            <div
+                              className={`h-4 rounded-full flex items-center justify-end pr-2 text-xs font-mono text-black font-semibold ${barColor}`}
+                              style={{ width: `${Math.max(8, (f.lines / maxLines) * 100)}%` }}
+                            >
+                              {f.lines}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}

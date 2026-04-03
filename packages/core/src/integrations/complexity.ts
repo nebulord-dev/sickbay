@@ -1,8 +1,8 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 
-import { CRITICAL_LINES } from '../constants.js';
-import { timer, WARN_LINES } from '../utils/file-helpers.js';
+import { timer } from '../utils/file-helpers.js';
+import { getThresholds, getFileTypeLabel } from '../utils/file-types.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue } from '../types.js';
@@ -40,27 +40,42 @@ export class ComplexityRunner extends BaseRunner {
           : [],
       );
 
-      const oversized = files.filter((f) => f.lines >= WARN_LINES);
-      const issues: Issue[] = oversized.map((f) => ({
-        severity: (f.lines >= CRITICAL_LINES ? 'warning' : 'info') as Issue['severity'],
-        message: `${f.path}: ${f.lines} lines — consider splitting into smaller modules`,
-        fix: { description: 'Extract concerns into smaller, focused files' },
-        reportedBy: ['complexity'],
-      }));
+      const issues: Issue[] = [];
+      let oversizedCount = 0;
+
+      for (const f of files) {
+        const { warn, critical, fileType } = getThresholds(f.path);
+        if (f.lines >= warn) {
+          oversizedCount++;
+          const label = getFileTypeLabel(fileType);
+          issues.push({
+            severity: (f.lines >= critical ? 'warning' : 'info') as Issue['severity'],
+            message: `${f.path} (${label}): ${f.lines} lines — consider splitting (threshold: ${warn})`,
+            fix: { description: 'Extract concerns into smaller, focused files' },
+            reportedBy: ['complexity'],
+          });
+        }
+      }
 
       const totalLines = files.reduce((sum, f) => sum + f.lines, 0);
       const avgLines = files.length > 0 ? Math.round(totalLines / files.length) : 0;
-      const score = Math.max(0, 100 - oversized.length * 10);
-      const topFiles = [...files].sort((a, b) => b.lines - a.lines).slice(0, 10);
+      const score = Math.max(0, 100 - oversizedCount * 10);
+      const topFiles = [...files]
+        .sort((a, b) => b.lines - a.lines)
+        .slice(0, 10)
+        .map((f) => {
+          const { warn, critical, fileType } = getThresholds(f.path);
+          return { ...f, fileType, warn, critical };
+        });
 
       return {
         id: 'complexity',
         category: this.category,
         name: 'File Complexity',
         score,
-        status: oversized.some((f) => f.lines >= CRITICAL_LINES)
+        status: issues.some((i) => i.severity === 'warning')
           ? 'warning'
-          : oversized.length > 0
+          : oversizedCount > 0
             ? 'warning'
             : 'pass',
         issues,
@@ -70,7 +85,7 @@ export class ComplexityRunner extends BaseRunner {
           totalFiles: files.length,
           totalLines,
           avgLines,
-          oversizedCount: oversized.length,
+          oversizedCount,
           topFiles,
         },
       };
