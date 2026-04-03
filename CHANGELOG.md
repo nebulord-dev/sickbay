@@ -1,3 +1,9 @@
+# [1.5.0](https://github.com/nebulord-dev/sickbay/compare/v1.4.2...v1.5.0) (2026-04-03)
+
+### Features
+
+- project-type-aware file length thresholds (KAN-125) ([b413a56](https://github.com/nebulord-dev/sickbay/commit/b413a56cd34db4d06af59dacf770d585004788c1))
+
 ## [1.4.2](https://github.com/nebulord-dev/sickbay/compare/v1.4.1...v1.4.2) (2026-04-01)
 
 ### Bug Fixes
