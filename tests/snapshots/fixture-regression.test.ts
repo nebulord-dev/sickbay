@@ -222,10 +222,13 @@ describe('angular-app', () => {
 
   // Angular-specific checks — structural assertions (scores vary with ecosystem)
   const ANGULAR_CHECKS = [
+    { id: 'angular-build-config', category: 'performance' },
     { id: 'angular-change-detection', category: 'performance' },
     { id: 'angular-lazy-routes', category: 'performance' },
+    { id: 'angular-security', category: 'security' },
     { id: 'angular-strict', category: 'code-quality' },
     { id: 'angular-subscriptions', category: 'code-quality' },
+    { id: 'angular-template-performance', category: 'performance' },
   ];
 
   for (const { id, category } of ANGULAR_CHECKS) {
@@ -260,6 +263,24 @@ describe('angular-app', () => {
 
   it('angular-subscriptions reports unguarded subscriptions', () => {
     const check = report.checks.find((c) => c.id === 'angular-subscriptions');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('angular-security reports DomSanitizer bypasses or innerHTML', () => {
+    const check = report.checks.find((c) => c.id === 'angular-security');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('angular-template-performance reports missing trackBy or function calls', () => {
+    const check = report.checks.find((c) => c.id === 'angular-template-performance');
+    expect(check?.status).toBe('warning');
+    expect(check?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('angular-build-config reports production misconfigurations', () => {
+    const check = report.checks.find((c) => c.id === 'angular-build-config');
     expect(check?.status).toBe('warning');
     expect(check?.issues.length).toBeGreaterThan(0);
   });

@@ -48,6 +48,11 @@ const CHECK_DESCRIPTIONS: Record<string, string> = {
   'angular-lazy-routes': 'Checks Angular routes for lazy loading via loadComponent().',
   'angular-strict': 'Verifies strict TypeScript and Angular compiler settings in tsconfig.json.',
   'angular-subscriptions': 'Detects RxJS subscriptions in components that are never unsubscribed.',
+  'angular-security': 'Detects Angular DomSanitizer bypasses and unsafe innerHTML bindings.',
+  'angular-template-performance':
+    'Flags missing trackBy in ngFor loops and function calls in templates.',
+  'angular-build-config':
+    'Checks angular.json production build settings for common misconfigurations.',
   'next-images':
     'Detects raw image elements that should use next/image for automatic optimization and lazy loading.',
   'next-link':

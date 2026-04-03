@@ -1,9 +1,12 @@
 import { relative } from 'path';
 
+import { AngularBuildConfigRunner } from './integrations/angular-build-config.js';
 import { AngularChangeDetectionRunner } from './integrations/angular-change-detection.js';
 import { AngularLazyRoutesRunner } from './integrations/angular-lazy-routes.js';
+import { AngularSecurityRunner } from './integrations/angular-security.js';
 import { AngularStrictRunner } from './integrations/angular-strict.js';
 import { AngularSubscriptionsRunner } from './integrations/angular-subscriptions.js';
+import { AngularTemplatePerformanceRunner } from './integrations/angular-template-performance.js';
 import { AssetSizeRunner } from './integrations/asset-size.js';
 import { ComplexityRunner } from './integrations/complexity.js';
 import { CoverageRunner } from './integrations/coverage.js';
@@ -78,10 +81,13 @@ const ALL_RUNNERS: ToolRunner[] = [
   new NodeSecurityRunner(),
   new NodeInputValidationRunner(),
   new NodeAsyncErrorsRunner(),
+  new AngularBuildConfigRunner(),
   new AngularChangeDetectionRunner(),
   new AngularLazyRoutesRunner(),
+  new AngularSecurityRunner(),
   new AngularStrictRunner(),
   new AngularSubscriptionsRunner(),
+  new AngularTemplatePerformanceRunner(),
   new NextClientComponentsRunner(),
   new NextFontsRunner(),
   new NextImagesRunner(),
