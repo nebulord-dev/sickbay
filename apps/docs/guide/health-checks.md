@@ -1,6 +1,6 @@
 # Health Checks
 
-Sickbay includes 30 checks across 5 categories. Each check is framework-aware — only checks relevant to your project type will run.
+Sickbay includes 34 checks across 5 categories. Each check is framework-aware — only checks relevant to your project type will run.
 
 **Supported frameworks:** React · Next.js · Angular · Node.js · TypeScript — Vue and Remix coming soon.
 

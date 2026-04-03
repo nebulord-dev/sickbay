@@ -17,7 +17,7 @@ A zero-config health check CLI for JavaScript and TypeScript projects. Run `sick
 
 ## Features
 
-- **30 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
+- **34 integrated checks** across 5 categories (dependencies, security, code quality, performance, git)
 - **Framework-aware** — automatically detects React, Next, Express, Fastify, Koa, Hapi, and more; runs only relevant checks
 - **Monorepo support** — auto-detects pnpm/npm/yarn/turbo/nx/lerna workspaces; per-package scoring and reporting
 - **Animated terminal UI** built with Ink (React for terminals)

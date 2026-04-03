@@ -250,7 +250,7 @@ Should we also support a flat `maxLines` override that applies to all types as a
 
 ### 3. What overrides does each runner support?
 
-Need to audit all ~30 runners and catalog which ones have configurable thresholds vs which are binary (pass/fail with no knobs). Some candidates:
+Need to audit all ~34 runners and catalog which ones have configurable thresholds vs which are binary (pass/fail with no knobs). Some candidates:
 
 - **complexity**: file-type thresholds (designed above)
 - **jscpd**: duplication threshold percentage
