@@ -41,6 +41,7 @@ export default defineConfig({
           { text: 'Scoring System', link: '/guide/scoring' },
           { text: 'Health Checks', link: '/guide/health-checks' },
           { text: 'Monorepo Support', link: '/guide/monorepo' },
+          { text: 'Data Directory', link: '/guide/data-directory' },
         ],
       },
       {
