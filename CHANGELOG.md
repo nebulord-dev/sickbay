@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/nebulord-dev/sickbay/compare/v1.5.0...v1.6.0) (2026-04-03)
+
+
+### Features
+
+* add angular-security, angular-template-performance, and angular-build-config checks (KAN-134) ([e750b6e](https://github.com/nebulord-dev/sickbay/commit/e750b6e54c31a4c68b59f2805b34cc31cdcd4ea5))
+
 # [1.5.0](https://github.com/nebulord-dev/sickbay/compare/v1.4.2...v1.5.0) (2026-04-03)
 
 ### Features
