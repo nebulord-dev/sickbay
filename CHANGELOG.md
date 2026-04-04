@@ -1,3 +1,16 @@
+# [1.7.0](https://github.com/nebulord-dev/sickbay/compare/v1.6.0...v1.7.0) (2026-04-04)
+
+
+### Features
+
+* **cli:** add sickbay/config entry point for defineConfig re-export (KAN-99) ([88f9c6f](https://github.com/nebulord-dev/sickbay/commit/88f9c6fb641bb6d5ea5ec9ebaa3d2f0503490349))
+* **cli:** generate sickbay.config.ts from sickbay init with framework-aware checks (KAN-99) ([b083f23](https://github.com/nebulord-dev/sickbay/commit/b083f237221d0fb56999fa2208027f9b37c0f28f))
+* **cli:** show custom config active notices in Summary and TUI ScorePanel (KAN-99) ([bd70f1a](https://github.com/nebulord-dev/sickbay/commit/bd70f1a1d7e785babb41806871bacb07ed858446))
+* **core:** add isCheckDisabled, resolveConfigMeta, and validateConfig (KAN-99) ([98fea43](https://github.com/nebulord-dev/sickbay/commit/98fea433ccdeb61645bd9b78b002b1e891d3ec61))
+* **core:** add loadConfig with jiti for runtime TS config loading (KAN-99) ([5e77433](https://github.com/nebulord-dev/sickbay/commit/5e774335f99b11ea28e4a3bb709ace8c51de3050))
+* **core:** add SickbayConfig types and defineConfig helper (KAN-99) ([cd158ee](https://github.com/nebulord-dev/sickbay/commit/cd158eebbb82f6f2692e0d965e5afd09d118b432))
+* **core:** wire config loading into runner pipeline, filter disabled checks (KAN-99) ([7c2f840](https://github.com/nebulord-dev/sickbay/commit/7c2f84056d7863ea8fe7bdfcc06c83ffdfaa8eb9))
+
 # [1.6.0](https://github.com/nebulord-dev/sickbay/compare/v1.5.0...v1.6.0) (2026-04-03)
 
 
