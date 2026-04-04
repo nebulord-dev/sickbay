@@ -512,12 +512,15 @@ Each phase is a standalone deliverable that ships value on its own. The full `Si
 - `RunOptions.checkConfig` field threads per-check config from runner.ts to each runner
 - 15 new tests covering threshold override behavior across all configurable runners
 
-### Phase C: Exclude Paths + Weight Overrides
+### Phase C: Exclude Paths + Weight Overrides ✅ Complete (2026-04-04)
 
-- Global `exclude` passed to all runners
-- Per-check `exclude` passed to individual runners
-- `weights` merged with defaults + proportional normalization
-- Validation: values must be > 0
+- Global `config.exclude` + per-check `checkConfig.exclude` merged in runner.ts
+- 5 file-scanning runners filter via `createExcludeFilter()` using picomatch
+- `normalizeWeights()` merges user overrides with `CATEGORY_WEIGHTS` proportionally
+- `calculateOverallScore()` accepts optional custom weights param
+- `CATEGORY_WEIGHTS` exported for external use
+- 10 new tests covering exclude filtering and weight normalization
+- Validation (values > 0) already in place from Phase A
 
 ### Phase D: Suppression
 
