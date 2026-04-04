@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 
+import { createExcludeFilter } from '../utils/exclude.js';
 import { timer } from '../utils/file-helpers.js';
 import { classifyFile, getFileTypeLabel, FILE_TYPE_THRESHOLDS } from '../utils/file-types.js';
 import { BaseRunner } from './base.js';
@@ -56,10 +57,12 @@ export class ComplexityRunner extends BaseRunner {
       return { ...mergedThresholds[fileType], fileType };
     };
 
+    const isExcluded = createExcludeFilter(options?.checkConfig?.exclude ?? []);
+
     try {
       const files = SOURCE_DIRS.flatMap((dir) =>
         existsSync(join(projectPath, dir))
-          ? scanDirectory(join(projectPath, dir), projectPath)
+          ? scanDirectory(join(projectPath, dir), projectPath, isExcluded)
           : [],
       );
 
@@ -133,7 +136,11 @@ export class ComplexityRunner extends BaseRunner {
   }
 }
 
-function scanDirectory(dir: string, projectRoot: string): FileStats[] {
+function scanDirectory(
+  dir: string,
+  projectRoot: string,
+  isExcluded: (path: string) => boolean,
+): FileStats[] {
   const files: FileStats[] = [];
   try {
     for (const entry of readdirSync(dir)) {
@@ -148,13 +155,15 @@ function scanDirectory(dir: string, projectRoot: string): FileStats[] {
       const fullPath = join(dir, entry);
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
-        files.push(...scanDirectory(fullPath, projectRoot));
+        files.push(...scanDirectory(fullPath, projectRoot, isExcluded));
       } else if (SOURCE_EXTENSIONS.has(extname(entry)) && !isTestFile(entry)) {
+        const relPath = fullPath.replace(projectRoot + '/', '');
+        if (isExcluded(relPath)) continue;
         try {
           const lines = readFileSync(fullPath, 'utf-8')
             .split('\n')
             .filter((l) => l.trim()).length;
-          files.push({ path: fullPath.replace(projectRoot + '/', ''), lines });
+          files.push({ path: relPath, lines });
         } catch {
           // skip unreadable files
         }

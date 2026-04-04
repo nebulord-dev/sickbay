@@ -38,9 +38,11 @@
     "knip": "^6.1.0",
     "license-checker": "^25.0.1",
     "madge": "^8.0.0",
+    "picomatch": "^4.0.4",
     "source-map-explorer": "^2.5.3"
   },
   "devDependencies": {
+    "@types/picomatch": "^4.0.3",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

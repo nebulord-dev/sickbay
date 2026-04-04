@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 
+import { createExcludeFilter } from '../utils/exclude.js';
 import { timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
@@ -51,9 +52,10 @@ export class TodoScannerRunner extends BaseRunner {
     const thresholds = options?.checkConfig?.thresholds as TodoScannerThresholds | undefined;
     const patterns = thresholds?.patterns ?? DEFAULT_PATTERNS;
     const pattern = buildPattern(patterns);
+    const isExcluded = createExcludeFilter(options?.checkConfig?.exclude ?? []);
 
     try {
-      const todos = scanDirectory(join(projectPath, 'src'), projectPath, pattern);
+      const todos = scanDirectory(join(projectPath, 'src'), projectPath, pattern, isExcluded);
 
       const issues: Issue[] = todos.map((t) => ({
         severity: (t.kind === 'FIXME' || t.kind === 'HACK'
@@ -107,16 +109,23 @@ export class TodoScannerRunner extends BaseRunner {
 /** Files that reference TODO/FIXME/HACK as part of their implementation, not as tech debt */
 const SELF_REFERENCING_FILES = new Set(['todo-scanner.ts', 'todo-scanner.test.ts']);
 
-function scanDirectory(dir: string, projectRoot: string, pattern: RegExp): TodoItem[] {
+function scanDirectory(
+  dir: string,
+  projectRoot: string,
+  pattern: RegExp,
+  isExcluded: (p: string) => boolean,
+): TodoItem[] {
   const todos: TodoItem[] = [];
   try {
     for (const entry of readdirSync(dir)) {
       if (entry.startsWith('.') || entry === 'node_modules') continue;
       if (SELF_REFERENCING_FILES.has(entry)) continue;
       const fullPath = join(dir, entry);
+      const relPath = fullPath.replace(projectRoot + '/', '');
+      if (isExcluded(relPath)) continue;
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
-        todos.push(...scanDirectory(fullPath, projectRoot, pattern));
+        todos.push(...scanDirectory(fullPath, projectRoot, pattern, isExcluded));
       } else if (SOURCE_EXTENSIONS.has(extname(entry))) {
         todos.push(...scanFile(fullPath, projectRoot, pattern));
       }

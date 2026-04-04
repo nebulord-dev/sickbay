@@ -5,7 +5,15 @@ export type {
   DependencyTreeNode,
   MonorepoDependencyTree,
 } from './utils/dep-tree.js';
-export { calculateOverallScore, buildSummary, getScoreColor, getScoreEmoji } from './scoring.js';
+export {
+  calculateOverallScore,
+  buildSummary,
+  getScoreColor,
+  getScoreEmoji,
+  normalizeWeights,
+  CATEGORY_WEIGHTS,
+} from './scoring.js';
+export { createExcludeFilter } from './utils/exclude.js';
 export { detectProject, detectPackageManager, detectContext } from './utils/detect-project.js';
 export { detectMonorepo } from './utils/detect-monorepo.js';
 export type {

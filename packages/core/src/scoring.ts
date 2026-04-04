@@ -10,7 +10,7 @@ import type { CheckResult, SickbayReport } from './types.js';
  * The getScoreColor and getScoreEmoji functions help in visually representing the health status of the project based on the calculated score.
  */
 
-const CATEGORY_WEIGHTS: Record<string, number> = {
+export const CATEGORY_WEIGHTS: Record<string, number> = {
   dependencies: 0.25,
   security: 0.3,
   'code-quality': 0.25,
@@ -18,15 +18,43 @@ const CATEGORY_WEIGHTS: Record<string, number> = {
   git: 0.05,
 };
 
-export function calculateOverallScore(checks: CheckResult[]): number {
+/**
+ * Merge user weight overrides with defaults and normalize to sum to 1.0.
+ * User values are absolute weights in the same scale as defaults.
+ */
+export function normalizeWeights(
+  userWeights: Partial<Record<string, number>>,
+  defaults: Record<string, number>,
+): Record<string, number> {
+  const merged = { ...defaults };
+
+  for (const [cat, val] of Object.entries(userWeights)) {
+    if (val !== undefined) merged[cat] = val;
+  }
+
+  const total = Object.values(merged).reduce((sum, v) => sum + v, 0);
+  if (total === 0) return merged;
+
+  for (const cat of Object.keys(merged)) {
+    merged[cat] /= total;
+  }
+
+  return merged;
+}
+
+export function calculateOverallScore(
+  checks: CheckResult[],
+  weights?: Record<string, number>,
+): number {
   const active = checks.filter((c) => c.status !== 'skipped');
   if (active.length === 0) return 0;
 
+  const w = weights ?? CATEGORY_WEIGHTS;
   let totalWeight = 0;
   let weightedScore = 0;
 
   for (const check of active) {
-    const weight = CATEGORY_WEIGHTS[check.category] ?? 0.1;
+    const weight = w[check.category] ?? 0.1;
     weightedScore += check.score * weight;
     totalWeight += weight;
   }

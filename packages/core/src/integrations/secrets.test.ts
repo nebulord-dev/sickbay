@@ -15,12 +15,19 @@ vi.mock('../utils/file-helpers.js', () => ({
   WARN_LINES: 400,
 }));
 
+vi.mock('../utils/exclude.js', () => ({
+  createExcludeFilter: vi.fn(() => () => false),
+}));
+
 import { existsSync, readdirSync, statSync, readFileSync } from 'fs';
+
+import { createExcludeFilter } from '../utils/exclude.js';
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
 const mockReadFileSync = vi.mocked(readFileSync);
+const mockCreateExcludeFilter = vi.mocked(createExcludeFilter);
 
 describe('SecretsRunner', () => {
   let runner: SecretsRunner;
@@ -225,5 +232,30 @@ describe('SecretsRunner', () => {
 
     expect(result.issues).toHaveLength(1);
     expect(result.issues[0].severity).toBe('critical');
+  });
+
+  it('excludes files matching exclude patterns', async () => {
+    mockExistsSync.mockImplementation((p) => {
+      if (String(p).endsWith('/src')) return true;
+      return false;
+    });
+    // src dir contains a subdirectory "generated" with a file inside
+    mockReaddirSync
+      .mockReturnValueOnce(['generated'] as any)
+      .mockReturnValueOnce(['config.ts'] as any);
+    mockStatSync
+      .mockReturnValueOnce({ isDirectory: () => true } as any)
+      .mockReturnValueOnce({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue('const key = "AKIAIOSFODNN7EXAMPLE";\n' as any);
+
+    // Mock createExcludeFilter to return a function that excludes "generated" paths
+    mockCreateExcludeFilter.mockReturnValue((p: string) => p.includes('generated'));
+
+    const result = await runner.run('/project', {
+      checkConfig: { exclude: ['src/generated/**'] },
+    });
+
+    expect(result.issues).toHaveLength(0);
+    expect(result.status).toBe('pass');
   });
 });

@@ -17,10 +17,17 @@ vi.mock('../utils/file-helpers.js', () => ({
   WARN_LINES: 400,
 }));
 
+vi.mock('../utils/exclude.js', () => ({
+  createExcludeFilter: vi.fn(() => () => false),
+}));
+
+import { createExcludeFilter } from '../utils/exclude.js';
+
 const mockExistsSync = vi.mocked(existsSync);
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
 const mockReadFileSync = vi.mocked(readFileSync);
+const mockCreateExcludeFilter = vi.mocked(createExcludeFilter);
 
 describe('TodoScannerRunner', () => {
   let runner: TodoScannerRunner;
@@ -275,5 +282,26 @@ describe('TodoScannerRunner', () => {
     expect(customResult.issues).toHaveLength(1);
     expect(customResult.issues[0].message).toContain('REVIEW');
     expect(customResult.issues[0].message).toContain('check this logic');
+  });
+
+  it('excludes files matching exclude patterns', async () => {
+    mockExistsSync.mockReturnValue(true);
+    // src dir contains a subdirectory "generated" with a file inside
+    mockReaddirSync
+      .mockReturnValueOnce(['generated'] as any)
+      .mockReturnValueOnce(['types.ts'] as any);
+    mockStatSync
+      .mockReturnValueOnce({ isDirectory: () => true } as any)
+      .mockReturnValueOnce({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue('// TODO: auto-generated, do not edit\n' as any);
+
+    // Mock createExcludeFilter to return a function that excludes "generated" paths
+    mockCreateExcludeFilter.mockReturnValue((p: string) => p.includes('generated'));
+
+    const result = await runner.run('/project', {
+      checkConfig: { exclude: ['src/generated/**'] },
+    });
+
+    expect(result.issues).toHaveLength(0);
   });
 });

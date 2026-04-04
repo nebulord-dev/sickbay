@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
 
-import { calculateOverallScore, buildSummary, getScoreColor, getScoreEmoji } from './scoring.js';
+import {
+  calculateOverallScore,
+  buildSummary,
+  getScoreColor,
+  getScoreEmoji,
+  normalizeWeights,
+  CATEGORY_WEIGHTS,
+} from './scoring.js';
 
 import type { CheckResult, Issue } from './types.js';
 
@@ -96,6 +103,38 @@ describe('calculateOverallScore', () => {
     ];
     // Should only count the active check
     expect(calculateOverallScore(checks)).toBe(100);
+  });
+
+  it('uses custom weights when provided', () => {
+    const securityCheck: CheckResult = {
+      id: 'security',
+      name: 'Security',
+      category: 'security',
+      score: 100,
+      status: 'pass',
+      issues: [],
+      toolsUsed: [],
+      duration: 0,
+    };
+    const gitCheck: CheckResult = {
+      id: 'git',
+      name: 'Git',
+      category: 'git',
+      score: 0,
+      status: 'pass',
+      issues: [],
+      toolsUsed: [],
+      duration: 0,
+    };
+    const checks = [securityCheck, gitCheck];
+
+    const defaultScore = calculateOverallScore(checks);
+    const customScore = calculateOverallScore(checks, { security: 0.05, git: 0.95 });
+
+    // With defaults, security (weight 0.30) dominates → high score
+    // With custom, git (weight 0.95) dominates → low score
+    expect(defaultScore).toBeGreaterThan(customScore);
+    expect(defaultScore - customScore).toBeGreaterThan(30);
   });
 
   it('uses default weight for unknown categories', () => {
@@ -237,6 +276,45 @@ describe('getScoreColor', () => {
     expect(getScoreColor(59)).toBe('red');
     expect(getScoreColor(30)).toBe('red');
     expect(getScoreColor(0)).toBe('red');
+  });
+});
+
+describe('normalizeWeights', () => {
+  it('returns defaults unchanged when no overrides', () => {
+    const result = normalizeWeights({}, CATEGORY_WEIGHTS);
+    const sum = Object.values(result).reduce((s, v) => s + v, 0);
+    expect(sum).toBeCloseTo(1.0);
+    // Each value should match the default after normalization (defaults already sum to 1.0)
+    for (const [cat, val] of Object.entries(CATEGORY_WEIGHTS)) {
+      expect(result[cat]).toBeCloseTo(val);
+    }
+  });
+
+  it('increases security share when overridden', () => {
+    const result = normalizeWeights({ security: 0.5 }, CATEGORY_WEIGHTS);
+    const sum = Object.values(result).reduce((s, v) => s + v, 0);
+    expect(sum).toBeCloseTo(1.0);
+    // security was 0.30, now 0.50 — merged total = 1.20, so security = 0.50/1.20 ≈ 0.417
+    expect(result['security']).toBeCloseTo(0.417, 2);
+  });
+
+  it('normalizes all-custom weights to sum to 1.0', () => {
+    const result = normalizeWeights(
+      { security: 2, dependencies: 2, 'code-quality': 2, performance: 2, git: 2 },
+      CATEGORY_WEIGHTS,
+    );
+    const sum = Object.values(result).reduce((s, v) => s + v, 0);
+    expect(sum).toBeCloseTo(1.0);
+    for (const val of Object.values(result)) {
+      expect(val).toBeCloseTo(0.2);
+    }
+  });
+
+  it('preserves relative proportions of non-overridden categories', () => {
+    const result = normalizeWeights({ security: 0.5 }, CATEGORY_WEIGHTS);
+    const defaultRatio = CATEGORY_WEIGHTS['dependencies'] / CATEGORY_WEIGHTS['code-quality'];
+    const resultRatio = result['dependencies'] / result['code-quality'];
+    expect(resultRatio).toBeCloseTo(defaultRatio);
   });
 });
 

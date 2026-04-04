@@ -36,7 +36,12 @@ import { SourceMapExplorerRunner } from './integrations/source-map-explorer.js';
 import { TodoScannerRunner } from './integrations/todo-scanner.js';
 import { TypeScriptRunner } from './integrations/typescript.js';
 import { getQuote } from './quotes/index.js';
-import { calculateOverallScore, buildSummary } from './scoring.js';
+import {
+  calculateOverallScore,
+  buildSummary,
+  normalizeWeights,
+  CATEGORY_WEIGHTS,
+} from './scoring.js';
 import { detectMonorepo } from './utils/detect-monorepo.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
 
@@ -136,11 +141,18 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
 
       options.onCheckStart?.(runner.name);
       const checkCfg = getCheckConfig(config, runner.name);
+      const globalExclude = config?.exclude ?? [];
+      const checkExclude = checkCfg?.exclude ?? [];
+      const mergedExclude = [...globalExclude, ...checkExclude];
       const result = await runner.run(projectPath, {
         verbose: options.verbose,
-        checkConfig: checkCfg
-          ? { thresholds: checkCfg.thresholds, exclude: checkCfg.exclude }
-          : undefined,
+        checkConfig:
+          checkCfg || mergedExclude.length > 0
+            ? {
+                thresholds: checkCfg?.thresholds,
+                exclude: mergedExclude.length > 0 ? mergedExclude : undefined,
+              }
+            : undefined,
       });
       options.onCheckComplete?.(result);
       return result;
@@ -153,7 +165,10 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
     }
   }
 
-  const overallScore = calculateOverallScore(checks);
+  const normalizedWeights = config?.weights
+    ? normalizeWeights(config.weights, CATEGORY_WEIGHTS)
+    : undefined;
+  const overallScore = calculateOverallScore(checks, normalizedWeights);
   const summary = buildSummary(checks);
 
   return {

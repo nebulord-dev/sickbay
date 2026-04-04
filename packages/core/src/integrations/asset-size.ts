@@ -1,6 +1,7 @@
 import { readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 
+import { createExcludeFilter } from '../utils/exclude.js';
 import { timer, fileExists } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
@@ -57,13 +58,14 @@ export class AssetSizeRunner extends BaseRunner {
     const fontWarn = t?.fontWarn ?? FONT_WARN;
     const totalWarn = t?.totalWarn ?? TOTAL_WARN;
     const totalCritical = t?.totalCritical ?? TOTAL_CRITICAL;
+    const isExcluded = createExcludeFilter(options?.checkConfig?.exclude ?? []);
 
     try {
       const assets: AssetFile[] = [];
 
       for (const dir of ASSET_DIRS) {
         if (fileExists(projectPath, dir)) {
-          scanAssets(join(projectPath, dir), projectPath, assets);
+          scanAssets(join(projectPath, dir), projectPath, assets, isExcluded);
         }
       }
 
@@ -185,15 +187,22 @@ export class AssetSizeRunner extends BaseRunner {
   }
 }
 
-function scanAssets(dir: string, projectRoot: string, assets: AssetFile[]): void {
+function scanAssets(
+  dir: string,
+  projectRoot: string,
+  assets: AssetFile[],
+  isExcluded: (p: string) => boolean,
+): void {
   try {
     for (const entry of readdirSync(dir)) {
       if (entry.startsWith('.') || entry === 'node_modules') continue;
       const fullPath = join(dir, entry);
+      const relPath = fullPath.replace(projectRoot + '/', '');
+      if (isExcluded(relPath)) continue;
       const stat = statSync(fullPath);
 
       if (stat.isDirectory()) {
-        scanAssets(fullPath, projectRoot, assets);
+        scanAssets(fullPath, projectRoot, assets, isExcluded);
       } else {
         const ext = extname(entry).toLowerCase();
         if (SKIP_EXTENSIONS.has(ext)) continue;

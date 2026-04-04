@@ -12,13 +12,19 @@ vi.mock('../utils/file-helpers.js', () => ({
   fileExists: vi.fn(),
 }));
 
+vi.mock('../utils/exclude.js', () => ({
+  createExcludeFilter: vi.fn(() => () => false),
+}));
+
 import { readdirSync, statSync } from 'fs';
 
+import { createExcludeFilter } from '../utils/exclude.js';
 import { fileExists } from '../utils/file-helpers.js';
 
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
 const mockFileExists = vi.mocked(fileExists);
+const mockCreateExcludeFilter = vi.mocked(createExcludeFilter);
 
 // Byte constants matching the runner's thresholds
 const KB = 1024;
@@ -246,6 +252,28 @@ describe('AssetSizeRunner', () => {
       expect(result.issues).toHaveLength(0);
       expect(result.status).toBe('pass');
       expect(result.score).toBe(100);
+    });
+
+    it('excludes files matching exclude patterns', async () => {
+      // public dir contains a subdirectory "generated" with a large image
+      mockFileExists.mockImplementation((_root, dir) => dir === 'public');
+      mockReaddirSync
+        .mockReturnValueOnce(['generated'] as never)
+        .mockReturnValueOnce(['big.png'] as never);
+      mockStatSync
+        .mockReturnValueOnce({ isDirectory: () => true } as never)
+        .mockReturnValueOnce({ isDirectory: () => false, size: 600 * KB } as never);
+
+      // Mock createExcludeFilter to return a function that excludes "generated" paths
+      mockCreateExcludeFilter.mockReturnValue((p: string) => p.includes('generated'));
+
+      const result = await runner.run('/project', {
+        checkConfig: { exclude: ['public/generated/**'] },
+      });
+
+      const bigPngIssue = result.issues.find((i) => i.message.includes('big.png'));
+      expect(bigPngIssue).toBeUndefined();
+      expect(result.status).toBe('pass');
     });
   });
 });

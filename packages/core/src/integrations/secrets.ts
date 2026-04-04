@@ -1,10 +1,11 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname, basename } from 'path';
 
+import { createExcludeFilter } from '../utils/exclude.js';
 import { timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
 
 /**
  * SecretsRunner analyzes the project's source code and configuration files to detect hardcoded secrets such as API keys, tokens, and passwords.
@@ -74,8 +75,9 @@ export class SecretsRunner extends BaseRunner {
   name = 'secrets';
   category = 'security' as const;
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const isExcluded = createExcludeFilter(options?.checkConfig?.exclude ?? []);
 
     try {
       const findings: Finding[] = [];
@@ -105,7 +107,7 @@ export class SecretsRunner extends BaseRunner {
 
       // Scan source files
       if (existsSync(join(projectPath, 'src'))) {
-        findings.push(...scanDirectory(join(projectPath, 'src'), projectPath));
+        findings.push(...scanDirectory(join(projectPath, 'src'), projectPath, isExcluded));
       }
 
       const issues: Issue[] = findings.map((f) => ({
@@ -160,7 +162,11 @@ export class SecretsRunner extends BaseRunner {
   }
 }
 
-function scanDirectory(dir: string, projectRoot: string): Finding[] {
+function scanDirectory(
+  dir: string,
+  projectRoot: string,
+  isExcluded: (p: string) => boolean,
+): Finding[] {
   const findings: Finding[] = [];
   try {
     for (const entry of readdirSync(dir)) {
@@ -173,9 +179,11 @@ function scanDirectory(dir: string, projectRoot: string): Finding[] {
       )
         continue;
       const fullPath = join(dir, entry);
+      const relPath = fullPath.replace(projectRoot + '/', '');
+      if (isExcluded(relPath)) continue;
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
-        findings.push(...scanDirectory(fullPath, projectRoot));
+        findings.push(...scanDirectory(fullPath, projectRoot, isExcluded));
       } else if (
         SCAN_EXTENSIONS.has(extname(entry)) &&
         !SKIP_FILES.has(basename(entry)) &&

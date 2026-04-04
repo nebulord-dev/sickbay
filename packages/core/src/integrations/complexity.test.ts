@@ -14,6 +14,10 @@ vi.mock('../utils/file-helpers.js', () => ({
   fileExists: vi.fn(),
 }));
 
+vi.mock('../utils/exclude.js', () => ({
+  createExcludeFilter: vi.fn(() => () => false),
+}));
+
 vi.mock('../utils/file-types.js', () => ({
   FILE_TYPE_THRESHOLDS: {
     'react-component': { warn: 300, critical: 500 },
@@ -45,10 +49,13 @@ vi.mock('../utils/file-types.js', () => ({
 
 import { existsSync, readdirSync, statSync, readFileSync } from 'fs';
 
+import { createExcludeFilter } from '../utils/exclude.js';
+
 const mockExistsSync = vi.mocked(existsSync);
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
 const mockReadFileSync = vi.mocked(readFileSync);
+const mockCreateExcludeFilter = vi.mocked(createExcludeFilter);
 
 /** Generate a string with N non-empty lines */
 function makeLines(count: number): string {
@@ -367,5 +374,24 @@ describe('ComplexityRunner', () => {
     expect(result.score).toBe(100);
     expect(result.issues).toHaveLength(0);
     expect(result.status).toBe('pass');
+  });
+
+  it('excludes files matching exclude patterns', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+    mockReaddirSync.mockReturnValue(['normal.ts', 'generated.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    // Both files are 500 lines — above general warn (400)
+    mockReadFileSync.mockReturnValue(makeLines(500) as any);
+
+    // Mock createExcludeFilter to return a function that excludes "generated" paths
+    mockCreateExcludeFilter.mockReturnValue((p: string) => p.includes('generated'));
+
+    const result = await runner.run('/project', {
+      checkConfig: { exclude: ['src/generated/**'] },
+    });
+
+    expect(result.issues).toHaveLength(1);
+    expect(result.issues[0].message).toContain('normal.ts');
+    expect(result.issues.every((i) => !i.message.includes('generated.ts'))).toBe(true);
   });
 });

@@ -1,11 +1,12 @@
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 
+import { createExcludeFilter } from '../utils/exclude.js';
 import { timer } from '../utils/file-helpers.js';
 import { getThresholds } from '../utils/file-types.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
 
 /**
  * ReactPerfRunner analyzes React component files for common performance anti-patterns.
@@ -28,13 +29,14 @@ export class ReactPerfRunner extends BaseRunner {
   category = 'performance' as const;
   applicableFrameworks = ['react', 'next', 'remix'] as const;
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const isExcluded = createExcludeFilter(options?.checkConfig?.exclude ?? []);
 
     try {
       const hasReactCompiler = detectReactCompiler(projectPath);
       const findings: Finding[] = [];
-      const files = scanDirectory(join(projectPath, 'src'), projectPath);
+      const files = scanDirectory(join(projectPath, 'src'), projectPath, isExcluded);
 
       for (const file of files) {
         findings.push(...analyzeFile(file.path, file.fullPath, file.lines));
@@ -116,7 +118,11 @@ function detectReactCompiler(projectPath: string): boolean {
   }
 }
 
-function scanDirectory(dir: string, projectRoot: string): FileInfo[] {
+function scanDirectory(
+  dir: string,
+  projectRoot: string,
+  isExcluded: (p: string) => boolean,
+): FileInfo[] {
   const files: FileInfo[] = [];
   try {
     for (const entry of readdirSync(dir)) {
@@ -130,9 +136,11 @@ function scanDirectory(dir: string, projectRoot: string): FileInfo[] {
       )
         continue;
       const fullPath = join(dir, entry);
+      const relPath = fullPath.replace(projectRoot + '/', '');
+      if (isExcluded(relPath)) continue;
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
-        files.push(...scanDirectory(fullPath, projectRoot));
+        files.push(...scanDirectory(fullPath, projectRoot, isExcluded));
       } else if (COMPONENT_EXTENSIONS.has(extname(entry))) {
         try {
           const content = readFileSync(fullPath, 'utf-8');

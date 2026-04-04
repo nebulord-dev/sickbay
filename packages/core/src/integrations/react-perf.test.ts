@@ -12,15 +12,22 @@ vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
 }));
 
+vi.mock('../utils/exclude.js', () => ({
+  createExcludeFilter: vi.fn(() => () => false),
+}));
+
 vi.mock('../utils/file-types.js', () => ({
   getThresholds: vi.fn(() => ({ warn: 300, critical: 500, fileType: 'react-component' })),
 }));
 
 import { readdirSync, statSync, readFileSync } from 'fs';
 
+import { createExcludeFilter } from '../utils/exclude.js';
+
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
 const mockReadFileSync = vi.mocked(readFileSync);
+const mockCreateExcludeFilter = vi.mocked(createExcludeFilter);
 
 describe('ReactPerfRunner', () => {
   let runner: ReactPerfRunner;
@@ -367,6 +374,35 @@ describe('ReactPerfRunner', () => {
       const lazyIssue = result.issues.find((i) => i.message.includes('lazy'));
       expect(lazyIssue).toBeDefined();
       expect(lazyIssue?.severity).toBe('info');
+    });
+
+    it('excludes files matching exclude patterns', async () => {
+      const content = [
+        "import React from 'react';",
+        '',
+        'export function Heavy() {',
+        '  return <div style={{ color: "red" }}>Hello</div>;',
+        '}',
+      ].join('\n');
+
+      // src dir contains a subdirectory "generated" with a tsx file inside
+      mockReaddirSync
+        .mockReturnValueOnce(['generated'] as never)
+        .mockReturnValueOnce(['Heavy.tsx'] as never);
+      mockStatSync
+        .mockReturnValueOnce({ isDirectory: () => true } as never)
+        .mockReturnValueOnce({ isDirectory: () => false, size: 100 } as never);
+      mockReadFileSync.mockReturnValue(content as never);
+
+      // Mock createExcludeFilter to return a function that excludes "generated" paths
+      mockCreateExcludeFilter.mockReturnValue((p: string) => p.includes('generated'));
+
+      const result = await runner.run('/project', {
+        checkConfig: { exclude: ['src/generated/**'] },
+      });
+
+      expect(result.issues).toHaveLength(0);
+      expect(result.status).toBe('pass');
     });
   });
 });
