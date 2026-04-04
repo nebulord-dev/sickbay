@@ -1,3 +1,10 @@
+## [1.7.3](https://github.com/nebulord-dev/sickbay/compare/v1.7.2...v1.7.3) (2026-04-04)
+
+
+### Bug Fixes
+
+* **core:** filter sickbay.config.ts from knip unused file false positives ([bb61d52](https://github.com/nebulord-dev/sickbay/commit/bb61d52a0059499cca05951edef500f9fc76de58))
+
 ## [1.7.2](https://github.com/nebulord-dev/sickbay/compare/v1.7.1...v1.7.2) (2026-04-04)
 
 
