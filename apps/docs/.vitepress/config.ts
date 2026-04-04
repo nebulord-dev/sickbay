@@ -39,6 +39,7 @@ export default defineConfig({
           { text: 'Installation', link: '/guide/installation' },
           { text: 'Quick Start', link: '/guide/quick-start' },
           { text: 'Scoring System', link: '/guide/scoring' },
+          { text: 'Configuration', link: '/guide/configuration' },
           { text: 'Health Checks', link: '/guide/health-checks' },
           { text: 'Monorepo Support', link: '/guide/monorepo' },
           { text: 'Data Directory', link: '/guide/data-directory' },
