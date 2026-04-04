@@ -13,6 +13,9 @@ export abstract class BaseRunner implements ToolRunner {
   abstract name: string;
   abstract category: CheckResult['category'];
 
+  /** Human-readable display name. Falls back to `name` (the check ID) if not set. */
+  displayName?: string;
+
   abstract run(projectPath: string, options?: RunOptions): Promise<CheckResult>;
 
   applicableFrameworks?: readonly Framework[];
@@ -39,7 +42,7 @@ export abstract class BaseRunner implements ToolRunner {
     return {
       id: this.name,
       category: this.category,
-      name: this.name,
+      name: this.displayName ?? this.name,
       score: 100,
       status: 'skipped',
       issues: [],

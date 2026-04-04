@@ -52,6 +52,7 @@ function findEntryChunks(buildPath: string): string[] {
 
 export class SourceMapExplorerRunner extends BaseRunner {
   name = 'source-map-explorer';
+  displayName = 'Bundle Size';
   category = 'performance' as const;
   applicableRuntimes = ['browser'] as const;
 
