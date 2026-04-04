@@ -502,12 +502,15 @@ Each phase is a standalone deliverable that ships value on its own. The full `Si
 - knip runner filters `sickbay.config.ts` from unused file false positives
 - `sickbay init` skips config loading during baseline scan (`_config: null`)
 
-### Phase B: Threshold Overrides
+### Phase B: Threshold Overrides ✅ Complete (2026-04-04)
 
 - Each configurable runner reads its `thresholds` from config instead of hardcoded values
-- 12 runners get typed threshold interfaces
-- Unknown threshold keys warn to stderr
+- 12 runners get typed threshold interfaces with local `*Thresholds` types
+- `getCheckConfig()` helper + `KNOWN_THRESHOLD_KEYS` map in config.ts
+- Unknown threshold keys warn to stderr via centralized validation
 - Complexity runner merges user thresholds with `FILE_TYPE_THRESHOLDS` defaults
+- `RunOptions.checkConfig` field threads per-check config from runner.ts to each runner
+- 15 new tests covering threshold override behavior across all configurable runners
 
 ### Phase C: Exclude Paths + Weight Overrides
 
