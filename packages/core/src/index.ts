@@ -36,6 +36,7 @@ export {
 } from './constants.js';
 export {
   defineConfig,
+  getCheckConfig,
   isCheckDisabled,
   loadConfig,
   resolveConfigMeta,

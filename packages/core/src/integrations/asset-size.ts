@@ -4,7 +4,16 @@ import { join, extname } from 'path';
 import { timer, fileExists } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface AssetSizeThresholds {
+  imageWarn?: number;
+  imageCritical?: number;
+  svgWarn?: number;
+  fontWarn?: number;
+  totalWarn?: number;
+  totalCritical?: number;
+}
 
 /**
  * AssetSizeRunner scans common asset directories for images, SVGs, and fonts, and checks their file sizes against defined thresholds.
@@ -39,8 +48,15 @@ export class AssetSizeRunner extends BaseRunner {
   category = 'performance' as const;
   applicableRuntimes = ['browser'] as const;
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const t = options?.checkConfig?.thresholds as AssetSizeThresholds | undefined;
+    const imageWarn = t?.imageWarn ?? IMAGE_WARN;
+    const imageCritical = t?.imageCritical ?? IMAGE_CRITICAL;
+    const svgWarn = t?.svgWarn ?? SVG_WARN;
+    const fontWarn = t?.fontWarn ?? FONT_WARN;
+    const totalWarn = t?.totalWarn ?? TOTAL_WARN;
+    const totalCritical = t?.totalCritical ?? TOTAL_CRITICAL;
 
     try {
       const assets: AssetFile[] = [];
@@ -60,7 +76,7 @@ export class AssetSizeRunner extends BaseRunner {
         const sizeMB = (asset.size / (1024 * 1024)).toFixed(1);
 
         if (asset.type === 'image') {
-          if (asset.size > IMAGE_CRITICAL) {
+          if (asset.size > imageCritical) {
             issues.push({
               severity: 'critical',
               message: `${asset.path} — ${sizeMB}MB image (exceeds 2MB)`,
@@ -71,7 +87,7 @@ export class AssetSizeRunner extends BaseRunner {
               },
               reportedBy: ['asset-size'],
             });
-          } else if (asset.size > IMAGE_WARN) {
+          } else if (asset.size > imageWarn) {
             issues.push({
               severity: 'warning',
               message: `${asset.path} — ${sizeKB}KB image (exceeds 500KB)`,
@@ -81,7 +97,7 @@ export class AssetSizeRunner extends BaseRunner {
             });
           }
         } else if (asset.type === 'svg') {
-          if (asset.size > SVG_WARN) {
+          if (asset.size > svgWarn) {
             issues.push({
               severity: 'warning',
               message: `${asset.path} — ${sizeKB}KB SVG (exceeds 100KB, likely unoptimized)`,
@@ -93,7 +109,7 @@ export class AssetSizeRunner extends BaseRunner {
             });
           }
         } else if (asset.type === 'font') {
-          if (asset.size > FONT_WARN) {
+          if (asset.size > fontWarn) {
             issues.push({
               severity: 'warning',
               message: `${asset.path} — ${sizeKB}KB font (exceeds 500KB)`,
@@ -110,14 +126,14 @@ export class AssetSizeRunner extends BaseRunner {
 
       // Check total asset size
       const totalMB = (totalSize / (1024 * 1024)).toFixed(1);
-      if (totalSize > TOTAL_CRITICAL) {
+      if (totalSize > totalCritical) {
         issues.push({
           severity: 'critical',
           message: `Total asset size is ${totalMB}MB — exceeds 10MB threshold`,
           fix: { description: 'Review and optimize all static assets to reduce total payload' },
           reportedBy: ['asset-size'],
         });
-      } else if (totalSize > TOTAL_WARN) {
+      } else if (totalSize > totalWarn) {
         issues.push({
           severity: 'warning',
           message: `Total asset size is ${totalMB}MB — consider optimizing`,

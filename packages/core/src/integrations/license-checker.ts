@@ -3,7 +3,11 @@ import { execa } from 'execa';
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface LicenseCheckerThresholds {
+  blocklist?: string[];
+}
 
 /**
  * LicenseCheckerRunner uses the license-checker tool to analyze the project's dependencies for problematic licenses.
@@ -23,8 +27,10 @@ export class LicenseCheckerRunner extends BaseRunner {
   name = 'license-checker';
   category = 'security' as const;
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const thresholds = options?.checkConfig?.thresholds as LicenseCheckerThresholds | undefined;
+    const blocklist = thresholds?.blocklist ?? PROBLEMATIC_LICENSES;
     const available = await isCommandAvailable('license-checker');
 
     if (!available) {
@@ -44,7 +50,7 @@ export class LicenseCheckerRunner extends BaseRunner {
 
       for (const [pkg, info] of Object.entries(licenses)) {
         const license = info.licenses;
-        if (PROBLEMATIC_LICENSES.some((l) => license.includes(l))) {
+        if (blocklist.some((l) => license.includes(l))) {
           issues.push({
             severity: 'warning',
             message: `${pkg} uses ${license} license — may be incompatible with commercial use`,

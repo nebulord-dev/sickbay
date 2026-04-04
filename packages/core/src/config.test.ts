@@ -6,6 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import {
   defineConfig,
+  getCheckConfig,
   isCheckDisabled,
   loadConfig,
   resolveConfigMeta,
@@ -67,6 +68,35 @@ describe('isCheckDisabled', () => {
   });
 });
 
+describe('getCheckConfig', () => {
+  it('returns null when config is null', () => {
+    expect(getCheckConfig(null, 'knip')).toBeNull();
+  });
+  it('returns null when checks is undefined', () => {
+    expect(getCheckConfig({}, 'knip')).toBeNull();
+  });
+  it('returns null when check is true', () => {
+    expect(getCheckConfig({ checks: { knip: true } }, 'knip')).toBeNull();
+  });
+  it('returns null when check is false', () => {
+    expect(getCheckConfig({ checks: { knip: false } }, 'knip')).toBeNull();
+  });
+  it('returns null when check has enabled: false', () => {
+    expect(getCheckConfig({ checks: { knip: { enabled: false } } }, 'knip')).toBeNull();
+  });
+  it('returns CheckConfig when check has thresholds', () => {
+    const cfg = { thresholds: { maxErrors: 5 } };
+    expect(getCheckConfig({ checks: { eslint: cfg } }, 'eslint')).toBe(cfg);
+  });
+  it('returns CheckConfig when check has exclude', () => {
+    const cfg = { exclude: ['src/generated/**'] };
+    expect(getCheckConfig({ checks: { knip: cfg } }, 'knip')).toBe(cfg);
+  });
+  it('returns null for check not in config', () => {
+    expect(getCheckConfig({ checks: { knip: true } }, 'eslint')).toBeNull();
+  });
+});
+
 describe('resolveConfigMeta', () => {
   it('returns no-config meta when config is null', () => {
     expect(resolveConfigMeta(null)).toEqual({
@@ -115,6 +145,30 @@ describe('validateConfig', () => {
   it('does not warn on valid check IDs', () => {
     const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
     validateConfig({ checks: { knip: false } }, ['knip']);
+    expect(stderrSpy).not.toHaveBeenCalled();
+    stderrSpy.mockRestore();
+  });
+  it('warns on unknown threshold keys', () => {
+    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    validateConfig({ checks: { eslint: { thresholds: { maxErrors: 10, unknownKey: 5 } } } }, [
+      'eslint',
+    ]);
+    expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining('unknownKey'));
+    expect(stderrSpy).not.toHaveBeenCalledWith(expect.stringContaining('maxErrors'));
+    stderrSpy.mockRestore();
+  });
+  it('does not warn on valid threshold keys', () => {
+    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    validateConfig(
+      { checks: { git: { thresholds: { staleMonths: 12, maxRemoteBranches: 30 } } } },
+      ['git'],
+    );
+    expect(stderrSpy).not.toHaveBeenCalled();
+    stderrSpy.mockRestore();
+  });
+  it('skips threshold validation for checks without known keys', () => {
+    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    validateConfig({ checks: { knip: { thresholds: { anything: true } } } }, ['knip']);
     expect(stderrSpy).not.toHaveBeenCalled();
     stderrSpy.mockRestore();
   });

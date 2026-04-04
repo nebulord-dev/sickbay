@@ -108,6 +108,10 @@ export interface ToolRunner {
 export interface RunOptions {
   verbose?: boolean;
   timeout?: number;
+  checkConfig?: {
+    thresholds?: Record<string, unknown>;
+    exclude?: string[];
+  };
 }
 
 export interface ToolResult {

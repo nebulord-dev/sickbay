@@ -2,10 +2,11 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 
 import { timer } from '../utils/file-helpers.js';
-import { getThresholds, getFileTypeLabel } from '../utils/file-types.js';
+import { classifyFile, getFileTypeLabel, FILE_TYPE_THRESHOLDS } from '../utils/file-types.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+import type { FileType } from '../utils/file-types.js';
 
 /**
  * ComplexityRunner analyzes the source code files in the 'src' directory to identify files with high line counts, which can indicate complexity and maintenance challenges.
@@ -30,8 +31,30 @@ export class ComplexityRunner extends BaseRunner {
     return SOURCE_DIRS.some((dir) => existsSync(join(projectPath, dir)));
   }
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const userThresholds = options?.checkConfig?.thresholds as
+      | Partial<Record<FileType, { warn?: number; critical?: number }>>
+      | undefined;
+
+    // Merge user thresholds with defaults
+    const mergedThresholds = { ...FILE_TYPE_THRESHOLDS };
+    if (userThresholds) {
+      for (const [key, overrides] of Object.entries(userThresholds)) {
+        const ft = key as FileType;
+        if (mergedThresholds[ft] && overrides) {
+          mergedThresholds[ft] = {
+            warn: overrides.warn ?? mergedThresholds[ft].warn,
+            critical: overrides.critical ?? mergedThresholds[ft].critical,
+          };
+        }
+      }
+    }
+
+    const resolveThresholds = (filePath: string) => {
+      const fileType = classifyFile(filePath);
+      return { ...mergedThresholds[fileType], fileType };
+    };
 
     try {
       const files = SOURCE_DIRS.flatMap((dir) =>
@@ -44,7 +67,7 @@ export class ComplexityRunner extends BaseRunner {
       let oversizedCount = 0;
 
       for (const f of files) {
-        const { warn, critical, fileType } = getThresholds(f.path);
+        const { warn, critical, fileType } = resolveThresholds(f.path);
         if (f.lines >= warn) {
           oversizedCount++;
           const label = getFileTypeLabel(fileType);
@@ -64,7 +87,7 @@ export class ComplexityRunner extends BaseRunner {
         .sort((a, b) => b.lines - a.lines)
         .slice(0, 10)
         .map((f) => {
-          const { warn, critical, fileType } = getThresholds(f.path);
+          const { warn, critical, fileType } = resolveThresholds(f.path);
           return { ...f, fileType, warn, critical };
         });
 

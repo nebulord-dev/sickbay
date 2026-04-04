@@ -12,7 +12,11 @@ import {
 } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface MadgeThresholds {
+  maxCircular?: number;
+}
 
 /**
  * MadgeRunner uses the madge tool to analyze the project's source code for circular dependencies.
@@ -68,8 +72,10 @@ export class MadgeRunner extends BaseRunner {
   name = 'madge';
   category = 'code-quality' as const;
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const thresholds = options?.checkConfig?.thresholds as MadgeThresholds | undefined;
+    const maxCircular = thresholds?.maxCircular ?? 5;
     const available = await isCommandAvailable('madge');
 
     if (!available) {
@@ -121,7 +127,7 @@ export class MadgeRunner extends BaseRunner {
         category: this.category,
         name: 'Circular Dependencies',
         score: circles.length === 0 ? 100 : Math.max(0, 100 - circles.length * 10),
-        status: circles.length === 0 ? 'pass' : circles.length > 5 ? 'fail' : 'warning',
+        status: circles.length === 0 ? 'pass' : circles.length > maxCircular ? 'fail' : 'warning',
         issues,
         toolsUsed: ['madge'],
         duration: elapsed(),

@@ -156,6 +156,7 @@ const mockContext = {
 vi.mock('./config.js', () => ({
   loadConfig: vi.fn(),
   isCheckDisabled: vi.fn(),
+  getCheckConfig: vi.fn().mockReturnValue(null),
   resolveConfigMeta: vi.fn(),
   validateConfig: vi.fn(),
 }));

@@ -186,4 +186,17 @@ describe('JscpdRunner', () => {
 
     expect(result.issues[0].fix?.description).toContain('duplicated');
   });
+
+  it('uses warnPercent threshold from config', async () => {
+    mockIsAvailable.mockResolvedValue(true);
+    mockExeca.mockResolvedValue({
+      stdout: JSON.stringify({ statistics: { total: { percentage: 10, clones: 5 } } }),
+    } as never);
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { warnPercent: 15 } },
+    });
+
+    expect(result.status).toBe('pass');
+  });
 });

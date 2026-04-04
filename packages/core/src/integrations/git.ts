@@ -3,7 +3,12 @@ import { execa } from 'execa';
 import { timer, fileExists } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface GitThresholds {
+  staleMonths?: number;
+  maxRemoteBranches?: number;
+}
 
 /**
  * GitRunner analyzes the Git repository of the project to provide insights into its health and activity.
@@ -20,8 +25,11 @@ export class GitRunner extends BaseRunner {
     return fileExists(projectPath, '.git');
   }
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const thresholds = options?.checkConfig?.thresholds as GitThresholds | undefined;
+    const staleMonths = thresholds?.staleMonths ?? 6;
+    const maxRemoteBranches = thresholds?.maxRemoteBranches ?? 20;
 
     try {
       const [lastCommitResult, logCountResult, contributorsResult] = await Promise.allSettled([
@@ -57,7 +65,8 @@ export class GitRunner extends BaseRunner {
 
       // Check if repo is stale (last commit > 6 months ago)
       const isStale =
-        lastCommit.includes('year') || (lastCommit.includes('month') && parseInt(lastCommit) > 6);
+        lastCommit.includes('year') ||
+        (lastCommit.includes('month') && parseInt(lastCommit) > staleMonths);
       if (isStale) {
         issues.push({
           severity: 'warning',
@@ -66,7 +75,7 @@ export class GitRunner extends BaseRunner {
         });
       }
 
-      if (remoteBranches > 20) {
+      if (remoteBranches > maxRemoteBranches) {
         issues.push({
           severity: 'info',
           message: `${remoteBranches} remote branches — consider pruning stale branches`,

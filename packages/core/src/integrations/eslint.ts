@@ -6,7 +6,11 @@ import { execa } from 'execa';
 import { timer, parseJsonOutput } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface EslintThresholds {
+  maxErrors?: number;
+}
 
 /**
  * ESLintRunner uses ESLint to analyze the project's source code for linting issues, enforcing code quality and consistency.
@@ -46,8 +50,10 @@ export class ESLintRunner extends BaseRunner {
     );
   }
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const thresholds = options?.checkConfig?.thresholds as EslintThresholds | undefined;
+    const maxErrors = thresholds?.maxErrors ?? 10;
 
     try {
       const candidateDirs = ['src', 'lib', 'app'];
@@ -101,7 +107,7 @@ export class ESLintRunner extends BaseRunner {
         name: 'Lint',
         score,
         status:
-          totalErrors > 10
+          totalErrors > maxErrors
             ? 'fail'
             : totalErrors > 0
               ? 'warning'

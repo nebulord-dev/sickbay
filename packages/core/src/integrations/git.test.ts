@@ -160,4 +160,16 @@ describe('GitRunner', () => {
     expect(result.score).toBe(0);
     expect(result.issues[0].severity).toBe('critical');
   });
+
+  it('uses maxRemoteBranches threshold from config', async () => {
+    const branchLines = Array.from({ length: 25 }, (_, i) => `  origin/branch-${i}`).join('\n');
+    makeGitMock({ remotes: 'origin', branches: branchLines });
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { maxRemoteBranches: 30 } },
+    });
+
+    const branchIssue = result.issues.find((i) => i.message.includes('remote branches'));
+    expect(branchIssue).toBeUndefined();
+  });
 });

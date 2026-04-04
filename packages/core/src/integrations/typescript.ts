@@ -6,7 +6,11 @@ import { execa } from 'execa';
 import { timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface TypeScriptThresholds {
+  maxErrors?: number;
+}
 
 /**
  * TypeScriptRunner uses the TypeScript compiler (tsc) to check for type errors in the project.
@@ -24,8 +28,10 @@ export class TypeScriptRunner extends BaseRunner {
     return existsSync(join(projectPath, 'tsconfig.json'));
   }
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const thresholds = options?.checkConfig?.thresholds as TypeScriptThresholds | undefined;
+    const maxErrors = thresholds?.maxErrors ?? 20;
 
     try {
       // tsc exits with code 1 when there are type errors — use reject: false
@@ -70,7 +76,7 @@ export class TypeScriptRunner extends BaseRunner {
         category: this.category,
         name: 'Type Safety',
         score,
-        status: count === 0 ? 'pass' : count > 20 ? 'fail' : 'warning',
+        status: count === 0 ? 'pass' : count > maxErrors ? 'fail' : 'warning',
         issues,
         toolsUsed: ['tsc'],
         duration: elapsed(),

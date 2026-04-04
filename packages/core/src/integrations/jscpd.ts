@@ -3,7 +3,12 @@ import { execa } from 'execa';
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface JscpdThresholds {
+  warnPercent?: number;
+  criticalPercent?: number;
+}
 
 /**
  * Jscpd is a code duplication detection tool that identifies duplicate code blocks in a project.
@@ -28,8 +33,11 @@ export class JscpdRunner extends BaseRunner {
   name = 'jscpd';
   category = 'code-quality' as const;
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const thresholds = options?.checkConfig?.thresholds as JscpdThresholds | undefined;
+    const warnPercent = thresholds?.warnPercent ?? 5;
+    const criticalPercent = thresholds?.criticalPercent ?? 20;
     const available = await isCommandAvailable('jscpd');
 
     if (!available) {
@@ -60,9 +68,9 @@ export class JscpdRunner extends BaseRunner {
       const clones = data.statistics?.total.clones ?? 0;
       const issues: Issue[] = [];
 
-      if (percentage > 5) {
+      if (percentage > warnPercent) {
         issues.push({
-          severity: percentage > 20 ? 'critical' : 'warning',
+          severity: percentage > criticalPercent ? 'critical' : 'warning',
           message: `${percentage.toFixed(1)}% code duplication detected (${clones} clone${clones !== 1 ? 's' : ''})`,
           fix: {
             description: 'Extract duplicated code into shared utilities or components',
@@ -79,9 +87,9 @@ export class JscpdRunner extends BaseRunner {
         status:
           percentage === 0
             ? 'pass'
-            : percentage > 20
+            : percentage > criticalPercent
               ? 'fail'
-              : percentage > 5
+              : percentage > warnPercent
                 ? 'warning'
                 : 'pass',
         issues,

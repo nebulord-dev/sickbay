@@ -174,4 +174,17 @@ describe('OutdatedRunner', () => {
     expect(result.score).toBe(0);
     expect(result.issues[0].severity).toBe('critical');
   });
+
+  it('uses maxOutdated threshold from config', async () => {
+    const packages = Object.fromEntries(
+      Array.from({ length: 16 }, (_, i) => [`pkg-${i}`, { current: '1.0.0', latest: '2.0.0' }]),
+    );
+    mockExeca.mockResolvedValue({ stdout: makeOutdated(packages) } as never);
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { maxOutdated: 20 } },
+    });
+
+    expect(result.status).toBe('warning');
+  });
 });

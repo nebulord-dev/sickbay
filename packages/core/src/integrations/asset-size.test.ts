@@ -232,5 +232,20 @@ describe('AssetSizeRunner', () => {
       expect(result.score).toBe(0);
       expect(result.issues[0].severity).toBe('critical');
     });
+
+    it('uses custom image threshold from config', async () => {
+      // 600KB image — above default imageWarn (512KB) but below custom (1MB)
+      mockFileExists.mockImplementation((_root, dir) => dir === 'public');
+      mockReaddirSync.mockReturnValue(['photo.jpg'] as never);
+      mockStatSync.mockReturnValue({ isDirectory: () => false, size: 600 * KB } as never);
+
+      const result = await runner.run('/project', {
+        checkConfig: { thresholds: { imageWarn: 1048576 } },
+      });
+
+      expect(result.issues).toHaveLength(0);
+      expect(result.status).toBe('pass');
+      expect(result.score).toBe(100);
+    });
   });
 });

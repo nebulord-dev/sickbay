@@ -4,7 +4,11 @@ import { detectPackageManager } from '../utils/detect-project.js';
 import { timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface OutdatedThresholds {
+  maxOutdated?: number;
+}
 
 /**
  * OutdatedRunner uses the package manager's outdated command to analyze the project's dependencies for outdated packages.
@@ -24,9 +28,11 @@ export class OutdatedRunner extends BaseRunner {
   name = 'outdated';
   category = 'dependencies' as const;
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
     const pm = detectPackageManager(projectPath);
+    const thresholds = options?.checkConfig?.thresholds as OutdatedThresholds | undefined;
+    const maxOutdated = thresholds?.maxOutdated ?? 15;
 
     // yarn and bun don't support `--json` in a parseable way (yarn outputs NDJSON,
     // bun outputs a formatted table). Rather than crash or return wrong results,
@@ -69,7 +75,7 @@ export class OutdatedRunner extends BaseRunner {
         category: this.category,
         name: 'Outdated Packages',
         score: Math.max(0, 100 - count * 3),
-        status: count === 0 ? 'pass' : count > 15 ? 'fail' : 'warning',
+        status: count === 0 ? 'pass' : count > maxOutdated ? 'fail' : 'warning',
         issues,
         toolsUsed: [pm],
         duration: elapsed(),

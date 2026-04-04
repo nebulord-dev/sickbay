@@ -8,7 +8,12 @@ import { detectPackageManager } from '../utils/detect-project.js';
 import { timer, readPackageJson } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface CoverageThresholds {
+  lines?: number;
+  functions?: number;
+}
 
 /**
  * CoverageRunner checks for test coverage in the project by looking for existing coverage reports or by running tests with coverage enabled.
@@ -81,13 +86,16 @@ export class CoverageRunner extends BaseRunner {
     return true;
   }
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const thresholds = options?.checkConfig?.thresholds as CoverageThresholds | undefined;
+    const lineTarget = thresholds?.lines ?? 80;
+    const functionTarget = thresholds?.functions ?? 80;
     const runner = this.detectTestRunner(projectPath);
 
     // No test runner — fall back to reading existing coverage report
     if (!runner) {
-      return this.readExistingCoverage(projectPath, elapsed);
+      return this.readExistingCoverage(projectPath, elapsed, lineTarget);
     }
 
     try {
@@ -159,6 +167,8 @@ export class CoverageRunner extends BaseRunner {
         runner,
         hasCoverage,
         packageManager,
+        lineTarget,
+        functionTarget,
       );
     } catch (err) {
       return {
@@ -183,6 +193,8 @@ export class CoverageRunner extends BaseRunner {
     runner: string,
     hasCoverage: boolean,
     packageManager = 'npm',
+    lineTarget = 80,
+    functionTarget = 80,
   ): CheckResult {
     const issues: Issue[] = [];
 
@@ -196,18 +208,18 @@ export class CoverageRunner extends BaseRunner {
     }
 
     if (coverage) {
-      if (coverage.lines.pct < 80) {
+      if (coverage.lines.pct < lineTarget) {
         issues.push({
           severity: coverage.lines.pct < 50 ? 'critical' : 'warning',
-          message: `Line coverage: ${coverage.lines.pct.toFixed(1)}% (target: 80%)`,
+          message: `Line coverage: ${coverage.lines.pct.toFixed(1)}% (target: ${lineTarget}%)`,
           fix: { description: 'Add tests to improve coverage' },
           reportedBy: ['coverage'],
         });
       }
-      if (coverage.functions.pct < 80) {
+      if (coverage.functions.pct < functionTarget) {
         issues.push({
           severity: 'warning',
-          message: `Function coverage: ${coverage.functions.pct.toFixed(1)}% (target: 80%)`,
+          message: `Function coverage: ${coverage.functions.pct.toFixed(1)}% (target: ${functionTarget}%)`,
           fix: { description: 'Add tests for uncovered functions' },
           reportedBy: ['coverage'],
         });
@@ -244,7 +256,7 @@ export class CoverageRunner extends BaseRunner {
         ? 'fail'
         : coverage && coverage.lines.pct < 50
           ? 'fail'
-          : coverage && coverage.lines.pct < 80
+          : coverage && coverage.lines.pct < lineTarget
             ? 'warning'
             : issues.length > 0
               ? 'warning'
@@ -277,7 +289,11 @@ export class CoverageRunner extends BaseRunner {
     };
   }
 
-  private readExistingCoverage(projectPath: string, elapsed: () => number): CheckResult {
+  private readExistingCoverage(
+    projectPath: string,
+    elapsed: () => number,
+    lineTarget = 80,
+  ): CheckResult {
     const coveragePath = COVERAGE_PATHS.map((p) => join(projectPath, p)).find(existsSync);
     if (!coveragePath) {
       return this.skipped('No test runner or coverage report found');
@@ -291,10 +307,10 @@ export class CoverageRunner extends BaseRunner {
       const { lines, statements, functions, branches } = candidate;
       const avg = (lines.pct + statements.pct + functions.pct + branches.pct) / 4;
       const issues: Issue[] = [];
-      if (lines.pct < 80) {
+      if (lines.pct < lineTarget) {
         issues.push({
           severity: lines.pct < 50 ? 'critical' : 'warning',
-          message: `Line coverage: ${lines.pct.toFixed(1)}% (target: 80%)`,
+          message: `Line coverage: ${lines.pct.toFixed(1)}% (target: ${lineTarget}%)`,
           reportedBy: ['coverage'],
         });
       }

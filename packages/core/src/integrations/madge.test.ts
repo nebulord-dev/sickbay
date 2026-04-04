@@ -277,4 +277,32 @@ describe('MadgeRunner', () => {
 
     expect(result.metadata).toMatchObject({ circularCount: 1 });
   });
+
+  it('uses maxCircular threshold from config', async () => {
+    mockIsAvailable.mockResolvedValue(true);
+    mockFileExists.mockReturnValue(false);
+    // Build 6 cycles: a↔b, c↔d, e↔f, g↔h, i↔j, k↔l
+    mockExeca.mockResolvedValue({
+      stdout: JSON.stringify({
+        'src/a.ts': ['src/b.ts'],
+        'src/b.ts': ['src/a.ts'],
+        'src/c.ts': ['src/d.ts'],
+        'src/d.ts': ['src/c.ts'],
+        'src/e.ts': ['src/f.ts'],
+        'src/f.ts': ['src/e.ts'],
+        'src/g.ts': ['src/h.ts'],
+        'src/h.ts': ['src/g.ts'],
+        'src/i.ts': ['src/j.ts'],
+        'src/j.ts': ['src/i.ts'],
+        'src/k.ts': ['src/l.ts'],
+        'src/l.ts': ['src/k.ts'],
+      }),
+    } as never);
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { maxCircular: 10 } },
+    });
+
+    expect(result.status).toBe('warning');
+  });
 });

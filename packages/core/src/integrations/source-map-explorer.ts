@@ -13,7 +13,12 @@ import {
 } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface SmeThresholds {
+  warnSize?: number;
+  failSize?: number;
+}
 
 /**
  * SourceMapExplorerRunner analyzes the project's JavaScript bundle size using source-map-explorer if source maps are available.
@@ -56,8 +61,11 @@ export class SourceMapExplorerRunner extends BaseRunner {
   category = 'performance' as const;
   applicableRuntimes = ['browser'] as const;
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const t = options?.checkConfig?.thresholds as SmeThresholds | undefined;
+    const warnSize = t?.warnSize ?? SIZE_THRESHOLD_WARN;
+    const failSize = t?.failSize ?? SIZE_THRESHOLD_FAIL;
     const buildDir = fileExists(projectPath, 'dist') ? 'dist' : 'build';
     const buildPath = join(projectPath, buildDir);
 
@@ -92,7 +100,7 @@ export class SourceMapExplorerRunner extends BaseRunner {
               const largestKB = Math.round(largestBytes / 1024);
 
               const issues: Issue[] = [];
-              if (largestBytes > SIZE_THRESHOLD_FAIL) {
+              if (largestBytes > failSize) {
                 issues.push({
                   severity: 'critical',
                   message: `Largest bundle is ${largestKB}KB — exceeds 1MB threshold`,
@@ -101,7 +109,7 @@ export class SourceMapExplorerRunner extends BaseRunner {
                   },
                   reportedBy: ['source-map-explorer'],
                 });
-              } else if (largestBytes > SIZE_THRESHOLD_WARN) {
+              } else if (largestBytes > warnSize) {
                 issues.push({
                   severity: 'warning',
                   message: `Largest bundle is ${largestKB}KB — consider optimizing`,
@@ -112,12 +120,7 @@ export class SourceMapExplorerRunner extends BaseRunner {
                 });
               }
 
-              const score =
-                largestBytes > SIZE_THRESHOLD_FAIL
-                  ? 40
-                  : largestBytes > SIZE_THRESHOLD_WARN
-                    ? 70
-                    : 100;
+              const score = largestBytes > failSize ? 40 : largestBytes > warnSize ? 70 : 100;
 
               return {
                 id: 'source-map-explorer',
@@ -187,7 +190,7 @@ export class SourceMapExplorerRunner extends BaseRunner {
       const initialKB = Math.round(initialBytes / 1024);
       const issues: Issue[] = [];
 
-      if (initialBytes > SIZE_THRESHOLD_FAIL) {
+      if (initialBytes > failSize) {
         issues.push({
           severity: 'critical',
           message: `Initial bundle is ${initialKB}KB — exceeds 1MB threshold`,
@@ -198,7 +201,7 @@ export class SourceMapExplorerRunner extends BaseRunner {
           },
           reportedBy: ['bundle-size-check'],
         });
-      } else if (initialBytes > SIZE_THRESHOLD_WARN) {
+      } else if (initialBytes > warnSize) {
         issues.push({
           severity: 'warning',
           message: `Initial bundle is ${initialKB}KB — consider optimizing`,
@@ -211,8 +214,7 @@ export class SourceMapExplorerRunner extends BaseRunner {
         });
       }
 
-      const score =
-        initialBytes > SIZE_THRESHOLD_FAIL ? 40 : initialBytes > SIZE_THRESHOLD_WARN ? 70 : 100;
+      const score = initialBytes > failSize ? 40 : initialBytes > warnSize ? 70 : 100;
 
       return {
         id: 'source-map-explorer',

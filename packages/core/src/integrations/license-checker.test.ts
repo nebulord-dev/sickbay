@@ -256,4 +256,28 @@ describe('LicenseCheckerRunner', () => {
     expect(result.score).toBe(0);
     expect(result.issues[0].severity).toBe('critical');
   });
+
+  it('uses custom blocklist from config', async () => {
+    mockIsAvailable.mockResolvedValue(true);
+    mockExeca.mockResolvedValue({
+      stdout: JSON.stringify({
+        'react@18.0.0': { licenses: 'MIT', repository: 'https://github.com/facebook/react' },
+      }),
+    } as never);
+
+    // MIT is NOT in the default blocklist — should pass normally
+    const passResult = await runner.run('/project');
+    expect(passResult.issues).toHaveLength(0);
+    expect(passResult.status).toBe('pass');
+
+    // With custom blocklist including MIT — should be flagged
+    const flaggedResult = await runner.run('/project', {
+      checkConfig: { thresholds: { blocklist: ['MIT'] } },
+    });
+
+    expect(flaggedResult.issues).toHaveLength(1);
+    expect(flaggedResult.issues[0].message).toContain('MIT');
+    expect(flaggedResult.issues[0].message).toContain('react@18.0.0');
+    expect(flaggedResult.status).toBe('warning');
+  });
 });

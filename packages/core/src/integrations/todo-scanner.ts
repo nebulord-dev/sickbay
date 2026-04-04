@@ -4,7 +4,11 @@ import { join, extname } from 'path';
 import { timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
-import type { CheckResult, Issue } from '../types.js';
+import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+interface TodoScannerThresholds {
+  patterns?: string[];
+}
 
 /**
  * This module analyzes the project's source code for TODO, FIXME, and HACK comments that indicate technical debt or areas needing attention.
@@ -13,7 +17,12 @@ import type { CheckResult, Issue } from '../types.js';
  * It calculates an overall score based on the number and severity of findings, giving insights into the project's code quality and maintenance health.
  */
 
+const DEFAULT_PATTERNS = ['TODO', 'FIXME', 'HACK'];
 const TODO_PATTERN = /\b(TODO|FIXME|HACK)\b[:\s]*(.*)/i;
+
+function buildPattern(patterns: string[]): RegExp {
+  return new RegExp('\\b(' + patterns.join('|') + ')\\b[:\\s]*(.*)', 'i');
+}
 // Matches single-quoted, double-quoted, and single-line template literal strings
 const STRING_LITERAL_RE = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g;
 
@@ -37,11 +46,14 @@ export class TodoScannerRunner extends BaseRunner {
     return existsSync(join(projectPath, 'src'));
   }
 
-  async run(projectPath: string): Promise<CheckResult> {
+  async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
+    const thresholds = options?.checkConfig?.thresholds as TodoScannerThresholds | undefined;
+    const patterns = thresholds?.patterns ?? DEFAULT_PATTERNS;
+    const pattern = buildPattern(patterns);
 
     try {
-      const todos = scanDirectory(join(projectPath, 'src'), projectPath);
+      const todos = scanDirectory(join(projectPath, 'src'), projectPath, pattern);
 
       const issues: Issue[] = todos.map((t) => ({
         severity: (t.kind === 'FIXME' || t.kind === 'HACK'
@@ -95,7 +107,7 @@ export class TodoScannerRunner extends BaseRunner {
 /** Files that reference TODO/FIXME/HACK as part of their implementation, not as tech debt */
 const SELF_REFERENCING_FILES = new Set(['todo-scanner.ts', 'todo-scanner.test.ts']);
 
-function scanDirectory(dir: string, projectRoot: string): TodoItem[] {
+function scanDirectory(dir: string, projectRoot: string, pattern: RegExp): TodoItem[] {
   const todos: TodoItem[] = [];
   try {
     for (const entry of readdirSync(dir)) {
@@ -104,9 +116,9 @@ function scanDirectory(dir: string, projectRoot: string): TodoItem[] {
       const fullPath = join(dir, entry);
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
-        todos.push(...scanDirectory(fullPath, projectRoot));
+        todos.push(...scanDirectory(fullPath, projectRoot, pattern));
       } else if (SOURCE_EXTENSIONS.has(extname(entry))) {
-        todos.push(...scanFile(fullPath, projectRoot));
+        todos.push(...scanFile(fullPath, projectRoot, pattern));
       }
     }
   } catch {
@@ -115,13 +127,13 @@ function scanDirectory(dir: string, projectRoot: string): TodoItem[] {
   return todos;
 }
 
-function scanFile(filePath: string, projectRoot: string): TodoItem[] {
+function scanFile(filePath: string, projectRoot: string, pattern: RegExp): TodoItem[] {
   const todos: TodoItem[] = [];
   try {
     const lines = readFileSync(filePath, 'utf-8').split('\n');
     const relPath = filePath.replace(projectRoot + '/', '');
     for (let i = 0; i < lines.length; i++) {
-      const match = stripStringLiterals(lines[i]).match(TODO_PATTERN);
+      const match = stripStringLiterals(lines[i]).match(pattern);
       if (match) {
         todos.push({
           file: relPath,

@@ -183,4 +183,16 @@ describe('ESLintRunner', () => {
     expect(result.score).toBe(0);
     expect(result.issues[0].severity).toBe('critical');
   });
+
+  it('uses maxErrors threshold from config', async () => {
+    mockExeca.mockResolvedValue({
+      stdout: JSON.stringify([makeFile('/project/src/index.ts', 12, 0)]),
+    } as never);
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { maxErrors: 15 } },
+    });
+
+    expect(result.status).toBe('warning');
+  });
 });

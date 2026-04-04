@@ -38,6 +38,13 @@ export function defineConfig(config: SickbayConfig): SickbayConfig {
 
 const CONFIG_FILES = ['sickbay.config.ts', 'sickbay.config.js', 'sickbay.config.mjs'];
 
+export function getCheckConfig(config: SickbayConfig | null, checkId: string): CheckConfig | null {
+  if (!config?.checks) return null;
+  const entry = config.checks[checkId];
+  if (typeof entry === 'object' && entry.enabled !== false) return entry;
+  return null;
+}
+
 export function isCheckDisabled(config: SickbayConfig | null, checkId: string): boolean {
   if (!config?.checks) return false;
   const entry = config.checks[checkId];
@@ -75,6 +82,31 @@ export function resolveConfigMeta(config: SickbayConfig | null): ResolvedConfigM
   return { hasCustomConfig, overriddenChecks, disabledChecks };
 }
 
+/** Known threshold keys per configurable runner. Used for validation. */
+export const KNOWN_THRESHOLD_KEYS: Record<string, string[]> = {
+  outdated: ['maxOutdated'],
+  complexity: [
+    'react-component',
+    'custom-hook',
+    'node-service',
+    'route-file',
+    'ts-utility',
+    'config',
+    'test',
+    'general',
+  ],
+  jscpd: ['warnPercent', 'criticalPercent'],
+  coverage: ['lines', 'functions'],
+  eslint: ['maxErrors'],
+  typescript: ['maxErrors'],
+  madge: ['maxCircular'],
+  'todo-scanner': ['patterns'],
+  'asset-size': ['imageWarn', 'imageCritical', 'svgWarn', 'fontWarn', 'totalWarn', 'totalCritical'],
+  'source-map-explorer': ['warnSize', 'failSize'],
+  'license-checker': ['blocklist'],
+  git: ['staleMonths', 'maxRemoteBranches'],
+};
+
 export function validateConfig(config: SickbayConfig, knownCheckIds: string[]): void {
   if (config.weights) {
     for (const [category, value] of Object.entries(config.weights)) {
@@ -85,11 +117,26 @@ export function validateConfig(config: SickbayConfig, knownCheckIds: string[]): 
   }
 
   if (config.checks) {
-    for (const checkId of Object.keys(config.checks)) {
+    for (const [checkId, entry] of Object.entries(config.checks)) {
       if (!knownCheckIds.includes(checkId)) {
         process.stderr.write(
           `Warning: Unknown check "${checkId}" in sickbay.config — it will be ignored.\n`,
         );
+        continue;
+      }
+
+      // Validate threshold keys for configurable runners
+      if (typeof entry === 'object' && entry.thresholds) {
+        const knownKeys = KNOWN_THRESHOLD_KEYS[checkId];
+        if (knownKeys) {
+          for (const key of Object.keys(entry.thresholds)) {
+            if (!knownKeys.includes(key)) {
+              process.stderr.write(
+                `Warning: Unknown threshold key "${key}" for check "${checkId}" — it will be ignored.\n`,
+              );
+            }
+          }
+        }
       }
     }
   }

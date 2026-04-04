@@ -1,6 +1,6 @@
 import { relative } from 'path';
 
-import { loadConfig, isCheckDisabled, resolveConfigMeta } from './config.js';
+import { loadConfig, isCheckDisabled, getCheckConfig, resolveConfigMeta } from './config.js';
 import { AngularBuildConfigRunner } from './integrations/angular-build-config.js';
 import { AngularChangeDetectionRunner } from './integrations/angular-change-detection.js';
 import { AngularLazyRoutesRunner } from './integrations/angular-lazy-routes.js';
@@ -135,7 +135,13 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
       if (!applicable) return null;
 
       options.onCheckStart?.(runner.name);
-      const result = await runner.run(projectPath, { verbose: options.verbose });
+      const checkCfg = getCheckConfig(config, runner.name);
+      const result = await runner.run(projectPath, {
+        verbose: options.verbose,
+        checkConfig: checkCfg
+          ? { thresholds: checkCfg.thresholds, exclude: checkCfg.exclude }
+          : undefined,
+      });
       options.onCheckComplete?.(result);
       return result;
     }),

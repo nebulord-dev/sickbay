@@ -147,4 +147,15 @@ describe('TypeScriptRunner', () => {
     expect(result.score).toBe(0);
     expect(result.issues[0].severity).toBe('critical');
   });
+
+  it('uses maxErrors threshold from config', async () => {
+    const errors = Array.from({ length: 22 }, (_, i) => makeErrorLine(`src/f${i}.ts`)).join('\n');
+    mockExeca.mockResolvedValue({ stdout: errors, stderr: '' } as never);
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { maxErrors: 25 } },
+    });
+
+    expect(result.status).toBe('warning');
+  });
 });

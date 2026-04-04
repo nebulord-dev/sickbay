@@ -15,15 +15,21 @@ vi.mock('../utils/file-helpers.js', () => ({
 }));
 
 vi.mock('../utils/file-types.js', () => ({
-  getThresholds: vi.fn((filePath: string) => {
-    // Default: return general thresholds
-    if (filePath.includes('use') && filePath.endsWith('.ts'))
-      return { warn: 150, critical: 250, fileType: 'custom-hook' };
-    if (filePath.endsWith('.tsx') || filePath.endsWith('.jsx'))
-      return { warn: 300, critical: 500, fileType: 'react-component' };
-    if (filePath.includes('.service.'))
-      return { warn: 500, critical: 800, fileType: 'node-service' };
-    return { warn: 400, critical: 600, fileType: 'general' };
+  FILE_TYPE_THRESHOLDS: {
+    'react-component': { warn: 300, critical: 500 },
+    'custom-hook': { warn: 150, critical: 250 },
+    'node-service': { warn: 500, critical: 800 },
+    'route-file': { warn: 250, critical: 400 },
+    'ts-utility': { warn: 600, critical: 1000 },
+    config: { warn: Infinity, critical: Infinity },
+    test: { warn: Infinity, critical: Infinity },
+    general: { warn: 400, critical: 600 },
+  },
+  classifyFile: vi.fn((filePath: string) => {
+    if (filePath.includes('use') && filePath.endsWith('.ts')) return 'custom-hook';
+    if (filePath.endsWith('.tsx') || filePath.endsWith('.jsx')) return 'react-component';
+    if (filePath.includes('.service.')) return 'node-service';
+    return 'general';
   }),
   getFileTypeLabel: vi.fn((fileType: string) => {
     const labels: Record<string, string> = {
@@ -341,5 +347,25 @@ describe('ComplexityRunner', () => {
     expect(result.score).toBe(80); // 100 - 2*10
     expect(result.issues[0].message).toContain('custom hook');
     expect(result.issues[1].message).toContain('file');
+  });
+
+  it('uses custom thresholds from config', async () => {
+    mockExistsSync.mockImplementation((p) => String(p).endsWith('/src'));
+    mockReaddirSync.mockReturnValue(['BigComponent.tsx'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    // 450 lines — above default react-component warn (300) but below custom warn (500)
+    mockReadFileSync.mockReturnValue(makeLines(450) as any);
+
+    const result = await runner.run('/project', {
+      checkConfig: {
+        thresholds: {
+          'react-component': { warn: 500, critical: 800 },
+        },
+      },
+    });
+
+    expect(result.score).toBe(100);
+    expect(result.issues).toHaveLength(0);
+    expect(result.status).toBe('pass');
   });
 });

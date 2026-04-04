@@ -256,4 +256,24 @@ describe('TodoScannerRunner', () => {
     expect(result.issues).toHaveLength(1);
     expect(result.issues[0].message).toContain('TODO');
   });
+
+  it('uses custom patterns from config', async () => {
+    mockExistsSync.mockReturnValue(true);
+    mockReaddirSync.mockReturnValue(['review.ts'] as any);
+    mockStatSync.mockReturnValue({ isDirectory: () => false } as any);
+    mockReadFileSync.mockReturnValue('// REVIEW: check this logic\nconst x = 1;\n' as any);
+
+    // Default patterns (TODO/FIXME/HACK) — should NOT find REVIEW
+    const defaultResult = await runner.run('/project');
+    expect(defaultResult.issues).toHaveLength(0);
+
+    // Custom patterns including REVIEW — should find it
+    const customResult = await runner.run('/project', {
+      checkConfig: { thresholds: { patterns: ['REVIEW'] } },
+    });
+
+    expect(customResult.issues).toHaveLength(1);
+    expect(customResult.issues[0].message).toContain('REVIEW');
+    expect(customResult.issues[0].message).toContain('check this logic');
+  });
 });

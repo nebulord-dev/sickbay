@@ -195,4 +195,42 @@ describe('CoverageRunner', () => {
     expect(result.status).toBe('fail');
     expect(result.issues[0].severity).toBe('critical');
   });
+
+  it('uses line coverage threshold from config', async () => {
+    // 70% line coverage — below default (80) but above custom (60)
+    const coverage70 = {
+      total: {
+        lines: { pct: 70 },
+        statements: { pct: 70 },
+        functions: { pct: 85 },
+        branches: { pct: 75 },
+      },
+    };
+
+    mockReadPackageJson.mockReturnValue({ devDependencies: { vitest: '^1.0.0' } });
+    mockExistsSync.mockImplementation(
+      (p) =>
+        String(p).includes('@vitest/coverage-v8') ||
+        String(p).includes('sickbay-test-') ||
+        String(p).endsWith('coverage-summary.json'),
+    );
+    mockExeca.mockResolvedValue({} as never);
+    mockReadFileSync.mockImplementation((p) => {
+      if (String(p).includes('sickbay-test-'))
+        return JSON.stringify({
+          numTotalTests: 10,
+          numPassedTests: 10,
+          numFailedTests: 0,
+        }) as never;
+      return JSON.stringify(coverage70) as never;
+    });
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { lines: 60 } },
+    });
+
+    // With custom threshold of 60%, 70% lines should NOT produce a line coverage issue
+    const lineCoverageIssue = result.issues.find((i) => i.message.includes('Line coverage'));
+    expect(lineCoverageIssue).toBeUndefined();
+  });
 });

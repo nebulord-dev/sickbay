@@ -386,4 +386,24 @@ describe('SourceMapExplorerRunner', () => {
       );
     });
   });
+
+  describe('run — custom thresholds from config', () => {
+    it('uses custom size thresholds from config', async () => {
+      // 600KB bundle — above default warnSize (512KB) but below custom (1MB)
+      mockFileExists.mockImplementation((_root, dir) => dir === 'dist');
+      mockGlobby
+        .mockResolvedValueOnce([]) // no source maps
+        .mockResolvedValueOnce(['/project/dist/main.js']);
+
+      mockStatSync.mockReturnValue({ size: 600 * KB } as never);
+
+      const result = await runner.run('/project', {
+        checkConfig: { thresholds: { warnSize: 1048576 } },
+      });
+
+      expect(result.status).toBe('pass');
+      expect(result.score).toBe(100);
+      expect(result.issues).toHaveLength(0);
+    });
+  });
 });
