@@ -1,3 +1,10 @@
+## [1.7.5](https://github.com/nebulord-dev/sickbay/compare/v1.7.4...v1.7.5) (2026-04-04)
+
+
+### Bug Fixes
+
+* **core:** add displayName to BaseRunner so skipped checks show proper names ([fad9bed](https://github.com/nebulord-dev/sickbay/commit/fad9bedb2c69eb01f2f82fe3d93def116560081d))
+
 ## [1.7.4](https://github.com/nebulord-dev/sickbay/compare/v1.7.3...v1.7.4) (2026-04-04)
 
 

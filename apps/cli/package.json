@@ -1,6 +1,6 @@
 {
   "name": "sickbay",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "description": "Zero-config health check CLI for JavaScript and TypeScript projects",
   "license": "MIT",
   "repository": {
