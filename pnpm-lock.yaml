@@ -255,6 +255,9 @@ importers:
       globby:
         specifier: ^16.2.0
         version: 16.2.0
+      jiti:
+        specifier: ^2.6.1
+        version: 2.6.1
       jscpd:
         specifier: ^4.0.8
         version: 4.0.8

@@ -1,3 +1,6 @@
+import { existsSync } from 'fs';
+import { join } from 'path';
+
 /**
  * Scoring categories. Excludes 'unknown-category' from CheckResult['category']
  * because unknown categories have no configurable weight (they fall back to 0.1 in scoring.ts).
@@ -31,4 +34,26 @@ export interface ResolvedConfigMeta {
 
 export function defineConfig(config: SickbayConfig): SickbayConfig {
   return config;
+}
+
+const CONFIG_FILES = ['sickbay.config.ts', 'sickbay.config.js', 'sickbay.config.mjs'];
+
+export async function loadConfig(projectPath: string): Promise<SickbayConfig | null> {
+  const configPath = CONFIG_FILES.map((f) => join(projectPath, f)).find((p) => existsSync(p));
+
+  if (!configPath) return null;
+
+  try {
+    const { createJiti } = await import('jiti');
+    const jiti = createJiti(projectPath);
+    const mod = await jiti.import(configPath);
+    const config = (mod as Record<string, unknown>).default ?? mod;
+    return config as SickbayConfig;
+  } catch (err) {
+    process.stderr.write(
+      `Warning: Failed to load ${configPath}: ${err instanceof Error ? err.message : err}\n` +
+        `Falling back to defaults.\n`,
+    );
+    return null;
+  }
 }

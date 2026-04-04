@@ -33,6 +33,7 @@
     "depcheck": "^1.4.7",
     "execa": "^9.6.1",
     "globby": "^16.2.0",
+    "jiti": "^2.6.1",
     "jscpd": "^4.0.8",
     "knip": "^6.1.0",
     "license-checker": "^25.0.1",

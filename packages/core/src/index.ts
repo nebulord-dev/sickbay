@@ -34,7 +34,7 @@ export {
   SCORE_GOOD,
   SCORE_FAIR,
 } from './constants.js';
-export { defineConfig } from './config.js';
+export { defineConfig, loadConfig } from './config.js';
 export type {
   SickbayConfig,
   CheckConfig,
