@@ -488,16 +488,19 @@ This powers:
 
 Each phase is a standalone deliverable that ships value on its own. The full `SickbayConfig` type ships in Phase A so the schema is stable from day one.
 
-### Phase A: Config Loading + Enable/Disable
+### Phase A: Config Loading + Enable/Disable ✅ Complete (2026-04-04)
 
 - `SickbayConfig` type with full shape (all fields defined)
-- `defineConfig` helper in core, re-exported from CLI
-- `loadConfig()` using jiti — resolution, validation, defaults merging
-- `sickbay init` generates config file with applicable checks as `true`
+- `defineConfig` helper in core, re-exported from CLI via `sickbay/config`
+- `loadConfig()` using jiti — resolution, validation, defaults merging (resolves relative paths)
+- `sickbay init` generates config file with applicable checks as `true` (JSDoc `@type` annotation, no import required)
 - Runners respect `false` / `{ enabled: false }` to skip
 - Report metadata: `hasCustomConfig`, `disabledChecks`, `overriddenChecks`
 - "Custom config active" notice in CLI output and TUI score panel
-- VitePress Configuration Reference page (full reference even for features not yet wired up — documents the complete schema)
+- VitePress Configuration Reference page at `/guide/configuration`
+- jiti externalized from CLI bundle to avoid Node builtin resolution errors
+- knip runner filters `sickbay.config.ts` from unused file false positives
+- `sickbay init` skips config loading during baseline scan (`_config: null`)
 
 ### Phase B: Threshold Overrides
 
