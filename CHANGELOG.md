@@ -1,3 +1,10 @@
+## [1.7.4](https://github.com/nebulord-dev/sickbay/compare/v1.7.3...v1.7.4) (2026-04-04)
+
+
+### Bug Fixes
+
+* **core:** resolve relative paths to absolute before passing to jiti ([e4ee3c4](https://github.com/nebulord-dev/sickbay/commit/e4ee3c40891f81950ff2afd61fec04d0fe330292))
+
 ## [1.7.3](https://github.com/nebulord-dev/sickbay/compare/v1.7.2...v1.7.3) (2026-04-04)
 
 
