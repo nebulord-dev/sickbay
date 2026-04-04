@@ -1,4 +1,4 @@
-export { runSickbay, runSickbayMonorepo } from './runner.js';
+export { runSickbay, runSickbayMonorepo, getAvailableChecks } from './runner.js';
 export { getDependencyTree } from './utils/dep-tree.js';
 export type {
   DependencyTree,

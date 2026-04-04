@@ -171,7 +171,7 @@ vi.mock('./scoring.js', () => ({
 }));
 
 import { loadConfig, isCheckDisabled, resolveConfigMeta } from './config.js';
-import { runSickbay } from './runner.js';
+import { runSickbay, getAvailableChecks } from './runner.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
 
 describe('runSickbay', () => {
@@ -354,5 +354,33 @@ describe('runSickbay', () => {
       const report = await runSickbay({ projectPath: '/test' });
       expect(report.config).toBeUndefined();
     });
+  });
+});
+
+describe('getAvailableChecks', () => {
+  beforeEach(() => {
+    for (const runner of Object.values(allMockRunners)) {
+      runner.isApplicableToContext.mockReturnValue(true);
+    }
+  });
+
+  it('returns all runners when no context provided', () => {
+    const checks = getAvailableChecks();
+    expect(checks.length).toBeGreaterThan(0);
+    expect(checks[0]).toHaveProperty('name');
+    expect(checks[0]).toHaveProperty('category');
+  });
+
+  it('filters by context when provided', () => {
+    const allChecks = getAvailableChecks();
+    // Make some runners not applicable
+    allMockRunners.reactPerf.isApplicableToContext.mockReturnValue(false);
+    const filtered = getAvailableChecks({
+      frameworks: ['react'],
+      runtime: 'browser',
+      buildTool: 'vite',
+      testFramework: null,
+    });
+    expect(filtered.length).toBeLessThan(allChecks.length);
   });
 });

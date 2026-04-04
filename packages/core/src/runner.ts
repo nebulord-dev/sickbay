@@ -47,6 +47,7 @@ import type {
   ToolRunner,
   MonorepoReport,
   PackageReport,
+  ProjectContext,
 } from './types.js';
 
 export interface RunnerOptions {
@@ -99,6 +100,13 @@ const ALL_RUNNERS: ToolRunner[] = [
   new NextMissingBoundariesRunner(),
   new NextSecurityHeadersRunner(),
 ];
+
+export function getAvailableChecks(context?: ProjectContext): { name: string; category: string }[] {
+  const runners = context
+    ? ALL_RUNNERS.filter((r) => r.isApplicableToContext(context))
+    : ALL_RUNNERS;
+  return runners.map((r) => ({ name: r.name, category: r.category }));
+}
 
 export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayReport> {
   const projectPath = options.projectPath ?? process.cwd();
