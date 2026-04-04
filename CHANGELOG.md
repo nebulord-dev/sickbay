@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/nebulord-dev/sickbay/compare/v1.7.0...v1.7.1) (2026-04-04)
+
+
+### Bug Fixes
+
+* **cli:** externalize jiti from bundle and skip config load during init ([8c5aff9](https://github.com/nebulord-dev/sickbay/commit/8c5aff9dcffab069f24cd2f0b1633a89a880d25f))
+
 # [1.7.0](https://github.com/nebulord-dev/sickbay/compare/v1.6.0...v1.7.0) (2026-04-04)
 
 
