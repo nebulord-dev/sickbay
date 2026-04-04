@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/nebulord-dev/sickbay/compare/v1.7.1...v1.7.2) (2026-04-04)
+
+
+### Bug Fixes
+
+* **cli:** use JSDoc type annotation instead of defineConfig import in generated config ([9b547d8](https://github.com/nebulord-dev/sickbay/commit/9b547d8e905425b6f15cdff6e8f3ddef29c5c46d))
+
 ## [1.7.1](https://github.com/nebulord-dev/sickbay/compare/v1.7.0...v1.7.1) (2026-04-04)
 
 
