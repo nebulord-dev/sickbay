@@ -1,5 +1,6 @@
 import { relative } from 'path';
 
+import { loadConfig, isCheckDisabled, resolveConfigMeta } from './config.js';
 import { AngularBuildConfigRunner } from './integrations/angular-build-config.js';
 import { AngularChangeDetectionRunner } from './integrations/angular-change-detection.js';
 import { AngularLazyRoutesRunner } from './integrations/angular-lazy-routes.js';
@@ -39,6 +40,7 @@ import { calculateOverallScore, buildSummary } from './scoring.js';
 import { detectMonorepo } from './utils/detect-monorepo.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
 
+import type { SickbayConfig } from './config.js';
 import type {
   SickbayReport,
   CheckResult,
@@ -57,6 +59,8 @@ export interface RunnerOptions {
   onCheckComplete?: (result: CheckResult) => void;
   onPackageStart?: (name: string) => void;
   onPackageComplete?: (report: PackageReport) => void;
+  /** Pre-loaded config — used internally by runSickbayMonorepo */
+  _config?: SickbayConfig | null;
 }
 
 const ALL_RUNNERS: ToolRunner[] = [
@@ -101,12 +105,17 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
   const projectInfo = await detectProject(projectPath);
   const context = await detectContext(projectPath);
 
+  const config = options._config !== undefined ? options._config : await loadConfig(projectPath);
+  const configMeta = resolveConfigMeta(config);
+
   const candidateRunners = options.checks
     ? ALL_RUNNERS.filter((r) => options.checks!.includes(r.name))
     : ALL_RUNNERS;
 
-  // Filter by context first (synchronous, cheap) then by isApplicable (async, may do I/O)
-  const runners = candidateRunners.filter((r) => r.isApplicableToContext(context));
+  // Filter by context first (synchronous, cheap), then by config, then by isApplicable (async, may do I/O)
+  const runners = candidateRunners
+    .filter((r) => r.isApplicableToContext(context))
+    .filter((r) => !isCheckDisabled(config, r.name));
   options.onRunnersReady?.(runners.map((r) => r.name));
 
   const checks: CheckResult[] = [];
@@ -140,6 +149,7 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
     checks,
     overallScore,
     summary,
+    config: configMeta.hasCustomConfig ? configMeta : undefined,
     quote: options.quotes !== false ? getQuote(overallScore) : undefined,
   };
 }
@@ -152,9 +162,12 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
     throw new Error(`Not a monorepo root: ${rootPath}`);
   }
 
+  const config = await loadConfig(rootPath);
+  const configMeta = resolveConfigMeta(config);
+
   const packageReports = await Promise.all(
     monorepoInfo.packagePaths.map(async (pkgPath): Promise<PackageReport> => {
-      const report = await runSickbay({ ...options, projectPath: pkgPath });
+      const report = await runSickbay({ ...options, projectPath: pkgPath, _config: config });
       const context = await detectContext(pkgPath);
 
       options.onPackageStart?.(report.projectInfo.name);
@@ -200,6 +213,7 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
     packages: packageReports,
     overallScore,
     summary,
+    config: configMeta.hasCustomConfig ? configMeta : undefined,
     quote: options.quotes !== false ? getQuote(overallScore) : undefined,
   };
 }

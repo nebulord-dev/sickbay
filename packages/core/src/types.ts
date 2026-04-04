@@ -15,6 +15,11 @@ export interface SickbayReport {
     warnings: number;
     info: number;
   };
+  config?: {
+    hasCustomConfig: boolean;
+    overriddenChecks: string[];
+    disabledChecks: string[];
+  };
   quote?: Quote;
 }
 
@@ -142,5 +147,10 @@ export interface MonorepoReport {
   packages: PackageReport[];
   overallScore: number;
   summary: { critical: number; warnings: number; info: number };
+  config?: {
+    hasCustomConfig: boolean;
+    overriddenChecks: string[];
+    disabledChecks: string[];
+  };
   quote?: Quote;
 }

@@ -153,6 +153,13 @@ const mockContext = {
   testFramework: null,
 };
 
+vi.mock('./config.js', () => ({
+  loadConfig: vi.fn(),
+  isCheckDisabled: vi.fn(),
+  resolveConfigMeta: vi.fn(),
+  validateConfig: vi.fn(),
+}));
+
 vi.mock('./utils/detect-project.js', () => ({
   detectProject: vi.fn(),
   detectContext: vi.fn(),
@@ -163,6 +170,7 @@ vi.mock('./scoring.js', () => ({
   buildSummary: vi.fn().mockReturnValue({ critical: 0, warnings: 0, info: 0 }),
 }));
 
+import { loadConfig, isCheckDisabled, resolveConfigMeta } from './config.js';
 import { runSickbay } from './runner.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
 
@@ -173,6 +181,13 @@ describe('runSickbay', () => {
     // implementations; re-assert defaults for any runners that tests may have reconfigured)
     vi.mocked(detectProject).mockResolvedValue(mockProjectInfo);
     vi.mocked(detectContext).mockResolvedValue(mockContext);
+    vi.mocked(loadConfig).mockResolvedValue(null);
+    vi.mocked(isCheckDisabled).mockReturnValue(false);
+    vi.mocked(resolveConfigMeta).mockReturnValue({
+      hasCustomConfig: false,
+      overriddenChecks: [],
+      disabledChecks: [],
+    });
 
     for (const runner of Object.values(allMockRunners)) {
       runner.isApplicableToContext.mockReturnValue(true);
@@ -295,5 +310,49 @@ describe('runSickbay', () => {
     const report = await runSickbay({ projectPath: '/p', quotes: false });
 
     expect(report.quote).toBeUndefined();
+  });
+
+  describe('config integration', () => {
+    it('filters out checks disabled by config', async () => {
+      vi.mocked(loadConfig).mockResolvedValue({ checks: { knip: false } });
+      vi.mocked(isCheckDisabled).mockImplementation((_config, id) => id === 'knip');
+      vi.mocked(resolveConfigMeta).mockReturnValue({
+        hasCustomConfig: true,
+        overriddenChecks: [],
+        disabledChecks: ['knip'],
+      });
+
+      const report = await runSickbay({ projectPath: '/test' });
+      expect(allMockRunners.knip.run).not.toHaveBeenCalled();
+      expect(report.config?.hasCustomConfig).toBe(true);
+      expect(report.config?.disabledChecks).toEqual(['knip']);
+    });
+
+    it('attaches config metadata to report when custom config active', async () => {
+      vi.mocked(loadConfig).mockResolvedValue({ checks: { eslint: false } });
+      vi.mocked(isCheckDisabled).mockImplementation((_config, id) => id === 'eslint');
+      vi.mocked(resolveConfigMeta).mockReturnValue({
+        hasCustomConfig: true,
+        overriddenChecks: [],
+        disabledChecks: ['eslint'],
+      });
+
+      const report = await runSickbay({ projectPath: '/test' });
+      expect(report.config).toBeDefined();
+      expect(report.config!.disabledChecks).toContain('eslint');
+    });
+
+    it('omits config field when no custom config', async () => {
+      vi.mocked(loadConfig).mockResolvedValue(null);
+      vi.mocked(isCheckDisabled).mockReturnValue(false);
+      vi.mocked(resolveConfigMeta).mockReturnValue({
+        hasCustomConfig: false,
+        overriddenChecks: [],
+        disabledChecks: [],
+      });
+
+      const report = await runSickbay({ projectPath: '/test' });
+      expect(report.config).toBeUndefined();
+    });
   });
 });
