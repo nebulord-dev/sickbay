@@ -34,3 +34,11 @@ export {
   SCORE_GOOD,
   SCORE_FAIR,
 } from './constants.js';
+export { defineConfig } from './config.js';
+export type {
+  SickbayConfig,
+  CheckConfig,
+  SuppressionRule,
+  Category,
+  ResolvedConfigMeta,
+} from './config.js';
