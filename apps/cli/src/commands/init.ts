@@ -53,13 +53,13 @@ export async function generateConfigFile(projectPath: string): Promise<void> {
 
   const template = `// Threshold overrides, suppressions, and more:
 // https://nebulord-dev.github.io/sickbay/guide/configuration
-import { defineConfig } from 'sickbay/config'
 
-export default defineConfig({
+/** @type {import('sickbay/config').SickbayConfig} */
+export default {
   checks: {
 ${checkLines}
   },
-})
+}
 `;
 
   writeFileSync(configPath, template);

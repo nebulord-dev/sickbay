@@ -30,7 +30,7 @@ describe('generateConfigFile', () => {
     const configPath = join(tempDir, 'sickbay.config.ts');
     expect(existsSync(configPath)).toBe(true);
     const content = readFileSync(configPath, 'utf-8');
-    expect(content).toContain("import { defineConfig } from 'sickbay/config'");
+    expect(content).toContain("@type {import('sickbay/config').SickbayConfig}");
     expect(content).toContain('knip: true');
   });
 
