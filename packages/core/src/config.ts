@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 /**
  * Scoring categories. Excludes 'unknown-category' from CheckResult['category']
@@ -96,13 +96,14 @@ export function validateConfig(config: SickbayConfig, knownCheckIds: string[]): 
 }
 
 export async function loadConfig(projectPath: string): Promise<SickbayConfig | null> {
-  const configPath = CONFIG_FILES.map((f) => join(projectPath, f)).find((p) => existsSync(p));
+  const absProjectPath = resolve(projectPath);
+  const configPath = CONFIG_FILES.map((f) => join(absProjectPath, f)).find((p) => existsSync(p));
 
   if (!configPath) return null;
 
   try {
     const { createJiti } = await import('jiti');
-    const jiti = createJiti(projectPath);
+    const jiti = createJiti(absProjectPath);
     const mod = await jiti.import(configPath);
     const config = (mod as Record<string, unknown>).default ?? mod;
     return config as SickbayConfig;
