@@ -14,6 +14,7 @@ export {
   CATEGORY_WEIGHTS,
 } from './scoring.js';
 export { createExcludeFilter } from './utils/exclude.js';
+export { applySuppression } from './utils/suppress.js';
 export { detectProject, detectPackageManager, detectContext } from './utils/detect-project.js';
 export { detectMonorepo } from './utils/detect-monorepo.js';
 export type {

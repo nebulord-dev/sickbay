@@ -185,7 +185,7 @@ For example, setting `security: 0.50` with all other defaults produces weights o
 
 Weight values must be greater than 0.
 
-### Suppression Rules (coming soon)
+### Suppression Rules
 
 Suppress specific findings that are intentional or irrelevant:
 

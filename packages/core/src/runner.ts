@@ -44,6 +44,7 @@ import {
 } from './scoring.js';
 import { detectMonorepo } from './utils/detect-monorepo.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
+import { applySuppression } from './utils/suppress.js';
 
 import type { SickbayConfig } from './config.js';
 import type {
@@ -151,9 +152,19 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
             ? {
                 thresholds: checkCfg?.thresholds,
                 exclude: mergedExclude.length > 0 ? mergedExclude : undefined,
+                suppress: checkCfg?.suppress,
               }
             : undefined,
       });
+
+      // Apply suppression rules post-run
+      if (checkCfg?.suppress?.length) {
+        const { issues, suppressedCount } = applySuppression(result.issues, checkCfg.suppress);
+        result.issues = issues;
+        if (suppressedCount > 0) {
+          result.metadata = { ...result.metadata, suppressedCount };
+        }
+      }
       options.onCheckComplete?.(result);
       return result;
     }),

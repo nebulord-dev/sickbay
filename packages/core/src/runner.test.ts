@@ -161,6 +161,13 @@ vi.mock('./config.js', () => ({
   validateConfig: vi.fn(),
 }));
 
+vi.mock('./utils/suppress.js', () => ({
+  applySuppression: vi.fn((issues: unknown[]) => ({
+    issues,
+    suppressedCount: 0,
+  })),
+}));
+
 vi.mock('./utils/detect-project.js', () => ({
   detectProject: vi.fn(),
   detectContext: vi.fn(),
@@ -171,9 +178,10 @@ vi.mock('./scoring.js', () => ({
   buildSummary: vi.fn().mockReturnValue({ critical: 0, warnings: 0, info: 0 }),
 }));
 
-import { loadConfig, isCheckDisabled, resolveConfigMeta } from './config.js';
+import { loadConfig, isCheckDisabled, getCheckConfig, resolveConfigMeta } from './config.js';
 import { runSickbay, getAvailableChecks } from './runner.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
+import { applySuppression } from './utils/suppress.js';
 
 describe('runSickbay', () => {
   beforeEach(() => {
@@ -355,6 +363,47 @@ describe('runSickbay', () => {
       const report = await runSickbay({ projectPath: '/test' });
       expect(report.config).toBeUndefined();
     });
+  });
+
+  it('applies suppression rules to runner results', async () => {
+    const mockIssues = [
+      {
+        severity: 'warning' as const,
+        message: 'NEXT_PUBLIC_KEY found',
+        file: 'src/config.ts',
+        reportedBy: ['secrets'],
+      },
+      {
+        severity: 'critical' as const,
+        message: 'AWS_SECRET found',
+        file: 'src/env.ts',
+        reportedBy: ['secrets'],
+      },
+    ];
+    allMockRunners.knip.run.mockResolvedValue({
+      id: 'knip',
+      category: 'code-quality' as const,
+      name: 'knip check',
+      score: 80,
+      status: 'warning' as const,
+      issues: mockIssues,
+      toolsUsed: ['knip'],
+      duration: 0,
+    });
+
+    const suppressRules = [{ match: 'NEXT_PUBLIC_', reason: 'public keys' }];
+    vi.mocked(getCheckConfig).mockReturnValue({ suppress: suppressRules });
+    vi.mocked(applySuppression).mockReturnValue({
+      issues: [mockIssues[1]],
+      suppressedCount: 1,
+    });
+
+    const report = await runSickbay({ projectPath: '/p', checks: ['knip'] });
+
+    expect(applySuppression).toHaveBeenCalledWith(mockIssues, suppressRules);
+    expect(report.checks[0].issues).toHaveLength(1);
+    expect(report.checks[0].issues[0].message).toContain('AWS_SECRET');
+    expect(report.checks[0].metadata).toEqual(expect.objectContaining({ suppressedCount: 1 }));
   });
 });
 

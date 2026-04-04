@@ -111,6 +111,7 @@ export interface RunOptions {
   checkConfig?: {
     thresholds?: Record<string, unknown>;
     exclude?: string[];
+    suppress?: Array<{ path?: string; match?: string; reason: string }>;
   };
 }
 

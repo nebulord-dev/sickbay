@@ -522,12 +522,15 @@ Each phase is a standalone deliverable that ships value on its own. The full `Si
 - 10 new tests covering exclude filtering and weight normalization
 - Validation (values > 0) already in place from Phase A
 
-### Phase D: Suppression
+### Phase D: Suppression ✅ Complete (2026-04-04)
 
-- Per-check `suppress` arrays with `SuppressionRule`
-- Each runner filters its results against suppression rules before returning
-- Suppressed findings tracked in report metadata
+- `applySuppression()` utility using picomatch for path globs + case-insensitive substring for message matching
+- Suppression applied centrally in runner.ts after each runner returns (no runner changes needed)
+- `suppressedCount` tracked in `CheckResult.metadata`
+- `suppress` field added to `RunOptions.checkConfig`
+- AND logic when both `path` and `match` provided; either alone when only one given
 - `reason` field required on all suppression rules
+- 8 new tests covering all suppression scenarios
 
 ### Phase E: Web Config Tab
 
