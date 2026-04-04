@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/nebulord-dev/sickbay/compare/v1.7.5...v1.8.0) (2026-04-04)
+
+
+### Features
+
+* **core:** add threshold overrides for 12 configurable runners (KAN-99 Phase B) ([0d51358](https://github.com/nebulord-dev/sickbay/commit/0d51358651523bd134a4e602a4deb92bcb1b5a0d))
+
 ## [1.7.5](https://github.com/nebulord-dev/sickbay/compare/v1.7.4...v1.7.5) (2026-04-04)
 
 
