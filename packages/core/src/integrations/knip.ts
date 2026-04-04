@@ -85,6 +85,9 @@ export class KnipRunner extends BaseRunner {
         // Unused files (knip v6: per-entry files array)
         (fileIssue.files ?? []).forEach((f) => {
           const filePath = f.name || fileIssue.file;
+          // sickbay.config.ts is a runtime config file loaded by sickbay, not by the project —
+          // knip can't see the usage so it's always a false positive
+          if (/^sickbay\.config\.[cm]?[jt]s$/.test(filePath)) return;
           unusedFiles.push(filePath);
           issues.push({
             severity: 'warning',
