@@ -77,7 +77,7 @@ The file is executed at runtime using [jiti](https://github.com/unjs/jiti) — n
 
 ## Full Schema Reference
 
-The complete config type supports threshold overrides, path exclusions, scoring weight adjustments, and per-check suppression rules. These features are being rolled out incrementally.
+The config supports threshold overrides, path exclusions, scoring weight adjustments, and per-check suppression rules.
 
 ### Threshold Overrides
 
@@ -143,12 +143,12 @@ Checks not listed above are binary (enable/disable only).
 
 ### Path Exclusions
 
-Exclude files from all checks or specific checks:
+Exclude files from all checks or specific checks using glob patterns ([picomatch](https://github.com/micromatch/picomatch) syntax):
 
 ```ts
 /** @type {import('sickbay/config').SickbayConfig} */
 export default {
-  // Global — applies to all checks
+  // Global — applies to all file-scanning checks
   exclude: ['src/generated/**', 'src/legacy/**'],
 
   checks: {
@@ -159,6 +159,8 @@ export default {
   },
 }
 ```
+
+Global and per-check excludes are merged — a file matching either is skipped. Exclude patterns apply to checks that scan files directly: `complexity`, `todo-scanner`, `secrets`, `react-perf`, and `asset-size`.
 
 ### Scoring Weights
 
@@ -179,7 +181,11 @@ export default {
 
 You only need to list categories you want to change. Omitted categories keep their defaults. All values are normalized proportionally — they don't need to sum to 1.
 
-### Suppression Rules
+For example, setting `security: 0.50` with all other defaults produces weights of roughly: security 42%, dependencies 21%, code-quality 21%, performance 12%, git 4%. Security gets the largest share; other categories shrink proportionally but keep their relative ratios.
+
+Weight values must be greater than 0.
+
+### Suppression Rules (coming soon)
 
 Suppress specific findings that are intentional or irrelevant:
 
