@@ -44,11 +44,11 @@
     "vitest": "catalog:"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,mjs}": [
+    "!(fixtures)/**/*.{ts,tsx,js,jsx,mjs}": [
       "oxlint --fix",
       "oxfmt"
     ],
-    "*.{css,html}": [
+    "!(fixtures)/**/*.{css,html}": [
       "oxfmt"
     ]
   },
