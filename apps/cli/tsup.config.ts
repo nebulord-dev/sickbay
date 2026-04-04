@@ -11,6 +11,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   noExternal: ['@nebulord/sickbay-core'],
+  external: ['jiti'],
   define: {
     __VERSION__: JSON.stringify(version),
   },

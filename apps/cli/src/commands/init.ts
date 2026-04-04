@@ -96,7 +96,9 @@ export async function initSickbay(projectPath: string): Promise<void> {
 
   console.log('Running initial scan to generate baseline...\n');
 
-  const report = await runSickbay({ projectPath });
+  // Skip config loading during init — the just-generated config only has defaults
+  // and `sickbay/config` isn't resolvable from the target project yet
+  const report = await runSickbay({ projectPath, _config: null });
 
   writeFileSync(baselinePath, JSON.stringify(report, null, 2));
 

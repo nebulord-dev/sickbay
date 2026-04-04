@@ -44,6 +44,7 @@
     "ink": "^6.8.0",
     "ink-gradient": "^4.0.0",
     "ink-spinner": "^5.0.0",
+    "jiti": "^2.6.1",
     "jscpd": "^4.0.8",
     "knip": "^6.1.0",
     "license-checker": "^25.0.1",

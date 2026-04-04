@@ -115,6 +115,9 @@ importers:
       ink-spinner:
         specifier: ^5.0.0
         version: 5.0.0(ink@6.8.0(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
+      jiti:
+        specifier: ^2.6.1
+        version: 2.6.1
       jscpd:
         specifier: ^4.0.8
         version: 4.0.8
