@@ -179,4 +179,15 @@ describe('ScorePanel', () => {
     );
     expect(lastFrame()).not.toContain('Dr. McCoy');
   });
+
+  it('shows custom config badge when config is active', () => {
+    const report = {
+      ...createMockReport(75),
+      config: { hasCustomConfig: true, overriddenChecks: [], disabledChecks: ['knip'] },
+    };
+    const { lastFrame } = render(
+      <ScorePanel report={report} previousScore={null} animate={false} />,
+    );
+    expect(lastFrame()).toContain('Custom config');
+  });
 });

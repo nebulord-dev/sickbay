@@ -120,4 +120,19 @@ describe('Summary', () => {
     const output = lastFrame();
     expect(output).not.toContain('Dr. McCoy');
   });
+
+  it('shows custom config notice when config is active', () => {
+    const report = {
+      ...createMockReport(),
+      config: { hasCustomConfig: true, overriddenChecks: [], disabledChecks: ['knip'] },
+    };
+    const { lastFrame } = render(<Summary report={report} />);
+    expect(lastFrame()).toContain('Custom config active');
+  });
+
+  it('does not show config notice when no custom config', () => {
+    const report = createMockReport();
+    const { lastFrame } = render(<Summary report={report} />);
+    expect(lastFrame()).not.toContain('Custom config active');
+  });
 });

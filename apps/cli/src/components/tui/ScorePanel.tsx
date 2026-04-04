@@ -99,6 +99,11 @@ export function ScorePanel({ report, previousScore, animate = true }: ScorePanel
           </Text>
         </Box>
       )}
+      {report.config?.hasCustomConfig && (
+        <Text dimColor italic>
+          Custom config
+        </Text>
+      )}
     </Box>
   );
 }

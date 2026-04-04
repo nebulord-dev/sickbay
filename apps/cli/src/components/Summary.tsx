@@ -49,6 +49,15 @@ export function Summary({ report, scanDuration }: SummaryProps) {
           <Text dimColor> — {report.quote.source}</Text>
         </Box>
       )}
+      {report.config?.hasCustomConfig && (
+        <Box marginTop={1}>
+          <Text dimColor italic>
+            Custom config active
+            {report.config.disabledChecks.length > 0 &&
+              ` (${report.config.disabledChecks.length} check${report.config.disabledChecks.length === 1 ? '' : 's'} disabled)`}
+          </Text>
+        </Box>
+      )}
     </Box>
   );
 }
