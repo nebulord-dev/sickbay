@@ -12,6 +12,7 @@ export function buildSuppressSnippet({
   file,
 }: SuppressSnippetInput): string {
   const match = (suppressMatch ?? message ?? '').replace(/'/g, "\\'");
-  const pathComment = file ? ` /* path: '${file}', */` : '';
+  const escapedFile = file?.replace(/'/g, "\\'");
+  const pathComment = escapedFile ? ` /* path: '${escapedFile}', */` : '';
   return `// sickbay.config.ts → checks.${checkId}.suppress\n{ match: '${match}',${pathComment} reason: '' }`;
 }

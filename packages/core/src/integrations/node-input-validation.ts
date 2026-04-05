@@ -59,7 +59,6 @@ export class NodeInputValidationRunner extends BaseRunner {
         {
           severity: 'info',
           message: `Input validation library detected: ${found}`,
-          suppressMatch: found,
           reportedBy: ['node-input-validation'],
         },
       ];

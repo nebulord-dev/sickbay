@@ -113,7 +113,7 @@ function IssueRow({
       message: issue.message,
       file: issue.file,
     });
-    navigator.clipboard.writeText(snippet);
+    navigator.clipboard.writeText(snippet).catch(() => {});
     setSuppressCopied(true);
     setTimeout(() => setSuppressCopied(false), 2000);
   };

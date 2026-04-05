@@ -41,4 +41,13 @@ describe('buildSuppressSnippet', () => {
     });
     expect(result).toContain("match: 'it\\'s broken'");
   });
+
+  it('escapes single quotes in file path', () => {
+    const result = buildSuppressSnippet({
+      checkId: 'test',
+      suppressMatch: 'foo',
+      file: "src/it's-a-file.ts",
+    });
+    expect(result).toContain("/* path: 'src/it\\'s-a-file.ts', */");
+  });
 });
