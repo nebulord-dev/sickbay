@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/nebulord-dev/sickbay/compare/v1.14.3...v1.15.0) (2026-04-05)
+
+
+### Features
+
+* add claude command to generate a skill to give Claude Code users context on sickbay files ([3244be0](https://github.com/nebulord-dev/sickbay/commit/3244be0890c124756c42e4e73db0f4d8503bf0d2))
+
 ## [1.14.3](https://github.com/nebulord-dev/sickbay/compare/v1.14.2...v1.14.3) (2026-04-05)
 
 
