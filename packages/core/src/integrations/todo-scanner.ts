@@ -62,6 +62,7 @@ export class TodoScannerRunner extends BaseRunner {
           ? 'warning'
           : 'info') as Issue['severity'],
         message: `${t.file}:${t.line} — ${t.kind}: ${t.text || '(no description)'}`,
+        suppressMatch: t.file,
         reportedBy: ['todo-scanner'],
       }));
 

@@ -92,6 +92,7 @@ export class KnipRunner extends BaseRunner {
           issues.push({
             severity: 'warning',
             message: `Unused file: ${filePath}`,
+            suppressMatch: filePath,
             file: filePath,
             fix: { description: `Remove ${filePath}` },
             reportedBy: ['knip'],
@@ -120,6 +121,7 @@ export class KnipRunner extends BaseRunner {
         issues.push({
           severity: 'warning',
           message: `Unused dependency: ${dep}`,
+          suppressMatch: dep,
           fix: { description: `Remove ${dep}` },
           reportedBy: ['knip'],
         }),
@@ -129,6 +131,7 @@ export class KnipRunner extends BaseRunner {
         issues.push({
           severity: 'info',
           message: `Unused devDependency: ${dep}`,
+          suppressMatch: dep,
           fix: { description: `Remove ${dep}` },
           reportedBy: ['knip'],
         }),
@@ -138,6 +141,7 @@ export class KnipRunner extends BaseRunner {
         issues.push({
           severity: 'info',
           message: `Unused export: ${exp}`,
+          suppressMatch: exp,
           reportedBy: ['knip'],
         }),
       );

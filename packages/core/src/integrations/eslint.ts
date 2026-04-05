@@ -89,6 +89,7 @@ export class ESLintRunner extends BaseRunner {
           issues.push({
             severity: file.errorCount > 0 ? 'warning' : 'info',
             message: `${relPath}: ${parts.join(', ')}`,
+            suppressMatch: relPath,
             fix: {
               description: `Fix ESLint issues in ${relPath}`,
               command: `eslint ${relPath} --fix`,

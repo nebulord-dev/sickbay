@@ -82,6 +82,7 @@ export class AssetSizeRunner extends BaseRunner {
             issues.push({
               severity: 'critical',
               message: `${asset.path} — ${sizeMB}MB image (exceeds 2MB)`,
+              suppressMatch: asset.path,
               file: asset.path,
               fix: {
                 description:
@@ -93,6 +94,7 @@ export class AssetSizeRunner extends BaseRunner {
             issues.push({
               severity: 'warning',
               message: `${asset.path} — ${sizeKB}KB image (exceeds 500KB)`,
+              suppressMatch: asset.path,
               file: asset.path,
               fix: { description: 'Compress or convert to a more efficient format (WebP, AVIF)' },
               reportedBy: ['asset-size'],
@@ -103,6 +105,7 @@ export class AssetSizeRunner extends BaseRunner {
             issues.push({
               severity: 'warning',
               message: `${asset.path} — ${sizeKB}KB SVG (exceeds 100KB, likely unoptimized)`,
+              suppressMatch: asset.path,
               file: asset.path,
               fix: {
                 description: 'Optimize with SVGO or svgomg.net — remove metadata, simplify paths',
@@ -115,6 +118,7 @@ export class AssetSizeRunner extends BaseRunner {
             issues.push({
               severity: 'warning',
               message: `${asset.path} — ${sizeKB}KB font (exceeds 500KB)`,
+              suppressMatch: asset.path,
               file: asset.path,
               fix: {
                 description:

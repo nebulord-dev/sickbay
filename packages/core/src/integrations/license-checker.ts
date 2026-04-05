@@ -54,6 +54,7 @@ export class LicenseCheckerRunner extends BaseRunner {
           issues.push({
             severity: 'warning',
             message: `${pkg} uses ${license} license — may be incompatible with commercial use`,
+            suppressMatch: pkg.slice(0, pkg.lastIndexOf('@')),
             fix: { description: `Review or replace ${pkg.split('@')[0]}` },
             reportedBy: ['license-checker'],
           });

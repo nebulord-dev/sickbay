@@ -118,6 +118,7 @@ export class MadgeRunner extends BaseRunner {
       const issues: Issue[] = circles.map((cycle) => ({
         severity: 'warning' as const,
         message: `Circular dependency: ${cycle.join(' → ')}`,
+        suppressMatch: cycle[0],
         fix: { description: 'Refactor to break the circular dependency cycle' },
         reportedBy: ['madge'],
       }));
