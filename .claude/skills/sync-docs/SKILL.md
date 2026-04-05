@@ -29,19 +29,20 @@ If $ARGUMENTS specifies a commit range or number of commits, use that. Otherwise
 
 For each changed file or area, determine what kind of change it is:
 
-| Change type                | Triggers doc update in...                                                        |
-| -------------------------- | -------------------------------------------------------------------------------- |
-| New check runner added     | `CONTRIBUTING.md` (pattern), `README.md` (check table), package `core/README.md` |
-| New CLI command or flag    | `CONTRIBUTING.md`, `README.md` (CLI usage), `packages/cli/README.md`             |
-| New fixture added          | `fixtures/README.md`, `CONTRIBUTING.md` (if convention changed)                  |
-| Fixture restructured       | `fixtures/README.md`, `CONTRIBUTING.md`                                          |
-| New architectural pattern  | `CLAUDE.md`, `CONTRIBUTING.md`                                                   |
-| Types changed (`types.ts`) | `packages/core/README.md` (API section)                                          |
-| Scoring weights changed    | `README.md` (scoring table), `packages/core/README.md`                           |
-| New web component or tab   | `packages/web/README.md`                                                         |
-| New TUI panel or hotkey    | `packages/cli/README.md` (TUI section)                                           |
-| Build/tooling change       | `CONTRIBUTING.md` (dev workflow), `README.md`                                    |
-| New Jira tasks added       | No doc update needed — tracked in Jira                                           |
+| Change type                | Triggers doc update in...                                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| New check runner added     | `apps/docs/guide/health-checks.md`, `CONTRIBUTING.md` (pattern), `README.md` (check table), `packages/core/README.md` |
+| New CLI command or flag    | `apps/docs/commands/<command>.md`, `CONTRIBUTING.md`, `README.md` (CLI usage), `apps/cli/README.md`                    |
+| Scoring weights changed    | `apps/docs/guide/scoring.md`, `README.md` (scoring table), `packages/core/README.md`                                  |
+| New config option          | `apps/docs/guide/configuration.md`                                                                                     |
+| New fixture added          | `fixtures/README.md`, `CONTRIBUTING.md` (if convention changed)                                                        |
+| Fixture restructured       | `fixtures/README.md`, `CONTRIBUTING.md`                                                                                |
+| New architectural pattern  | `CLAUDE.md`, `CONTRIBUTING.md`                                                                                         |
+| Types changed (`types.ts`) | `packages/core/README.md` (API section)                                                                                |
+| New web component or tab   | `apps/web/README.md`                                                                                                   |
+| New TUI panel or hotkey    | `apps/docs/commands/tui.md`, `apps/cli/README.md` (TUI section)                                                       |
+| Build/tooling change       | `CONTRIBUTING.md` (dev workflow), `README.md`                                                                          |
+| New Jira tasks added       | No doc update needed — tracked in Jira                                                                                 |
 
 ### Step 3: Read the Potentially Affected Docs
 
@@ -49,13 +50,23 @@ Read each doc that might need updating. Don't propose changes based on assumptio
 
 Docs to check (read only the ones relevant to what changed):
 
+**Docs site** (`apps/docs/`) — user-facing documentation deployed to nebulord-dev.github.io/sickbay:
+
+- `apps/docs/guide/health-checks.md` — all 34 checks with scoring formulas, framework sections
+- `apps/docs/guide/scoring.md` — category weights, score formulas, thresholds
+- `apps/docs/guide/configuration.md` — config file options, per-check settings
+- `apps/docs/guide/monorepo.md` — monorepo detection and per-package reporting
+- `apps/docs/commands/*.md` — one file per CLI command (scan, fix, diff, badge, trend, stats, doctor, init, tui)
+
+**READMEs and contributor docs:**
+
 - `CONTRIBUTING.md` — contributor guide: setup, adding checks, fixtures, languages, dev workflow
 - `README.md` — root README: features list, monorepo structure, CLI usage, check table, scoring
 - `CLAUDE.md` — AI navigation guide: architecture overview, file navigation, patterns
 - `fixtures/README.md` — fixture structure and intentional issues
 - `packages/core/README.md` — core API, checks table, runner pattern
-- `packages/cli/README.md` — CLI flags, commands, TUI panels and hotkeys
-- `packages/web/README.md` — dashboard components, report loading
+- `apps/cli/README.md` — CLI flags, commands, TUI panels and hotkeys
+- `apps/web/README.md` — dashboard components, report loading
 
 ### Step 4: Evaluate Each Doc
 
