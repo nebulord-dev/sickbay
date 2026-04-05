@@ -170,4 +170,89 @@ describe('IssuesList', () => {
     expect(screen.getByText('From A')).toBeInTheDocument();
     expect(screen.getByText('From B')).toBeInTheDocument();
   });
+
+  it('shows suppress button for every issue', () => {
+    const check = makeCheck({
+      issues: [
+        {
+          severity: 'warning',
+          message: 'Unused dependency: lodash',
+          reportedBy: ['knip'],
+          suppressMatch: 'lodash',
+        },
+      ],
+    });
+    render(<IssuesList checks={[check]} />);
+    expect(screen.getByText(/suppress/i)).toBeInTheDocument();
+  });
+
+  it('copies suppress snippet to clipboard when suppress button is clicked', () => {
+    const check = makeCheck({
+      id: 'knip',
+      issues: [
+        {
+          severity: 'warning',
+          message: 'Unused dependency: lodash',
+          reportedBy: ['knip'],
+          suppressMatch: 'lodash',
+        },
+      ],
+    });
+    render(<IssuesList checks={[check]} />);
+    fireEvent.click(screen.getByText(/suppress/i));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      expect.stringContaining("match: 'lodash'"),
+    );
+  });
+
+  it('includes commented-out path in suppress snippet when issue has a file', () => {
+    const check = makeCheck({
+      id: 'secrets',
+      issues: [
+        {
+          severity: 'critical',
+          message: 'AWS Access Key detected',
+          file: 'src/config.ts',
+          reportedBy: ['secrets'],
+          suppressMatch: 'AWS Access Key',
+        },
+      ],
+    });
+    render(<IssuesList checks={[check]} />);
+    fireEvent.click(screen.getByText(/suppress/i));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      expect.stringContaining("/* path: 'src/config.ts', */"),
+    );
+  });
+
+  it('falls back to message when suppressMatch is not set', () => {
+    const check = makeCheck({
+      id: 'git',
+      issues: [{ severity: 'info', message: 'Last commit was 45 days ago', reportedBy: ['git'] }],
+    });
+    render(<IssuesList checks={[check]} />);
+    fireEvent.click(screen.getByText(/suppress/i));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      expect.stringContaining("match: 'Last commit was 45 days ago'"),
+    );
+  });
+
+  it('uses checkId from parent CheckResult for config path', () => {
+    const check = makeCheck({
+      id: 'npm-audit',
+      issues: [
+        {
+          severity: 'critical',
+          message: '[lodash] Prototype Pollution',
+          reportedBy: ['npm-audit'],
+          suppressMatch: 'lodash',
+        },
+      ],
+    });
+    render(<IssuesList checks={[check]} />);
+    fireEvent.click(screen.getByText(/suppress/i));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      expect.stringContaining('checks.npm-audit.suppress'),
+    );
+  });
 });

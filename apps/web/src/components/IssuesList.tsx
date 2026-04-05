@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { buildSuppressSnippet } from '../lib/suppress-snippet.js';
+
 import type { CheckResult, Issue } from '@nebulord/sickbay-core';
 
 interface IssuesListProps {
@@ -45,6 +47,7 @@ export function IssuesList({ checks }: IssuesListProps) {
             key={`${issue.checkName}-${issue.message}`}
             issue={issue}
             checkName={issue.checkName}
+            checkId={issue.checkId}
           />
         ))}
       </div>
@@ -52,7 +55,15 @@ export function IssuesList({ checks }: IssuesListProps) {
   );
 }
 
-function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
+function IssueRow({
+  issue,
+  checkName,
+  checkId,
+}: {
+  issue: Issue & { checkId: string };
+  checkName: string;
+  checkId: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   const copy = () => {
@@ -61,6 +72,20 @@ function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  };
+
+  const [suppressCopied, setSuppressCopied] = useState(false);
+
+  const copySuppress = () => {
+    const snippet = buildSuppressSnippet({
+      checkId,
+      suppressMatch: issue.suppressMatch,
+      message: issue.message,
+      file: issue.file,
+    });
+    navigator.clipboard.writeText(snippet);
+    setSuppressCopied(true);
+    setTimeout(() => setSuppressCopied(false), 2000);
   };
 
   const color =
@@ -83,6 +108,12 @@ function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
             {copied ? '✓ copied' : issue.fix.command}
           </button>
         )}
+        <button
+          onClick={copySuppress}
+          className="shrink-0 text-xs text-gray-500 hover:text-accent font-mono transition-colors"
+        >
+          {suppressCopied ? '✓ copied' : '⊘ suppress'}
+        </button>
       </div>
 
       {issue.file && (
