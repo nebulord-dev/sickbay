@@ -10,6 +10,11 @@ vi.mock('fs', () => ({
   readFileSync: vi.fn(),
 }));
 
+const mockLoadConfig = vi.fn();
+vi.mock('@nebulord/sickbay-core', () => ({
+  loadConfig: (...args: unknown[]) => mockLoadConfig(...args),
+}));
+
 import { existsSync, readFileSync } from 'fs';
 
 import { serveWeb } from './web.js';
@@ -215,6 +220,39 @@ describe('serveWeb', () => {
       expect(res.status).toBe(500);
       const data = (await res.json()) as { error: string };
       expect(data.error).toContain('API rate limit');
+    });
+
+    it('/sickbay-config.json returns 200 with config data when config file exists', async () => {
+      const configData = { checks: { knip: false }, weights: { security: 0.5 } };
+      mockLoadConfig.mockResolvedValue(configData);
+
+      const url = await serveWeb(makeReport(), 0);
+
+      const res = await fetch(`${url}/sickbay-config.json`);
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('application/json');
+
+      const data = await res.json();
+      expect(data.checks.knip).toBe(false);
+      expect(data.weights.security).toBe(0.5);
+    });
+
+    it('/sickbay-config.json returns 404 when no config file found', async () => {
+      mockLoadConfig.mockResolvedValue(null);
+
+      const url = await serveWeb(makeReport(), 0);
+
+      const res = await fetch(`${url}/sickbay-config.json`);
+      expect(res.status).toBe(404);
+    });
+
+    it('/sickbay-config.json returns 500 when loadConfig throws', async () => {
+      mockLoadConfig.mockRejectedValue(new Error('jiti parse error'));
+
+      const url = await serveWeb(makeReport(), 0);
+
+      const res = await fetch(`${url}/sickbay-config.json`);
+      expect(res.status).toBe(500);
     });
 
     it('serves an existing static file with the correct content-type', async () => {

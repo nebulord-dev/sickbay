@@ -22,6 +22,7 @@ function fmt(n: number): string {
 import { About } from './About.js';
 import { AISummary } from './AISummary.js';
 import { CodebaseStats } from './CodebaseStats.js';
+import { ConfigTab } from './ConfigTab.js';
 import { CriticalIssues } from './CriticalIssues.js';
 import { DependencyList } from './DependencyList.js';
 import { HistoryChart } from './HistoryChart.js';
@@ -37,7 +38,7 @@ interface DashboardProps {
   report: SickbayReport | MonorepoReport;
 }
 
-type View = 'overview' | 'issues' | 'dependencies' | 'codebase' | 'history' | 'about';
+type View = 'overview' | 'issues' | 'dependencies' | 'codebase' | 'history' | 'config' | 'about';
 
 function isMonorepoReport(r: SickbayReport | MonorepoReport): r is MonorepoReport {
   return 'isMonorepo' in r;
@@ -364,6 +365,15 @@ export function Dashboard({ report }: DashboardProps) {
                     history
                   </button>
                 )}
+                {activeReport?.config?.hasCustomConfig && (
+                  <button
+                    onClick={() => setView('config')}
+                    className={`px-3 py-1 rounded text-sm font-mono transition-colors
+                      ${view === 'config' ? 'bg-accent text-black font-semibold' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    config
+                  </button>
+                )}
               </div>
               <div className="flex gap-2">
                 {(!monorepo || selectedPackageIdx >= 0) && (
@@ -437,6 +447,8 @@ export function Dashboard({ report }: DashboardProps) {
                     least once
                   </div>
                 ))}
+
+              {view === 'config' && activeReport && <ConfigTab report={activeReport} />}
 
               {view === 'about' && <About report={activeReport} />}
             </div>

@@ -4,7 +4,7 @@ import { join, extname } from 'path';
 import { fileURLToPath } from 'url';
 
 import type { AIService } from '../services/ai.js';
-import type { SickbayReport, MonorepoReport } from '@nebulord/sickbay-core';
+import type { SickbayReport, MonorepoReport, SickbayConfig } from '@nebulord/sickbay-core';
 
 /**
  * This module implements a simple HTTP server to serve a web dashboard for visualizing Sickbay reports.
@@ -129,6 +129,26 @@ export async function serveWeb(
         res.end(readFileSync(treePath, 'utf-8'));
       } else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end('{}');
+      }
+      return;
+    }
+
+    // Serve project config
+    if (url === '/sickbay-config.json') {
+      const basePath = 'isMonorepo' in report ? report.rootPath : report.projectPath;
+      try {
+        const { loadConfig } = await import('@nebulord/sickbay-core');
+        const config = await loadConfig(basePath);
+        if (config) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(config));
+        } else {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end('{}');
+        }
+      } catch {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end('{}');
       }
       return;
