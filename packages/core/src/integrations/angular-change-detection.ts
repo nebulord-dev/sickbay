@@ -41,6 +41,7 @@ export class AngularChangeDetectionRunner extends BaseRunner {
         severity: 'warning' as const,
         message: `${file} — component missing OnPush change detection`,
         file,
+        suppressMatch: file,
         fix: {
           description:
             'Add `changeDetection: ChangeDetectionStrategy.OnPush` to the @Component decorator to prevent unnecessary re-renders.',

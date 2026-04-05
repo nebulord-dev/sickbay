@@ -40,6 +40,7 @@ export class AngularSubscriptionsRunner extends BaseRunner {
         severity: 'warning' as const,
         message: `${file} — possible unguarded subscription (no takeUntilDestroyed, takeUntil, or ngOnDestroy found)`,
         file,
+        suppressMatch: file,
         fix: {
           description:
             'Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or call `.unsubscribe()` in `ngOnDestroy` to prevent memory leaks.',

@@ -34,6 +34,7 @@ export class NextImagesRunner extends BaseRunner {
         severity: 'warning' as const,
         message: `${file} — raw image element; use next/image for automatic optimization`,
         file,
+        suppressMatch: file,
         fix: {
           description:
             'Replace <img> with the <Image> component from next/image for automatic optimization, lazy loading, and Core Web Vitals improvements.',

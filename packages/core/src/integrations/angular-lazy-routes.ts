@@ -61,6 +61,7 @@ export class AngularLazyRoutesRunner extends BaseRunner {
               severity: 'warning',
               message: `${relPath}:${i + 1} — static route component import; consider lazy loading`,
               file: relPath,
+              suppressMatch: relPath,
               fix: {
                 description:
                   "Replace `component: MyComponent` with `loadComponent: () => import('./my.component').then(m => m.MyComponent)` to enable route-level code splitting.",

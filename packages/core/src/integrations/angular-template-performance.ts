@@ -80,6 +80,7 @@ function checkNgForTrackBy(template: string, relPath: string, issues: Issue[]): 
         severity: 'warning',
         message: `${relPath} — *ngFor without trackBy causes full list re-renders on any array change`,
         file: relPath,
+        suppressMatch: relPath,
         fix: {
           description:
             'Add a trackBy function to the *ngFor directive (e.g. *ngFor="let item of items; trackBy: trackById").',
@@ -101,6 +102,7 @@ function checkForTrack(template: string, relPath: string, issues: Issue[]): void
         severity: 'warning',
         message: `${relPath} — @for without track expression causes full list re-renders`,
         file: relPath,
+        suppressMatch: relPath,
         fix: {
           description:
             'Add a track expression to the @for block (e.g. @for (item of items; track item.id)).',
@@ -121,8 +123,9 @@ function checkFunctionCalls(template: string, relPath: string, issues: Issue[]):
     if (fnName === '$any' || fnName === '$event') continue;
     issues.push({
       severity: 'warning',
-      message: `${relPath} — function call {{ ${fnName}() }} in template re-runs on every change detection cycle`,
+      message: `${relPath} — function call \`${fnName}()\` in template re-runs on every change detection cycle`,
       file: relPath,
+      suppressMatch: relPath,
       fix: {
         description:
           'Replace the function call with a pre-computed property, a pipe, or use memoization to avoid re-execution on every change detection cycle.',
@@ -138,8 +141,9 @@ function checkFunctionCalls(template: string, relPath: string, issues: Issue[]):
     if (fnName === '$any' || fnName === '$event') continue;
     issues.push({
       severity: 'warning',
-      message: `${relPath} — function call ${fnName}() in property binding re-runs on every change detection cycle`,
+      message: `${relPath} — function call \`${fnName}()\` in property binding re-runs on every change detection cycle`,
       file: relPath,
+      suppressMatch: relPath,
       fix: {
         description:
           'Replace the function call with a pre-computed property, a pipe, or use memoization to avoid re-execution on every change detection cycle.',
