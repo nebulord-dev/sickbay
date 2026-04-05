@@ -1,3 +1,20 @@
+# [1.13.0](https://github.com/nebulord-dev/sickbay/compare/v1.12.0...v1.13.0) (2026-04-05)
+
+
+### Bug Fixes
+
+* address PR review feedback for suppress snippet (KAN-140) ([c6ead8f](https://github.com/nebulord-dev/sickbay/commit/c6ead8fdc005db369435a3991235072d71b97e3e))
+
+
+### Features
+
+* **core:** add suppressMatch field to Issue type (KAN-140) ([b77d510](https://github.com/nebulord-dev/sickbay/commit/b77d510532adbe8cd5959144f7caaf50a7946fa3))
+* **core:** add suppressMatch to framework-specific runners (KAN-140) ([7b1dfd7](https://github.com/nebulord-dev/sickbay/commit/7b1dfd73c2ea65c53883cfb762dbd8f689a9b376))
+* **core:** add suppressMatch to universal runners (KAN-140) ([9654f2e](https://github.com/nebulord-dev/sickbay/commit/9654f2e892812f7a0bc93ef093bc705e90cf9e13))
+* **web:** add suppress button to IssueRow in web dashboard ([bfc2c90](https://github.com/nebulord-dev/sickbay/commit/bfc2c90fe03592654fe5c5c29704ef22487ffbab))
+* **web:** add suppress info popover to issues tab (KAN-140) ([b4e119a](https://github.com/nebulord-dev/sickbay/commit/b4e119a2faa67dee1380604277dbbf23a8945b34))
+* **web:** add suppress snippet generation utility (KAN-140) ([28b254b](https://github.com/nebulord-dev/sickbay/commit/28b254b5cdab0e17acbcc0a8edf8ebe855ad9aa2))
+
 # [1.12.0](https://github.com/nebulord-dev/sickbay/compare/v1.11.0...v1.12.0) (2026-04-05)
 
 ### Features
