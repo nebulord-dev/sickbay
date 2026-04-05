@@ -1,3 +1,10 @@
+## [1.14.2](https://github.com/nebulord-dev/sickbay/compare/v1.14.1...v1.14.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* suppressed runner should affect the score ([d2ce56a](https://github.com/nebulord-dev/sickbay/commit/d2ce56aa1a16bf6310581cfab3efbd7f8d911fdf))
+
 ## [1.14.1](https://github.com/nebulord-dev/sickbay/compare/v1.14.0...v1.14.1) (2026-04-05)
 
 
