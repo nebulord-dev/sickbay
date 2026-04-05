@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/nebulord-dev/sickbay/compare/v1.11.0...v1.12.0) (2026-04-05)
+
+
+### Features
+
+* **core:** add Angular, Next.js, and Universal advisors (KAN-141, KAN-142, KAN-143) ([0bac709](https://github.com/nebulord-dev/sickbay/commit/0bac7098c700a93a135176dd3aa1a5af331c96b1))
+
 # [1.11.0](https://github.com/nebulord-dev/sickbay/compare/v1.10.3...v1.11.0) (2026-04-05)
 
 
