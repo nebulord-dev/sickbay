@@ -255,4 +255,25 @@ describe('IssuesList', () => {
       expect.stringContaining('checks.npm-audit.suppress'),
     );
   });
+
+  it('shows suppress info popover when info icon is clicked', () => {
+    const check = makeCheck({
+      issues: [{ severity: 'warning', message: 'Test', reportedBy: ['test'] }],
+    });
+    render(<IssuesList checks={[check]} />);
+    fireEvent.click(screen.getByTitle('About suppress rules'));
+    expect(screen.getByText(/copy a suppression rule/)).toBeInTheDocument();
+  });
+
+  it('hides suppress info popover when info icon is clicked again', () => {
+    const check = makeCheck({
+      issues: [{ severity: 'warning', message: 'Test', reportedBy: ['test'] }],
+    });
+    render(<IssuesList checks={[check]} />);
+    const icon = screen.getByTitle('About suppress rules');
+    fireEvent.click(icon);
+    expect(screen.getByText(/copy a suppression rule/)).toBeInTheDocument();
+    fireEvent.click(icon);
+    expect(screen.queryByText(/copy a suppression rule/)).not.toBeInTheDocument();
+  });
 });
