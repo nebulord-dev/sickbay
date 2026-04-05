@@ -43,6 +43,7 @@ export default defineConfig({
           { text: 'Health Checks', link: '/guide/health-checks' },
           { text: 'Monorepo Support', link: '/guide/monorepo' },
           { text: 'Data Directory', link: '/guide/data-directory' },
+          { text: 'Credits', link: '/guide/credits' },
         ],
       },
       {

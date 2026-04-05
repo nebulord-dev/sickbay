@@ -36,7 +36,7 @@ A zero-config health check CLI for JavaScript and TypeScript projects. Run `sick
 | ------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | **React**           | ✅ Supported   | `react-perf`, `asset-size`                                                                                             |
 | **Next.js**         | ✅ Supported   | `next-images`, `next-link`, `next-fonts`, `next-missing-boundaries`, `next-security-headers`, `next-client-components` |
-| **Angular**         | ✅ Supported   | `angular-change-detection`, `angular-lazy-routes`, `angular-strict`, `angular-subscriptions`                           |
+| **Angular**         | ✅ Supported   | `angular-change-detection`, `angular-lazy-routes`, `angular-strict`, `angular-subscriptions`, `angular-build-config`, `angular-security`, `angular-template-performance` |
 | **Node.js**         | ✅ Supported   | `node-security`, `node-input-validation`, `node-async-errors`                                                          |
 | **TypeScript**      | ✅ Supported   | `typescript` (type error reporting)                                                                                    |
 | **Vue**             | 🔜 Coming Soon | —                                                                                                                      |
@@ -224,7 +224,7 @@ Sickbay automatically detects your project type and runs only applicable checks.
 
 **React:** `react-perf` · `asset-size`
 
-**Angular:** `angular-change-detection` · `angular-lazy-routes` · `angular-strict` · `angular-subscriptions`
+**Angular:** `angular-change-detection` · `angular-lazy-routes` · `angular-strict` · `angular-subscriptions` · `angular-build-config` · `angular-security` · `angular-template-performance`
 
 **Next.js:** `next-images` · `next-link` · `next-fonts` · `next-missing-boundaries` · `next-security-headers` · `next-client-components`
 
@@ -334,7 +334,7 @@ See [`fixtures/README.md`](fixtures/README.md) for the full list of intentional 
                   └──────┬──────┘
           ┌──────────────┼──────────────┐
           ▼              ▼              ▼
-     KnipRunner    AuditRunner    GitRunner ...  (21 total)
+     KnipRunner    AuditRunner    GitRunner ...  (34 total)
           │              │              │
           └──────────────┼──────────────┘
                          │ SickbayReport / MonorepoReport JSON
@@ -348,6 +348,18 @@ See [`fixtures/README.md`](fixtures/README.md) for the full list of intentional 
                   │  + browser  │
                   └─────────────┘
 ```
+
+---
+
+## Powered By
+
+Sickbay orchestrates these excellent open-source tools:
+
+[knip](https://github.com/webpro-nl/knip) · [depcheck](https://github.com/depcheck/depcheck) · [madge](https://github.com/pahen/madge) · [jscpd](https://github.com/kucherenko/jscpd) · [source-map-explorer](https://github.com/danvk/source-map-explorer) · [license-checker](https://github.com/davglass/license-checker) · [ESLint](https://github.com/eslint/eslint) · [TypeScript](https://github.com/microsoft/TypeScript)
+
+Built with [Ink](https://github.com/vadimdemedes/ink) · [React](https://github.com/facebook/react) · [Vite](https://github.com/vitejs/vite) · [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) · [Commander.js](https://github.com/tj/commander.js)
+
+→ [Full credits and acknowledgments](https://nebulord-dev.github.io/sickbay/guide/credits)
 
 ---
 
