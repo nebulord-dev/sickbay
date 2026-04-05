@@ -20,11 +20,11 @@ Transform a feature request into a **comprehensive implementation plan** through
 
 ## Planning Process
 
-### Phase 1: Orient to the Kanban and Roadmap
+### Phase 1: Orient to Jira and the Roadmap
 
 Before anything else:
 
-- Read `.claude/kanban.md` — confirm the feature is in the backlog, check which roadmap phase it belongs to, and verify it isn't blocked by upstream work (e.g. features marked "do not implement before polyglot/monorepo")
+- Check the Jira board ([KAN project](https://nebulord.atlassian.net/jira/software/projects/KAN/boards/1), epic KAN-5) using Atlassian Rovo MCP tools — confirm the feature exists or needs a ticket, check which roadmap phase it belongs to, and verify it isn't blocked by upstream work
 - If the feature is blocked, stop and report why rather than producing a plan for something that can't be built yet
 - Note any related tasks already in progress that could conflict or overlap
 

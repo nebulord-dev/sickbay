@@ -40,7 +40,7 @@ For each changed file or area, determine what kind of change it is:
 | New web component or tab   | `packages/web/README.md`                                                         |
 | New TUI panel or hotkey    | `packages/cli/README.md` (TUI section)                                           |
 | Build/tooling change       | `CONTRIBUTING.md` (dev workflow), `README.md`                                    |
-| New kanban tasks added     | No doc update needed — kanban is self-documenting                                |
+| New Jira tasks added       | No doc update needed — tracked in Jira                                           |
 
 ### Step 3: Read the Potentially Affected Docs
 

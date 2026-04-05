@@ -1,10 +1,20 @@
 # Sickbay Monorepo - Claude Code Guide
 
-## Kanban Board
+## Task Tracking
 
-Project tasks are tracked in `.claude/kanban.md`. When the user mentions tasks, the board, or asks to add/move/update/list tasks, always read that file first, then edit it. Columns: Backlog → In Progress → Done.
+Project tasks are tracked in **Jira** — project [Ricochet Devs (KAN)](https://nebulord.atlassian.net/jira/software/projects/KAN/boards/1), epic [KAN-5 — Sickbay](https://nebulord.atlassian.net/browse/KAN-5). Use the Atlassian Rovo MCP tools (cloud ID `00fce82c-0eef-4c5b-8d2a-1c101e580369`) to read, create, and update tasks.
 
-When a task is completed, move it from In Progress to Done immediately — do not wait to be asked. If work was done that matches a backlog task (even one not explicitly pulled into In Progress), move it to Done.
+### Label Reference
+
+| Label             | Meaning                                                  |
+| ----------------- | -------------------------------------------------------- |
+| `auto`            | Can be executed headless from a written plan             |
+| `collab`          | Needs user in the loop for design/UX/product decisions   |
+| `plan-auto`       | Needs a planning session, then execution can be headless |
+| `blocked`         | Explicitly blocked by prerequisite work                  |
+| `tui-enhancement` | TUI-specific feature or improvement                      |
+| `icebox`          | Low priority / deferred                                  |
+| `phase-N`         | Roadmap phase the task belongs to                        |
 
 ## Headless Execution Workflow
 
@@ -20,24 +30,16 @@ Tasks are executed via a two-phase workflow:
 - The `ready/` subfolder is the approval gate — only plans there get picked up by the script
 - Never combine multiple tasks into a single plan
 
-### Kanban Automation Tags
-
-Each backlog task is tagged with one of:
-
-| Tag           | Meaning                                                                    |
-| ------------- | -------------------------------------------------------------------------- |
-| `[Auto]`      | Can be executed headless from a written plan — no mid-task judgment needed |
-| `[Plan→Auto]` | Needs a collaborative planning session, then execution can be headless     |
-| `[Collab]`    | Needs the user in the loop throughout for design/UX/product decisions      |
-
 This document helps Claude Code understand the Sickbay codebase structure and where to look when making updates.
 
 ## Project Overview
 
-**Sickbay** is a zero-config health check CLI for React projects that provides:
+**Sickbay** is a zero-config health check CLI for JavaScript/TypeScript projects that provides:
 
-- 15 integrated checks across 5 categories (dependencies, security, code quality, performance, git)
-- Animated terminal UI built with Ink (React for terminals)
+- 34 checks across 5 categories (dependencies, security, code quality, performance, git)
+- Framework-aware: React, Next.js, Angular, Node.js — only relevant checks run per project
+- Monorepo support: auto-detects pnpm/npm/yarn/turbo/nx/lerna workspaces, per-package reporting
+- Animated terminal UI built with Ink (React for terminals) + persistent TUI dashboard
 - Web dashboard with AI-powered insights using Claude
 - Structured JSON output for CI/CD integration
 
@@ -51,9 +53,11 @@ This is a **pnpm workspace** monorepo managed with **Turbo**. The packages have 
 sickbay (depends on core)
     ↓
 @nebulord/sickbay-web (independent, but served by CLI)
+
+apps/docs — VitePress documentation site (nebulord-dev.github.io/sickbay)
 ```
 
-The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turbo build pipeline) used for testing Sickbay against real project types. It contains two packages: `fixtures/packages/react-app` (moderately healthy React app) and `fixtures/packages/node-api` (intentionally broken Node API with hardcoded secrets, circular deps, outdated packages, duplicate code, no tests, etc.). See `fixtures/README.md` for the full breakdown of intentional issues and how to add new fixtures.
+The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turbo build pipeline) used for testing Sickbay against real project types. It contains four packages: `fixtures/packages/react-app` (moderately healthy React app), `fixtures/packages/node-api` (intentionally broken Node API), `fixtures/packages/next-app` (Next.js app with intentional issues), and `fixtures/packages/angular-app` (Angular app with intentional issues). See `fixtures/README.md` for the full breakdown of intentional issues and how to add new fixtures.
 
 ### Build System
 
@@ -94,12 +98,14 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 **Key Files**:
 
 - `src/runner.ts` - Main orchestrator, runs checks in parallel via `Promise.allSettled`
-- `src/types.ts` - Core TypeScript interfaces (`Sickbay`, `CheckResult`, `Issue`)
+- `src/types.ts` - Core TypeScript interfaces (`SickbayReport`, `CheckResult`, `Issue`, `MonorepoReport`)
 - `src/scoring.ts` - Weighted scoring logic (security 30%, dependencies 25%, etc.)
-- `src/integrations/` - Individual check runners (15 total)
+- `src/config.ts` - Config loading and validation (`sickbay.config.ts`)
+- `src/integrations/` - Individual check runners (34 total, framework-scoped)
   - Each extends `BaseRunner` and implements `run()` method
-  - Examples: `knip.ts`, `npm-audit.ts`, `eslint.ts`, `git.ts`
-- `src/utils/` - Shared utilities (file detection, command execution)
+  - Universal: `knip.ts`, `npm-audit.ts`, `eslint.ts`, `git.ts`, etc.
+  - Framework-specific: `react-perf.ts`, `next-*.ts`, `angular-*.ts`, `node-*.ts`
+- `src/utils/` - Shared utilities (file detection, command execution, monorepo detection)
 
 **When to modify**:
 
@@ -154,8 +160,8 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 - `src/components/Dashboard.tsx` - Main layout (sidebar + tabbed content)
 - `src/components/ScoreCard.tsx` - Circular score displays per category
 - `src/components/IssuesList.tsx` - Filterable/sortable issues table
-- `src/components/AIInsights.tsx` - Claude-powered analysis drawer (if API key present)
-- `src/components/ChatBot.tsx` - Interactive AI chat interface
+- `src/components/AISummary.tsx` - Claude-powered analysis drawer (if API key present)
+- `src/components/ChatDrawer.tsx` - Interactive AI chat interface
 - `src/lib/load-report.ts` - Report loading logic (HTTP, query params, localStorage)
 
 **Report Loading Priority**:
@@ -167,7 +173,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 **When to modify**:
 
 - Adding dashboard features → Edit components in `src/components/`
-- Changing AI integration → Edit `AIInsights.tsx` or `ChatBot.tsx`
+- Changing AI integration → Edit `AISummary.tsx` or `ChatDrawer.tsx`
 - Modifying report loading → Edit `src/lib/load-report.ts`
 - Styling changes → Edit `src/index.css` or Tailwind config
 
@@ -262,30 +268,41 @@ packages/core/src/
 ├── runner.ts             # Main orchestrator
 ├── scoring.ts            # Weighted scoring
 ├── types.ts              # TypeScript interfaces
-├── integrations/         # 15 check runners
-│   ├── knip.ts
-│   ├── npm-audit.ts
-│   ├── eslint.ts
+├── config.ts             # Config loading (sickbay.config.ts)
+├── constants.ts          # Shared constants
+├── quotes/               # Star Trek doctor quotes
+├── integrations/         # 34 check runners (framework-scoped)
+│   ├── base.ts           # BaseRunner abstract class
+│   ├── knip.ts, depcheck.ts, npm-audit.ts, ...  # Universal
+│   ├── react-perf.ts     # React-specific
+│   ├── next-*.ts         # Next.js-specific (6 runners)
+│   ├── angular-*.ts      # Angular-specific (7 runners)
+│   ├── node-*.ts         # Node.js-specific (3 runners)
 │   └── ...
 └── utils/                # Shared helpers
-    ├── exec.ts           # Command execution
-    └── detect.ts         # Project detection
+    ├── detect-project.ts # Framework/runtime detection
+    ├── detect-monorepo.ts # Monorepo detection
+    ├── file-helpers.ts   # File utilities
+    └── ...
 ```
 
 ### CLI Package Structure
 
 ```
 apps/cli/src/
-├── index.ts              # Commander entry
+├── index.ts              # Commander entry — all subcommands registered here
 ├── components/           # Ink UI components
-│   ├── App.tsx
-│   ├── ProgressList.tsx
-│   ├── CheckResult.tsx
-│   └── ...
-├── commands/
-│   └── web.ts            # HTTP server
-└── services/
-    └── ai.ts             # AI integration (if applicable)
+│   ├── App.tsx           # Root component (scan + results phases)
+│   ├── ProgressList.tsx, CheckResult.tsx, Summary.tsx, QuickWins.tsx, ...
+│   └── tui/              # Persistent TUI dashboard
+│       ├── TuiApp.tsx    # TUI root — layout, keyboard input, state
+│       ├── HealthPanel.tsx, ScorePanel.tsx, TrendPanel.tsx, ...
+│       └── hooks/        # useFileWatcher, useGitStatus, useSickbayRunner, ...
+├── commands/             # Subcommand implementations
+│   ├── web.ts, fix.ts, diff.ts, badge.ts, trend.ts, stats.ts, doctor.ts, init.ts
+└── lib/                  # Shared utilities
+    ├── history.ts        # Trend history read/write
+    └── update-check.ts   # npm update notifications
 ```
 
 ### Web Package Structure
@@ -296,13 +313,17 @@ apps/web/src/
 ├── App.tsx               # Root component
 ├── index.css             # Global styles + Tailwind
 ├── components/           # React components
-│   ├── Dashboard.tsx
-│   ├── ScoreCard.tsx
-│   ├── IssuesList.tsx
-│   ├── AIInsights.tsx
+│   ├── Dashboard.tsx     # Main layout (sidebar + tabbed content)
+│   ├── ScoreCard.tsx, IssuesList.tsx, DependencyList.tsx, CodebaseStats.tsx
+│   ├── AISummary.tsx     # AI insights drawer
+│   ├── ChatDrawer.tsx    # Interactive AI chat
+│   ├── HistoryChart.tsx  # Score trend visualization
+│   ├── MonorepoOverview.tsx  # Monorepo scoreboard + cross-package view
+│   ├── ConfigTab.tsx     # Read-only config display
 │   └── ...
 └── lib/
-    └── load-report.ts    # Report fetching
+    ├── load-report.ts    # Report fetching
+    └── constants.ts      # Duplicated core constants (browser-safe)
 ```
 
 ---

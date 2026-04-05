@@ -24,7 +24,7 @@ Show directory structure:
 Read in this order — each builds on the previous:
 
 - `CLAUDE.md` — project rules, architecture overview, file navigation guide
-- `.claude/kanban.md` — current task board and **roadmap** (phases, what's blocked, what's next)
+- Jira board ([KAN project](https://nebulord.atlassian.net/jira/software/projects/KAN/boards/1), epic KAN-5) — current tasks, roadmap phases, what's blocked. Use Atlassian Rovo MCP tools to query.
 - `packages/core/README.md`, `apps/cli/README.md`, `apps/web/README.md` — per-package implementation details
 
 ### 3. Identify Key Files
