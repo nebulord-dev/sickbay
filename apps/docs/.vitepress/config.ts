@@ -32,12 +32,18 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: 'Guide',
+        text: 'Getting Started',
         collapsed: false,
         items: [
           { text: 'Introduction', link: '/guide/introduction' },
           { text: 'Installation', link: '/guide/installation' },
           { text: 'Quick Start', link: '/guide/quick-start' },
+        ],
+      },
+      {
+        text: 'Guide',
+        collapsed: false,
+        items: [
           { text: 'Scoring System', link: '/guide/scoring' },
           { text: 'Configuration', link: '/guide/configuration' },
           { text: 'Health Checks', link: '/guide/health-checks' },
