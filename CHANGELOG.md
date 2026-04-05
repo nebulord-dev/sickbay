@@ -1,3 +1,10 @@
+## [1.10.3](https://github.com/nebulord-dev/sickbay/compare/v1.10.2...v1.10.3) (2026-04-05)
+
+
+### Bug Fixes
+
+* **core:** npm-audit runner now detects package manager and scopes to target package ([c081fde](https://github.com/nebulord-dev/sickbay/commit/c081fdec5d403c736d44ee366cdef530b76372dd))
+
 ## [1.10.2](https://github.com/nebulord-dev/sickbay/compare/v1.10.1...v1.10.2) (2026-04-05)
 
 
