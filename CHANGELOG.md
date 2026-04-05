@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/nebulord-dev/sickbay/compare/v1.14.0...v1.14.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* update fixture snapshots and angular.json defaultProject (KAN-144) ([b339e7a](https://github.com/nebulord-dev/sickbay/commit/b339e7ad22d4408966629081c300f67c240f0f3d))
+
 # [1.14.0](https://github.com/nebulord-dev/sickbay/compare/v1.13.0...v1.14.0) (2026-04-05)
 
 
