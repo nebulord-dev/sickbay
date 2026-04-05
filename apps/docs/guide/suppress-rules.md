@@ -84,7 +84,7 @@ secrets: {
 
 ## Best Practices
 
-- **Always fill in `reason`.** It is enforced — rules without it are rejected. A good reason explains *why* the finding is safe or irrelevant, not just that it is.
+- **Always fill in `reason`.** It is enforced — rules without it are rejected. A good reason explains _why_ the finding is safe or irrelevant, not just that it is.
 - **Prefer specific matches over broad ones.** `{ match: 'GHSA-c2qf-rxjj' }` is safer than `{ match: 'lodash' }` if you only mean one CVE.
 - **Review suppress rules periodically.** Dependencies get patched, code gets refactored. A rule that was valid six months ago may no longer apply.
 - **Avoid suppressing entire categories.** Disabling a check with `false` is more explicit than a blanket `match` that catches everything.
