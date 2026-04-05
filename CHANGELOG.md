@@ -1,3 +1,12 @@
+# [1.9.0](https://github.com/nebulord-dev/sickbay/compare/v1.8.0...v1.9.0) (2026-04-05)
+
+
+### Features
+
+* **core:** add exclude paths and weight overrides (KAN-99 Phase C) ([96ae44e](https://github.com/nebulord-dev/sickbay/commit/96ae44ecfbd2d0be1dcbaedb4615c1d5962c16fa))
+* **core:** add per-check suppression rules (KAN-99 Phase D) ([a4f5e59](https://github.com/nebulord-dev/sickbay/commit/a4f5e5902cacf1afb7bc6d57e4967bb907bca197))
+* **web:** add read-only Config tab to web dashboard ([f94ba03](https://github.com/nebulord-dev/sickbay/commit/f94ba03e4b267266991f139b62aac8fed1ee61fa))
+
 # [1.8.0](https://github.com/nebulord-dev/sickbay/compare/v1.7.5...v1.8.0) (2026-04-04)
 
 
