@@ -1,9 +1,17 @@
 import { mkdirSync, writeFileSync, existsSync, readFileSync, appendFileSync } from 'fs';
 import { join } from 'path';
 
-import { runSickbay, detectContext, getAvailableChecks } from '@nebulord/sickbay-core';
+import {
+  runSickbay,
+  runSickbayMonorepo,
+  detectContext,
+  detectMonorepo,
+  getAvailableChecks,
+} from '@nebulord/sickbay-core';
 
 import { saveEntry } from '../lib/history.js';
+
+import type { MonorepoInfo } from '@nebulord/sickbay-core';
 
 const CONFIG_FILES = ['sickbay.config.ts', 'sickbay.config.js', 'sickbay.config.mjs'];
 
@@ -17,6 +25,39 @@ const CATEGORY_LABELS: Record<string, string> = {
   git: 'Git',
 };
 
+/**
+ * Get all applicable checks for a project path.
+ * For monorepos, unions checks across all packages so the root config
+ * lists every check that applies to any package.
+ */
+async function getAllApplicableChecks(
+  projectPath: string,
+  monorepoInfo?: MonorepoInfo | { isMonorepo: false },
+): Promise<{ name: string; category: string }[]> {
+  const mono = monorepoInfo ?? (await detectMonorepo(projectPath));
+
+  if (!mono.isMonorepo) {
+    const context = await detectContext(projectPath);
+    return getAvailableChecks(context);
+  }
+
+  // Union checks across all packages — deduplicate by name
+  const seen = new Set<string>();
+  const allChecks: { name: string; category: string }[] = [];
+
+  for (const pkgPath of mono.packagePaths) {
+    const context = await detectContext(pkgPath);
+    for (const check of getAvailableChecks(context)) {
+      if (!seen.has(check.name)) {
+        seen.add(check.name);
+        allChecks.push(check);
+      }
+    }
+  }
+
+  return allChecks;
+}
+
 export async function generateConfigFile(
   projectPath: string,
   options?: { force?: boolean },
@@ -28,8 +69,7 @@ export async function generateConfigFile(
     return;
   }
 
-  const context = await detectContext(projectPath);
-  const checks = getAvailableChecks(context);
+  const checks = await getAllApplicableChecks(projectPath);
 
   // Group checks by category
   const grouped: Record<string, string[]> = {};
@@ -94,9 +134,8 @@ export async function syncConfigFile(projectPath: string): Promise<void> {
     return;
   }
 
-  // Detect applicable checks for this project
-  const context = await detectContext(projectPath);
-  const applicableChecks = getAvailableChecks(context);
+  // Detect applicable checks (unions across packages for monorepos)
+  const applicableChecks = await getAllApplicableChecks(projectPath);
 
   // Scan file content for existing check IDs
   const existingIds = new Set<string>();
@@ -179,6 +218,8 @@ export async function syncConfigFile(projectPath: string): Promise<void> {
 }
 
 export async function initSickbay(projectPath: string): Promise<void> {
+  const monorepoInfo = await detectMonorepo(projectPath);
+
   await generateConfigFile(projectPath);
 
   const sickbayDir = join(projectPath, '.sickbay');
@@ -210,22 +251,33 @@ export async function initSickbay(projectPath: string): Promise<void> {
 
   // Skip config loading during init — the just-generated config only has defaults
   // and `sickbay/config` isn't resolvable from the target project yet
-  const report = await runSickbay({ projectPath, _config: null });
+  let overallScore: number;
+  let projectName: string;
 
-  writeFileSync(baselinePath, JSON.stringify(report, null, 2));
+  if (monorepoInfo.isMonorepo) {
+    const report = await runSickbayMonorepo({ projectPath, _config: null });
+    writeFileSync(baselinePath, JSON.stringify(report, null, 2));
+    overallScore = report.overallScore;
+    projectName = `monorepo (${report.packages.length} packages)`;
+  } else {
+    const report = await runSickbay({ projectPath, _config: null });
+    writeFileSync(baselinePath, JSON.stringify(report, null, 2));
 
-  // Seed history with this first entry
-  try {
-    saveEntry(report);
-  } catch {
-    // Non-critical
+    // Seed history with this first entry
+    try {
+      saveEntry(report);
+    } catch {
+      // Non-critical
+    }
+
+    overallScore = report.overallScore;
+    projectName = report.projectInfo.name;
   }
 
-  const scoreLabel =
-    report.overallScore >= 80 ? 'good' : report.overallScore >= 60 ? 'fair' : 'needs work';
+  const scoreLabel = overallScore >= 80 ? 'good' : overallScore >= 60 ? 'fair' : 'needs work';
 
-  console.log(`\n✓ Sickbay initialized for ${report.projectInfo.name}`);
-  console.log(`  Overall score: ${report.overallScore}/100 (${scoreLabel})`);
+  console.log(`\n✓ Sickbay initialized for ${projectName}`);
+  console.log(`  Overall score: ${overallScore}/100 (${scoreLabel})`);
   console.log(`\nCreated:`);
   console.log(`  sickbay.config.ts        — project configuration`);
   console.log(`  .sickbay/baseline.json   — committed (team baseline)`);

@@ -258,6 +258,15 @@ When both `path` and `match` are provided, both must match (AND logic).
 
 In a monorepo, place `sickbay.config.ts` at the workspace root. It applies to all packages during `sickbay` scans.
 
+### Initializing a Monorepo
+
+When you run `sickbay init` at a monorepo root, Sickbay detects the workspace and:
+
+- **Generates a config with all checks** — unions checks across every package so a React app's `react-perf`, a Node API's `node-security`, and a Next.js app's `next-images` all appear in the root config
+- **Runs a monorepo baseline scan** — scans all packages in parallel and saves the combined `MonorepoReport` as the baseline
+
+`sickbay init --sync` is also monorepo-aware — it detects new checks that apply to any package, not just the root.
+
 ### Per-Package Config
 
 Individual packages can have their own `sickbay.config.ts` that overrides the root config:
