@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/nebulord-dev/sickbay/compare/v1.10.1...v1.10.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* **docs:** escape Vue template syntax in health-checks page ([a1c362e](https://github.com/nebulord-dev/sickbay/commit/a1c362ee0a1cbd2b331d69b5ddc91d6a55938c0d))
+
 ## [1.10.1](https://github.com/nebulord-dev/sickbay/compare/v1.10.0...v1.10.1) (2026-04-05)
 
 
