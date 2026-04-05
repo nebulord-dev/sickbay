@@ -1,3 +1,10 @@
+## [1.14.3](https://github.com/nebulord-dev/sickbay/compare/v1.14.2...v1.14.3) (2026-04-05)
+
+
+### Bug Fixes
+
+* show skipped checks in the web dashboard ([ec99054](https://github.com/nebulord-dev/sickbay/commit/ec99054f4484f34443c0a35134bb8ccfc283f1a3))
+
 ## [1.14.2](https://github.com/nebulord-dev/sickbay/compare/v1.14.1...v1.14.2) (2026-04-05)
 
 
