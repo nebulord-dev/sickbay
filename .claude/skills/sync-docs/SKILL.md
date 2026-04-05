@@ -1,4 +1,5 @@
 ---
+name: sync-docs
 description: Review recent changes and propose documentation updates across CONTRIBUTING.md, READMEs, and CLAUDE.md
 ---
 
