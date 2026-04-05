@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/nebulord-dev/sickbay/compare/v1.10.3...v1.11.0) (2026-04-05)
+
+
+### Features
+
+* **core:** add non-scored best practice recommendations system (KAN-139) ([d9962d6](https://github.com/nebulord-dev/sickbay/commit/d9962d618346f529d7809bf237b3dd5539daa981))
+
 ## [1.10.3](https://github.com/nebulord-dev/sickbay/compare/v1.10.2...v1.10.3) (2026-04-05)
 
 
