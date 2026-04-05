@@ -43,6 +43,7 @@
     "fixtures/**",
     ".claude/**",
     "pnpm-lock.yaml",
-    ".changeset/**"
+    ".changeset/**",
+    "**/*.md"
   ]
 }
