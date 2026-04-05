@@ -4,7 +4,7 @@
 
 Read the lightweight spec at `docs/superpowers/specs/2026-03-28-resolve-transitive-vulnerabilities-design.md`.
 
-## Kanban Task
+## Jira Task
 
 Move this task to Done when complete (update the description to reflect the actual vulnerabilities fixed):
 
@@ -58,6 +58,6 @@ Run the monorepo-architect agent to review changes.
 
 ### 6. Update kanban and commit
 
-Move the security task to Done in `.claude/kanban.md`. Update the Done entry description to say: "Resolved transitive picomatch ReDoS and brace-expansion DoS vulnerabilities via pnpm.overrides; also includes previously resolved minimatch, rollup, and prismjs overrides."
+Move the security task to Done in jira. Update the Done entry description to say: "Resolved transitive picomatch ReDoS and brace-expansion DoS vulnerabilities via pnpm.overrides; also includes previously resolved minimatch, rollup, and prismjs overrides."
 
 Commit with a descriptive message.
