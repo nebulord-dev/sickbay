@@ -254,6 +254,8 @@ Each suppression rule requires a `reason` to prevent suppress-and-forget drift. 
 
 When both `path` and `match` are provided, both must match (AND logic).
 
+See [Suppress Rules](/guide/suppress-rules) for matching details, dashboard integration, and examples.
+
 ## Monorepo Support
 
 In a monorepo, place `sickbay.config.ts` at the workspace root. It applies to all packages during `sickbay` scans.

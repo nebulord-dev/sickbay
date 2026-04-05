@@ -46,6 +46,7 @@ export default defineConfig({
         items: [
           { text: 'Scoring System', link: '/guide/scoring' },
           { text: 'Configuration', link: '/guide/configuration' },
+          { text: 'Suppress Rules', link: '/guide/suppress-rules' },
           { text: 'Health Checks', link: '/guide/health-checks' },
           { text: 'Monorepo Support', link: '/guide/monorepo' },
           { text: 'Data Directory', link: '/guide/data-directory' },
