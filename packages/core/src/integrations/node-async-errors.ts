@@ -1,6 +1,7 @@
 import { readFileSync, existsSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 
+import { detectPackageManager } from '../utils/detect-project.js';
 import { timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
@@ -110,6 +111,7 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
       }
     }
 
+    const pm = detectPackageManager(projectPath);
     const issues: Issue[] = [];
 
     if (routeFiles === 0) {
@@ -135,7 +137,7 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
         fix: {
           description:
             'Wrap async route handlers in try/catch or use express-async-errors to auto-wrap all handlers',
-          command: 'npm install express-async-errors',
+          command: `${pm} install express-async-errors`,
         },
         reportedBy: ['node-async-errors'],
       });

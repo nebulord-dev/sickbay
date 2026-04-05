@@ -6,6 +6,10 @@ vi.mock('execa', () => ({
   execa: vi.fn(),
 }));
 
+vi.mock('../utils/detect-project.js', () => ({
+  detectPackageManager: vi.fn(() => 'npm'),
+}));
+
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
   isCommandAvailable: vi.fn(),
