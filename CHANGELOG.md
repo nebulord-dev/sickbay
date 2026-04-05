@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/nebulord-dev/sickbay/compare/v1.9.0...v1.10.0) (2026-04-05)
+
+
+### Features
+
+* **core:** add config sync, reset, and per-package monorepo config (KAN-99 Phase F) ([00677d3](https://github.com/nebulord-dev/sickbay/commit/00677d342d91000cb197c02fa9f63b62c0cd63cd))
+
 # [1.9.0](https://github.com/nebulord-dev/sickbay/compare/v1.8.0...v1.9.0) (2026-04-05)
 
 
