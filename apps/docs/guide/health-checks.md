@@ -4,7 +4,7 @@ Sickbay includes 34 checks across 5 categories. Each check is framework-aware �
 
 **Supported frameworks:** React · Next.js · Angular · Node.js · TypeScript — Vue and Remix coming soon.
 
-The first 15 checks below are **universal** and run on every project. The Angular and Next.js sections at the bottom contain framework-specific checks.
+The first 17 checks below run on all (or most) projects. The framework-specific sections at the bottom cover [React](#react), [Angular](#angular), [Next.js](#next-js), and [Node.js](#node-js) checks.
 
 ## How Applicability Works
 
@@ -105,13 +105,6 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 - **What it detects:** Production dependencies using licenses that may be incompatible with commercial use: GPL-2.0, GPL-3.0, AGPL-3.0, LGPL-2.1, LGPL-3.0, CC-BY-NC.
 - **Scoring:** `issues === 0 ? 100 : max(60, 100 - issues * 10)`. Score floor of 60. All flagged licenses are `warning` severity.
 
-### Node Security Middleware
-
-- **Tool:** Built-in dependency analysis
-- **Applies to:** Node.js projects with an HTTP server framework (Express, Fastify, Koa, Hapi, NestJS, etc.)
-- **What it detects:** Missing security middleware -- checks for helmet (security headers, +35 points), CORS middleware (+30 points), and rate limiting (+35 points).
-- **Scoring:** Additive from 0. Score >= 80 passes, >= 50 warns, < 50 fails. Missing helmet is `critical`; missing CORS or rate limiting is `warning`.
-
 ---
 
 ## Code Quality <Badge type="tip" text="25% weight" />
@@ -158,20 +151,6 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 - **What it detects:** Circular import cycles in `src/` by building a module dependency graph and performing depth-first search. Uses `tsconfig.app.json` if present (Vite projects), falling back to `tsconfig.json`.
 - **Scoring:** `circles === 0 ? 100 : max(0, 100 - circles * 10)`. Pass at 0 cycles, warning at 1--5, fail above 5.
 
-### Input Validation
-
-- **Tool:** Built-in dependency analysis
-- **Applies to:** Node.js projects with an HTTP server framework
-- **What it detects:** Whether an input validation library is present in dependencies: zod, joi, express-validator, yup, ajv, @sinclair/typebox, or valibot.
-- **Scoring:** Binary -- 85 (pass) if a validation library is found, 20 (warning) if not.
-
-### Async Error Handling
-
-- **Tool:** Built-in source code analysis
-- **Applies to:** Node.js projects only
-- **What it detects:** Async route handlers without try/catch protection, missing Express error handling middleware (4-parameter function), and whether `express-async-errors` is installed.
-- **Scoring:** `min(100, round(protectedFiles / routeFiles * 80) + (hasErrorMiddleware ? 20 : 0))`. If `express-async-errors` is detected, scores 100 immediately. Score >= 80 passes, >= 50 warns, < 50 fails.
-
 ### Tests & Coverage
 
 - **Tool:** Vitest or Jest (auto-detected)
@@ -194,13 +173,6 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 - **Applies to:** Browser projects only (requires `dist/` or `build/` directory)
 - **What it detects:** JavaScript bundle sizes using source map analysis when `.js.map` files are present. Falls back to summing raw `.js` file sizes when source maps are unavailable.
 - **Scoring:** <= 500KB scores 100 (pass), 500KB--1MB scores 70 (warning), > 1MB scores 40 (fail).
-
-### React Performance
-
-- **Tool:** Built-in JSX analyzer
-- **Applies to:** React, Next.js, and Remix projects only
-- **What it detects:** Common performance anti-patterns in `.tsx` and `.jsx` files: inline objects in JSX props, using array index as key in lists, large component files (> 400 lines), and route files without lazy loading.
-- **Scoring:** `max(20, 100 - warnings * 3 - infos * 1)`. If the React Compiler is detected, inline object warnings are automatically suppressed.
 
 ### Asset Sizes
 
@@ -228,6 +200,29 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 - **Applies to:** Repositories with a `.git` directory
 - **What it detects:** Repository activity and hygiene -- last commit date, total commit count, contributor count, and remote branch count. Flags stale repos (last commit > 6 months ago) and excessive remote branches (> 20).
 - **Scoring:** 100 if no issues, 80 if any issues found. Stale repo is `warning` severity; excessive branches is `info`.
+
+---
+
+## React <Badge type="info" text="framework-specific" />
+
+### React Performance
+
+- **Tool:** Built-in JSX analyzer
+- **Applies to:** React, Next.js, and Remix projects
+- **Category:** Performance
+- **What it detects:** Common performance anti-patterns in `.tsx` and `.jsx` files: inline objects in JSX props, using array index as key in lists, large component files (> 400 lines), and route files without lazy loading.
+- **Scoring:** `max(20, 100 - warnings * 3 - infos * 1)`. If the React Compiler is detected, inline object warnings are automatically suppressed.
+
+::: details Detected patterns
+| Pattern | Severity | Fix |
+|---------|----------|-----|
+| Inline object in JSX prop (`style={{ }}`, `prop={{ }}`) | warning | Extract to a constant or use `useMemo()` |
+| Array index as key (`key={index}`) | warning | Use a unique identifier (id, slug, etc.) |
+| Large component file (> 400 lines) | info | Split into smaller, focused components |
+| Route file with static imports (> 3 components, no `React.lazy`) | info | Use `React.lazy()` and `Suspense` for code splitting |
+
+`className={{ }}` patterns (clsx/classnames) are excluded from inline object detection.
+:::
 
 ---
 
@@ -264,6 +259,30 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 - **Category:** Code Quality
 - **What it detects:** Component files that call `.subscribe()` without any observable cleanup pattern: `takeUntilDestroyed`, `takeUntil`, `DestroyRef`, `ngOnDestroy`, or `.unsubscribe()`. Unmanaged subscriptions are a common source of memory leaks in Angular apps.
 - **Scoring:** `max(20, 100 - leakyCount * 20)`. All findings are `warning` severity.
+
+### Build Configuration
+
+- **Tool:** Built-in `angular.json` analyzer
+- **Applies to:** Angular projects
+- **Category:** Performance
+- **What it detects:** Suboptimal production build settings in `angular.json`: source maps enabled in production (ships source code to users), optimization disabled (no minification or tree-shaking), missing bundle size budgets, and AOT compilation disabled.
+- **Scoring:** `max(20, 100 - issueCount * 20)`. All findings are `warning` severity.
+
+### Security Sanitization
+
+- **Tool:** Built-in source scanner
+- **Applies to:** Angular projects
+- **Category:** Security
+- **What it detects:** Usage of `DomSanitizer` bypass methods (`bypassSecurityTrustHtml`, `bypassSecurityTrustScript`, `bypassSecurityTrustUrl`, `bypassSecurityTrustResourceUrl`, `bypassSecurityTrustStyle`) and `[innerHTML]` bindings in component and template files. These bypass Angular's built-in XSS protection.
+- **Scoring:** `max(20, 100 - violations * 20)`. All findings are `warning` severity.
+
+### Template Performance
+
+- **Tool:** Built-in inline template analyzer
+- **Applies to:** Angular projects
+- **Category:** Performance
+- **What it detects:** Performance anti-patterns in Angular component inline templates: `*ngFor` without `trackBy`, `@for` without `track` (Angular 17+ control flow), and function calls in template interpolations (`{{ method() }}`) or property bindings (`[attr]="method()"`), which re-run on every change detection cycle.
+- **Scoring:** `max(20, 100 - issues * 15)`. All findings are `warning` severity.
 
 ---
 
@@ -316,3 +335,33 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 - **Category:** Performance
 - **What it detects:** Files marked `'use client'` that don't appear to need client-side rendering -- no React hooks (`useState`, `useEffect`, `useRef`, etc.) or event handlers (`onClick`, `onChange`, etc.) are detected. Unnecessary client boundaries prevent React Server Component optimizations.
 - **Scoring:** `max(20, 100 - unnecessary * 15)`. All findings are `warning` severity.
+
+---
+
+## Node.js <Badge type="info" text="framework-specific" />
+
+These checks run on Node.js projects — specifically those using HTTP server frameworks (Express, Fastify, Koa, Hapi, NestJS, etc.). Projects with React, Vue, Angular, or other UI frameworks in their dependencies are classified as `browser` runtime and these checks are skipped.
+
+### Security Middleware
+
+- **Tool:** Built-in dependency analysis
+- **Applies to:** Node.js projects with an HTTP server framework
+- **Category:** Security
+- **What it detects:** Missing security middleware -- checks for helmet (security headers, +35 points), CORS middleware (+30 points), and rate limiting (+35 points).
+- **Scoring:** Additive from 0. Score >= 80 passes, >= 50 warns, < 50 fails. Missing helmet is `critical`; missing CORS or rate limiting is `warning`.
+
+### Input Validation
+
+- **Tool:** Built-in dependency analysis
+- **Applies to:** Node.js projects with an HTTP server framework
+- **Category:** Code Quality
+- **What it detects:** Whether an input validation library is present in dependencies: zod, joi, express-validator, yup, ajv, @sinclair/typebox, or valibot.
+- **Scoring:** Binary -- 85 (pass) if a validation library is found, 20 (warning) if not.
+
+### Async Error Handling
+
+- **Tool:** Built-in source code analysis
+- **Applies to:** Node.js projects only
+- **Category:** Code Quality
+- **What it detects:** Async route handlers without try/catch protection, missing Express error handling middleware (4-parameter function), and whether `express-async-errors` is installed.
+- **Scoring:** `min(100, round(protectedFiles / routeFiles * 80) + (hasErrorMiddleware ? 20 : 0))`. If `express-async-errors` is detected, scores 100 immediately. Score >= 80 passes, >= 50 warns, < 50 fails.
