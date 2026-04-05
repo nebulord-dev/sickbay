@@ -35,6 +35,7 @@ export class NextLinkRunner extends BaseRunner {
         severity: 'warning' as const,
         message: `${file} — raw anchor tag for internal navigation; use next/link`,
         file,
+        suppressMatch: file,
         fix: {
           description:
             'Replace <a href="/path"> with <Link href="/path"> from next/link to enable client-side navigation and prefetching.',

@@ -56,6 +56,7 @@ export class OutdatedRunner extends BaseRunner {
         return {
           severity: isMajor ? 'warning' : 'info',
           message: `${e.name}: ${e.current} → ${e.latest} (${updateType})`,
+          suppressMatch: e.name,
           fix: isMajor
             ? {
                 description: `Update ${e.name} to ${e.latest} (major — review changelog before upgrading)`,

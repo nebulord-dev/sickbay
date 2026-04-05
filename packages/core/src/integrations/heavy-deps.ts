@@ -142,6 +142,7 @@ export class HeavyDepsRunner extends BaseRunner {
       const issues: Issue[] = found.map((f) => ({
         severity: f.info.severity,
         message: `${f.name} — ${f.info.reason}`,
+        suppressMatch: f.name,
         fix: {
           description: `Consider replacing with ${f.info.alternative}`,
         },

@@ -77,6 +77,7 @@ export class ComplexityRunner extends BaseRunner {
           issues.push({
             severity: (f.lines >= critical ? 'warning' : 'info') as Issue['severity'],
             message: `${f.path} (${label}): ${f.lines} lines — consider splitting (threshold: ${warn})`,
+            suppressMatch: f.path,
             fix: { description: 'Extract concerns into smaller, focused files' },
             reportedBy: ['complexity'],
           });

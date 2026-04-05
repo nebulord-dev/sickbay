@@ -73,6 +73,7 @@ export interface Issue {
   file?: string;
   fix?: FixSuggestion;
   reportedBy: string[];
+  suppressMatch?: string;
 }
 
 export interface FixSuggestion {

@@ -26,6 +26,7 @@ A full `SickbayReport` snapshot captured by [`sickbay init`](/commands/init). Th
 The complete `SickbayReport` from the most recent scan. Overwritten after every scan (terminal, TUI, or `--json` mode).
 
 Used by:
+
 - [`sickbay diff`](/commands/diff) — reads the baseline branch's copy via `git show <branch>:.sickbay/last-report.json`
 - [`sickbay badge`](/commands/badge) — reads the last score to generate a badge without re-scanning
 - [Web dashboard](/commands/scan#web-dashboard) — served at `/sickbay-report.json` when using `--web`
@@ -39,6 +40,7 @@ Used by:
 An array of condensed scan entries used for trend tracking. Each entry records the timestamp, overall score, per-category scores, issue counts, and number of checks run. Capped at 100 entries (oldest are dropped).
 
 Used by:
+
 - [`sickbay trend`](/commands/trend) — displays score history and sparklines
 - [Web dashboard History tab](/commands/scan#web-dashboard) — renders line charts from this data
 - [TUI Trend panel](/commands/tui) — sparkline charts for the last 10 scans
@@ -48,6 +50,7 @@ Used by:
 - **Git**: Ignored by default — local to each developer's machine
 
 ::: details Example entry
+
 ```json
 {
   "timestamp": "2026-04-02T12:00:00.000Z",
@@ -63,6 +66,7 @@ Used by:
   "checksRun": 15
 }
 ```
+
 :::
 
 ### `dep-tree.json`
@@ -91,13 +95,13 @@ cache/
 
 ## Git strategy
 
-| File               | Commit? | Why                                                    |
-| ------------------ | ------- | ------------------------------------------------------ |
-| `baseline.json`    | Yes     | Shared team baseline for measuring improvement         |
-| `last-report.json` | Yes     | Enables `sickbay diff` across branches                 |
+| File               | Commit? | Why                                                       |
+| ------------------ | ------- | --------------------------------------------------------- |
+| `baseline.json`    | Yes     | Shared team baseline for measuring improvement            |
+| `last-report.json` | Yes     | Enables `sickbay diff` across branches                    |
 | `history.json`     | No      | Local scan history — each developer accumulates their own |
-| `dep-tree.json`    | No      | Large, regenerated every scan                          |
-| `.gitignore`       | Yes     | Ensures the above rules are applied                    |
+| `dep-tree.json`    | No      | Large, regenerated every scan                             |
+| `.gitignore`       | Yes     | Ensures the above rules are applied                       |
 
 ## Monorepos
 

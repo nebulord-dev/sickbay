@@ -41,6 +41,7 @@ export class NextMissingBoundariesRunner extends BaseRunner {
           issues.push({
             severity: 'info' as const,
             message: `${relDir} — missing loading.tsx (Suspense boundary for this route segment)`,
+            suppressMatch: relDir,
             fix: {
               description:
                 "Add loading.tsx to show a skeleton UI while this route's data loads (App Router Suspense boundary).",
@@ -55,6 +56,7 @@ export class NextMissingBoundariesRunner extends BaseRunner {
           issues.push({
             severity: 'info' as const,
             message: `${relDir} — missing error.tsx (error boundary for this route segment)`,
+            suppressMatch: relDir,
             fix: {
               description:
                 "Add error.tsx with 'use client' to gracefully handle errors in this route segment.",

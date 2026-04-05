@@ -114,6 +114,7 @@ export class SecretsRunner extends BaseRunner {
         severity: 'critical' as const,
         message:
           f.line > 0 ? `${f.file}:${f.line} — ${f.pattern} detected` : `${f.file} — ${f.pattern}`,
+        suppressMatch: f.pattern,
         file: f.file,
         fix: {
           description: 'Move secrets to environment variables',

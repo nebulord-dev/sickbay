@@ -51,6 +51,7 @@ export class ReactPerfRunner extends BaseRunner {
         severity: f.severity,
         message: f.line > 0 ? `${f.file}:${f.line} — ${f.pattern}` : `${f.file} — ${f.pattern}`,
         file: f.file,
+        suppressMatch: f.file,
         fix: { description: getFixDescription(f.pattern) },
         reportedBy: ['react-perf'],
       }));

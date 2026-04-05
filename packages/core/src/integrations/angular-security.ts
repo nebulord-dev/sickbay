@@ -39,6 +39,7 @@ export class AngularSecurityRunner extends BaseRunner {
                 severity: 'warning',
                 message: `${relPath}:${i + 1} — DomSanitizer ${method.slice(0, -1)}() bypasses XSS protection`,
                 file: relPath,
+                suppressMatch: relPath,
                 fix: {
                   description:
                     "Avoid bypassing Angular's built-in sanitization. Use safe values or sanitize input before rendering.",
@@ -53,6 +54,7 @@ export class AngularSecurityRunner extends BaseRunner {
               severity: 'warning',
               message: `${relPath}:${i + 1} — [innerHTML] binding is a potential XSS vector if content is user-controlled`,
               file: relPath,
+              suppressMatch: relPath,
               fix: {
                 description:
                   "Prefer Angular's built-in text interpolation or use DomSanitizer explicitly when innerHTML is required.",

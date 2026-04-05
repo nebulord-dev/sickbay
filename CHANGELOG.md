@@ -1,115 +1,100 @@
 # [1.12.0](https://github.com/nebulord-dev/sickbay/compare/v1.11.0...v1.12.0) (2026-04-05)
 
-
 ### Features
 
-* **core:** add Angular, Next.js, and Universal advisors (KAN-141, KAN-142, KAN-143) ([0bac709](https://github.com/nebulord-dev/sickbay/commit/0bac7098c700a93a135176dd3aa1a5af331c96b1))
+- **core:** add Angular, Next.js, and Universal advisors (KAN-141, KAN-142, KAN-143) ([0bac709](https://github.com/nebulord-dev/sickbay/commit/0bac7098c700a93a135176dd3aa1a5af331c96b1))
 
 # [1.11.0](https://github.com/nebulord-dev/sickbay/compare/v1.10.3...v1.11.0) (2026-04-05)
 
-
 ### Features
 
-* **core:** add non-scored best practice recommendations system (KAN-139) ([d9962d6](https://github.com/nebulord-dev/sickbay/commit/d9962d618346f529d7809bf237b3dd5539daa981))
+- **core:** add non-scored best practice recommendations system (KAN-139) ([d9962d6](https://github.com/nebulord-dev/sickbay/commit/d9962d618346f529d7809bf237b3dd5539daa981))
 
 ## [1.10.3](https://github.com/nebulord-dev/sickbay/compare/v1.10.2...v1.10.3) (2026-04-05)
 
-
 ### Bug Fixes
 
-* **core:** npm-audit runner now detects package manager and scopes to target package ([c081fde](https://github.com/nebulord-dev/sickbay/commit/c081fdec5d403c736d44ee366cdef530b76372dd))
+- **core:** npm-audit runner now detects package manager and scopes to target package ([c081fde](https://github.com/nebulord-dev/sickbay/commit/c081fdec5d403c736d44ee366cdef530b76372dd))
 
 ## [1.10.2](https://github.com/nebulord-dev/sickbay/compare/v1.10.1...v1.10.2) (2026-04-05)
 
-
 ### Bug Fixes
 
-* **docs:** escape Vue template syntax in health-checks page ([a1c362e](https://github.com/nebulord-dev/sickbay/commit/a1c362ee0a1cbd2b331d69b5ddc91d6a55938c0d))
+- **docs:** escape Vue template syntax in health-checks page ([a1c362e](https://github.com/nebulord-dev/sickbay/commit/a1c362ee0a1cbd2b331d69b5ddc91d6a55938c0d))
 
 ## [1.10.1](https://github.com/nebulord-dev/sickbay/compare/v1.10.0...v1.10.1) (2026-04-05)
 
-
 ### Bug Fixes
 
-* **cli:** make sickbay init monorepo-aware (KAN-99 Phase F) ([ef0dab4](https://github.com/nebulord-dev/sickbay/commit/ef0dab4cafaabab1d3e5f385748a6bd3bf122cd8))
+- **cli:** make sickbay init monorepo-aware (KAN-99 Phase F) ([ef0dab4](https://github.com/nebulord-dev/sickbay/commit/ef0dab4cafaabab1d3e5f385748a6bd3bf122cd8))
 
 # [1.10.0](https://github.com/nebulord-dev/sickbay/compare/v1.9.0...v1.10.0) (2026-04-05)
 
-
 ### Features
 
-* **core:** add config sync, reset, and per-package monorepo config (KAN-99 Phase F) ([00677d3](https://github.com/nebulord-dev/sickbay/commit/00677d342d91000cb197c02fa9f63b62c0cd63cd))
+- **core:** add config sync, reset, and per-package monorepo config (KAN-99 Phase F) ([00677d3](https://github.com/nebulord-dev/sickbay/commit/00677d342d91000cb197c02fa9f63b62c0cd63cd))
 
 # [1.9.0](https://github.com/nebulord-dev/sickbay/compare/v1.8.0...v1.9.0) (2026-04-05)
 
-
 ### Features
 
-* **core:** add exclude paths and weight overrides (KAN-99 Phase C) ([96ae44e](https://github.com/nebulord-dev/sickbay/commit/96ae44ecfbd2d0be1dcbaedb4615c1d5962c16fa))
-* **core:** add per-check suppression rules (KAN-99 Phase D) ([a4f5e59](https://github.com/nebulord-dev/sickbay/commit/a4f5e5902cacf1afb7bc6d57e4967bb907bca197))
-* **web:** add read-only Config tab to web dashboard ([f94ba03](https://github.com/nebulord-dev/sickbay/commit/f94ba03e4b267266991f139b62aac8fed1ee61fa))
+- **core:** add exclude paths and weight overrides (KAN-99 Phase C) ([96ae44e](https://github.com/nebulord-dev/sickbay/commit/96ae44ecfbd2d0be1dcbaedb4615c1d5962c16fa))
+- **core:** add per-check suppression rules (KAN-99 Phase D) ([a4f5e59](https://github.com/nebulord-dev/sickbay/commit/a4f5e5902cacf1afb7bc6d57e4967bb907bca197))
+- **web:** add read-only Config tab to web dashboard ([f94ba03](https://github.com/nebulord-dev/sickbay/commit/f94ba03e4b267266991f139b62aac8fed1ee61fa))
 
 # [1.8.0](https://github.com/nebulord-dev/sickbay/compare/v1.7.5...v1.8.0) (2026-04-04)
 
-
 ### Features
 
-* **core:** add threshold overrides for 12 configurable runners (KAN-99 Phase B) ([0d51358](https://github.com/nebulord-dev/sickbay/commit/0d51358651523bd134a4e602a4deb92bcb1b5a0d))
+- **core:** add threshold overrides for 12 configurable runners (KAN-99 Phase B) ([0d51358](https://github.com/nebulord-dev/sickbay/commit/0d51358651523bd134a4e602a4deb92bcb1b5a0d))
 
 ## [1.7.5](https://github.com/nebulord-dev/sickbay/compare/v1.7.4...v1.7.5) (2026-04-04)
 
-
 ### Bug Fixes
 
-* **core:** add displayName to BaseRunner so skipped checks show proper names ([fad9bed](https://github.com/nebulord-dev/sickbay/commit/fad9bedb2c69eb01f2f82fe3d93def116560081d))
+- **core:** add displayName to BaseRunner so skipped checks show proper names ([fad9bed](https://github.com/nebulord-dev/sickbay/commit/fad9bedb2c69eb01f2f82fe3d93def116560081d))
 
 ## [1.7.4](https://github.com/nebulord-dev/sickbay/compare/v1.7.3...v1.7.4) (2026-04-04)
 
-
 ### Bug Fixes
 
-* **core:** resolve relative paths to absolute before passing to jiti ([e4ee3c4](https://github.com/nebulord-dev/sickbay/commit/e4ee3c40891f81950ff2afd61fec04d0fe330292))
+- **core:** resolve relative paths to absolute before passing to jiti ([e4ee3c4](https://github.com/nebulord-dev/sickbay/commit/e4ee3c40891f81950ff2afd61fec04d0fe330292))
 
 ## [1.7.3](https://github.com/nebulord-dev/sickbay/compare/v1.7.2...v1.7.3) (2026-04-04)
 
-
 ### Bug Fixes
 
-* **core:** filter sickbay.config.ts from knip unused file false positives ([bb61d52](https://github.com/nebulord-dev/sickbay/commit/bb61d52a0059499cca05951edef500f9fc76de58))
+- **core:** filter sickbay.config.ts from knip unused file false positives ([bb61d52](https://github.com/nebulord-dev/sickbay/commit/bb61d52a0059499cca05951edef500f9fc76de58))
 
 ## [1.7.2](https://github.com/nebulord-dev/sickbay/compare/v1.7.1...v1.7.2) (2026-04-04)
 
-
 ### Bug Fixes
 
-* **cli:** use JSDoc type annotation instead of defineConfig import in generated config ([9b547d8](https://github.com/nebulord-dev/sickbay/commit/9b547d8e905425b6f15cdff6e8f3ddef29c5c46d))
+- **cli:** use JSDoc type annotation instead of defineConfig import in generated config ([9b547d8](https://github.com/nebulord-dev/sickbay/commit/9b547d8e905425b6f15cdff6e8f3ddef29c5c46d))
 
 ## [1.7.1](https://github.com/nebulord-dev/sickbay/compare/v1.7.0...v1.7.1) (2026-04-04)
 
-
 ### Bug Fixes
 
-* **cli:** externalize jiti from bundle and skip config load during init ([8c5aff9](https://github.com/nebulord-dev/sickbay/commit/8c5aff9dcffab069f24cd2f0b1633a89a880d25f))
+- **cli:** externalize jiti from bundle and skip config load during init ([8c5aff9](https://github.com/nebulord-dev/sickbay/commit/8c5aff9dcffab069f24cd2f0b1633a89a880d25f))
 
 # [1.7.0](https://github.com/nebulord-dev/sickbay/compare/v1.6.0...v1.7.0) (2026-04-04)
 
-
 ### Features
 
-* **cli:** add sickbay/config entry point for defineConfig re-export (KAN-99) ([88f9c6f](https://github.com/nebulord-dev/sickbay/commit/88f9c6fb641bb6d5ea5ec9ebaa3d2f0503490349))
-* **cli:** generate sickbay.config.ts from sickbay init with framework-aware checks (KAN-99) ([b083f23](https://github.com/nebulord-dev/sickbay/commit/b083f237221d0fb56999fa2208027f9b37c0f28f))
-* **cli:** show custom config active notices in Summary and TUI ScorePanel (KAN-99) ([bd70f1a](https://github.com/nebulord-dev/sickbay/commit/bd70f1a1d7e785babb41806871bacb07ed858446))
-* **core:** add isCheckDisabled, resolveConfigMeta, and validateConfig (KAN-99) ([98fea43](https://github.com/nebulord-dev/sickbay/commit/98fea433ccdeb61645bd9b78b002b1e891d3ec61))
-* **core:** add loadConfig with jiti for runtime TS config loading (KAN-99) ([5e77433](https://github.com/nebulord-dev/sickbay/commit/5e774335f99b11ea28e4a3bb709ace8c51de3050))
-* **core:** add SickbayConfig types and defineConfig helper (KAN-99) ([cd158ee](https://github.com/nebulord-dev/sickbay/commit/cd158eebbb82f6f2692e0d965e5afd09d118b432))
-* **core:** wire config loading into runner pipeline, filter disabled checks (KAN-99) ([7c2f840](https://github.com/nebulord-dev/sickbay/commit/7c2f84056d7863ea8fe7bdfcc06c83ffdfaa8eb9))
+- **cli:** add sickbay/config entry point for defineConfig re-export (KAN-99) ([88f9c6f](https://github.com/nebulord-dev/sickbay/commit/88f9c6fb641bb6d5ea5ec9ebaa3d2f0503490349))
+- **cli:** generate sickbay.config.ts from sickbay init with framework-aware checks (KAN-99) ([b083f23](https://github.com/nebulord-dev/sickbay/commit/b083f237221d0fb56999fa2208027f9b37c0f28f))
+- **cli:** show custom config active notices in Summary and TUI ScorePanel (KAN-99) ([bd70f1a](https://github.com/nebulord-dev/sickbay/commit/bd70f1a1d7e785babb41806871bacb07ed858446))
+- **core:** add isCheckDisabled, resolveConfigMeta, and validateConfig (KAN-99) ([98fea43](https://github.com/nebulord-dev/sickbay/commit/98fea433ccdeb61645bd9b78b002b1e891d3ec61))
+- **core:** add loadConfig with jiti for runtime TS config loading (KAN-99) ([5e77433](https://github.com/nebulord-dev/sickbay/commit/5e774335f99b11ea28e4a3bb709ace8c51de3050))
+- **core:** add SickbayConfig types and defineConfig helper (KAN-99) ([cd158ee](https://github.com/nebulord-dev/sickbay/commit/cd158eebbb82f6f2692e0d965e5afd09d118b432))
+- **core:** wire config loading into runner pipeline, filter disabled checks (KAN-99) ([7c2f840](https://github.com/nebulord-dev/sickbay/commit/7c2f84056d7863ea8fe7bdfcc06c83ffdfaa8eb9))
 
 # [1.6.0](https://github.com/nebulord-dev/sickbay/compare/v1.5.0...v1.6.0) (2026-04-03)
 
-
 ### Features
 
-* add angular-security, angular-template-performance, and angular-build-config checks (KAN-134) ([e750b6e](https://github.com/nebulord-dev/sickbay/commit/e750b6e54c31a4c68b59f2805b34cc31cdcd4ea5))
+- add angular-security, angular-template-performance, and angular-build-config checks (KAN-134) ([e750b6e](https://github.com/nebulord-dev/sickbay/commit/e750b6e54c31a4c68b59f2805b34cc31cdcd4ea5))
 
 # [1.5.0](https://github.com/nebulord-dev/sickbay/compare/v1.4.2...v1.5.0) (2026-04-03)
 

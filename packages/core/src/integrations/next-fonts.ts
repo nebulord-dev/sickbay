@@ -43,6 +43,7 @@ export class NextFontsRunner extends BaseRunner {
         severity: 'warning' as const,
         message: `${layoutPath} — Google Fonts loaded via external stylesheet; use next/font/google`,
         file: layoutPath,
+        suppressMatch: layoutPath,
         fix: {
           description:
             'Use next/font/google instead of a <link> stylesheet to self-host fonts and improve Core Web Vitals (eliminates render-blocking request).',

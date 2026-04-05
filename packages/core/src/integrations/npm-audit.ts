@@ -164,6 +164,7 @@ function parseNpmAudit(data: NpmAuditOutput): ParsedAudit {
     issues.push({
       severity: vuln.severity === 'critical' || vuln.severity === 'high' ? 'critical' : 'warning',
       message: formatAuditMessage(vuln.name, title, url),
+      suppressMatch: vuln.name,
       fix:
         typeof vuln.fixAvailable === 'object'
           ? { description: `Upgrade to ${vuln.fixAvailable.name}@${vuln.fixAvailable.version}` }
@@ -195,6 +196,7 @@ function parsePnpmAudit(data: PnpmAuditOutput, projectPath: string): ParsedAudit
         advisory.title || `Vulnerability in ${pkgName}`,
         advisory.url,
       ),
+      suppressMatch: pkgName,
       fix: advisory.recommendation
         ? { description: advisory.recommendation }
         : { description: 'No automatic fix available' },

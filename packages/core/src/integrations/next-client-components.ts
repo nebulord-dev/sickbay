@@ -53,6 +53,7 @@ export class NextClientComponentsRunner extends BaseRunner {
         severity: 'warning' as const,
         message: `${file} — may not need 'use client' (no hooks or event handlers detected)`,
         file,
+        suppressMatch: file,
         fix: {
           description:
             "This component may not need 'use client' — it contains no hooks or event handlers. Moving it to a Server Component reduces client bundle size.",

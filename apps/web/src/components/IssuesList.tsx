@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { buildSuppressSnippet } from '../lib/suppress-snippet.js';
+
 import type { CheckResult, Issue } from '@nebulord/sickbay-core';
 
 interface IssuesListProps {
@@ -8,6 +10,7 @@ interface IssuesListProps {
 
 export function IssuesList({ checks }: IssuesListProps) {
   const [filter, setFilter] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
+  const [showSuppressInfo, setShowSuppressInfo] = useState<boolean>(false);
 
   const allIssues = checks.flatMap((c) =>
     c.issues.map((issue) => ({ ...issue, checkName: c.name, checkId: c.id })),
@@ -23,7 +26,7 @@ export function IssuesList({ checks }: IssuesListProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         {(['all', 'critical', 'warning', 'info'] as const).map((f) => (
           <button
             key={f}
@@ -34,7 +37,36 @@ export function IssuesList({ checks }: IssuesListProps) {
             {f === 'all' ? `all (${allIssues.length})` : `${f} (${counts[f]})`}
           </button>
         ))}
+        <button
+          onClick={() => setShowSuppressInfo(!showSuppressInfo)}
+          className={`ml-auto text-xs transition-colors ${showSuppressInfo ? 'text-accent' : 'text-gray-500 hover:text-gray-300'}`}
+          title="About suppress rules"
+        >
+          ⓘ
+        </button>
       </div>
+
+      {showSuppressInfo && (
+        <div className="bg-surface border border-border rounded px-4 py-3 text-sm text-gray-300 space-y-2">
+          <p>
+            Click <span className="font-mono text-gray-400">⊘ suppress</span> on any issue to copy a
+            suppression rule to your clipboard.
+          </p>
+          <p>
+            Paste it into the <span className="font-mono text-gray-400">suppress</span> array for
+            that check in your <span className="font-mono text-gray-400">sickbay.config.ts</span> to
+            hide accepted findings from future scans.
+          </p>
+          <a
+            href="https://nebulord-dev.github.io/sickbay/guide/suppress-rules"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-accent hover:underline text-xs"
+          >
+            Learn more →
+          </a>
+        </div>
+      )}
 
       <div className="flex flex-col gap-1">
         {filtered.length === 0 && (
@@ -45,6 +77,7 @@ export function IssuesList({ checks }: IssuesListProps) {
             key={`${issue.checkName}-${issue.message}`}
             issue={issue}
             checkName={issue.checkName}
+            checkId={issue.checkId}
           />
         ))}
       </div>
@@ -52,7 +85,15 @@ export function IssuesList({ checks }: IssuesListProps) {
   );
 }
 
-function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
+function IssueRow({
+  issue,
+  checkName,
+  checkId,
+}: {
+  issue: Issue & { checkId: string };
+  checkName: string;
+  checkId: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   const copy = () => {
@@ -61,6 +102,20 @@ function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  };
+
+  const [suppressCopied, setSuppressCopied] = useState(false);
+
+  const copySuppress = () => {
+    const snippet = buildSuppressSnippet({
+      checkId,
+      suppressMatch: issue.suppressMatch,
+      message: issue.message,
+      file: issue.file,
+    });
+    navigator.clipboard.writeText(snippet).catch(() => {});
+    setSuppressCopied(true);
+    setTimeout(() => setSuppressCopied(false), 2000);
   };
 
   const color =
@@ -83,6 +138,12 @@ function IssueRow({ issue, checkName }: { issue: Issue; checkName: string }) {
             {copied ? '✓ copied' : issue.fix.command}
           </button>
         )}
+        <button
+          onClick={copySuppress}
+          className="shrink-0 text-xs text-gray-500 hover:text-accent font-mono transition-colors"
+        >
+          {suppressCopied ? '✓ copied' : '⊘ suppress'}
+        </button>
       </div>
 
       {issue.file && (
