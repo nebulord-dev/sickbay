@@ -85,7 +85,7 @@ describe('DepcheckRunner', () => {
 
     const result = await runner.run('/project');
 
-    expect(result.issues[0].fix?.command).toBeUndefined();
+    expect(result.issues[0].fix?.command).toBe('npm install lodash');
     expect(result.issues[0].fix?.description).toBe('Install lodash');
   });
 

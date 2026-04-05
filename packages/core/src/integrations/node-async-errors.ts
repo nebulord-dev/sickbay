@@ -135,6 +135,7 @@ export class NodeAsyncErrorsRunner extends BaseRunner {
         fix: {
           description:
             'Wrap async route handlers in try/catch or use express-async-errors to auto-wrap all handlers',
+          command: 'npm install express-async-errors',
         },
         reportedBy: ['node-async-errors'],
       });
