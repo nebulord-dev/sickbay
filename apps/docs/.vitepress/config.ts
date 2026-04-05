@@ -49,6 +49,7 @@ export default defineConfig({
           { text: 'Suppress Rules', link: '/guide/suppress-rules' },
           { text: 'Health Checks', link: '/guide/health-checks' },
           { text: 'Monorepo Support', link: '/guide/monorepo' },
+          { text: 'Claude Code Integration', link: '/guide/claude-code' },
           { text: 'Data Directory', link: '/guide/data-directory' },
           { text: 'Credits', link: '/guide/credits' },
         ],
@@ -66,6 +67,7 @@ export default defineConfig({
           { text: 'sickbay stats', link: '/commands/stats' },
           { text: 'sickbay badge', link: '/commands/badge' },
           { text: 'sickbay diff', link: '/commands/diff' },
+          { text: 'sickbay claude', link: '/commands/claude' },
         ],
       },
       {

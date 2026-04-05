@@ -426,6 +426,16 @@ program
     process.exit(0);
   });
 
+// --- sickbay claude ---
+program
+  .command('claude')
+  .description('Generate a Claude Code skill file for your project')
+  .option('-p, --path <path>', 'project path', process.cwd())
+  .action(async (options) => {
+    const { generateClaudeSkill } = await import('./commands/claude.js');
+    generateClaudeSkill(options.path);
+  });
+
 // --- sickbay diff ---
 program
   .command('diff <branch>')
