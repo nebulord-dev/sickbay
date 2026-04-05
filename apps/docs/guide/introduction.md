@@ -10,7 +10,7 @@ Sickbay is a zero-config health check CLI for JavaScript and TypeScript projects
 
 ## Philosophy
 
-**Zero config.** All 34 analysis tools are bundled as npm dependencies — no global installs, no configuration files, no setup. Run `npx sickbay` and get results.
+**Zero config.** All 34 analysis tools are bundled as npm dependencies — no global installs, no setup. Run `npx sickbay` and get results.
 
 **Framework-aware.** Sickbay detects your project's framework (React, Next.js, Express, Fastify, Koa, etc.) and only runs checks relevant to it. A Node API server won't be checked for React performance patterns, and a React app won't be checked for Express security issues.
 
@@ -26,9 +26,9 @@ Sickbay is a zero-config health check CLI for JavaScript and TypeScript projects
 | **Node.js**    | ✅ Supported   | `node-security`, `node-input-validation`, `node-async-errors`                                                          |
 | **TypeScript** | ✅ Supported   | `typescript` (type error reporting)                                                                                    |
 | **Vue**        | 🔜 Coming Soon | —                                                                                                                      |
-| **Remix**      | 🔜 Coming Soon | —                                                                                                                      |
+| **Python**     | 🔜 Coming Soon | —                                                                                                                      |
 
-All projects also get the full suite of 15 universal checks regardless of framework: dependencies, security, code quality, git, and complexity.
+All projects also get the full suite of 17 universal checks regardless of framework: dependencies, security, code quality, git, and complexity.
 
 ## What You Get
 

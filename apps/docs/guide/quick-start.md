@@ -51,7 +51,7 @@ The `--web` flag starts a local server and opens a rich browser dashboard with:
 npx sickbay tui --path ~/my-project
 ```
 
-The TUI is a persistent live dashboard that watches your files and re-scans automatically. Press `?` for keyboard shortcuts.
+[The TUI](/commands/tui) is a persistent live dashboard that watches your files and re-scans automatically. Press `?` for keyboard shortcuts.
 
 ## Output JSON for CI
 

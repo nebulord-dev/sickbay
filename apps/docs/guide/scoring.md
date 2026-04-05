@@ -46,3 +46,6 @@ A React project might score:
 - Git: 95 (good coverage)
 
 **Overall**: (100 × 0.30) + (85 × 0.25) + (72 × 0.25) + (90 × 0.15) + (95 × 0.05) = **87.0**
+
+> [!TIP]
+> Scoring can be configured to meet your needs. See [Configuration](configuration#scoring-weights).
