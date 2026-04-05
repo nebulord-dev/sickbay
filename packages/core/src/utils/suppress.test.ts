@@ -1,14 +1,29 @@
 import { describe, it, expect } from 'vitest';
 
-import { applySuppression } from './suppress.js';
+import { applySuppression, recalcScoreAfterSuppression } from './suppress.js';
 
-import type { Issue } from '../types.js';
+import type { CheckResult, Issue } from '../types.js';
 
 const issue = (msg: string, file?: string): Issue => ({
   severity: 'warning',
   message: msg,
   file,
   reportedBy: ['test'],
+});
+
+const makeResult = (
+  score: number,
+  issues: Issue[],
+  status: CheckResult['status'] = 'warning',
+): CheckResult => ({
+  id: 'test',
+  category: 'code-quality',
+  name: 'Test Check',
+  score,
+  status,
+  issues: [...issues],
+  toolsUsed: ['test'],
+  duration: 0,
 });
 
 describe('applySuppression', () => {
@@ -89,5 +104,72 @@ describe('applySuppression', () => {
     const result = applySuppression(issues, [{ match: 'GHSA-xxxx', reason: 'not exploitable' }]);
     expect(result.issues).toHaveLength(1);
     expect(result.suppressedCount).toBe(1);
+  });
+});
+
+describe('recalcScoreAfterSuppression', () => {
+  it('sets score to 100 and status to pass when all issues suppressed', () => {
+    const original: Issue[] = [
+      { severity: 'critical', message: 'a', reportedBy: ['t'] },
+      { severity: 'warning', message: 'b', reportedBy: ['t'] },
+    ];
+    const result = makeResult(40, [], 'fail');
+    recalcScoreAfterSuppression(result, original);
+    expect(result.score).toBe(100);
+    expect(result.status).toBe('pass');
+  });
+
+  it('does not change score when no issues were suppressed', () => {
+    const issues: Issue[] = [
+      { severity: 'warning', message: 'a', reportedBy: ['t'] },
+      { severity: 'warning', message: 'b', reportedBy: ['t'] },
+    ];
+    const result = makeResult(70, issues);
+    recalcScoreAfterSuppression(result, issues);
+    expect(result.score).toBe(70);
+  });
+
+  it('proportionally improves score when some issues suppressed', () => {
+    const original: Issue[] = [
+      { severity: 'warning', message: 'a', reportedBy: ['t'] },
+      { severity: 'warning', message: 'b', reportedBy: ['t'] },
+    ];
+    // Score 70 = penalty of 30. Suppressing half the weight → penalty 15 → score 85
+    const result = makeResult(70, [original[0]]);
+    recalcScoreAfterSuppression(result, original);
+    expect(result.score).toBe(85);
+  });
+
+  it('weights critical issues more heavily than warnings', () => {
+    const original: Issue[] = [
+      { severity: 'critical', message: 'crit', reportedBy: ['t'] },
+      { severity: 'warning', message: 'warn', reportedBy: ['t'] },
+    ];
+    // penalty = 50, original weight = 10+3 = 13
+    // Suppress the critical (weight 10): remaining = 3/13 of penalty
+    const result = makeResult(50, [original[1]]);
+    recalcScoreAfterSuppression(result, original);
+    // 100 - 50 * (3/13) = 100 - 11.54 ≈ 88
+    expect(result.score).toBe(88);
+  });
+
+  it('updates status to warning when critical issues are suppressed', () => {
+    const original: Issue[] = [
+      { severity: 'critical', message: 'crit', reportedBy: ['t'] },
+      { severity: 'warning', message: 'warn', reportedBy: ['t'] },
+    ];
+    const result = makeResult(40, [original[1]], 'fail');
+    recalcScoreAfterSuppression(result, original);
+    expect(result.status).toBe('warning');
+  });
+
+  it('keeps status as fail when critical issues remain', () => {
+    const original: Issue[] = [
+      { severity: 'critical', message: 'crit', reportedBy: ['t'] },
+      { severity: 'warning', message: 'warn', reportedBy: ['t'] },
+    ];
+    const result = makeResult(40, [original[0]], 'fail');
+    recalcScoreAfterSuppression(result, original);
+    expect(result.status).toBe('fail');
   });
 });
