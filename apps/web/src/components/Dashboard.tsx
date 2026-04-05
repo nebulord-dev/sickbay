@@ -128,7 +128,7 @@ export function Dashboard({ report }: DashboardProps) {
   const filteredChecks = activeReport
     ? selectedCheck
       ? activeReport.checks.filter((c) => c.id === selectedCheck)
-      : activeReport.checks
+      : activeReport.checks.filter((c) => c.status !== 'skipped')
     : [];
 
   const handleCriticalCheckClick = (checkId: string) => {
@@ -300,28 +300,48 @@ export function Dashboard({ report }: DashboardProps) {
 
             <nav className="p-2 flex-1 overflow-y-auto">
               <div className="text-xs text-gray-500 px-2 py-1">checks</div>
-              {activeReport.checks.map((check) => {
-                const color =
-                  check.score >= SCORE_GOOD
-                    ? 'text-green-400'
-                    : check.score >= SCORE_FAIR
-                      ? 'text-yellow-400'
-                      : 'text-red-400';
-                return (
-                  <button
-                    key={check.id}
-                    onClick={() => {
-                      setSelectedCheck(selectedCheck === check.id ? null : check.id);
-                      setView('issues');
-                    }}
-                    className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-sm transition-colors
+              {activeReport.checks
+                .filter((c) => c.status !== 'skipped')
+                .map((check) => {
+                  const color =
+                    check.score >= SCORE_GOOD
+                      ? 'text-green-400'
+                      : check.score >= SCORE_FAIR
+                        ? 'text-yellow-400'
+                        : 'text-red-400';
+                  return (
+                    <button
+                      key={check.id}
+                      onClick={() => {
+                        setSelectedCheck(selectedCheck === check.id ? null : check.id);
+                        setView('issues');
+                      }}
+                      className={`w-full flex items-center justify-between px-2 py-1.5 rounded text-sm transition-colors
                       ${selectedCheck === check.id ? 'bg-card text-white' : 'text-gray-400 hover:text-white hover:bg-card/50'}`}
-                  >
-                    <span className="font-mono">{check.name}</span>
-                    <span className={`text-xs font-bold ${color}`}>{check.score}</span>
-                  </button>
-                );
-              })}
+                    >
+                      <span className="font-mono">{check.name}</span>
+                      <span className={`text-xs font-bold ${color}`}>{check.score}</span>
+                    </button>
+                  );
+                })}
+              {activeReport.checks.some((c) => c.status === 'skipped') && (
+                <>
+                  <div className="text-xs text-gray-500 px-2 py-1 mt-2">skipped</div>
+                  {activeReport.checks
+                    .filter((c) => c.status === 'skipped')
+                    .map((check) => (
+                      <div
+                        key={check.id}
+                        className="w-full flex items-center justify-between px-2 py-1.5 rounded text-sm text-gray-600"
+                      >
+                        <span className="font-mono">{check.name}</span>
+                        <span className="text-xs bg-gray-500/10 text-gray-500 px-1.5 py-0.5 rounded-sm font-mono">
+                          skipped
+                        </span>
+                      </div>
+                    ))}
+                </>
+              )}
             </nav>
 
             <div className="p-3 border-t border-border text-xs text-gray-600">
