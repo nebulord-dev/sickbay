@@ -1,3 +1,15 @@
+# [1.14.0](https://github.com/nebulord-dev/sickbay/compare/v1.13.0...v1.14.0) (2026-04-05)
+
+
+### Bug Fixes
+
+* **core:** use detected package manager in fix commands, add test assertions (KAN-144) ([a97ac03](https://github.com/nebulord-dev/sickbay/commit/a97ac03abd4aed0dd058736ba0256236f9640ace))
+
+
+### Features
+
+* **core:** add missing fix commands to runners (KAN-144) ([8e783b6](https://github.com/nebulord-dev/sickbay/commit/8e783b615846846d47b724b203fa80651b3b3dbb))
+
 # [1.13.0](https://github.com/nebulord-dev/sickbay/compare/v1.12.0...v1.13.0) (2026-04-05)
 
 
