@@ -1,5 +1,6 @@
 import { relative } from 'path';
 
+import { ReactBestPracticesAdvisor } from './advisors/react-best-practices.js';
 import {
   loadConfig,
   isCheckDisabled,
@@ -53,10 +54,12 @@ import { detectMonorepo } from './utils/detect-monorepo.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
 import { applySuppression } from './utils/suppress.js';
 
+import type { BaseAdvisor } from './advisors/base.js';
 import type { SickbayConfig } from './config.js';
 import type {
   SickbayReport,
   CheckResult,
+  Recommendation,
   ToolRunner,
   MonorepoReport,
   PackageReport,
@@ -113,6 +116,8 @@ const ALL_RUNNERS: ToolRunner[] = [
   new NextMissingBoundariesRunner(),
   new NextSecurityHeadersRunner(),
 ];
+
+const ALL_ADVISORS: BaseAdvisor[] = [new ReactBestPracticesAdvisor()];
 
 export function getAvailableChecks(context?: ProjectContext): { name: string; category: string }[] {
   const runners = context
@@ -198,6 +203,24 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
     }
   }
 
+  // Run advisors in parallel (non-scored recommendations)
+  const applicableAdvisors = ALL_ADVISORS.filter((a) => a.isApplicableToContext(context));
+  const advisorResults = await Promise.allSettled(
+    applicableAdvisors.map(async (advisor) => {
+      try {
+        return await advisor.run(projectPath, context);
+      } catch {
+        return [] as Recommendation[];
+      }
+    }),
+  );
+  const recommendations: Recommendation[] = [];
+  for (const result of advisorResults) {
+    if (result.status === 'fulfilled') {
+      recommendations.push(...result.value);
+    }
+  }
+
   const normalizedWeights = config?.weights
     ? normalizeWeights(config.weights, CATEGORY_WEIGHTS)
     : undefined;
@@ -212,6 +235,7 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
     overallScore,
     summary,
     config: configMeta.hasCustomConfig ? configMeta : undefined,
+    recommendations: recommendations.length > 0 ? recommendations : undefined,
     quote: options.quotes !== false ? getQuote(overallScore) : undefined,
   };
 }
@@ -247,6 +271,7 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
         summary: report.summary,
         dependencies: report.projectInfo.dependencies,
         devDependencies: report.projectInfo.devDependencies,
+        recommendations: report.recommendations,
       };
 
       options.onPackageComplete?.(packageReport);

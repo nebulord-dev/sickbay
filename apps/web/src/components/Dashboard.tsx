@@ -21,6 +21,7 @@ function fmt(n: number): string {
 
 import { About } from './About.js';
 import { AISummary } from './AISummary.js';
+import { BestPracticesDrawer } from './BestPracticesDrawer.js';
 import { CodebaseStats } from './CodebaseStats.js';
 import { ConfigTab } from './ConfigTab.js';
 import { CriticalIssues } from './CriticalIssues.js';
@@ -85,6 +86,7 @@ export function Dashboard({ report }: DashboardProps) {
   const [view, setView] = useState<View>('overview');
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
   const [isAIDrawerOpen, setIsAIDrawerOpen] = useState(false);
+  const [isBestPracticesOpen, setIsBestPracticesOpen] = useState(false);
   const [history, setHistory] = useState<TrendHistory | null>(null);
   const historyFetched = useRef(false);
   const scoreColor = getScoreColor(activeReport?.overallScore ?? report.overallScore);
@@ -95,6 +97,7 @@ export function Dashboard({ report }: DashboardProps) {
     setView('overview');
     setSelectedCheck(null);
     setIsAIDrawerOpen(false);
+    setIsBestPracticesOpen(false);
   }, [selectedPackageIdx]);
 
   // Scroll to top when view changes
@@ -376,6 +379,16 @@ export function Dashboard({ report }: DashboardProps) {
                 )}
               </div>
               <div className="flex gap-2">
+                {activeReport?.recommendations && activeReport.recommendations.length > 0 && (
+                  <button
+                    onClick={() => setIsBestPracticesOpen(!isBestPracticesOpen)}
+                    className={`px-3 py-1 rounded text-sm font-mono transition-colors flex items-center gap-1.5
+                      ${isBestPracticesOpen ? 'bg-teal-500/20 text-teal-300 font-semibold' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    <span>💡</span>
+                    <span>advisor</span>
+                  </button>
+                )}
                 {(!monorepo || selectedPackageIdx >= 0) && (
                   <button
                     onClick={() => setIsAIDrawerOpen(!isAIDrawerOpen)}
@@ -463,6 +476,15 @@ export function Dashboard({ report }: DashboardProps) {
           isOpen={isAIDrawerOpen}
           onToggle={setIsAIDrawerOpen}
           packageName={monorepo ? monorepo.packages[selectedPackageIdx]?.name : undefined}
+        />
+      )}
+
+      {/* Best Practices Drawer */}
+      {activeReport?.recommendations && activeReport.recommendations.length > 0 && (
+        <BestPracticesDrawer
+          recommendations={activeReport.recommendations}
+          isOpen={isBestPracticesOpen}
+          onToggle={setIsBestPracticesOpen}
         />
       )}
 

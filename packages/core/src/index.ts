@@ -17,6 +17,7 @@ export { createExcludeFilter } from './utils/exclude.js';
 export { applySuppression } from './utils/suppress.js';
 export { detectProject, detectPackageManager, detectContext } from './utils/detect-project.js';
 export { detectMonorepo } from './utils/detect-monorepo.js';
+export { BaseAdvisor } from './advisors/base.js';
 export type {
   SickbayReport,
   Quote,
@@ -24,6 +25,7 @@ export type {
   CheckResult,
   Issue,
   FixSuggestion,
+  Recommendation,
   ToolRunner,
   ToolResult,
   RunOptions,

@@ -20,6 +20,7 @@ export interface SickbayReport {
     overriddenChecks: string[];
     disabledChecks: string[];
   };
+  recommendations?: Recommendation[];
   quote?: Quote;
 }
 
@@ -85,6 +86,16 @@ export interface FixSuggestion {
   };
 }
 
+export interface Recommendation {
+  id: string;
+  framework: Framework | 'universal';
+  title: string;
+  message: string;
+  severity: 'recommend' | 'suggest';
+  learnMoreUrl?: string;
+  fix?: FixSuggestion;
+}
+
 export type Framework = 'react' | 'next' | 'angular' | 'vue' | 'svelte' | 'remix';
 export type Runtime = 'browser' | 'node' | 'edge' | 'unknown';
 export type BuildTool = 'vite' | 'webpack' | 'esbuild' | 'rollup' | 'tsc' | 'unknown';
@@ -141,6 +152,7 @@ export interface PackageReport {
   summary: { critical: number; warnings: number; info: number };
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
+  recommendations?: Recommendation[];
 }
 
 export interface MonorepoReport {
