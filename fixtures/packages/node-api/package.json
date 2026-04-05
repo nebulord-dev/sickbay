@@ -1,5 +1,5 @@
 {
-  "name": "sickbay-fixture-node-api",
+  "name": "node-api-fixture",
   "version": "1.0.0",
   "description": "Node.js REST API fixture — intentionally full of issues for Sickbay testing",
   "main": "src/index.js",
