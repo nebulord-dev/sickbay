@@ -191,31 +191,12 @@ describe('ReactBestPracticesAdvisor', () => {
       expect(recs.find((r) => r.id === 'react-strict-mode')).toBeUndefined();
     });
 
-    it('checks next.config.js for Next.js instead of entry files', async () => {
-      mockReadFileSync.mockImplementation(((path: string) => {
-        if (path.endsWith('package.json'))
-          return JSON.stringify({ dependencies: { next: '^15.0.0' } });
-        if (path.endsWith('next.config.js')) return 'module.exports = { reactStrictMode: true }';
-        throw new Error('not found');
-      }) as typeof readFileSync);
+    it('skips StrictMode check for Next.js projects (handled by Next advisor)', async () => {
+      mockPackageJson({ next: '^15.0.0' });
 
       const recs = await advisor.run('/project', nextContext);
 
       expect(recs.find((r) => r.id === 'react-strict-mode')).toBeUndefined();
-    });
-
-    it('recommends StrictMode for Next.js when not in config', async () => {
-      mockReadFileSync.mockImplementation(((path: string) => {
-        if (path.endsWith('package.json'))
-          return JSON.stringify({ dependencies: { next: '^15.0.0' } });
-        throw new Error('not found');
-      }) as typeof readFileSync);
-
-      const recs = await advisor.run('/project', nextContext);
-
-      const rec = recs.find((r) => r.id === 'react-strict-mode');
-      expect(rec).toBeDefined();
-      expect(rec?.framework).toBe('next');
     });
   });
 
@@ -244,12 +225,8 @@ describe('ReactBestPracticesAdvisor', () => {
       expect(recs.find((r) => r.id === 'react-legacy-render')).toBeUndefined();
     });
 
-    it('skips legacy render check for Next.js projects', async () => {
-      mockReadFileSync.mockImplementation(((path: string) => {
-        if (path.endsWith('package.json'))
-          return JSON.stringify({ dependencies: { next: '^15.0.0' } });
-        throw new Error('not found');
-      }) as typeof readFileSync);
+    it('skips legacy render check for Next.js projects (handled by Next advisor)', async () => {
+      mockPackageJson({ next: '^15.0.0' });
 
       const recs = await advisor.run('/project', nextContext);
 

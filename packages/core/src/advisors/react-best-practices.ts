@@ -18,8 +18,6 @@ const ENTRY_FILES = [
   'src/index.jsx',
 ];
 
-const NEXT_CONFIG_FILES = ['next.config.js', 'next.config.mjs', 'next.config.ts'];
-
 export class ReactBestPracticesAdvisor extends BaseAdvisor {
   name = 'react-best-practices';
   frameworks = ['react', 'next', 'remix'] as const;
@@ -38,8 +36,8 @@ export class ReactBestPracticesAdvisor extends BaseAdvisor {
       this.checkErrorBoundaries(projectPath, allDeps, recommendations);
       this.checkSuspenseUsage(projectPath, recommendations);
       this.checkReactCompiler(allDeps, recommendations);
-      this.checkStrictMode(projectPath, isNext, recommendations);
-      this.checkLegacyRender(projectPath, isNext, recommendations);
+      if (!isNext) this.checkStrictMode(projectPath, recommendations);
+      if (!isNext) this.checkLegacyRender(projectPath, recommendations);
     } catch {
       // Can't read package.json — return empty
     }
@@ -137,41 +135,8 @@ export class ReactBestPracticesAdvisor extends BaseAdvisor {
     }
   }
 
-  private checkStrictMode(
-    projectPath: string,
-    isNext: boolean,
-    recommendations: Recommendation[],
-  ): void {
+  private checkStrictMode(projectPath: string, recommendations: Recommendation[]): void {
     try {
-      if (isNext) {
-        // Next.js manages StrictMode via next.config — check there instead
-        const hasStrictMode = NEXT_CONFIG_FILES.some((f) => {
-          try {
-            const content = readFileSync(join(projectPath, f), 'utf-8');
-            return content.includes('reactStrictMode') && content.includes('true');
-          } catch {
-            return false;
-          }
-        });
-
-        if (!hasStrictMode) {
-          recommendations.push({
-            id: 'react-strict-mode',
-            framework: 'next',
-            title: 'Enable React Strict Mode',
-            message:
-              'reactStrictMode is not enabled in your Next.js config. Strict Mode helps find bugs by double-invoking renders and effects in development.',
-            severity: 'recommend',
-            learnMoreUrl: 'https://nextjs.org/docs/api-reference/next.config.js/react-strict-mode',
-            fix: {
-              description: 'Add reactStrictMode: true to your next.config.js',
-            },
-          });
-        }
-        return;
-      }
-
-      // Standard React — check entry files for <StrictMode>
       const hasStrictMode = ENTRY_FILES.some((f) => {
         try {
           return readFileSync(join(projectPath, f), 'utf-8').includes('<StrictMode');
@@ -196,15 +161,8 @@ export class ReactBestPracticesAdvisor extends BaseAdvisor {
     }
   }
 
-  private checkLegacyRender(
-    projectPath: string,
-    isNext: boolean,
-    recommendations: Recommendation[],
-  ): void {
+  private checkLegacyRender(projectPath: string, recommendations: Recommendation[]): void {
     try {
-      // Next.js manages its own entry point
-      if (isNext) return;
-
       const hasLegacyRender = ENTRY_FILES.some((f) => {
         try {
           return readFileSync(join(projectPath, f), 'utf-8').includes('ReactDOM.render(');

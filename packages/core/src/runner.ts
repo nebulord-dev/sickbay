@@ -1,6 +1,9 @@
 import { relative } from 'path';
 
+import { AngularBestPracticesAdvisor } from './advisors/angular-best-practices.js';
+import { NextBestPracticesAdvisor } from './advisors/next-best-practices.js';
 import { ReactBestPracticesAdvisor } from './advisors/react-best-practices.js';
+import { UniversalBestPracticesAdvisor } from './advisors/universal-best-practices.js';
 import {
   loadConfig,
   isCheckDisabled,
@@ -117,7 +120,12 @@ const ALL_RUNNERS: ToolRunner[] = [
   new NextSecurityHeadersRunner(),
 ];
 
-const ALL_ADVISORS: BaseAdvisor[] = [new ReactBestPracticesAdvisor()];
+const ALL_ADVISORS: BaseAdvisor[] = [
+  new ReactBestPracticesAdvisor(),
+  new AngularBestPracticesAdvisor(),
+  new NextBestPracticesAdvisor(),
+  new UniversalBestPracticesAdvisor(),
+];
 
 export function getAvailableChecks(context?: ProjectContext): { name: string; category: string }[] {
   const runners = context

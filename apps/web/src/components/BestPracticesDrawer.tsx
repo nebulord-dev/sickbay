@@ -28,7 +28,11 @@ export function BestPracticesDrawer({
 }: BestPracticesDrawerProps) {
   if (!isOpen) return null;
 
-  const grouped = groupByFramework(recommendations);
+  const sorted = [...recommendations].sort((a, b) => {
+    const order = { recommend: 0, suggest: 1 };
+    return order[a.severity] - order[b.severity];
+  });
+  const grouped = groupByFramework(sorted);
 
   return (
     <div className="fixed top-6 right-6 w-104 max-h-[calc(100vh-3rem)] bg-surface border border-border rounded-lg shadow-2xl flex flex-col z-50 overflow-hidden">

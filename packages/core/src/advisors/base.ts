@@ -7,6 +7,8 @@ export abstract class BaseAdvisor {
   abstract run(projectPath: string, context: ProjectContext): Promise<Recommendation[]>;
 
   isApplicableToContext(context: ProjectContext): boolean {
+    // Empty frameworks array means "applies to all projects"
+    if (this.frameworks.length === 0) return true;
     return this.frameworks.some((f) => context.frameworks.includes(f));
   }
 }
