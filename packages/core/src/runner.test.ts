@@ -168,6 +168,7 @@ vi.mock('./utils/suppress.js', () => ({
     issues,
     suppressedCount: 0,
   })),
+  recalcScoreAfterSuppression: vi.fn(),
 }));
 
 vi.mock('./utils/detect-project.js', () => ({
@@ -183,7 +184,7 @@ vi.mock('./scoring.js', () => ({
 import { loadConfig, isCheckDisabled, getCheckConfig, resolveConfigMeta } from './config.js';
 import { runSickbay, getAvailableChecks } from './runner.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
-import { applySuppression } from './utils/suppress.js';
+import { applySuppression, recalcScoreAfterSuppression } from './utils/suppress.js';
 
 describe('runSickbay', () => {
   beforeEach(() => {
@@ -406,6 +407,10 @@ describe('runSickbay', () => {
     expect(report.checks[0].issues).toHaveLength(1);
     expect(report.checks[0].issues[0].message).toContain('AWS_SECRET');
     expect(report.checks[0].metadata).toEqual(expect.objectContaining({ suppressedCount: 1 }));
+    expect(recalcScoreAfterSuppression).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'knip' }),
+      mockIssues,
+    );
   });
 });
 

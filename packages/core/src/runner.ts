@@ -55,7 +55,7 @@ import {
 } from './scoring.js';
 import { detectMonorepo } from './utils/detect-monorepo.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
-import { applySuppression } from './utils/suppress.js';
+import { applySuppression, recalcScoreAfterSuppression } from './utils/suppress.js';
 
 import type { BaseAdvisor } from './advisors/base.js';
 import type { SickbayConfig } from './config.js';
@@ -192,11 +192,13 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
             : undefined,
       });
 
-      // Apply suppression rules post-run
+      // Apply suppression rules post-run and recalculate score
       if (checkCfg?.suppress?.length) {
+        const originalIssues = result.issues;
         const { issues, suppressedCount } = applySuppression(result.issues, checkCfg.suppress);
         result.issues = issues;
         if (suppressedCount > 0) {
+          recalcScoreAfterSuppression(result, originalIssues);
           result.metadata = { ...result.metadata, suppressedCount };
         }
       }

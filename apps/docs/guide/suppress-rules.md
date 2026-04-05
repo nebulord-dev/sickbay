@@ -1,6 +1,6 @@
 # Suppress Rules
 
-Suppress rules hide accepted or intentional findings from reports without disabling the check entirely. The check still runs — suppressed issues are filtered from the output after the check completes.
+Suppress rules hide accepted or intentional findings from reports and adjust the check's score accordingly, without disabling the check entirely. The check still runs — suppressed issues are filtered after the check completes, and the score is recalculated to reflect only the remaining findings.
 
 Use them when a finding is a known false positive, an accepted risk, or irrelevant to your context.
 
@@ -24,7 +24,7 @@ Each rule is an object with up to three fields:
 - **`match`** — case-insensitive substring match against the full issue message text
 - **Both fields** — both must match (AND logic). If only one field is provided, only that field is checked.
 
-A suppressed issue is removed from all output: terminal UI, web dashboard, and JSON reports. Note that suppressed issues still affect the check's score — suppression happens after the check computes its score, so scores reflect the full findings including suppressed ones.
+A suppressed issue is removed from all output: terminal UI, web dashboard, and JSON reports. The check's score is recalculated after suppression to reflect only the remaining findings — if you suppress an irrelevant finding, your score improves accordingly.
 
 ## Using the Dashboard
 
