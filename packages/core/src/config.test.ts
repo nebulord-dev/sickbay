@@ -7,8 +7,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   defineConfig,
   getCheckConfig,
+  getUnlistedChecks,
   isCheckDisabled,
   loadConfig,
+  mergeConfigs,
   resolveConfigMeta,
   validateConfig,
 } from './config.js';
@@ -241,5 +243,79 @@ describe('loadConfig', () => {
     );
     const result = await loadConfig(tempDir);
     expect(result).toEqual({ checks: { git: false } });
+  });
+});
+
+describe('getUnlistedChecks', () => {
+  it('returns empty array when config is null', () => {
+    expect(getUnlistedChecks(null, ['knip', 'eslint'])).toEqual([]);
+  });
+
+  it('returns empty array when config has no checks block', () => {
+    expect(getUnlistedChecks({ weights: { security: 0.5 } }, ['knip'])).toEqual([]);
+  });
+
+  it('returns empty array when all runners are listed', () => {
+    expect(
+      getUnlistedChecks({ checks: { knip: true, eslint: false } }, ['knip', 'eslint']),
+    ).toEqual([]);
+  });
+
+  it('returns unlisted runner names', () => {
+    expect(getUnlistedChecks({ checks: { knip: true } }, ['knip', 'eslint', 'madge'])).toEqual([
+      'eslint',
+      'madge',
+    ]);
+  });
+});
+
+describe('mergeConfigs', () => {
+  it('returns null when both are null', () => {
+    expect(mergeConfigs(null, null)).toBeNull();
+  });
+
+  it('returns root when pkg is null', () => {
+    const root = { checks: { knip: true as const } };
+    expect(mergeConfigs(root, null)).toBe(root);
+  });
+
+  it('returns pkg when root is null', () => {
+    const pkg = { checks: { eslint: false as const } };
+    expect(mergeConfigs(null, pkg)).toBe(pkg);
+  });
+
+  it('overrides checks per-key with package winning', () => {
+    const root = { checks: { knip: true as const, eslint: true as const } };
+    const pkg = { checks: { eslint: false as const } };
+    const merged = mergeConfigs(root, pkg)!;
+    expect(merged.checks).toEqual({ knip: true, eslint: false });
+  });
+
+  it('concatenates exclude arrays', () => {
+    const root = { exclude: ['src/generated/**'] };
+    const pkg = { exclude: ['src/legacy/**'] };
+    const merged = mergeConfigs(root, pkg)!;
+    expect(merged.exclude).toEqual(['src/generated/**', 'src/legacy/**']);
+  });
+
+  it('handles missing exclude on one side', () => {
+    const root = { exclude: ['src/generated/**'] };
+    const pkg = { checks: { knip: true as const } };
+    const merged = mergeConfigs(root, pkg)!;
+    expect(merged.exclude).toEqual(['src/generated/**']);
+  });
+
+  it('overrides weights per-category with package winning', () => {
+    const root = { weights: { security: 0.5 as const, git: 0.1 as const } };
+    const pkg = { weights: { security: 0.3 as const } };
+    const merged = mergeConfigs(root, pkg)!;
+    expect(merged.weights).toEqual({ security: 0.3, git: 0.1 });
+  });
+
+  it('returns undefined weights when neither has them', () => {
+    const root = { checks: { knip: true as const } };
+    const pkg = { checks: { eslint: false as const } };
+    const merged = mergeConfigs(root, pkg)!;
+    expect(merged.weights).toBeUndefined();
   });
 });

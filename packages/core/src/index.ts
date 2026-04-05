@@ -46,8 +46,10 @@ export {
 export {
   defineConfig,
   getCheckConfig,
+  getUnlistedChecks,
   isCheckDisabled,
   loadConfig,
+  mergeConfigs,
   resolveConfigMeta,
   validateConfig,
 } from './config.js';

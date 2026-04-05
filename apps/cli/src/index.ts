@@ -175,7 +175,22 @@ program
   .command('init')
   .description('Initialize .sickbay/ folder and run an initial baseline scan')
   .option('-p, --path <path>', 'project path to initialize', process.cwd())
+  .option(
+    '--sync',
+    'add newly available checks to existing config without touching existing entries',
+  )
+  .option('--reset-config', 'regenerate config from scratch (overwrites existing)')
   .action(async (options) => {
+    if (options.resetConfig) {
+      const { generateConfigFile } = await import('./commands/init.js');
+      await generateConfigFile(options.path, { force: true });
+      return;
+    }
+    if (options.sync) {
+      const { syncConfigFile } = await import('./commands/init.js');
+      await syncConfigFile(options.path);
+      return;
+    }
     const { initSickbay } = await import('./commands/init.js');
     await initSickbay(options.path);
   });

@@ -5,6 +5,8 @@ import { runSickbay, detectContext, getAvailableChecks } from '@nebulord/sickbay
 
 import { saveEntry } from '../lib/history.js';
 
+const CONFIG_FILES = ['sickbay.config.ts', 'sickbay.config.js', 'sickbay.config.mjs'];
+
 const CATEGORY_ORDER = ['dependencies', 'code-quality', 'performance', 'security', 'git'] as const;
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -15,10 +17,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   git: 'Git',
 };
 
-export async function generateConfigFile(projectPath: string): Promise<void> {
+export async function generateConfigFile(
+  projectPath: string,
+  options?: { force?: boolean },
+): Promise<void> {
   const configPath = join(projectPath, 'sickbay.config.ts');
 
-  if (existsSync(configPath)) {
+  if (!options?.force && existsSync(configPath)) {
     console.log('Config already exists, skipping');
     return;
   }
@@ -63,7 +68,114 @@ ${checkLines}
 `;
 
   writeFileSync(configPath, template);
-  console.log(`Created sickbay.config.ts`);
+  console.log(options?.force ? `Regenerated sickbay.config.ts` : `Created sickbay.config.ts`);
+}
+
+function formatCheckKey(name: string): string {
+  return name.includes('-') ? `'${name}'` : name;
+}
+
+export async function syncConfigFile(projectPath: string): Promise<void> {
+  // Find existing config file
+  const configFile = CONFIG_FILES.map((f) => join(projectPath, f)).find((p) => existsSync(p));
+
+  if (!configFile) {
+    console.log('No config file found. Run `sickbay init` to create one.');
+    return;
+  }
+
+  const content = readFileSync(configFile, 'utf-8');
+
+  // Check that the file has a checks block
+  if (!content.includes('checks:') && !content.includes('checks :')) {
+    console.log(
+      'Config file has no `checks` block. Add a `checks: { ... }` section or run `sickbay init --reset-config`.',
+    );
+    return;
+  }
+
+  // Detect applicable checks for this project
+  const context = await detectContext(projectPath);
+  const applicableChecks = getAvailableChecks(context);
+
+  // Scan file content for existing check IDs
+  const existingIds = new Set<string>();
+  const checkPattern = /^\s*['"]?([\w-]+)['"]?\s*:/gm;
+  let match;
+  while ((match = checkPattern.exec(content)) !== null) {
+    existingIds.add(match[1]);
+  }
+
+  // Find missing checks
+  const missing = applicableChecks.filter((c) => !existingIds.has(c.name));
+
+  if (missing.length === 0) {
+    console.log('Config is up to date — no new checks to add.');
+    return;
+  }
+
+  // Group missing checks by category
+  const grouped: Record<string, string[]> = {};
+  for (const check of missing) {
+    if (!grouped[check.category]) {
+      grouped[check.category] = [];
+    }
+    grouped[check.category].push(check.name);
+  }
+
+  // Build new check lines
+  const newLineGroups: string[] = [];
+  for (const category of CATEGORY_ORDER) {
+    const names = grouped[category];
+    if (!names || names.length === 0) continue;
+    const label = CATEGORY_LABELS[category] ?? category;
+    const lines = names.map((name) => `    ${formatCheckKey(name)}: true,`);
+    newLineGroups.push(`\n    // --- New: ${label} ---\n${lines.join('\n')}`);
+  }
+
+  const newBlock = newLineGroups.join('');
+
+  // Find insertion point: the closing `}` of the checks object.
+  // Strategy: find 'checks:' then find its matching closing brace.
+  const lines = content.split('\n');
+  let checksStartLine = -1;
+  let insertionLine = -1;
+  let braceDepth = 0;
+  let inChecksBlock = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (!inChecksBlock && /^\s*checks\s*:/.test(line)) {
+      checksStartLine = i;
+      // Count opening braces on this line
+      braceDepth = (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
+      inChecksBlock = braceDepth > 0;
+      continue;
+    }
+
+    if (inChecksBlock) {
+      braceDepth += (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
+      if (braceDepth <= 0) {
+        insertionLine = i;
+        break;
+      }
+    }
+  }
+
+  if (checksStartLine === -1 || insertionLine === -1) {
+    console.log(
+      'Could not find the checks block boundary. Please add the new checks manually or run `sickbay init --reset-config`.',
+    );
+    return;
+  }
+
+  // Insert new checks before the closing brace of the checks block
+  lines.splice(insertionLine, 0, newBlock);
+  writeFileSync(configFile, lines.join('\n'));
+
+  const names = missing.map((c) => c.name).join(', ');
+  console.log(`Added ${missing.length} new check(s): ${names}`);
 }
 
 export async function initSickbay(projectPath: string): Promise<void> {

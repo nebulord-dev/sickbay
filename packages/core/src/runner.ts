@@ -1,6 +1,13 @@
 import { relative } from 'path';
 
-import { loadConfig, isCheckDisabled, getCheckConfig, resolveConfigMeta } from './config.js';
+import {
+  loadConfig,
+  isCheckDisabled,
+  getCheckConfig,
+  getUnlistedChecks,
+  mergeConfigs,
+  resolveConfigMeta,
+} from './config.js';
 import { AngularBuildConfigRunner } from './integrations/angular-build-config.js';
 import { AngularChangeDetectionRunner } from './integrations/angular-change-detection.js';
 import { AngularLazyRoutesRunner } from './integrations/angular-lazy-routes.js';
@@ -132,6 +139,21 @@ export async function runSickbay(options: RunnerOptions = {}): Promise<SickbayRe
     .filter((r) => !isCheckDisabled(config, r.name));
   options.onRunnersReady?.(runners.map((r) => r.name));
 
+  // Scan-time notification: warn about checks running but not listed in config.
+  // Only emit for top-level calls (not internal per-package calls in monorepo mode).
+  if (options._config === undefined && config?.checks) {
+    const unlisted = getUnlistedChecks(
+      config,
+      runners.map((r) => r.name),
+    );
+    if (unlisted.length > 0) {
+      process.stderr.write(
+        `Note: ${unlisted.length} check(s) running but not listed in your config: ${unlisted.join(', ')}. ` +
+          `Run \`sickbay init --sync\` to add them.\n`,
+      );
+    }
+  }
+
   const checks: CheckResult[] = [];
 
   // Run all checks concurrently
@@ -202,12 +224,14 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
     throw new Error(`Not a monorepo root: ${rootPath}`);
   }
 
-  const config = await loadConfig(rootPath);
-  const configMeta = resolveConfigMeta(config);
+  const rootConfig = await loadConfig(rootPath);
+  const configMeta = resolveConfigMeta(rootConfig);
 
   const packageReports = await Promise.all(
     monorepoInfo.packagePaths.map(async (pkgPath): Promise<PackageReport> => {
-      const report = await runSickbay({ ...options, projectPath: pkgPath, _config: config });
+      const pkgConfig = await loadConfig(pkgPath);
+      const mergedConfig = mergeConfigs(rootConfig, pkgConfig);
+      const report = await runSickbay({ ...options, projectPath: pkgPath, _config: mergedConfig });
       const context = await detectContext(pkgPath);
 
       options.onPackageStart?.(report.projectInfo.name);

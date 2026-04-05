@@ -532,19 +532,28 @@ Each phase is a standalone deliverable that ships value on its own. The full `Si
 - `reason` field required on all suppression rules
 - 8 new tests covering all suppression scenarios
 
-### Phase E: Web Config Tab
+### Phase E: Web Config Tab ✅ Complete (2026-04-04)
 
-- `/sickbay-config.json` endpoint on CLI HTTP server
-- Read-only Config tab in web dashboard
-- Custom badges, default vs override comparison, disabled check dimming
-- "Custom configuration active" banner
+- `/sickbay-config.json` endpoint on CLI HTTP server (loads config from disk via `loadConfig()`)
+- Read-only `ConfigTab.tsx` component in web dashboard
+- Checks listed with colored badges: disabled (red), thresholds (blue), suppressed (yellow), exclude (purple)
+- Threshold details, suppress rules with reasons, and exclude patterns shown inline
+- Scoring Weights section shows custom vs default with color-coded comparison
+- Global Excludes section lists glob patterns
+- Config tab conditionally visible only when `hasCustomConfig` is true
+- `DEFAULT_WEIGHTS` duplicated in web constants (browser-safe, no core value imports)
+- "Custom configuration active" banner with disabled/overridden counts
+- 13 new tests (3 endpoint + 10 component)
 
-### Phase F: Config Sync + Monorepo (Future)
+### Phase F: Config Sync + Monorepo ✅ Complete (2026-04-04)
 
-- `sickbay init --sync` — appends new checks to existing config without touching existing entries
-- Scan-time warning when unlisted checks are detected
-- `sickbay init --reset-config` — regenerates config from scratch
-- Per-package `sickbay.config.ts` resolution and merge in monorepo mode
+- `sickbay init --sync` — text-based append of missing checks to existing config; finds checks block closing brace, inserts new entries with `// --- New: Category ---` headers; preserves all existing entries
+- `sickbay init --reset-config` — `generateConfigFile()` gains `force` option to overwrite existing config
+- Scan-time notification via `getUnlistedChecks()` helper in config.ts; emits stderr notice when config exists but has unlisted running checks; gated on top-level calls only (not per-package in monorepo)
+- Per-package `sickbay.config.ts` resolution in `runSickbayMonorepo()`; `mergeConfigs()` deep-merges root + package config (checks: per-key override, exclude: additive, weights: per-category override)
+- `--sync` and `--reset-config` are config-only operations — neither triggers baseline scan or `.sickbay/` scaffolding
+- 12 new tests (config.test.ts) + 5 new tests (init.test.ts)
+- Configuration docs updated with sync, reset, and monorepo per-package sections
 
 ---
 

@@ -157,6 +157,8 @@ vi.mock('./config.js', () => ({
   loadConfig: vi.fn(),
   isCheckDisabled: vi.fn(),
   getCheckConfig: vi.fn().mockReturnValue(null),
+  getUnlistedChecks: vi.fn().mockReturnValue([]),
+  mergeConfigs: vi.fn((root: unknown, pkg: unknown) => root ?? pkg ?? null),
   resolveConfigMeta: vi.fn(),
   validateConfig: vi.fn(),
 }));

@@ -142,6 +142,36 @@ export function validateConfig(config: SickbayConfig, knownCheckIds: string[]): 
   }
 }
 
+/**
+ * Returns runner names that are running but not listed in the user's config.
+ * Returns empty array when config is null or has no checks block.
+ */
+export function getUnlistedChecks(config: SickbayConfig | null, runnerNames: string[]): string[] {
+  if (!config?.checks) return [];
+  const configCheckIds = new Set(Object.keys(config.checks));
+  return runnerNames.filter((name) => !configCheckIds.has(name));
+}
+
+/**
+ * Merge a root config with a package-level config for monorepo mode.
+ * Package config overrides root per-key for checks and weights.
+ * Exclude patterns are concatenated (additive).
+ */
+export function mergeConfigs(
+  root: SickbayConfig | null,
+  pkg: SickbayConfig | null,
+): SickbayConfig | null {
+  if (!root && !pkg) return null;
+  if (!root) return pkg;
+  if (!pkg) return root;
+
+  return {
+    checks: { ...root.checks, ...pkg.checks },
+    exclude: [...(root.exclude ?? []), ...(pkg.exclude ?? [])],
+    weights: root.weights || pkg.weights ? { ...root.weights, ...pkg.weights } : undefined,
+  };
+}
+
 export async function loadConfig(projectPath: string): Promise<SickbayConfig | null> {
   const absProjectPath = resolve(projectPath);
   const configPath = CONFIG_FILES.map((f) => join(absProjectPath, f)).find((p) => existsSync(p));

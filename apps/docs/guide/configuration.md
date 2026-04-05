@@ -75,6 +75,45 @@ Sickbay looks for config files in this order:
 
 The file is executed at runtime using [jiti](https://github.com/unjs/jiti) — no build step required.
 
+## Keeping Config in Sync
+
+When Sickbay adds new checks in an update, your existing config still works — unlisted checks run with defaults. But you lose the discoverability benefit of seeing all checks in one place.
+
+### `sickbay init --sync`
+
+Appends newly available checks to your existing config without touching existing entries:
+
+```bash
+sickbay init --sync
+# Added 3 new check(s): next-images, next-link, next-fonts
+```
+
+New checks are added as `true` (enabled) with `// --- New: Category ---` comment headers so you can easily spot them. Your existing thresholds, suppress rules, and disabled checks are preserved.
+
+Run this after updating Sickbay (`npm update sickbay`) to pick up any new runners.
+
+### `sickbay init --reset-config`
+
+Regenerates the config from scratch, overwriting the existing file:
+
+```bash
+sickbay init --reset-config
+# Regenerated sickbay.config.ts
+```
+
+Use this when your config has drifted too far and you want a clean start. All customizations (thresholds, suppress rules, disabled checks) will be lost.
+
+### Scan-Time Notifications
+
+When Sickbay detects checks running that aren't listed in your config, it prints a notice:
+
+```
+Note: 3 check(s) running but not listed in your config: next-images, next-link, next-fonts.
+Run `sickbay init --sync` to add them.
+```
+
+This only appears when a config file exists. Zero-config users never see it.
+
 ## Full Schema Reference
 
 The config supports threshold overrides, path exclusions, scoring weight adjustments, and per-check suppression rules.
@@ -217,7 +256,63 @@ When both `path` and `match` are provided, both must match (AND logic).
 
 ## Monorepo Support
 
-In a monorepo, place `sickbay.config.ts` at the workspace root. It applies to all packages during `sickbay` scans. Per-package config overrides are planned for a future release.
+In a monorepo, place `sickbay.config.ts` at the workspace root. It applies to all packages during `sickbay` scans.
+
+### Per-Package Config
+
+Individual packages can have their own `sickbay.config.ts` that overrides the root config:
+
+```
+my-monorepo/
+  sickbay.config.ts          # root config — applies to all packages
+  packages/
+    react-app/
+      sickbay.config.ts      # overrides root for this package only
+    node-api/
+      sickbay.config.ts      # overrides root for this package only
+```
+
+### Merge Semantics
+
+When both root and package configs exist, they are merged with these rules:
+
+| Field | Merge behavior |
+|---|---|
+| `checks` | Per-key override — package wins on collision |
+| `exclude` | Additive — package paths are appended to root paths |
+| `weights` | Per-category override — package wins on collision |
+
+Example: if the root config disables `jscpd` but a package config sets `jscpd: true`, that package will run the duplication check.
+
+```ts
+// Root: sickbay.config.ts
+/** @type {import('sickbay/config').SickbayConfig} */
+export default {
+  checks: {
+    jscpd: false,            // disabled globally
+    coverage: {
+      thresholds: { lines: 80 },
+    },
+  },
+  exclude: ['src/generated/**'],
+}
+```
+
+```ts
+// packages/react-app/sickbay.config.ts
+/** @type {import('sickbay/config').SickbayConfig} */
+export default {
+  checks: {
+    jscpd: true,              // re-enable for this package
+    coverage: {
+      thresholds: { lines: 90 },  // stricter threshold
+    },
+  },
+  exclude: ['src/stories/**'],   // added to root excludes
+}
+```
+
+Result for `react-app`: `jscpd` enabled, coverage lines threshold 90, excludes `src/generated/**` and `src/stories/**`.
 
 ## All Checks
 
