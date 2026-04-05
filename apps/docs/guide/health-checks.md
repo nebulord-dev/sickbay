@@ -216,12 +216,12 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 ::: details Detected patterns
 | Pattern | Severity | Fix |
 |---------|----------|-----|
-| Inline object in JSX prop (`style={{ }}`, `prop={{ }}`) | warning | Extract to a constant or use `useMemo()` |
+| Inline object in JSX prop (<code v-pre>style={{ }}</code>, <code v-pre>prop={{ }}</code>) | warning | Extract to a constant or use `useMemo()` |
 | Array index as key (`key={index}`) | warning | Use a unique identifier (id, slug, etc.) |
 | Large component file (> 400 lines) | info | Split into smaller, focused components |
 | Route file with static imports (> 3 components, no `React.lazy`) | info | Use `React.lazy()` and `Suspense` for code splitting |
 
-`className={{ }}` patterns (clsx/classnames) are excluded from inline object detection.
+<code v-pre>className={{ }}</code> patterns (clsx/classnames) are excluded from inline object detection.
 :::
 
 ---
@@ -281,7 +281,7 @@ Projects without a `package.json` get runtime `unknown` and all scoped runners a
 - **Tool:** Built-in inline template analyzer
 - **Applies to:** Angular projects
 - **Category:** Performance
-- **What it detects:** Performance anti-patterns in Angular component inline templates: `*ngFor` without `trackBy`, `@for` without `track` (Angular 17+ control flow), and function calls in template interpolations (`{{ method() }}`) or property bindings (`[attr]="method()"`), which re-run on every change detection cycle.
+- **What it detects:** Performance anti-patterns in Angular component inline templates: `*ngFor` without `trackBy`, `@for` without `track` (Angular 17+ control flow), and function calls in template interpolations (<code v-pre>{{ method() }}</code>) or property bindings (`[attr]="method()"`), which re-run on every change detection cycle.
 - **Scoring:** `max(20, 100 - issues * 15)`. All findings are `warning` severity.
 
 ---
