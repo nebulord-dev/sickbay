@@ -84,6 +84,10 @@ describe('AngularBuildConfigRunner', () => {
     mockReadFileSync.mockReturnValue(JSON.stringify(angularJson) as never);
     const result = await runner.run('/project');
     expect(result.issues.some((i) => i.message.includes('sourceMap'))).toBe(true);
+    const issue = result.issues.find((i) => i.message.includes('sourceMap'));
+    expect(issue?.fix?.command).toBe(
+      'ng config projects.app.architect.build.configurations.production.sourceMap false',
+    );
   });
 
   it('detects optimization: false in production', async () => {
@@ -105,6 +109,10 @@ describe('AngularBuildConfigRunner', () => {
     mockReadFileSync.mockReturnValue(JSON.stringify(angularJson) as never);
     const result = await runner.run('/project');
     expect(result.issues.some((i) => i.message.includes('optimization'))).toBe(true);
+    const issue = result.issues.find((i) => i.message.includes('optimization'));
+    expect(issue?.fix?.command).toBe(
+      'ng config projects.app.architect.build.configurations.production.optimization true',
+    );
   });
 
   it('detects missing budgets', async () => {
@@ -147,6 +155,10 @@ describe('AngularBuildConfigRunner', () => {
     mockReadFileSync.mockReturnValue(JSON.stringify(angularJson) as never);
     const result = await runner.run('/project');
     expect(result.issues.some((i) => i.message.includes('AOT'))).toBe(true);
+    const issue = result.issues.find((i) => i.message.includes('AOT'));
+    expect(issue?.fix?.command).toBe(
+      'ng config projects.app.architect.build.configurations.production.aot true',
+    );
   });
 
   it('detects all issues at once and scores correctly', async () => {

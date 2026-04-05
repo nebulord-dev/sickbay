@@ -1,5 +1,6 @@
 import { execa } from 'execa';
 
+import { detectPackageManager } from '../utils/detect-project.js';
 import { timer, isCommandAvailable, coreLocalDir, parseJsonOutput } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
@@ -38,6 +39,7 @@ export class DepcheckRunner extends BaseRunner {
       });
 
       const data = parseJsonOutput(stdout, '{}') as DepcheckOutput;
+      const pm = detectPackageManager(projectPath);
       const issues: Issue[] = [];
 
       // Skip reporting unused dependencies - Knip handles this more comprehensively
@@ -53,7 +55,7 @@ export class DepcheckRunner extends BaseRunner {
           severity: 'critical',
           message: `Missing dependency: ${dep} (used in ${files.length} file${files.length > 1 ? 's' : ''})`,
           suppressMatch: dep,
-          fix: { description: `Install ${dep}` },
+          fix: { description: `Install ${dep}`, command: `${pm} install ${dep}` },
           reportedBy: ['depcheck'],
         });
       }

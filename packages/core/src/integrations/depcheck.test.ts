@@ -6,6 +6,10 @@ vi.mock('execa', () => ({
   execa: vi.fn(),
 }));
 
+vi.mock('../utils/detect-project.js', () => ({
+  detectPackageManager: vi.fn(() => 'npm'),
+}));
+
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
   isCommandAvailable: vi.fn(),
@@ -85,7 +89,7 @@ describe('DepcheckRunner', () => {
 
     const result = await runner.run('/project');
 
-    expect(result.issues[0].fix?.command).toBeUndefined();
+    expect(result.issues[0].fix?.command).toBe('npm install lodash');
     expect(result.issues[0].fix?.description).toBe('Install lodash');
   });
 

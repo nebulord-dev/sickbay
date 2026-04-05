@@ -60,6 +60,7 @@ export class AngularBuildConfigRunner extends BaseRunner {
           message: 'Production build has sourceMap enabled — ships source code to end users',
           fix: {
             description: 'Set "sourceMap": false in the production build configuration.',
+            command: `ng config projects.${projectName}.architect.build.configurations.production.sourceMap false`,
           },
           reportedBy: ['angular-build-config'],
         });
@@ -71,6 +72,7 @@ export class AngularBuildConfigRunner extends BaseRunner {
           message: 'Production build has optimization disabled — no minification or tree-shaking',
           fix: {
             description: 'Set "optimization": true in the production build configuration.',
+            command: `ng config projects.${projectName}.architect.build.configurations.production.optimization true`,
           },
           reportedBy: ['angular-build-config'],
         });
@@ -96,6 +98,7 @@ export class AngularBuildConfigRunner extends BaseRunner {
           fix: {
             description:
               'Remove "aot": false from the production build configuration. AOT is the default since Angular 9.',
+            command: `ng config projects.${projectName}.architect.build.configurations.production.aot true`,
           },
           reportedBy: ['angular-build-config'],
         });
