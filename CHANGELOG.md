@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/nebulord-dev/sickbay/compare/v1.10.0...v1.10.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* **cli:** make sickbay init monorepo-aware (KAN-99 Phase F) ([ef0dab4](https://github.com/nebulord-dev/sickbay/commit/ef0dab4cafaabab1d3e5f385748a6bd3bf122cd8))
+
 # [1.10.0](https://github.com/nebulord-dev/sickbay/compare/v1.9.0...v1.10.0) (2026-04-05)
 
 
