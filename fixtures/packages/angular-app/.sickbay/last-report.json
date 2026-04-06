@@ -1,0 +1,574 @@
+{
+  "timestamp": "2026-03-31T21:21:00.442Z",
+  "projectPath": "/Users/danteel/Desktop/nebulord/sickbay/fixtures/packages/angular-app",
+  "projectInfo": {
+    "name": "angular-app",
+    "version": "0.0.1",
+    "hasTypeScript": true,
+    "hasESLint": false,
+    "hasPrettier": false,
+    "framework": "node",
+    "packageManager": "pnpm",
+    "totalDependencies": 6,
+    "dependencies": {
+      "@angular/common": "^17.3.0",
+      "@angular/core": "^17.3.0",
+      "@angular/platform-browser": "^17.3.0",
+      "@angular/router": "^17.3.0",
+      "rxjs": "^7.8.0"
+    },
+    "devDependencies": {
+      "typescript": "~5.4.0"
+    }
+  },
+  "checks": [
+    {
+      "id": "knip",
+      "category": "dependencies",
+      "name": "Unused Code",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "knip"
+      ],
+      "duration": 262,
+      "metadata": {
+        "unusedFiles": 0,
+        "unusedDeps": 0,
+        "unusedDevDeps": 0,
+        "unusedExports": 0
+      }
+    },
+    {
+      "id": "depcheck",
+      "category": "dependencies",
+      "name": "Dependency Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "depcheck"
+      ],
+      "duration": 351,
+      "metadata": {
+        "unused": 0,
+        "missing": 0
+      }
+    },
+    {
+      "id": "outdated",
+      "category": "dependencies",
+      "name": "Outdated Packages",
+      "score": 85,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "@angular/common: 17.3.12 → 21.2.6 (major)",
+          "fix": {
+            "description": "Update @angular/common to 21.2.6 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@angular/core: 17.3.12 → 21.2.6 (major)",
+          "fix": {
+            "description": "Update @angular/core to 21.2.6 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@angular/platform-browser: 17.3.12 → 21.2.6 (major)",
+          "fix": {
+            "description": "Update @angular/platform-browser to 21.2.6 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@angular/router: 17.3.12 → 21.2.6 (major)",
+          "fix": {
+            "description": "Update @angular/router to 21.2.6 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "typescript: 5.4.5 → 6.0.2 (major)",
+          "fix": {
+            "description": "Update typescript to 6.0.2 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "pnpm"
+      ],
+      "duration": 720,
+      "metadata": {
+        "outdatedCount": 5
+      }
+    },
+    {
+      "id": "npm-audit",
+      "category": "security",
+      "name": "Security Vulnerabilities",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "npm-audit"
+      ],
+      "duration": 215,
+      "metadata": {
+        "vulnerablePackages": {}
+      }
+    },
+    {
+      "id": "madge",
+      "category": "code-quality",
+      "name": "Circular Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "madge"
+      ],
+      "duration": 321,
+      "metadata": {
+        "circularCount": 0,
+        "graph": {
+          "app.component.ts": [],
+          "app.config.ts": [
+            "app.routes.ts"
+          ],
+          "app.routes.ts": [
+            "components/header.component.ts",
+            "components/product-card.component.ts",
+            "components/user-list.component.ts"
+          ],
+          "components/header.component.ts": [],
+          "components/product-card.component.ts": [
+            "services/data.service.ts"
+          ],
+          "components/user-list.component.ts": [
+            "services/data.service.ts"
+          ],
+          "main.ts": [
+            "app.component.ts",
+            "app.config.ts"
+          ],
+          "services/data.service.ts": []
+        }
+      }
+    },
+    {
+      "id": "source-map-explorer",
+      "category": "performance",
+      "name": "source-map-explorer",
+      "score": 100,
+      "status": "skipped",
+      "issues": [],
+      "toolsUsed": [
+        "source-map-explorer"
+      ],
+      "duration": 0,
+      "metadata": {
+        "reason": "No JavaScript files found in build/"
+      }
+    },
+    {
+      "id": "license-checker",
+      "category": "security",
+      "name": "License Compliance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "license-checker"
+      ],
+      "duration": 113,
+      "metadata": {
+        "totalPackages": 6,
+        "flagged": 0
+      }
+    },
+    {
+      "id": "jscpd",
+      "category": "code-quality",
+      "name": "Code Duplication",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "jscpd"
+      ],
+      "duration": 242,
+      "metadata": {
+        "percentage": 0,
+        "clones": 0
+      }
+    },
+    {
+      "id": "typescript",
+      "category": "code-quality",
+      "name": "Type Safety",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "tsc"
+      ],
+      "duration": 1141,
+      "metadata": {
+        "errors": 0
+      }
+    },
+    {
+      "id": "todo-scanner",
+      "category": "code-quality",
+      "name": "Technical Debt",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "todo-scanner"
+      ],
+      "duration": 2,
+      "metadata": {
+        "total": 0,
+        "todo": 0,
+        "fixme": 0,
+        "hack": 0
+      }
+    },
+    {
+      "id": "complexity",
+      "category": "code-quality",
+      "name": "File Complexity",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "complexity"
+      ],
+      "duration": 1,
+      "metadata": {
+        "totalFiles": 8,
+        "totalLines": 110,
+        "avgLines": 14,
+        "oversizedCount": 0,
+        "topFiles": [
+          {
+            "path": "src/components/product-card.component.ts",
+            "lines": 25
+          },
+          {
+            "path": "src/components/user-list.component.ts",
+            "lines": 24
+          },
+          {
+            "path": "src/services/data.service.ts",
+            "lines": 17
+          },
+          {
+            "path": "src/app.component.ts",
+            "lines": 12
+          },
+          {
+            "path": "src/app.routes.ts",
+            "lines": 12
+          },
+          {
+            "path": "src/components/header.component.ts",
+            "lines": 10
+          },
+          {
+            "path": "src/app.config.ts",
+            "lines": 6
+          },
+          {
+            "path": "src/main.ts",
+            "lines": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "secrets",
+      "category": "security",
+      "name": "Secrets Detection",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "secrets"
+      ],
+      "duration": 1,
+      "metadata": {
+        "findings": 0
+      }
+    },
+    {
+      "id": "heavy-deps",
+      "category": "performance",
+      "name": "Heavy Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "heavy-deps"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalDeps": 6,
+        "heavyDepsFound": 0,
+        "heavyDeps": []
+      }
+    },
+    {
+      "id": "asset-size",
+      "category": "performance",
+      "name": "Asset Sizes",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "asset-size"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalAssets": 0,
+        "totalSizeBytes": 0,
+        "totalSizeMB": "0.0",
+        "images": 0,
+        "svgs": 0,
+        "fonts": 0
+      }
+    },
+    {
+      "id": "angular-change-detection",
+      "category": "performance",
+      "name": "Angular Change Detection",
+      "score": 40,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "src/app.component.ts — component missing OnPush change detection",
+          "file": "src/app.component.ts",
+          "fix": {
+            "description": "Add `changeDetection: ChangeDetectionStrategy.OnPush` to the @Component decorator to prevent unnecessary re-renders."
+          },
+          "reportedBy": [
+            "angular-change-detection"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/header.component.ts — component missing OnPush change detection",
+          "file": "src/components/header.component.ts",
+          "fix": {
+            "description": "Add `changeDetection: ChangeDetectionStrategy.OnPush` to the @Component decorator to prevent unnecessary re-renders."
+          },
+          "reportedBy": [
+            "angular-change-detection"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/product-card.component.ts — component missing OnPush change detection",
+          "file": "src/components/product-card.component.ts",
+          "fix": {
+            "description": "Add `changeDetection: ChangeDetectionStrategy.OnPush` to the @Component decorator to prevent unnecessary re-renders."
+          },
+          "reportedBy": [
+            "angular-change-detection"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/user-list.component.ts — component missing OnPush change detection",
+          "file": "src/components/user-list.component.ts",
+          "fix": {
+            "description": "Add `changeDetection: ChangeDetectionStrategy.OnPush` to the @Component decorator to prevent unnecessary re-renders."
+          },
+          "reportedBy": [
+            "angular-change-detection"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "angular-change-detection"
+      ],
+      "duration": 0,
+      "metadata": {
+        "filesScanned": 4,
+        "missingOnPush": 4
+      }
+    },
+    {
+      "id": "angular-lazy-routes",
+      "category": "performance",
+      "name": "Angular Lazy Routes",
+      "score": 20,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "src/app.routes.ts:9 — static route component import; consider lazy loading",
+          "file": "src/app.routes.ts",
+          "fix": {
+            "description": "Replace `component: MyComponent` with `loadComponent: () => import('./my.component').then(m => m.MyComponent)` to enable route-level code splitting."
+          },
+          "reportedBy": [
+            "angular-lazy-routes"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/app.routes.ts:10 — static route component import; consider lazy loading",
+          "file": "src/app.routes.ts",
+          "fix": {
+            "description": "Replace `component: MyComponent` with `loadComponent: () => import('./my.component').then(m => m.MyComponent)` to enable route-level code splitting."
+          },
+          "reportedBy": [
+            "angular-lazy-routes"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/app.routes.ts:11 — static route component import; consider lazy loading",
+          "file": "src/app.routes.ts",
+          "fix": {
+            "description": "Replace `component: MyComponent` with `loadComponent: () => import('./my.component').then(m => m.MyComponent)` to enable route-level code splitting."
+          },
+          "reportedBy": [
+            "angular-lazy-routes"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/app.routes.ts:12 — static route component import; consider lazy loading",
+          "file": "src/app.routes.ts",
+          "fix": {
+            "description": "Replace `component: MyComponent` with `loadComponent: () => import('./my.component').then(m => m.MyComponent)` to enable route-level code splitting."
+          },
+          "reportedBy": [
+            "angular-lazy-routes"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "angular-lazy-routes"
+      ],
+      "duration": 1,
+      "metadata": {
+        "routeFiles": 2,
+        "staticRoutes": 4,
+        "lazyRoutes": 0,
+        "totalRoutes": 4
+      }
+    },
+    {
+      "id": "angular-strict",
+      "category": "code-quality",
+      "name": "Angular Strict Mode",
+      "score": 20,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "TypeScript strict mode is disabled — could not confirm strict mode is enabled (check parent configs if using extends)",
+          "fix": {
+            "description": "Enable `strict: true` in `compilerOptions` for full TypeScript strict mode."
+          },
+          "reportedBy": [
+            "angular-strict"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Angular strictTemplates is disabled — could not confirm strictTemplates is enabled (check parent configs if using extends)",
+          "fix": {
+            "description": "Enable `strictTemplates: true` in `angularCompilerOptions` to catch template type errors at build time."
+          },
+          "reportedBy": [
+            "angular-strict"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Angular strictInjectionParameters is disabled — could not confirm strictInjectionParameters is enabled (check parent configs if using extends)",
+          "fix": {
+            "description": "Enable `strictInjectionParameters: true` in `angularCompilerOptions` to catch missing injection token errors."
+          },
+          "reportedBy": [
+            "angular-strict"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "angular-strict"
+      ],
+      "duration": 0,
+      "metadata": {
+        "strict": false,
+        "strictTemplates": false,
+        "strictInjectionParameters": false
+      }
+    },
+    {
+      "id": "angular-subscriptions",
+      "category": "code-quality",
+      "name": "Angular Subscriptions",
+      "score": 80,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "src/components/product-card.component.ts — possible unguarded subscription (no takeUntilDestroyed, takeUntil, or ngOnDestroy found)",
+          "file": "src/components/product-card.component.ts",
+          "fix": {
+            "description": "Use `takeUntilDestroyed()` from `@angular/core/rxjs-interop` or call `.unsubscribe()` in `ngOnDestroy` to prevent memory leaks."
+          },
+          "reportedBy": [
+            "angular-subscriptions"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "angular-subscriptions"
+      ],
+      "duration": 0,
+      "metadata": {
+        "filesScanned": 4,
+        "leakyComponents": 1
+      }
+    }
+  ],
+  "overallScore": 88,
+  "summary": {
+    "critical": 0,
+    "warnings": 17,
+    "info": 0
+  },
+  "quote": {
+    "text": "I find the resilience of this organism quite remarkable!",
+    "source": "Dr. Phlox",
+    "severity": "info"
+  }
+}

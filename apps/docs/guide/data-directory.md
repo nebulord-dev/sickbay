@@ -83,6 +83,7 @@ Created by `sickbay init` inside the `.sickbay/` directory. Prevents `history.js
 
 ```
 history.json
+dep-tree.json
 cache/
 ```
 
@@ -90,6 +91,7 @@ cache/
 
 ```
 .sickbay/history.json
+.sickbay/dep-tree.json
 .sickbay/cache/
 ```
 

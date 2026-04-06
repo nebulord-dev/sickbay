@@ -1,0 +1,86 @@
+{
+  "projectPath": "fixtures/packages/angular-app",
+  "projectName": "angular-app",
+  "entries": [
+    {
+      "timestamp": "2026-03-31T02:06:41.620Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 95,
+        "security": 100,
+        "code-quality": 86,
+        "performance": 65
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 17,
+        "info": 0
+      },
+      "checksRun": 17
+    },
+    {
+      "timestamp": "2026-03-31T02:09:09.246Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 95,
+        "security": 100,
+        "code-quality": 86,
+        "performance": 65
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 17,
+        "info": 0
+      },
+      "checksRun": 17
+    },
+    {
+      "timestamp": "2026-03-31T03:15:02.128Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 95,
+        "security": 100,
+        "code-quality": 86,
+        "performance": 65
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 17,
+        "info": 0
+      },
+      "checksRun": 17
+    },
+    {
+      "timestamp": "2026-03-31T03:16:58.469Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 95,
+        "security": 100,
+        "code-quality": 86,
+        "performance": 65
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 17,
+        "info": 0
+      },
+      "checksRun": 17
+    },
+    {
+      "timestamp": "2026-03-31T21:21:00.442Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 95,
+        "security": 100,
+        "code-quality": 86,
+        "performance": 65
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 17,
+        "info": 0
+      },
+      "checksRun": 17
+    }
+  ]
+}

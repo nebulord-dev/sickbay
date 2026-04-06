@@ -1,0 +1,89 @@
+{
+  "name": "sickbay-test-app",
+  "version": "1.0.0",
+  "packageManager": "pnpm",
+  "dependencies": {
+    "faker": {
+      "name": "faker",
+      "version": "6.6.6"
+    },
+    "jquery": {
+      "name": "jquery",
+      "version": "4.0.0"
+    },
+    "lodash": {
+      "name": "lodash",
+      "version": "4.17.23"
+    },
+    "moment": {
+      "name": "moment",
+      "version": "2.30.1"
+    },
+    "react": {
+      "name": "react",
+      "version": "19.2.4"
+    },
+    "tailwindcss": {
+      "name": "tailwindcss",
+      "version": "4.2.1"
+    },
+    "underscore": {
+      "name": "underscore",
+      "version": "1.13.8"
+    },
+    "@tailwindcss/vite": {
+      "name": "@tailwindcss/vite",
+      "version": "4.2.1",
+      "dependencies": {
+        "@tailwindcss/node": {
+          "name": "@tailwindcss/node",
+          "version": "4.2.1"
+        },
+        "@tailwindcss/oxide": {
+          "name": "@tailwindcss/oxide",
+          "version": "4.2.1"
+        },
+        "tailwindcss": {
+          "name": "tailwindcss",
+          "version": "4.2.1"
+        },
+        "vite": {
+          "name": "vite",
+          "version": "7.3.1"
+        }
+      }
+    },
+    "axios": {
+      "name": "axios",
+      "version": "1.13.5",
+      "dependencies": {
+        "follow-redirects": {
+          "name": "follow-redirects",
+          "version": "1.15.11"
+        },
+        "form-data": {
+          "name": "form-data",
+          "version": "4.0.5"
+        },
+        "proxy-from-env": {
+          "name": "proxy-from-env",
+          "version": "1.1.0"
+        }
+      }
+    },
+    "react-dom": {
+      "name": "react-dom",
+      "version": "19.2.4",
+      "dependencies": {
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        },
+        "scheduler": {
+          "name": "scheduler",
+          "version": "0.27.0"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,277 @@
+{
+  "name": "@nebulord/sickbay",
+  "version": "1.2.1",
+  "packageManager": "pnpm",
+  "dependencies": {
+    "commander": {
+      "name": "commander",
+      "version": "14.0.3"
+    },
+    "dotenv": {
+      "name": "dotenv",
+      "version": "17.3.1"
+    },
+    "react": {
+      "name": "react",
+      "version": "19.2.4"
+    },
+    "@anthropic-ai/sdk": {
+      "name": "@anthropic-ai/sdk",
+      "version": "0.80.0",
+      "dependencies": {
+        "json-schema-to-ts": {
+          "name": "json-schema-to-ts",
+          "version": "3.1.1"
+        },
+        "zod": {
+          "name": "zod",
+          "version": "4.3.6"
+        }
+      }
+    },
+    "@nebulord/sickbay-core": {
+      "name": "@nebulord/sickbay-core",
+      "version": "link:../../packages/core",
+      "dependencies": {
+        "depcheck": {
+          "name": "depcheck",
+          "version": "1.4.7"
+        },
+        "execa": {
+          "name": "execa",
+          "version": "9.6.1"
+        },
+        "globby": {
+          "name": "globby",
+          "version": "16.2.0"
+        },
+        "jscpd": {
+          "name": "jscpd",
+          "version": "4.0.8"
+        },
+        "knip": {
+          "name": "knip",
+          "version": "6.1.0"
+        },
+        "license-checker": {
+          "name": "license-checker",
+          "version": "25.0.1"
+        },
+        "madge": {
+          "name": "madge",
+          "version": "8.0.0"
+        },
+        "source-map-explorer": {
+          "name": "source-map-explorer",
+          "version": "2.5.3"
+        },
+        "tsup": {
+          "name": "tsup",
+          "version": "8.5.1"
+        },
+        "typescript": {
+          "name": "typescript",
+          "version": "5.9.3"
+        },
+        "vitest": {
+          "name": "vitest",
+          "version": "4.1.2"
+        }
+      }
+    },
+    "chokidar": {
+      "name": "chokidar",
+      "version": "5.0.0",
+      "dependencies": {
+        "readdirp": {
+          "name": "readdirp",
+          "version": "5.0.0"
+        }
+      }
+    },
+    "ink": {
+      "name": "ink",
+      "version": "6.8.0",
+      "dependencies": {
+        "@alcalzone/ansi-tokenize": {
+          "name": "@alcalzone/ansi-tokenize",
+          "version": "0.2.5"
+        },
+        "@types/react": {
+          "name": "@types/react",
+          "version": "19.2.14"
+        },
+        "ansi-escapes": {
+          "name": "ansi-escapes",
+          "version": "7.3.0"
+        },
+        "ansi-styles": {
+          "name": "ansi-styles",
+          "version": "6.2.3"
+        },
+        "auto-bind": {
+          "name": "auto-bind",
+          "version": "5.0.1"
+        },
+        "chalk": {
+          "name": "chalk",
+          "version": "5.6.2"
+        },
+        "cli-boxes": {
+          "name": "cli-boxes",
+          "version": "3.0.0"
+        },
+        "cli-cursor": {
+          "name": "cli-cursor",
+          "version": "4.0.0"
+        },
+        "cli-truncate": {
+          "name": "cli-truncate",
+          "version": "5.2.0"
+        },
+        "code-excerpt": {
+          "name": "code-excerpt",
+          "version": "4.0.0"
+        },
+        "es-toolkit": {
+          "name": "es-toolkit",
+          "version": "1.45.1"
+        },
+        "indent-string": {
+          "name": "indent-string",
+          "version": "5.0.0"
+        },
+        "is-in-ci": {
+          "name": "is-in-ci",
+          "version": "2.0.0"
+        },
+        "patch-console": {
+          "name": "patch-console",
+          "version": "2.0.0"
+        },
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        },
+        "react-reconciler": {
+          "name": "react-reconciler",
+          "version": "0.33.0"
+        },
+        "scheduler": {
+          "name": "scheduler",
+          "version": "0.27.0"
+        },
+        "signal-exit": {
+          "name": "signal-exit",
+          "version": "3.0.7"
+        },
+        "slice-ansi": {
+          "name": "slice-ansi",
+          "version": "8.0.0"
+        },
+        "stack-utils": {
+          "name": "stack-utils",
+          "version": "2.0.6"
+        },
+        "string-width": {
+          "name": "string-width",
+          "version": "8.2.0"
+        },
+        "terminal-size": {
+          "name": "terminal-size",
+          "version": "4.0.1"
+        },
+        "type-fest": {
+          "name": "type-fest",
+          "version": "5.5.0"
+        },
+        "widest-line": {
+          "name": "widest-line",
+          "version": "6.0.0"
+        },
+        "wrap-ansi": {
+          "name": "wrap-ansi",
+          "version": "9.0.2"
+        },
+        "ws": {
+          "name": "ws",
+          "version": "8.20.0"
+        },
+        "yoga-layout": {
+          "name": "yoga-layout",
+          "version": "3.2.1"
+        }
+      }
+    },
+    "ink-gradient": {
+      "name": "ink-gradient",
+      "version": "4.0.0",
+      "dependencies": {
+        "@types/gradient-string": {
+          "name": "@types/gradient-string",
+          "version": "1.1.6"
+        },
+        "gradient-string": {
+          "name": "gradient-string",
+          "version": "3.0.0"
+        },
+        "ink": {
+          "name": "ink",
+          "version": "6.8.0"
+        },
+        "strip-ansi": {
+          "name": "strip-ansi",
+          "version": "7.2.0"
+        }
+      }
+    },
+    "ink-spinner": {
+      "name": "ink-spinner",
+      "version": "5.0.0",
+      "dependencies": {
+        "cli-spinners": {
+          "name": "cli-spinners",
+          "version": "2.9.2"
+        },
+        "ink": {
+          "name": "ink",
+          "version": "6.8.0"
+        },
+        "react": {
+          "name": "react",
+          "version": "19.2.4"
+        }
+      }
+    },
+    "open": {
+      "name": "open",
+      "version": "11.0.0",
+      "dependencies": {
+        "default-browser": {
+          "name": "default-browser",
+          "version": "5.5.0"
+        },
+        "define-lazy-prop": {
+          "name": "define-lazy-prop",
+          "version": "3.0.0"
+        },
+        "is-in-ssh": {
+          "name": "is-in-ssh",
+          "version": "1.0.0"
+        },
+        "is-inside-container": {
+          "name": "is-inside-container",
+          "version": "1.0.0"
+        },
+        "powershell-utils": {
+          "name": "powershell-utils",
+          "version": "0.1.0"
+        },
+        "wsl-utils": {
+          "name": "wsl-utils",
+          "version": "0.3.1"
+        }
+      }
+    }
+  }
+}

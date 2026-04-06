@@ -228,11 +228,11 @@ export async function initSickbay(projectPath: string): Promise<void> {
   mkdirSync(sickbayDir, { recursive: true });
 
   // Write .gitignore — history is local, baseline is committed
-  writeFileSync(join(sickbayDir, '.gitignore'), 'history.json\ncache/\n');
+  writeFileSync(join(sickbayDir, '.gitignore'), 'history.json\ndep-tree.json\ncache/\n');
 
   // Add .sickbay entries to project's root .gitignore if not already present
   const rootGitignorePath = join(projectPath, '.gitignore');
-  const gitignoreEntries = ['.sickbay/history.json', '.sickbay/cache/'];
+  const gitignoreEntries = ['.sickbay/history.json', '.sickbay/dep-tree.json', '.sickbay/cache/'];
   const existingGitignore = existsSync(rootGitignorePath)
     ? readFileSync(rootGitignorePath, 'utf-8')
     : '';
@@ -281,7 +281,7 @@ export async function initSickbay(projectPath: string): Promise<void> {
   console.log(`\nCreated:`);
   console.log(`  sickbay.config.ts        — project configuration`);
   console.log(`  .sickbay/baseline.json   — committed (team baseline)`);
-  console.log(`  .sickbay/.gitignore      — ignores history.json + cache/`);
+  console.log(`  .sickbay/.gitignore      — ignores history.json, dep-tree.json + cache/`);
   if (toAdd.length > 0) {
     console.log(`  .gitignore              — added ${toAdd.join(', ')}`);
   }

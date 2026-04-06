@@ -1,0 +1,294 @@
+{
+  "projectPath": "/Users/danteel/Desktop/nebulord/sickbay/fixtures/packages/next-app",
+  "projectName": "next-app",
+  "entries": [
+    {
+      "timestamp": "2026-03-31T03:07:45.289Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:08:04.799Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:14:07.424Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:14:15.370Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:15:21.317Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:15:30.146Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:15:34.135Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:15:38.199Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:16:27.806Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:18:26.788Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:18:30.241Z",
+      "overallScore": 87,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 85,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 18
+    },
+    {
+      "timestamp": "2026-03-31T03:18:35.481Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 88,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 19
+    },
+    {
+      "timestamp": "2026-03-31T03:19:29.431Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 88,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 19
+    },
+    {
+      "timestamp": "2026-03-31T03:21:05.934Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 88,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 19
+    },
+    {
+      "timestamp": "2026-03-31T03:21:22.575Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 92,
+        "security": 83,
+        "code-quality": 88,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 12,
+        "info": 4
+      },
+      "checksRun": 19
+    },
+    {
+      "timestamp": "2026-03-31T03:22:41.109Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 94,
+        "security": 83,
+        "code-quality": 88,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 11,
+        "info": 4
+      },
+      "checksRun": 19
+    },
+    {
+      "timestamp": "2026-03-31T03:23:12.338Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 94,
+        "security": 83,
+        "code-quality": 88,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 11,
+        "info": 4
+      },
+      "checksRun": 19
+    },
+    {
+      "timestamp": "2026-03-31T21:20:47.175Z",
+      "overallScore": 88,
+      "categoryScores": {
+        "dependencies": 94,
+        "security": 83,
+        "code-quality": 88,
+        "performance": 90
+      },
+      "summary": {
+        "critical": 0,
+        "warnings": 11,
+        "info": 4
+      },
+      "checksRun": 19
+    }
+  ]
+}

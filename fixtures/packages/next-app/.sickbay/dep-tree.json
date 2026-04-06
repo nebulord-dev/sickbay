@@ -1,0 +1,113 @@
+{
+  "name": "next-app",
+  "version": "0.0.1",
+  "packageManager": "pnpm",
+  "dependencies": {
+    "next": {
+      "name": "next",
+      "version": "14.2.35",
+      "dependencies": {
+        "@next/env": {
+          "name": "@next/env",
+          "version": "14.2.35"
+        },
+        "@swc/helpers": {
+          "name": "@swc/helpers",
+          "version": "0.5.5"
+        },
+        "busboy": {
+          "name": "busboy",
+          "version": "1.6.0"
+        },
+        "caniuse-lite": {
+          "name": "caniuse-lite",
+          "version": "1.0.30001774"
+        },
+        "graceful-fs": {
+          "name": "graceful-fs",
+          "version": "4.2.11"
+        },
+        "postcss": {
+          "name": "postcss",
+          "version": "8.4.31"
+        },
+        "react": {
+          "name": "react",
+          "version": "18.3.1"
+        },
+        "react-dom": {
+          "name": "react-dom",
+          "version": "18.3.1"
+        },
+        "styled-jsx": {
+          "name": "styled-jsx",
+          "version": "5.1.1"
+        },
+        "@next/swc-darwin-arm64": {
+          "name": "@next/swc-darwin-arm64",
+          "version": "14.2.33"
+        },
+        "@next/swc-darwin-x64": {
+          "name": "@next/swc-darwin-x64",
+          "version": "14.2.33"
+        },
+        "@next/swc-linux-arm64-gnu": {
+          "name": "@next/swc-linux-arm64-gnu",
+          "version": "14.2.33"
+        },
+        "@next/swc-linux-arm64-musl": {
+          "name": "@next/swc-linux-arm64-musl",
+          "version": "14.2.33"
+        },
+        "@next/swc-linux-x64-gnu": {
+          "name": "@next/swc-linux-x64-gnu",
+          "version": "14.2.33"
+        },
+        "@next/swc-linux-x64-musl": {
+          "name": "@next/swc-linux-x64-musl",
+          "version": "14.2.33"
+        },
+        "@next/swc-win32-arm64-msvc": {
+          "name": "@next/swc-win32-arm64-msvc",
+          "version": "14.2.33"
+        },
+        "@next/swc-win32-ia32-msvc": {
+          "name": "@next/swc-win32-ia32-msvc",
+          "version": "14.2.33"
+        },
+        "@next/swc-win32-x64-msvc": {
+          "name": "@next/swc-win32-x64-msvc",
+          "version": "14.2.33"
+        }
+      }
+    },
+    "react": {
+      "name": "react",
+      "version": "18.3.1",
+      "dependencies": {
+        "loose-envify": {
+          "name": "loose-envify",
+          "version": "1.4.0"
+        }
+      }
+    },
+    "react-dom": {
+      "name": "react-dom",
+      "version": "18.3.1",
+      "dependencies": {
+        "loose-envify": {
+          "name": "loose-envify",
+          "version": "1.4.0"
+        },
+        "react": {
+          "name": "react",
+          "version": "18.3.1"
+        },
+        "scheduler": {
+          "name": "scheduler",
+          "version": "0.23.2"
+        }
+      }
+    }
+  }
+}

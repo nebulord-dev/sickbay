@@ -1,0 +1,810 @@
+{
+  "timestamp": "2026-03-31T03:16:15.192Z",
+  "projectPath": "fixtures/packages/react-app",
+  "projectInfo": {
+    "name": "sickbay-test-app",
+    "version": "1.0.0",
+    "hasTypeScript": true,
+    "hasESLint": true,
+    "hasPrettier": true,
+    "framework": "vite",
+    "packageManager": "pnpm",
+    "totalDependencies": 32,
+    "dependencies": {
+      "@tailwindcss/vite": "^4.1.18",
+      "axios": "^1.13.4",
+      "faker": "^6.6.6",
+      "jquery": "^4.0.0",
+      "lodash": "^4.17.23",
+      "moment": "^2.30.1",
+      "react": "^19.2.0",
+      "react-dom": "^19.2.0",
+      "tailwindcss": "^4.1.18",
+      "underscore": "^1.13.7"
+    },
+    "devDependencies": {
+      "@eslint/js": "^9.39.1",
+      "@testing-library/jest-dom": "^6.9.1",
+      "@testing-library/react": "^16.3.2",
+      "@testing-library/user-event": "^14.6.1",
+      "@types/jquery": "^3.5.33",
+      "@types/lodash": "^4.17.23",
+      "@types/node": "^24.10.1",
+      "@types/react": "^19.2.5",
+      "@types/react-dom": "^19.2.3",
+      "@vitejs/plugin-react": "^5.1.1",
+      "@vitest/coverage-v8": "^4.0.18",
+      "@vitest/ui": "^4.0.18",
+      "eslint": "^9.39.2",
+      "eslint-plugin-react-hooks": "^7.0.1",
+      "eslint-plugin-react-refresh": "^0.4.24",
+      "globals": "",
+      "jsdom": "^28.0.0",
+      "prettier": "^3.8.1",
+      "typescript": "~5.9.3",
+      "typescript-eslint": "^8.46.4",
+      "vite": "^7.2.4",
+      "vitest": "^4.0.18"
+    }
+  },
+  "checks": [
+    {
+      "id": "knip",
+      "category": "dependencies",
+      "name": "Unused Code",
+      "score": 70,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Unused dependency: faker",
+          "fix": {
+            "description": "Remove faker"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: jquery",
+          "fix": {
+            "description": "Remove jquery"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: underscore",
+          "fix": {
+            "description": "Remove underscore"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "Unused devDependency: @types/jquery",
+          "fix": {
+            "description": "Remove @types/jquery"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "Unused devDependency: @vitest/coverage-v8",
+          "fix": {
+            "description": "Remove @vitest/coverage-v8"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "Unused devDependency: prettier",
+          "fix": {
+            "description": "Remove prettier"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "knip"
+      ],
+      "duration": 433,
+      "metadata": {
+        "unusedFiles": 0,
+        "unusedDeps": 3,
+        "unusedDevDeps": 3,
+        "unusedExports": 0
+      }
+    },
+    {
+      "id": "depcheck",
+      "category": "dependencies",
+      "name": "Dependency Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "depcheck"
+      ],
+      "duration": 333,
+      "metadata": {
+        "unused": 0,
+        "missing": 0
+      }
+    },
+    {
+      "id": "outdated",
+      "category": "dependencies",
+      "name": "Outdated Packages",
+      "score": 52,
+      "status": "fail",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "@tailwindcss/vite: 4.2.1 → 4.2.2 (patch)",
+          "fix": {
+            "description": "Update @tailwindcss/vite to 4.2.2",
+            "command": "pnpm update @tailwindcss/vite",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "tailwindcss: 4.2.1 → 4.2.2 (patch)",
+          "fix": {
+            "description": "Update tailwindcss to 4.2.2",
+            "command": "pnpm update tailwindcss",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "@vitest/coverage-v8: 4.0.18 → 4.1.2 (minor)",
+          "fix": {
+            "description": "Update @vitest/coverage-v8 to 4.1.2",
+            "command": "pnpm update @vitest/coverage-v8",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "@vitest/ui: 4.0.18 → 4.1.2 (minor)",
+          "fix": {
+            "description": "Update @vitest/ui to 4.1.2",
+            "command": "pnpm update @vitest/ui",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "axios: 1.13.5 → 1.14.0 (minor)",
+          "fix": {
+            "description": "Update axios to 1.14.0",
+            "command": "pnpm update axios",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "typescript-eslint: 8.56.1 → 8.58.0 (minor)",
+          "fix": {
+            "description": "Update typescript-eslint to 8.58.0",
+            "command": "pnpm update typescript-eslint",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "vitest: 4.0.18 → 4.1.2 (minor)",
+          "fix": {
+            "description": "Update vitest to 4.1.2",
+            "command": "pnpm update vitest",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@eslint/js: 9.39.3 → 10.0.1 (major)",
+          "fix": {
+            "description": "Update @eslint/js to 10.0.1 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@types/jquery: 3.5.34 → 4.0.0 (major)",
+          "fix": {
+            "description": "Update @types/jquery to 4.0.0 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@types/node: 24.10.13 → 25.5.0 (major)",
+          "fix": {
+            "description": "Update @types/node to 25.5.0 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@vitejs/plugin-react: 5.1.4 → 6.0.1 (major)",
+          "fix": {
+            "description": "Update @vitejs/plugin-react to 6.0.1 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "eslint: 9.39.3 → 10.1.0 (major)",
+          "fix": {
+            "description": "Update eslint to 10.1.0 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "jsdom: 28.1.0 → 29.0.1 (major)",
+          "fix": {
+            "description": "Update jsdom to 29.0.1 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "typescript: 5.9.3 → 6.0.2 (major)",
+          "fix": {
+            "description": "Update typescript to 6.0.2 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "vite: 7.3.1 → 8.0.3 (major)",
+          "fix": {
+            "description": "Update vite to 8.0.3 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "eslint-plugin-react-refresh: 0.4.26 → 0.5.2 (minor)",
+          "fix": {
+            "description": "Update eslint-plugin-react-refresh to 0.5.2",
+            "command": "pnpm update eslint-plugin-react-refresh",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "pnpm"
+      ],
+      "duration": 757,
+      "metadata": {
+        "outdatedCount": 16
+      }
+    },
+    {
+      "id": "npm-audit",
+      "category": "security",
+      "name": "Security Vulnerabilities",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "npm-audit"
+      ],
+      "duration": 213,
+      "metadata": {
+        "vulnerablePackages": {}
+      }
+    },
+    {
+      "id": "madge",
+      "category": "code-quality",
+      "name": "Circular Dependencies",
+      "score": 90,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Circular dependency: utils/formatter.ts → utils/validator.ts",
+          "fix": {
+            "description": "Refactor to break the circular dependency cycle"
+          },
+          "reportedBy": [
+            "madge"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "madge"
+      ],
+      "duration": 381,
+      "metadata": {
+        "circularCount": 1,
+        "graph": {
+          "App.css": [],
+          "App.test.tsx": [
+            "App.tsx",
+            "hooks/useData.ts"
+          ],
+          "App.tsx": [
+            "App.css",
+            "components/Header.tsx",
+            "components/PostList.tsx",
+            "components/UserCard.tsx"
+          ],
+          "components/Header.test.tsx": [
+            "components/Header.tsx"
+          ],
+          "components/Header.tsx": [
+            "utils/formatter.ts"
+          ],
+          "components/PostList.test.tsx": [
+            "components/PostList.tsx",
+            "hooks/useData.ts"
+          ],
+          "components/PostList.tsx": [
+            "hooks/useData.ts",
+            "utils/helpers.ts"
+          ],
+          "components/UserCard.test.tsx": [
+            "components/UserCard.tsx"
+          ],
+          "components/UserCard.tsx": [
+            "utils/helpers.ts"
+          ],
+          "hooks/useData.test.ts": [
+            "hooks/useData.ts",
+            "services/api.ts"
+          ],
+          "hooks/useData.ts": [
+            "services/api.ts"
+          ],
+          "index.css": [],
+          "main.tsx": [
+            "App.tsx",
+            "index.css"
+          ],
+          "services/api.test.ts": [
+            "services/api.ts"
+          ],
+          "services/api.ts": [],
+          "test/setup.ts": [],
+          "utils/formatter.test.ts": [
+            "utils/formatter.ts"
+          ],
+          "utils/formatter.ts": [
+            "utils/validator.ts"
+          ],
+          "utils/helpers.test.ts": [
+            "utils/helpers.ts"
+          ],
+          "utils/helpers.ts": [],
+          "utils/validator.test.ts": [
+            "utils/validator.ts"
+          ],
+          "utils/validator.ts": [
+            "utils/formatter.ts"
+          ]
+        }
+      }
+    },
+    {
+      "id": "source-map-explorer",
+      "category": "performance",
+      "name": "source-map-explorer",
+      "score": 100,
+      "status": "skipped",
+      "issues": [],
+      "toolsUsed": [
+        "source-map-explorer"
+      ],
+      "duration": 0,
+      "metadata": {
+        "reason": "No JavaScript files found in build/"
+      }
+    },
+    {
+      "id": "coverage",
+      "category": "code-quality",
+      "name": "Tests & Coverage",
+      "score": 98,
+      "status": "fail",
+      "issues": [
+        {
+          "severity": "critical",
+          "message": "1 test failing (64/65 passing)",
+          "fix": {
+            "description": "Fix failing tests"
+          },
+          "reportedBy": [
+            "coverage"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "vitest"
+      ],
+      "duration": 1835,
+      "metadata": {
+        "testRunner": "vitest",
+        "totalTests": 65,
+        "passed": 64,
+        "failed": 1,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "license-checker",
+      "category": "security",
+      "name": "License Compliance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "license-checker"
+      ],
+      "duration": 143,
+      "metadata": {
+        "totalPackages": 11,
+        "flagged": 0
+      }
+    },
+    {
+      "id": "jscpd",
+      "category": "code-quality",
+      "name": "Code Duplication",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "jscpd"
+      ],
+      "duration": 305,
+      "metadata": {
+        "percentage": 0,
+        "clones": 0
+      }
+    },
+    {
+      "id": "eslint",
+      "category": "code-quality",
+      "name": "Lint",
+      "score": 95,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "/Users/danteel/Desktop/nebulord/sickbay/src/hooks/useData.ts: 1 error",
+          "fix": {
+            "description": "Fix ESLint issues in /Users/danteel/Desktop/nebulord/sickbay/src/hooks/useData.ts",
+            "command": "eslint /Users/danteel/Desktop/nebulord/sickbay/src/hooks/useData.ts --fix",
+            "modifiesSource": true
+          },
+          "reportedBy": [
+            "eslint"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "eslint"
+      ],
+      "duration": 1890,
+      "metadata": {
+        "errors": 1,
+        "warnings": 0,
+        "files": 20
+      }
+    },
+    {
+      "id": "typescript",
+      "category": "code-quality",
+      "name": "Type Safety",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "tsc"
+      ],
+      "duration": 701,
+      "metadata": {
+        "errors": 0
+      }
+    },
+    {
+      "id": "todo-scanner",
+      "category": "code-quality",
+      "name": "Technical Debt",
+      "score": 97,
+      "status": "pass",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "src/utils/validator.ts:29 — TODO: Move to utils",
+          "reportedBy": [
+            "todo-scanner"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "todo-scanner"
+      ],
+      "duration": 4,
+      "metadata": {
+        "total": 1,
+        "todo": 1,
+        "fixme": 0,
+        "hack": 0
+      }
+    },
+    {
+      "id": "complexity",
+      "category": "code-quality",
+      "name": "File Complexity",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "complexity"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalFiles": 10,
+        "totalLines": 243,
+        "avgLines": 24,
+        "oversizedCount": 0,
+        "topFiles": [
+          {
+            "path": "src/App.tsx",
+            "lines": 64
+          },
+          {
+            "path": "src/services/api.ts",
+            "lines": 26
+          },
+          {
+            "path": "src/components/UserCard.tsx",
+            "lines": 25
+          },
+          {
+            "path": "src/utils/validator.ts",
+            "lines": 25
+          },
+          {
+            "path": "src/utils/formatter.ts",
+            "lines": 24
+          },
+          {
+            "path": "src/utils/helpers.ts",
+            "lines": 23
+          },
+          {
+            "path": "src/components/PostList.tsx",
+            "lines": 18
+          },
+          {
+            "path": "src/hooks/useData.ts",
+            "lines": 16
+          },
+          {
+            "path": "src/components/Header.tsx",
+            "lines": 13
+          },
+          {
+            "path": "src/main.tsx",
+            "lines": 9
+          }
+        ]
+      }
+    },
+    {
+      "id": "secrets",
+      "category": "security",
+      "name": "Secrets Detection",
+      "score": 75,
+      "status": "fail",
+      "issues": [
+        {
+          "severity": "critical",
+          "message": "src/utils/validator.ts:4 — Hardcoded API key detected",
+          "file": "src/utils/validator.ts",
+          "fix": {
+            "description": "Move secrets to environment variables",
+            "codeChange": {
+              "before": "const api_key = 'ABCDEF1234567890ABCDEF';",
+              "after": "Use process.env.YOUR_SECRET_NAME instead"
+            }
+          },
+          "reportedBy": [
+            "secrets"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "secrets"
+      ],
+      "duration": 2,
+      "metadata": {
+        "findings": 1
+      }
+    },
+    {
+      "id": "heavy-deps",
+      "category": "performance",
+      "name": "Heavy Dependencies",
+      "score": 55,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "axios — fetch is built-in to Node 18+ and all modern browsers",
+          "fix": {
+            "description": "Consider replacing with native fetch"
+          },
+          "reportedBy": [
+            "heavy-deps"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "jquery — Modern browsers cover virtually all jQuery use cases natively",
+          "fix": {
+            "description": "Consider replacing with native DOM APIs (querySelector, fetch, classList, etc.)"
+          },
+          "reportedBy": [
+            "heavy-deps"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "lodash — Full lodash bundle is 70KB+ — use tree-shakeable imports instead",
+          "fix": {
+            "description": "Consider replacing with lodash-es or individual lodash/* imports"
+          },
+          "reportedBy": [
+            "heavy-deps"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "moment — moment is 300KB+ and mutable — modern alternatives are ~2KB",
+          "fix": {
+            "description": "Consider replacing with dayjs or date-fns"
+          },
+          "reportedBy": [
+            "heavy-deps"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "underscore — Most underscore utilities have native equivalents",
+          "fix": {
+            "description": "Consider replacing with native JS methods (map, filter, reduce, etc.)"
+          },
+          "reportedBy": [
+            "heavy-deps"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "heavy-deps"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalDeps": 32,
+        "heavyDepsFound": 5,
+        "heavyDeps": [
+          "axios",
+          "jquery",
+          "lodash",
+          "moment",
+          "underscore"
+        ]
+      }
+    },
+    {
+      "id": "react-perf",
+      "category": "performance",
+      "name": "React Performance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "react-perf"
+      ],
+      "duration": 1,
+      "metadata": {
+        "filesScanned": 5,
+        "reactCompiler": false,
+        "totalFindings": 0,
+        "inlineObjects": 0,
+        "indexAsKey": 0,
+        "largeComponents": 0
+      }
+    },
+    {
+      "id": "asset-size",
+      "category": "performance",
+      "name": "Asset Sizes",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "asset-size"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalAssets": 2,
+        "totalSizeBytes": 5623,
+        "totalSizeMB": "0.0",
+        "images": 0,
+        "svgs": 2,
+        "fonts": 0
+      }
+    }
+  ],
+  "overallScore": 90,
+  "summary": {
+    "critical": 2,
+    "warnings": 17,
+    "info": 13
+  },
+  "quote": {
+    "text": "I must say, I'm impressed. Don't let it happen again.",
+    "source": "The Doctor",
+    "severity": "allClear"
+  }
+}

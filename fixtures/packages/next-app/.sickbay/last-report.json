@@ -1,0 +1,568 @@
+{
+  "timestamp": "2026-03-31T21:20:47.175Z",
+  "projectPath": "/Users/danteel/Desktop/nebulord/sickbay/fixtures/packages/next-app",
+  "projectInfo": {
+    "name": "next-app",
+    "version": "0.0.1",
+    "hasTypeScript": true,
+    "hasESLint": false,
+    "hasPrettier": false,
+    "framework": "next",
+    "packageManager": "pnpm",
+    "totalDependencies": 6,
+    "dependencies": {
+      "next": "^14.2.0",
+      "react": "^18.3.0",
+      "react-dom": "^18.3.0"
+    },
+    "devDependencies": {
+      "@types/react": "^18.3.0",
+      "@types/react-dom": "^18.3.0",
+      "typescript": "~5.4.0"
+    }
+  },
+  "checks": [
+    {
+      "id": "knip",
+      "category": "dependencies",
+      "name": "Unused Code",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "knip"
+      ],
+      "duration": 1683,
+      "metadata": {
+        "unusedFiles": 0,
+        "unusedDeps": 0,
+        "unusedDevDeps": 0,
+        "unusedExports": 0
+      }
+    },
+    {
+      "id": "depcheck",
+      "category": "dependencies",
+      "name": "Dependency Health",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "depcheck"
+      ],
+      "duration": 833,
+      "metadata": {
+        "unused": 2,
+        "missing": 0
+      }
+    },
+    {
+      "id": "outdated",
+      "category": "dependencies",
+      "name": "Outdated Packages",
+      "score": 82,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "@types/react: 18.3.28 → 19.2.14 (major)",
+          "fix": {
+            "description": "Update @types/react to 19.2.14 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "@types/react-dom: 18.3.7 → 19.2.3 (major)",
+          "fix": {
+            "description": "Update @types/react-dom to 19.2.3 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "next: 14.2.35 → 16.2.1 (major)",
+          "fix": {
+            "description": "Update next to 16.2.1 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "react: 18.3.1 → 19.2.4 (major)",
+          "fix": {
+            "description": "Update react to 19.2.4 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "react-dom: 18.3.1 → 19.2.4 (major)",
+          "fix": {
+            "description": "Update react-dom to 19.2.4 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "typescript: 5.4.5 → 6.0.2 (major)",
+          "fix": {
+            "description": "Update typescript to 6.0.2 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "pnpm"
+      ],
+      "duration": 948,
+      "metadata": {
+        "outdatedCount": 6
+      }
+    },
+    {
+      "id": "npm-audit",
+      "category": "security",
+      "name": "Security Vulnerabilities",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "npm-audit"
+      ],
+      "duration": 199,
+      "metadata": {
+        "vulnerablePackages": {}
+      }
+    },
+    {
+      "id": "madge",
+      "category": "code-quality",
+      "name": "Circular Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "madge"
+      ],
+      "duration": 968,
+      "metadata": {
+        "circularCount": 0,
+        "graph": {
+          "about/page.tsx": [
+            "utils/format.ts"
+          ],
+          "components/StaticHeader.tsx": [],
+          "dashboard/page.tsx": [
+            "utils/format.ts"
+          ],
+          "layout.tsx": [
+            "components/StaticHeader.tsx"
+          ],
+          "page.tsx": [],
+          "utils/format.ts": []
+        }
+      }
+    },
+    {
+      "id": "source-map-explorer",
+      "category": "performance",
+      "name": "source-map-explorer",
+      "score": 100,
+      "status": "skipped",
+      "issues": [],
+      "toolsUsed": [
+        "source-map-explorer"
+      ],
+      "duration": 0,
+      "metadata": {
+        "reason": "No JavaScript files found in build/"
+      }
+    },
+    {
+      "id": "license-checker",
+      "category": "security",
+      "name": "License Compliance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "license-checker"
+      ],
+      "duration": 957,
+      "metadata": {
+        "totalPackages": 4,
+        "flagged": 0
+      }
+    },
+    {
+      "id": "jscpd",
+      "category": "code-quality",
+      "name": "Code Duplication",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "jscpd"
+      ],
+      "duration": 1226,
+      "metadata": {
+        "percentage": 0,
+        "clones": 0
+      }
+    },
+    {
+      "id": "typescript",
+      "category": "code-quality",
+      "name": "Type Safety",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "tsc"
+      ],
+      "duration": 806,
+      "metadata": {
+        "errors": 0
+      }
+    },
+    {
+      "id": "complexity",
+      "category": "code-quality",
+      "name": "File Complexity",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "complexity"
+      ],
+      "duration": 1,
+      "metadata": {
+        "totalFiles": 6,
+        "totalLines": 61,
+        "avgLines": 10,
+        "oversizedCount": 0,
+        "topFiles": [
+          {
+            "path": "app/layout.tsx",
+            "lines": 20
+          },
+          {
+            "path": "app/page.tsx",
+            "lines": 15
+          },
+          {
+            "path": "app/components/StaticHeader.tsx",
+            "lines": 11
+          },
+          {
+            "path": "app/about/page.tsx",
+            "lines": 6
+          },
+          {
+            "path": "app/dashboard/page.tsx",
+            "lines": 6
+          },
+          {
+            "path": "app/utils/format.ts",
+            "lines": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "secrets",
+      "category": "security",
+      "name": "Secrets Detection",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "secrets"
+      ],
+      "duration": 0,
+      "metadata": {
+        "findings": 0
+      }
+    },
+    {
+      "id": "heavy-deps",
+      "category": "performance",
+      "name": "Heavy Dependencies",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "heavy-deps"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalDeps": 6,
+        "heavyDepsFound": 0,
+        "heavyDeps": []
+      }
+    },
+    {
+      "id": "react-perf",
+      "category": "performance",
+      "name": "React Performance",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "react-perf"
+      ],
+      "duration": 0,
+      "metadata": {
+        "filesScanned": 0,
+        "reactCompiler": false,
+        "totalFindings": 0,
+        "inlineObjects": 0,
+        "indexAsKey": 0,
+        "largeComponents": 0
+      }
+    },
+    {
+      "id": "asset-size",
+      "category": "performance",
+      "name": "Asset Sizes",
+      "score": 100,
+      "status": "pass",
+      "issues": [],
+      "toolsUsed": [
+        "asset-size"
+      ],
+      "duration": 0,
+      "metadata": {
+        "totalAssets": 0,
+        "totalSizeBytes": 0,
+        "totalSizeMB": "0.0",
+        "images": 0,
+        "svgs": 0,
+        "fonts": 0
+      }
+    },
+    {
+      "id": "next-client-components",
+      "category": "performance",
+      "name": "Next.js Client Components",
+      "score": 85,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "app/components/StaticHeader.tsx — may not need 'use client' (no hooks or event handlers detected)",
+          "file": "app/components/StaticHeader.tsx",
+          "fix": {
+            "description": "This component may not need 'use client' — it contains no hooks or event handlers. Moving it to a Server Component reduces client bundle size."
+          },
+          "reportedBy": [
+            "next-client-components"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "next-client-components"
+      ],
+      "duration": 0,
+      "metadata": {
+        "filesScanned": 5,
+        "clientFiles": 1,
+        "unnecessaryClientFiles": 1
+      }
+    },
+    {
+      "id": "next-fonts",
+      "category": "performance",
+      "name": "Next.js Fonts",
+      "score": 70,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "app/layout.tsx — Google Fonts loaded via external stylesheet; use next/font/google",
+          "file": "app/layout.tsx",
+          "fix": {
+            "description": "Use next/font/google instead of a <link> stylesheet to self-host fonts and improve Core Web Vitals (eliminates render-blocking request)."
+          },
+          "reportedBy": [
+            "next-fonts"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "next-fonts"
+      ],
+      "duration": 0,
+      "metadata": {
+        "layoutFilesChecked": 9,
+        "violations": 1
+      }
+    },
+    {
+      "id": "next-images",
+      "category": "performance",
+      "name": "Next.js Image Optimization",
+      "score": 90,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "app/page.tsx — raw image element; use next/image for automatic optimization",
+          "file": "app/page.tsx",
+          "fix": {
+            "description": "Replace <img> with the <Image> component from next/image for automatic optimization, lazy loading, and Core Web Vitals improvements."
+          },
+          "reportedBy": [
+            "next-images"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "next-images"
+      ],
+      "duration": 1,
+      "metadata": {
+        "filesScanned": 5,
+        "violations": 1
+      }
+    },
+    {
+      "id": "next-link",
+      "category": "performance",
+      "name": "Next.js Link Usage",
+      "score": 85,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "app/page.tsx — raw anchor tag for internal navigation; use next/link",
+          "file": "app/page.tsx",
+          "fix": {
+            "description": "Replace <a href=\"/path\"> with <Link href=\"/path\"> from next/link to enable client-side navigation and prefetching."
+          },
+          "reportedBy": [
+            "next-link"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "next-link"
+      ],
+      "duration": 0,
+      "metadata": {
+        "filesScanned": 5,
+        "violations": 1
+      }
+    },
+    {
+      "id": "next-missing-boundaries",
+      "category": "code-quality",
+      "name": "Next.js Missing Boundaries",
+      "score": 40,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "info",
+          "message": "app/about — missing loading.tsx (Suspense boundary for this route segment)",
+          "fix": {
+            "description": "Add loading.tsx to show a skeleton UI while this route's data loads (App Router Suspense boundary)."
+          },
+          "reportedBy": [
+            "next-missing-boundaries"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "app/about — missing error.tsx (error boundary for this route segment)",
+          "fix": {
+            "description": "Add error.tsx with 'use client' to gracefully handle errors in this route segment."
+          },
+          "reportedBy": [
+            "next-missing-boundaries"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "app/dashboard — missing loading.tsx (Suspense boundary for this route segment)",
+          "fix": {
+            "description": "Add loading.tsx to show a skeleton UI while this route's data loads (App Router Suspense boundary)."
+          },
+          "reportedBy": [
+            "next-missing-boundaries"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "app/dashboard — missing error.tsx (error boundary for this route segment)",
+          "fix": {
+            "description": "Add error.tsx with 'use client' to gracefully handle errors in this route segment."
+          },
+          "reportedBy": [
+            "next-missing-boundaries"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "next-missing-boundaries"
+      ],
+      "duration": 1,
+      "metadata": {
+        "segmentsChecked": 2,
+        "missingLoading": 2,
+        "missingError": 2
+      }
+    },
+    {
+      "id": "next-security-headers",
+      "category": "security",
+      "name": "Next.js Security Headers",
+      "score": 30,
+      "status": "warning",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "next.config.js missing async headers() — security response headers (CSP, X-Frame-Options, etc.) are not configured",
+          "fix": {
+            "description": "Add an async headers() function to next.config.js to set security headers like Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, and Referrer-Policy."
+          },
+          "reportedBy": [
+            "next-security-headers"
+          ]
+        }
+      ],
+      "toolsUsed": [
+        "next-security-headers"
+      ],
+      "duration": 0,
+      "metadata": {
+        "configFile": "next.config.js",
+        "hasHeaders": false,
+        "missingHeaders": []
+      }
+    }
+  ],
+  "overallScore": 88,
+  "summary": {
+    "critical": 0,
+    "warnings": 11,
+    "info": 4
+  },
+  "quote": {
+    "text": "You're in fair health, but don't let that go to your head.",
+    "source": "Dr. McCoy",
+    "severity": "info"
+  }
+}

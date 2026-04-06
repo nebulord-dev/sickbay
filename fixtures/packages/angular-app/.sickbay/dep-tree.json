@@ -1,0 +1,97 @@
+{
+  "name": "angular-app",
+  "version": "0.0.1",
+  "packageManager": "pnpm",
+  "dependencies": {
+    "@angular/common": {
+      "name": "@angular/common",
+      "version": "17.3.12",
+      "dependencies": {
+        "@angular/core": {
+          "name": "@angular/core",
+          "version": "17.3.12"
+        },
+        "rxjs": {
+          "name": "rxjs",
+          "version": "7.8.2"
+        },
+        "tslib": {
+          "name": "tslib",
+          "version": "2.8.1"
+        }
+      }
+    },
+    "@angular/core": {
+      "name": "@angular/core",
+      "version": "17.3.12",
+      "dependencies": {
+        "rxjs": {
+          "name": "rxjs",
+          "version": "7.8.2"
+        },
+        "tslib": {
+          "name": "tslib",
+          "version": "2.8.1"
+        },
+        "zone.js": {
+          "name": "zone.js",
+          "version": "0.14.10"
+        }
+      }
+    },
+    "@angular/platform-browser": {
+      "name": "@angular/platform-browser",
+      "version": "17.3.12",
+      "dependencies": {
+        "@angular/common": {
+          "name": "@angular/common",
+          "version": "17.3.12"
+        },
+        "@angular/core": {
+          "name": "@angular/core",
+          "version": "17.3.12"
+        },
+        "tslib": {
+          "name": "tslib",
+          "version": "2.8.1"
+        }
+      }
+    },
+    "@angular/router": {
+      "name": "@angular/router",
+      "version": "17.3.12",
+      "dependencies": {
+        "@angular/common": {
+          "name": "@angular/common",
+          "version": "17.3.12"
+        },
+        "@angular/core": {
+          "name": "@angular/core",
+          "version": "17.3.12"
+        },
+        "@angular/platform-browser": {
+          "name": "@angular/platform-browser",
+          "version": "17.3.12"
+        },
+        "rxjs": {
+          "name": "rxjs",
+          "version": "7.8.2"
+        },
+        "tslib": {
+          "name": "tslib",
+          "version": "2.8.1"
+        }
+      }
+    },
+    "rxjs": {
+      "name": "rxjs",
+      "version": "7.8.2",
+      "dependencies": {
+        "tslib": {
+          "name": "tslib",
+          "version": "2.8.1"
+        }
+      }
+    }
+  }
+}

@@ -8,14 +8,12 @@ coverage/
 *.local
 .worktrees/
 .superpowers/
-.sickbay/
+
 .serena/
-.changeset
 
-wallaby.cjs
 
-# ignore plans Claude makes using plugins
-docs/*
+
 .worktrees/
 .sickbay/history.json
+.sickbay/dep-tree.json
 .sickbay/cache/
