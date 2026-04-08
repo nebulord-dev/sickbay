@@ -63,5 +63,6 @@
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
-  }
+  },
+  "_bundleNote": "tsup bundles @nebulord/sickbay-core inline (see tsup.config.ts noExternal). Core's runtime deps are mirrored in `dependencies` below so the bundled require() calls resolve at runtime. Do NOT delete entries that look unused from cli source — they are needed by core's bundled code. Drift is enforced by `pnpm check:bundled-deps` (scripts/check-bundled-deps.mjs)."
 }
