@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from 'fs';
 import http from 'http';
-import { join, extname } from 'path';
+import { join, extname, resolve, relative, isAbsolute } from 'path';
 import { fileURLToPath } from 'url';
 
 import type { AIService } from '../services/ai.js';
@@ -22,6 +22,42 @@ const MIME_TYPES: Record<string, string> = {
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
 };
+
+/**
+ * Safely resolve a URL pathname to a file path within baseDir, rejecting
+ * any attempt to escape the directory via `..`, absolute paths, URL-encoded
+ * traversal (`%2e%2e`), or null bytes. Returns null if the path is unsafe.
+ *
+ * Note that `new URL()` (used by the request handler) already normalizes
+ * `..` segments from the pathname before this function sees it, so in
+ * practice most traversal attempts are neutralized upstream. This function
+ * is defense-in-depth — it guards against null bytes, manually constructed
+ * malformed paths, and any future code path that bypasses URL normalization.
+ *
+ * Even though the dashboard server binds to 127.0.0.1, the dashboard exposes
+ * scan results including secret-scan findings — treat it like any public
+ * static server.
+ *
+ * Exported for direct unit testing; not part of the stable public API.
+ */
+export function resolveSafeStaticPath(baseDir: string, pathname: string): string | null {
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    return null;
+  }
+  if (decoded.includes('\0')) return null;
+  // Strip leading slashes so resolve() treats the path as relative to baseDir.
+  const cleaned = decoded.replace(/^\/+/, '');
+  const resolved = resolve(baseDir, cleaned);
+  const rel = relative(baseDir, resolved);
+  // relative() returns '' when identical, '..'-prefixed when outside, or absolute on other drives (Windows).
+  if (rel === '' || (!rel.startsWith('..') && !isAbsolute(rel))) {
+    return resolved;
+  }
+  return null;
+}
 
 function findWebDist(): string | null {
   // Resolve relative to this file's location
@@ -183,8 +219,11 @@ export async function serveWeb(
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ summary }));
         } catch (err) {
+          // Don't leak internal error details (stack, constructor name, dep internals)
+          // over the wire, even on loopback — other processes on the machine can reach it.
+          const message = err instanceof Error ? err.message : 'Internal error';
           res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: String(err) }));
+          res.end(JSON.stringify({ error: message }));
         }
         return;
       }
@@ -239,16 +278,21 @@ export async function serveWeb(
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ response }));
         } catch (err) {
+          // See above — no internal error leakage.
+          const errMessage = err instanceof Error ? err.message : 'Internal error';
           res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: String(err) }));
+          res.end(JSON.stringify({ error: errMessage }));
         }
       });
       return;
     }
 
-    // Serve static files from dist
-    const filePath = join(distDir, url === '/' ? 'index.html' : url);
-    if (existsSync(filePath)) {
+    // Serve static files from dist. Use the parsed pathname (not the raw url)
+    // so query strings are stripped, and route through resolveSafeStaticPath
+    // to prevent path traversal (e.g. `/../../etc/passwd`, `%2e%2e/`).
+    const requestedPath = parsedUrl.pathname === '/' ? 'index.html' : parsedUrl.pathname;
+    const filePath = resolveSafeStaticPath(distDir, requestedPath);
+    if (filePath && existsSync(filePath)) {
       const ext = extname(filePath);
       const mime = MIME_TYPES[ext] ?? 'application/octet-stream';
       res.writeHead(200, { 'Content-Type': mime });
