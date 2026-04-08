@@ -80,7 +80,7 @@ program
     // Warn early if any --checks IDs don't match known check names
     if (checks && checks.length > 0) {
       const knownNames = new Set(getAvailableChecks().map((c) => c.name));
-      const unknown = checks.filter((c) => !knownNames.has(c));
+      const unknown = checks.filter((c: string) => !knownNames.has(c));
       if (unknown.length > 0) {
         process.stderr.write(`Warning: unknown check ID(s): ${unknown.join(', ')}\n`);
       }
