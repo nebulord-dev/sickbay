@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname, basename } from 'path';
 
 import { createExcludeFilter } from '../utils/exclude.js';
-import { timer } from '../utils/file-helpers.js';
+import { relativeFromRoot, timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue, RunOptions } from '../types.js';
@@ -192,7 +192,7 @@ function scanDirectory(
       )
         continue;
       const fullPath = join(dir, entry);
-      const relPath = fullPath.replace(projectRoot + '/', '');
+      const relPath = relativeFromRoot(projectRoot, fullPath);
       if (isExcluded(relPath)) continue;
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
@@ -251,7 +251,7 @@ function scanFile(filePath: string, projectRoot: string): Finding[] {
   try {
     const content = readFileSync(filePath, 'utf-8');
     const lines = content.split('\n');
-    const relPath = filePath.replace(projectRoot + '/', '');
+    const relPath = relativeFromRoot(projectRoot, filePath);
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];

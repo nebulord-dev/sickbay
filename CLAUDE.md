@@ -81,6 +81,23 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 - pnpm quirks: use `--filter` not `-F` for scripting; lockfile changes require `pnpm install --no-frozen-lockfile` in CI if deps changed
 - The `fixtures/` workspace is separate from the Turbo pipeline — it has its own `pnpm-lock.yaml` and won't be built by `pnpm build` at root
 
+#### Test matrix: Linux + Windows
+
+The `test` job in `.github/workflows/ci.yml` runs on both `ubuntu-latest` AND `windows-latest` via a strategy matrix with `fail-fast: false`. Sickbay supports Windows users, so cross-platform regressions must be caught at PR time, not by users. The other CI jobs (`build`, `lint`, `test-snapshots`) stay on `ubuntu-latest` only — build is OS-independent, oxlint/oxfmt are platform-independent, and snapshot fixtures use POSIX paths that would need separate Windows snapshot files.
+
+**The cross-platform path-handling rule:** Never use string manipulation on paths. Specifically, **never write `fullPath.replace(projectRoot + '/', '')`** to compute relative paths — that pattern silently produces wrong output on Windows because the literal `/` doesn't match the actual `\` separator. Use `relativeFromRoot(projectRoot, fullPath)` from `core/src/utils/file-helpers.ts`, which handles the cross-platform normalization (always returns forward-slash output on every OS). The audit at `docs/audit-2026-04-07.md` documents how 19 sites in 16 files were silently broken on Windows for the entire project's history because tests only ran on Linux.
+
+**Test mock convention for path handling:** Test files that mock `fs` and compare paths against forward-slash literals (e.g. `String(p).endsWith('/src')`) need to also mock `path` to use POSIX semantics, otherwise they fail on the Windows CI runner because `path.join('/project', 'src')` returns `\project\src` on Windows. The pattern:
+
+```ts
+vi.mock('path', async () => {
+  const actual = await vi.importActual<typeof import('path')>('path');
+  return { ...actual.posix, default: actual.posix };
+});
+```
+
+`packages/core/src/utils/file-helpers.test.ts` deliberately does NOT mock `path` so its `relativeFromRoot` unit tests exercise the real cross-platform behavior on whichever OS the test is running on.
+
 ## Package Breakdown
 
 > **Note**: Each package has its own detailed README with current implementation specifics:

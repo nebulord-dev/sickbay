@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { NpmAuditRunner } from './npm-audit.js';
 
+// Force POSIX path semantics so mocks comparing forward-slash literals
+// (e.g. `endsWith('/src')`) match the path.join output on Windows.
+vi.mock('path', async () => {
+  const actual = await vi.importActual<typeof import('path')>('path');
+  return { ...actual.posix, default: actual.posix };
+});
+
 vi.mock('execa', () => ({ execa: vi.fn() }));
 
 vi.mock('../utils/file-helpers.js', () => ({

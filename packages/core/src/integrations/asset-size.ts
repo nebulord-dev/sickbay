@@ -2,7 +2,7 @@ import { readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 
 import { createExcludeFilter } from '../utils/exclude.js';
-import { timer, fileExists } from '../utils/file-helpers.js';
+import { fileExists, relativeFromRoot, timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue, RunOptions } from '../types.js';
@@ -201,7 +201,7 @@ function scanAssets(
     for (const entry of readdirSync(dir)) {
       if (entry.startsWith('.') || entry === 'node_modules') continue;
       const fullPath = join(dir, entry);
-      const relPath = fullPath.replace(projectRoot + '/', '');
+      const relPath = relativeFromRoot(projectRoot, fullPath);
       if (isExcluded(relPath)) continue;
       const stat = statSync(fullPath);
 
@@ -218,7 +218,7 @@ function scanAssets(
         else continue; // Only track known asset types
 
         assets.push({
-          path: fullPath.replace(projectRoot + '/', ''),
+          path: relativeFromRoot(projectRoot, fullPath),
           size: stat.size,
           type,
         });

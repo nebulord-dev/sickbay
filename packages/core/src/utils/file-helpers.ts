@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { join, dirname } from 'path';
+import { dirname, join, relative, sep } from 'path';
 import { fileURLToPath } from 'url';
 
 import { execa } from 'execa';
@@ -36,6 +36,33 @@ export async function isCommandAvailable(cmd: string): Promise<boolean> {
 
 export function fileExists(projectPath: string, ...parts: string[]): boolean {
   return existsSync(join(projectPath, ...parts));
+}
+
+/**
+ * Compute a project-relative path from an absolute path, with forward
+ * slashes regardless of platform.
+ *
+ * Why this exists: every check runner that walks the filesystem builds
+ * absolute paths with `path.join`, then needs to display/store/match a
+ * project-relative version. The natural way to do that is `path.relative`,
+ * but on Windows that returns paths with backslashes — which then break
+ * suppression rules (users write forward-slash globs), JSON snapshots
+ * (compared across platforms), and dashboard rendering.
+ *
+ * Historical bug: 19 sites across 16 integrations used
+ * `fullPath.replace(projectRoot + '/', '')` instead, which silently
+ * produced wrong output on Windows because the literal `/` in the
+ * search string never matched the actual `\` separator. The result was
+ * that every "relative" path was actually the original absolute path
+ * unchanged, breaking suppression matching and dashboard display for
+ * all Windows users. This helper replaces every one of those sites.
+ */
+export function relativeFromRoot(projectRoot: string, fullPath: string): string {
+  // path.relative returns paths with the platform-native separator (`\` on
+  // Windows). Splitting on `sep` and rejoining with `/` normalizes to
+  // forward slashes regardless of OS. On POSIX this is a no-op (`sep`
+  // is already `/`), so the runtime cost is negligible.
+  return relative(projectRoot, fullPath).split(sep).join('/');
 }
 
 export { WARN_LINES };

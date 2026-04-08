@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
+import { join } from 'path';
 
 import { execa } from 'execa';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -9,6 +10,7 @@ import {
   readPackageJson,
   isCommandAvailable,
   fileExists,
+  relativeFromRoot,
 } from './file-helpers.js';
 
 vi.mock('fs', () => ({
@@ -142,7 +144,10 @@ describe('readPackageJson', () => {
     vi.mocked(readFileSync).mockReturnValue('{"name": "my-app", "version": "1.0.0"}');
     const result = readPackageJson('/some/project');
     expect(result).toEqual({ name: 'my-app', version: '1.0.0' });
-    expect(readFileSync).toHaveBeenCalledWith('/some/project/package.json', 'utf-8');
+    // Use path.join so the expected value uses the platform-native separator
+    // (forward slash on POSIX, backslash on Windows). The source code calls
+    // path.join under the hood, so this test is platform-correct on both.
+    expect(readFileSync).toHaveBeenCalledWith(join('/some/project', 'package.json'), 'utf-8');
   });
 
   it('throws when the file does not exist', () => {
@@ -183,7 +188,7 @@ describe('fileExists', () => {
   it('returns true when the file exists', () => {
     vi.mocked(existsSync).mockReturnValue(true);
     expect(fileExists('/project', 'package.json')).toBe(true);
-    expect(existsSync).toHaveBeenCalledWith('/project/package.json');
+    expect(existsSync).toHaveBeenCalledWith(join('/project', 'package.json'));
   });
 
   it('returns false when the file does not exist', () => {
@@ -194,6 +199,46 @@ describe('fileExists', () => {
   it('joins multiple path parts', () => {
     vi.mocked(existsSync).mockReturnValue(true);
     fileExists('/root', 'src', 'index.ts');
-    expect(existsSync).toHaveBeenCalledWith('/root/src/index.ts');
+    expect(existsSync).toHaveBeenCalledWith(join('/root', 'src', 'index.ts'));
+  });
+});
+
+describe('relativeFromRoot', () => {
+  // These tests use POSIX paths because the test runner is invoked from
+  // POSIX systems (macOS/Linux) most of the time. The Windows-specific
+  // behavior is exercised by the CI matrix on `windows-latest` — when
+  // these same tests run there, `path.relative` produces backslashes
+  // and the helper's split/join normalizes them, so the assertions
+  // hold on both platforms.
+
+  it('returns a project-relative path for a file inside the root', () => {
+    expect(relativeFromRoot('/project', '/project/src/index.ts')).toBe('src/index.ts');
+  });
+
+  it('handles deeply nested files', () => {
+    expect(relativeFromRoot('/project', '/project/src/components/ui/Button.tsx')).toBe(
+      'src/components/ui/Button.tsx',
+    );
+  });
+
+  it('returns just the filename when the file is directly in the root', () => {
+    expect(relativeFromRoot('/project', '/project/package.json')).toBe('package.json');
+  });
+
+  it('returns "" when the path equals the root', () => {
+    expect(relativeFromRoot('/project', '/project')).toBe('');
+  });
+
+  it('handles trailing slashes on the root', () => {
+    expect(relativeFromRoot('/project/', '/project/src/index.ts')).toBe('src/index.ts');
+  });
+
+  it('always returns forward slashes (cross-platform invariant)', () => {
+    // This is the property that prevents the original Windows bug:
+    // every relative path returned must use `/`, never `\`, regardless
+    // of which platform the runner is on.
+    const result = relativeFromRoot('/project', '/project/src/components/Button.tsx');
+    expect(result).not.toContain('\\');
+    expect(result.split('/').length).toBeGreaterThan(1);
   });
 });
