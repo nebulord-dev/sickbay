@@ -164,23 +164,74 @@ describe('readPackageJson', () => {
 });
 
 describe('isCommandAvailable', () => {
-  it('returns true when the command binary exists in local node_modules/.bin', async () => {
+  // Save and restore process.platform around each test so we can simulate
+  // both POSIX and Windows behavior regardless of which OS the test runner
+  // is on. process.platform is a normal property, not a getter, so plain
+  // Object.defineProperty works.
+  const originalPlatform = process.platform;
+  function setPlatform(p: NodeJS.Platform) {
+    Object.defineProperty(process, 'platform', { value: p, configurable: true });
+  }
+  afterEach(() => {
+    Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true });
+  });
+
+  it('returns true when the command binary exists in local node_modules/.bin (POSIX)', async () => {
+    setPlatform('linux');
     vi.mocked(existsSync).mockReturnValue(true);
     expect(await isCommandAvailable('knip')).toBe(true);
     expect(execa).not.toHaveBeenCalled();
   });
 
-  it('returns true when the command is found via which on PATH', async () => {
+  it('returns true when the command is found via `which` on PATH (POSIX)', async () => {
+    setPlatform('linux');
     vi.mocked(existsSync).mockReturnValue(false);
     vi.mocked(execa).mockResolvedValue({} as never);
     expect(await isCommandAvailable('git')).toBe(true);
     expect(execa).toHaveBeenCalledWith('which', ['git']);
   });
 
-  it('returns false when the command is not found anywhere', async () => {
+  it('returns false when the command is not found anywhere (POSIX)', async () => {
+    setPlatform('linux');
     vi.mocked(existsSync).mockReturnValue(false);
     vi.mocked(execa).mockRejectedValue(new Error('not found'));
     expect(await isCommandAvailable('nonexistent-tool')).toBe(false);
+    expect(execa).toHaveBeenCalledWith('which', ['nonexistent-tool']);
+  });
+
+  it('uses `where` instead of `which` on Windows when falling back to PATH', async () => {
+    // Regression: previously used `which` unconditionally, which doesn't
+    // exist on Windows. The PATH fallback would always throw and return
+    // false, breaking detection of any user-installed (non-bundled) tool.
+    setPlatform('win32');
+    vi.mocked(existsSync).mockReturnValue(false);
+    vi.mocked(execa).mockResolvedValue({} as never);
+    expect(await isCommandAvailable('git')).toBe(true);
+    expect(execa).toHaveBeenCalledWith('where', ['git']);
+  });
+
+  it('checks .cmd / .exe / .ps1 wrappers in local .bin on Windows', async () => {
+    // Regression: previously only checked the bare-name shell wrapper in
+    // node_modules/.bin. On Windows, pnpm typically creates .cmd / .exe /
+    // .ps1 wrappers, and the bare-name shell wrapper may not exist at all.
+    // The result was that every bundled tool's local fast path failed on
+    // Windows, forcing the (also-broken) PATH fallback.
+    setPlatform('win32');
+    // Simulate: only the .cmd wrapper exists in .bin
+    vi.mocked(existsSync).mockImplementation((p: unknown) => String(p).endsWith('knip.cmd'));
+    vi.mocked(execa).mockClear();
+    expect(await isCommandAvailable('knip')).toBe(true);
+    expect(execa).not.toHaveBeenCalled();
+  });
+
+  it('returns false on Windows when neither local .bin nor `where` finds the command', async () => {
+    setPlatform('win32');
+    vi.mocked(existsSync).mockReturnValue(false);
+    vi.mocked(execa).mockRejectedValue(
+      new Error('INFO: Could not find files for the given pattern'),
+    );
+    expect(await isCommandAvailable('nonexistent-tool')).toBe(false);
+    expect(execa).toHaveBeenCalledWith('where', ['nonexistent-tool']);
   });
 });
 

@@ -23,11 +23,22 @@ export function readPackageJson(projectPath: string): Record<string, unknown> {
 }
 
 export async function isCommandAvailable(cmd: string): Promise<boolean> {
-  // Check local node_modules/.bin first (bundled deps)
-  if (existsSync(join(coreLocalDir, 'node_modules', '.bin', cmd))) return true;
-  // Fall back to PATH
+  // Check local node_modules/.bin first (bundled deps). On Windows, pnpm
+  // creates `.cmd` / `.exe` / `.ps1` wrappers in addition to (or instead
+  // of) the bare-name shell wrapper. Checking only the bare name on Windows
+  // would silently miss every bundled tool and force the PATH fallback.
+  const binDir = join(coreLocalDir, 'node_modules', '.bin');
+  const localCandidates =
+    process.platform === 'win32' ? [cmd, `${cmd}.cmd`, `${cmd}.exe`, `${cmd}.ps1`] : [cmd];
+  if (localCandidates.some((c) => existsSync(join(binDir, c)))) return true;
+
+  // Fall back to PATH lookup. `which` is POSIX-only — Windows uses `where`.
+  // Without this branch, every PATH-installed tool returns false on Windows
+  // and any runner relying on isCommandAvailable to detect a user-installed
+  // tool would skip its check entirely.
+  const lookupCmd = process.platform === 'win32' ? 'where' : 'which';
   try {
-    await execa('which', [cmd]);
+    await execa(lookupCmd, [cmd]);
     return true;
   } catch {
     return false;
