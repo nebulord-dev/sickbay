@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { MadgeRunner } from './madge.js';
 
+// Force POSIX path semantics so mocks comparing forward-slash literals
+// match the path.join output on Windows.
+vi.mock('path', async () => {
+  const actual = await vi.importActual<typeof import('path')>('path');
+  return { ...actual.posix, default: actual.posix };
+});
+
 vi.mock('execa', () => ({
   execa: vi.fn(),
 }));

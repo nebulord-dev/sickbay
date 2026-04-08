@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
+import { join } from 'path';
 
 import { execa } from 'execa';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -143,7 +144,10 @@ describe('readPackageJson', () => {
     vi.mocked(readFileSync).mockReturnValue('{"name": "my-app", "version": "1.0.0"}');
     const result = readPackageJson('/some/project');
     expect(result).toEqual({ name: 'my-app', version: '1.0.0' });
-    expect(readFileSync).toHaveBeenCalledWith('/some/project/package.json', 'utf-8');
+    // Use path.join so the expected value uses the platform-native separator
+    // (forward slash on POSIX, backslash on Windows). The source code calls
+    // path.join under the hood, so this test is platform-correct on both.
+    expect(readFileSync).toHaveBeenCalledWith(join('/some/project', 'package.json'), 'utf-8');
   });
 
   it('throws when the file does not exist', () => {
@@ -184,7 +188,7 @@ describe('fileExists', () => {
   it('returns true when the file exists', () => {
     vi.mocked(existsSync).mockReturnValue(true);
     expect(fileExists('/project', 'package.json')).toBe(true);
-    expect(existsSync).toHaveBeenCalledWith('/project/package.json');
+    expect(existsSync).toHaveBeenCalledWith(join('/project', 'package.json'));
   });
 
   it('returns false when the file does not exist', () => {
@@ -195,7 +199,7 @@ describe('fileExists', () => {
   it('joins multiple path parts', () => {
     vi.mocked(existsSync).mockReturnValue(true);
     fileExists('/root', 'src', 'index.ts');
-    expect(existsSync).toHaveBeenCalledWith('/root/src/index.ts');
+    expect(existsSync).toHaveBeenCalledWith(join('/root', 'src', 'index.ts'));
   });
 });
 

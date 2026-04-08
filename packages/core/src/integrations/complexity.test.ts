@@ -2,6 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ComplexityRunner } from './complexity.js';
 
+// Force POSIX path semantics so mocks comparing forward-slash literals
+// (e.g. `endsWith('/src')`) match the path.join output on Windows. The
+// real cross-platform path handling is exercised by the relativeFromRoot
+// unit tests in file-helpers.test.ts (which uses real `path`).
+vi.mock('path', async () => {
+  const actual = await vi.importActual<typeof import('path')>('path');
+  return { ...actual.posix, default: actual.posix };
+});
+
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
   readdirSync: vi.fn(),

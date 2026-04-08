@@ -4,6 +4,13 @@ import { ReactBestPracticesAdvisor } from './react-best-practices.js';
 
 import type { ProjectContext } from '../types.js';
 
+// Force POSIX path semantics so mocks comparing forward-slash literals
+// match the path.join output on Windows.
+vi.mock('path', async () => {
+  const actual = await vi.importActual<typeof import('path')>('path');
+  return { ...actual.posix, default: actual.posix };
+});
+
 vi.mock('fs', () => ({
   readdirSync: vi.fn(),
   statSync: vi.fn(),
