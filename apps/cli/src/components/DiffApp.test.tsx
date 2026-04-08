@@ -96,11 +96,22 @@ beforeEach(() => {
 });
 
 describe('DiffApp', () => {
+  // DiffApp's render lifecycle ends with `setTimeout(() => exit(), 100)` after
+  // the results phase, which unmounts the component. On slow CI runners
+  // (specifically the Windows matrix), this race causes `lastFrame()` to
+  // sometimes return the post-unmount empty state ('\n') by the time
+  // vi.waitFor's poll runs. The fix is to check ALL rendered frames via
+  // ink-testing-library's `frames` array — even if the last frame is post-
+  // unmount, an earlier frame contains the rendered content we're asserting on.
+  function joinFrames(frames: readonly string[]): string {
+    return frames.join('\n');
+  }
+
   it('shows error when base report is not found on branch', async () => {
     mockRunSickbay.mockResolvedValue(makeReport(90));
     mockLoadBaseReport.mockReturnValue(null);
 
-    const { lastFrame } = render(
+    const { frames } = render(
       React.createElement(DiffApp, {
         projectPath: '/test/project',
         branch: 'main',
@@ -109,7 +120,7 @@ describe('DiffApp', () => {
     );
 
     await vi.waitFor(() => {
-      const output = lastFrame();
+      const output = joinFrames(frames);
       expect(output).toContain('main');
       expect(output).toContain('No saved report');
       expect(output).toContain('commit');
@@ -121,7 +132,7 @@ describe('DiffApp', () => {
     mockLoadBaseReport.mockReturnValue(makeReport(80));
     mockCompareReports.mockReturnValue(makeDiffResult());
 
-    const { lastFrame } = render(
+    const { frames } = render(
       React.createElement(DiffApp, {
         projectPath: '/test/project',
         branch: 'main',
@@ -130,7 +141,7 @@ describe('DiffApp', () => {
     );
 
     await vi.waitFor(() => {
-      const output = lastFrame();
+      const output = joinFrames(frames);
       expect(output).toContain('Unused Code');
       expect(output).toContain('+10');
     });
@@ -141,7 +152,7 @@ describe('DiffApp', () => {
     mockLoadBaseReport.mockReturnValue(makeReport(80));
     mockCompareReports.mockReturnValue(makeDiffResult());
 
-    const { lastFrame } = render(
+    const { frames } = render(
       React.createElement(DiffApp, {
         projectPath: '/test/project',
         branch: 'main',
@@ -150,7 +161,7 @@ describe('DiffApp', () => {
     );
 
     await vi.waitFor(() => {
-      const output = lastFrame();
+      const output = joinFrames(frames);
       expect(output).toContain('90');
       expect(output).toContain('80');
     });
@@ -194,7 +205,7 @@ describe('DiffApp', () => {
       }),
     );
 
-    const { lastFrame } = render(
+    const { frames } = render(
       React.createElement(DiffApp, {
         projectPath: '/test/project',
         branch: 'main',
@@ -203,7 +214,7 @@ describe('DiffApp', () => {
     );
 
     await vi.waitFor(() => {
-      const output = lastFrame();
+      const output = joinFrames(frames);
       expect(output).toContain('3 improved');
       expect(output).toContain('1 regressed');
     });
