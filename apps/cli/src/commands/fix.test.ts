@@ -231,6 +231,16 @@ describe('executeFix', () => {
     expect(args).toEqual(['audit', 'fix']);
   });
 
+  it('does not invoke execFileAsync with shell: true (command-injection guard)', async () => {
+    mockExecFileAsync.mockResolvedValue({ stdout: '', stderr: '' });
+
+    const fix = makeFixableIssue('npm audit fix');
+    await executeFix(fix, '/project');
+
+    const opts = mockExecFileAsync.mock.calls[0]?.[2] as { shell?: unknown } | undefined;
+    expect(opts?.shell).toBeUndefined();
+  });
+
   it('handles non-Error rejected values gracefully', async () => {
     mockExecFileAsync.mockRejectedValue('string error');
 
