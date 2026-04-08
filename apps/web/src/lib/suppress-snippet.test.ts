@@ -50,4 +50,40 @@ describe('buildSuppressSnippet', () => {
     });
     expect(result).toContain("/* path: 'src/it\\'s-a-file.ts', */");
   });
+
+  it('escapes backslashes before quotes so the output is parseable', () => {
+    // Windows-style path with backslash. Previously this would produce
+    // `match: 'C:\foo'` which is syntactically ambiguous (\f is a JS escape).
+    const result = buildSuppressSnippet({
+      checkId: 'test',
+      suppressMatch: 'C:\\foo\\bar',
+    });
+    expect(result).toContain("match: 'C:\\\\foo\\\\bar'");
+  });
+
+  it('does not double-escape a single quote that follows a backslash', () => {
+    // Input: don\'t  → previous buggy version would emit a malformed literal.
+    // Now the backslash becomes \\ and the quote becomes \', so together: \\\'
+    const result = buildSuppressSnippet({
+      checkId: 'test',
+      suppressMatch: "don\\'t",
+    });
+    expect(result).toContain("match: 'don\\\\\\'t'");
+  });
+
+  it('escapes newlines and carriage returns', () => {
+    const result = buildSuppressSnippet({
+      checkId: 'test',
+      suppressMatch: 'line one\nline two\r\nline three',
+    });
+    expect(result).toContain("match: 'line one\\nline two\\r\\nline three'");
+  });
+
+  it('escapes U+2028 and U+2029 line terminators', () => {
+    const result = buildSuppressSnippet({
+      checkId: 'test',
+      suppressMatch: 'foo\u2028bar\u2029baz',
+    });
+    expect(result).toContain("match: 'foo\\u2028bar\\u2029baz'");
+  });
 });

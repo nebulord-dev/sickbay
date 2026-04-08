@@ -16,8 +16,9 @@ vi.mock('sickbay-core', () => ({
 }));
 
 import { existsSync, readFileSync } from 'fs';
+import { resolve as pathResolve } from 'path';
 
-import { serveWeb } from './web.js';
+import { serveWeb, resolveSafeStaticPath } from './web.js';
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReadFileSync = vi.mocked(readFileSync);
@@ -279,6 +280,50 @@ describe('serveWeb', () => {
       expect(text).toContain('<html');
     });
 
+    it('strips query strings before resolving static paths', async () => {
+      // Previously the raw `url` (including ?query) was passed to join(), which
+      // meant `/app.js?v=1` would look for a literal file named `app.js?v=1`
+      // and always 404. Now pathname is used, so this serves the real file.
+      mockExistsSync.mockImplementation((p: unknown) => {
+        const s = String(p);
+        return s.endsWith('index.html') || s.endsWith('app.js');
+      });
+      mockReadFileSync.mockImplementation((p: unknown) => {
+        const s = String(p);
+        if (s.endsWith('app.js')) return Buffer.from('console.log("hi")');
+        return Buffer.from('<html></html>');
+      });
+
+      const url = await serveWeb(makeReport(), 0);
+      const res = await fetch(`${url}/app.js?v=cachebuster`);
+
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('javascript');
+    });
+
+    it('/ai/chat POST returns a generic error message when a non-Error is thrown', async () => {
+      // A bare string throw shouldn't reveal its content in the HTTP response.
+      const mockAiService = {
+        generateSummary: vi.fn().mockResolvedValue(null),
+        chat: vi.fn().mockImplementation(() => {
+          // eslint-disable-next-line no-throw-literal -- intentional for this test
+          throw 'internal database password abc123';
+        }),
+      };
+
+      const url = await serveWeb(makeReport(), 0, mockAiService as any);
+      const res = await fetch(`${url}/ai/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'hi', history: [] }),
+      });
+
+      expect(res.status).toBe(500);
+      const data = (await res.json()) as { error: string };
+      expect(data.error).toBe('Internal error');
+      expect(data.error).not.toContain('password');
+    });
+
     it('generateSummary failure does not prevent the server from starting', async () => {
       const mockAiService = {
         generateSummary: vi.fn().mockRejectedValue(new Error('AI unavailable')),
@@ -289,5 +334,55 @@ describe('serveWeb', () => {
       const url = await serveWeb(makeReport(), 0, mockAiService as any);
       expect(url).toMatch(/^http:\/\/localhost:\d+$/);
     });
+  });
+});
+
+// Direct unit tests for the safe-path resolver. Request-level tests can't
+// exercise most traversal payloads because `new URL()` strips `..` segments
+// upstream, but a broken implementation of this helper (or any future caller
+// that bypasses the URL parser) would re-open the attack surface. These
+// tests lock the helper's behavior independently of the HTTP layer.
+describe('resolveSafeStaticPath', () => {
+  // Use a synthetic absolute base dir — path.resolve handles both POSIX and Win32.
+  const BASE = pathResolve('/fake/dist');
+
+  it('resolves a simple relative path inside baseDir', () => {
+    const result = resolveSafeStaticPath(BASE, '/index.html');
+    expect(result).toBe(pathResolve(BASE, 'index.html'));
+  });
+
+  it('resolves a nested path inside baseDir', () => {
+    const result = resolveSafeStaticPath(BASE, '/assets/app.js');
+    expect(result).toBe(pathResolve(BASE, 'assets/app.js'));
+  });
+
+  it('rejects `..` traversal that escapes baseDir', () => {
+    expect(resolveSafeStaticPath(BASE, '../../etc/passwd')).toBeNull();
+  });
+
+  it('rejects `..` traversal with leading slash', () => {
+    expect(resolveSafeStaticPath(BASE, '/../../etc/passwd')).toBeNull();
+  });
+
+  it('rejects URL-encoded `..` traversal (%2e%2e)', () => {
+    expect(resolveSafeStaticPath(BASE, '/%2e%2e/%2e%2e/etc/passwd')).toBeNull();
+  });
+
+  it('rejects mixed-case URL-encoded traversal', () => {
+    expect(resolveSafeStaticPath(BASE, '/%2E%2e/%2E%2E/etc/passwd')).toBeNull();
+  });
+
+  it('rejects null bytes', () => {
+    expect(resolveSafeStaticPath(BASE, '/legit.js%00.png')).toBeNull();
+  });
+
+  it('rejects malformed URI encoding', () => {
+    expect(resolveSafeStaticPath(BASE, '/%ZZ')).toBeNull();
+  });
+
+  it('accepts paths that look like traversal but resolve inside baseDir', () => {
+    // `foo/../bar` resolves to `bar`, which is inside baseDir.
+    const result = resolveSafeStaticPath(BASE, '/foo/../bar.js');
+    expect(result).toBe(pathResolve(BASE, 'bar.js'));
   });
 });
