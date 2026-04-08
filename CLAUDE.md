@@ -16,6 +16,19 @@ Project tasks are tracked in **Jira** — project [Ricochet Devs (KAN)](https://
 | `icebox`          | Low priority / deferred                                  |
 | `phase-N`         | Roadmap phase the task belongs to                        |
 
+## Code Quality Audits
+
+Four targeted audit skills cover the package boundaries. Run them when you ship meaningful work to a package — not on a schedule, but before merging.
+
+| Skill | When to run |
+| ----- | ----------- |
+| `/audit-core` | After adding/modifying a runner in `integrations/`, changing `runner.ts`, `scoring.ts`, or `types.ts`, or after a dependency update in core |
+| `/audit-cli` | After touching CLI flags, TUI hooks, or `commands/web.ts` |
+| `/audit-web` | After adding components that render report data, or modifying `load-report.ts` |
+| `/audit-architecture` | After merging a large cross-package branch, adding a new package, or before a major release |
+
+Each skill dispatches a `feature-dev:code-reviewer` agent with a package-specific checklist. Fix findings before committing.
+
 ## Headless Execution Workflow
 
 Tasks are executed via a two-phase workflow:
