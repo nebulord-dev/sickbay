@@ -1,3 +1,10 @@
+## [1.15.3](https://github.com/nebulord-dev/sickbay/compare/v1.15.2...v1.15.3) (2026-04-08)
+
+
+### Bug Fixes
+
+* **advisors:** wire BestPractices into CLI, tighten checks, fix architect agent ([7923306](https://github.com/nebulord-dev/sickbay/commit/79233060e9c8badaeec71ad52dade1f5e26ddea7))
+
 ## [1.15.2](https://github.com/nebulord-dev/sickbay/compare/v1.15.1...v1.15.2) (2026-04-08)
 
 
