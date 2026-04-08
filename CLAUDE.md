@@ -103,7 +103,7 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 - `src/config.ts` - Config loading and validation (`sickbay.config.ts`)
 - `src/integrations/` - Individual check runners (34 total, framework-scoped)
   - Each extends `BaseRunner` and implements `run()` method
-  - Universal: `knip.ts`, `npm-audit.ts`, `eslint.ts`, `git.ts`, etc.
+  - Universal: `knip.ts`, `npm-audit.ts`, `eslint.ts` (detects ESLint in the analyzed user project — distinct from sickbay's own oxlint tooling), `git.ts`, etc.
   - Framework-specific: `react-perf.ts`, `next-*.ts`, `angular-*.ts`, `node-*.ts`
 - `src/utils/` - Shared utilities (file detection, command execution, monorepo detection)
 
