@@ -1,3 +1,12 @@
+## [1.15.8](https://github.com/nebulord-dev/sickbay/compare/v1.15.7...v1.15.8) (2026-04-08)
+
+
+### Bug Fixes
+
+* address audit findings across core, cli, and web ([3f85013](https://github.com/nebulord-dev/sickbay/commit/3f8501366336ad547245cf6940a680484655e3f6))
+* **cli:** add explicit type annotation to suppress implicit any in checks filter ([679a24e](https://github.com/nebulord-dev/sickbay/commit/679a24ec11c4d6b6e947efc00e89e95f63797bdf))
+* **web:** address audit findings in load-report and DependencyList ([c540b33](https://github.com/nebulord-dev/sickbay/commit/c540b331406aa6f5639acb14bc9c476f5e0a6364))
+
 ## [1.15.7](https://github.com/nebulord-dev/sickbay/compare/v1.15.6...v1.15.7) (2026-04-08)
 
 
