@@ -317,9 +317,17 @@ This loads the full project context — architecture, file locations, domain mod
 
 Other useful entry points:
 
-- `/plan-feature` — create an implementation plan before writing code
 - `/review-project` — scan the project for issues
 - `/sync-docs` — check if docs need updating after recent changes
+
+Before opening a PR, run the audit skill for the package you touched:
+
+| Skill | When to run |
+| ----- | ----------- |
+| `/audit-core` | After modifying a runner, `runner.ts`, `scoring.ts`, or `types.ts` |
+| `/audit-cli` | After touching CLI flags, TUI hooks, or `commands/web.ts` |
+| `/audit-web` | After adding components or modifying `load-report.ts` |
+| `/audit-architecture` | After adding a new package or a large cross-package change |
 
 Project-specific configuration lives in `CLAUDE.md` and `.claude/`.
 

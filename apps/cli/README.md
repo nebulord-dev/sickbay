@@ -34,15 +34,18 @@ sickbay [options]
 
 ### Flags
 
-| Flag                   | Default         | Description                       |
-| ---------------------- | --------------- | --------------------------------- |
-| `-p, --path <path>`    | `process.cwd()` | Path to the project to analyze    |
-| `-c, --checks <names>` | all             | Comma-separated check IDs to run  |
-| `--json`               | false           | Output raw JSON to stdout (no UI) |
-| `--web`                | false           | Open web dashboard after scan     |
-| `--verbose`            | false           | Show tool output during checks    |
-| `-V, --version`        |                 | Print version                     |
-| `-h, --help`           |                 | Show help                         |
+| Flag                   | Default         | Description                                        |
+| ---------------------- | --------------- | -------------------------------------------------- |
+| `-p, --path <path>`    | `process.cwd()` | Path to the project to analyze                     |
+| `-c, --checks <names>` | all             | Comma-separated check IDs to run                   |
+| `--package <name>`     |                 | Scope to a single named package (monorepo only)    |
+| `--json`               | false           | Output raw JSON to stdout (no UI)                  |
+| `--web`                | false           | Open web dashboard after scan                      |
+| `--no-ai`              |                 | Disable AI features even if `ANTHROPIC_API_KEY` is set |
+| `--no-quotes`          |                 | Suppress personality quotes in output              |
+| `--verbose`            | false           | Show tool output during checks                     |
+| `-V, --version`        |                 | Print version                                      |
+| `-h, --help`           |                 | Show help                                          |
 
 ### Examples
 
