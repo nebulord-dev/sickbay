@@ -67,7 +67,11 @@
       "picomatch": ">=4.0.4",
       "brace-expansion": ">=5.0.5",
       "lodash": ">=4.18.0",
-      "lodash-es": ">=4.18.0"
-    }
+      "lodash-es": ">=4.18.0",
+      "esbuild": ">=0.28.0"
+    },
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
