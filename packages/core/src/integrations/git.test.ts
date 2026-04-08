@@ -96,6 +96,20 @@ describe('GitRunner', () => {
     expect(result.issues.some((i) => i.message.includes('stale'))).toBe(false);
   });
 
+  it('flags "a month ago" as stale when staleMonths is 0', async () => {
+    // Regression: the previous substring-based check did
+    // `parseInt('a month ago')` which returns NaN, and `NaN > 0` is false —
+    // so a repo last committed exactly one month ago was never flagged as
+    // stale even with the most aggressive threshold.
+    makeGitMock({ lastCommit: 'a month ago' });
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { staleMonths: 0 } },
+    });
+
+    expect(result.issues.some((i) => i.message.includes('stale'))).toBe(true);
+  });
+
   it('flags more than 20 remote branches as info issue', async () => {
     const branchLines = Array.from({ length: 21 }, (_, i) => `  origin/branch-${i}`).join('\n');
     makeGitMock({ remotes: 'origin', branches: branchLines });

@@ -136,6 +136,39 @@ describe('SecretsRunner', () => {
     expect(result.issues).toHaveLength(0);
   });
 
+  it('detects secrets in root config files outside src/', async () => {
+    // Regression: previously the runner only scanned src/, so a secret in
+    // a root-level config file (e.g. webpack.config.js, vite.config.ts)
+    // would be missed entirely. The expanded scope now includes a
+    // root-level pass via scanRootFiles.
+    mockExistsSync.mockImplementation((p) => {
+      // No src/app/lib/etc dirs — only the root has the file
+      const s = String(p);
+      if (s === '/project') return true;
+      return false;
+    });
+    mockReaddirSync.mockImplementation((p: any) => {
+      if (String(p) === '/project') return ['vite.config.ts'] as any;
+      return [] as any;
+    });
+    mockStatSync.mockReturnValue({
+      isDirectory: () => false,
+      isFile: () => true,
+    } as any);
+    mockReadFileSync.mockImplementation((p: any) => {
+      if (String(p).endsWith('vite.config.ts')) {
+        return 'export const cfg = { token: "ghp_abcdefghijklmnopqrstuvwxyz0123456789ABCD" };\n' as any;
+      }
+      return '' as any;
+    });
+
+    const result = await runner.run('/project');
+
+    expect(result.status).toBe('fail');
+    expect(result.issues.length).toBeGreaterThan(0);
+    expect(result.issues[0].message).toContain('GitHub Token');
+  });
+
   it('skips lines containing process.env references', async () => {
     mockExistsSync.mockImplementation((p) => {
       if (String(p).endsWith('/src')) return true;

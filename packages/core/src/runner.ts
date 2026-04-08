@@ -1,4 +1,5 @@
-import { relative } from 'path';
+import { existsSync, readFileSync } from 'fs';
+import { basename, join, relative } from 'path';
 
 import { AngularBestPracticesAdvisor } from './advisors/angular-best-practices.js';
 import { NextBestPracticesAdvisor } from './advisors/next-best-practices.js';
@@ -126,6 +127,25 @@ const ALL_ADVISORS: BaseAdvisor[] = [
   new NextBestPracticesAdvisor(),
   new UniversalBestPracticesAdvisor(),
 ];
+
+/**
+ * Read the `name` field from a package.json without running the full
+ * detectProject pipeline. Used by runSickbayMonorepo to fire onPackageStart
+ * before the (relatively slow) per-package scan begins. Falls back to the
+ * directory basename if package.json is missing or unreadable.
+ */
+function readPackageName(pkgPath: string): string {
+  const pkgJsonPath = join(pkgPath, 'package.json');
+  if (existsSync(pkgJsonPath)) {
+    try {
+      const pkg = JSON.parse(readFileSync(pkgJsonPath, 'utf-8')) as { name?: string };
+      if (pkg.name) return pkg.name;
+    } catch {
+      // fall through to basename
+    }
+  }
+  return basename(pkgPath);
+}
 
 export function getAvailableChecks(context?: ProjectContext): { name: string; category: string }[] {
   const runners = context
@@ -265,10 +285,18 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
     monorepoInfo.packagePaths.map(async (pkgPath): Promise<PackageReport> => {
       const pkgConfig = await loadConfig(pkgPath);
       const mergedConfig = mergeConfigs(rootConfig, pkgConfig);
+
+      // Notify "starting X" BEFORE running the scan, not after — the previous
+      // ordering meant the CLI's "scanning <package>" indicator updated only
+      // after that package's scan was already done.
+      // We resolve the package name from package.json directly so we can fire
+      // the callback before runSickbay (which is what otherwise produces the
+      // ProjectInfo we'd read it from).
+      const packageName = readPackageName(pkgPath) ?? pkgPath;
+      options.onPackageStart?.(packageName);
+
       const report = await runSickbay({ ...options, projectPath: pkgPath, _config: mergedConfig });
       const context = await detectContext(pkgPath);
-
-      options.onPackageStart?.(report.projectInfo.name);
 
       const packageReport: PackageReport = {
         name: report.projectInfo.name,

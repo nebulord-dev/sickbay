@@ -63,10 +63,15 @@ export class GitRunner extends BaseRunner {
 
       const issues: Issue[] = [];
 
-      // Check if repo is stale (last commit > 6 months ago)
+      // Check if repo is stale (last commit > N months ago).
+      // git's relative date strings look like "3 months ago", "a month ago",
+      // "2 years ago", "a year ago". `parseInt('a month ago')` returns NaN,
+      // which would silently skip the "exactly one month" case under the
+      // previous substring-based check. Parse the leading number explicitly
+      // and treat the word "a"/"an" as 1.
       const isStale =
         lastCommit.includes('year') ||
-        (lastCommit.includes('month') && parseInt(lastCommit) > staleMonths);
+        (lastCommit.includes('month') && parseGitRelativeCount(lastCommit) > staleMonths);
       if (isStale) {
         issues.push({
           severity: 'warning',
@@ -110,4 +115,17 @@ export class GitRunner extends BaseRunner {
       };
     }
   }
+}
+
+/**
+ * Extract the leading numeric count from a git relative-date string like
+ * "3 months ago" or "a month ago". The word "a"/"an" represents 1.
+ * Returns 0 if the string can't be parsed (which keeps stale-detection
+ * conservative — non-parseable strings won't trigger a stale warning).
+ */
+export function parseGitRelativeCount(s: string): number {
+  const trimmed = s.trim().toLowerCase();
+  if (trimmed.startsWith('a ') || trimmed.startsWith('an ')) return 1;
+  const match = trimmed.match(/^(\d+)\b/);
+  return match ? parseInt(match[1], 10) : 0;
 }
