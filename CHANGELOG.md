@@ -1,3 +1,10 @@
+## [1.15.5](https://github.com/nebulord-dev/sickbay/compare/v1.15.4...v1.15.5) (2026-04-08)
+
+
+### Bug Fixes
+
+* **core:** cross-platform path handling + add Windows to CI matrix ([#32](https://github.com/nebulord-dev/sickbay/issues/32)) ([7137967](https://github.com/nebulord-dev/sickbay/commit/7137967ce2f6bbf12cb708a559a8f0356eb9d8ec))
+
 ## [1.15.4](https://github.com/nebulord-dev/sickbay/compare/v1.15.3...v1.15.4) (2026-04-08)
 
 
