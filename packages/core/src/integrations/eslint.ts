@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { execa } from 'execa';
 
-import { timer, parseJsonOutput } from '../utils/file-helpers.js';
+import { parseJsonOutput, relativeFromRoot, timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue, RunOptions } from '../types.js';
@@ -80,7 +80,7 @@ export class ESLintRunner extends BaseRunner {
         totalWarnings += file.warningCount;
 
         if (file.errorCount > 0 || file.warningCount > 0) {
-          const relPath = file.filePath.replace(projectPath + '/', '');
+          const relPath = relativeFromRoot(projectPath, file.filePath);
           const parts = [];
           if (file.errorCount > 0)
             parts.push(`${file.errorCount} error${file.errorCount > 1 ? 's' : ''}`);

@@ -81,9 +81,15 @@ jobs:
         run: pnpm check:bundled-deps
 
   test:
-    name: Test
-    runs-on: ubuntu-latest
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
+    strategy:
+      # Run both OSes to completion so we see ALL platform-specific failures
+      # in one CI run, not just whichever fails first.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 
 import { createExcludeFilter } from '../utils/exclude.js';
-import { timer } from '../utils/file-helpers.js';
+import { relativeFromRoot, timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue, RunOptions } from '../types.js';
@@ -122,7 +122,7 @@ function scanDirectory(
       if (entry.startsWith('.') || entry === 'node_modules') continue;
       if (SELF_REFERENCING_FILES.has(entry)) continue;
       const fullPath = join(dir, entry);
-      const relPath = fullPath.replace(projectRoot + '/', '');
+      const relPath = relativeFromRoot(projectRoot, fullPath);
       if (isExcluded(relPath)) continue;
       const stat = statSync(fullPath);
       if (stat.isDirectory()) {
@@ -141,7 +141,7 @@ function scanFile(filePath: string, projectRoot: string, pattern: RegExp): TodoI
   const todos: TodoItem[] = [];
   try {
     const lines = readFileSync(filePath, 'utf-8').split('\n');
-    const relPath = filePath.replace(projectRoot + '/', '');
+    const relPath = relativeFromRoot(projectRoot, filePath);
     for (let i = 0; i < lines.length; i++) {
       const match = stripStringLiterals(lines[i]).match(pattern);
       if (match) {

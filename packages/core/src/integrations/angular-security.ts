@@ -1,7 +1,7 @@
 import { readdirSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-import { timer } from '../utils/file-helpers.js';
+import { relativeFromRoot, timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue } from '../types.js';
@@ -114,7 +114,7 @@ function findSourceFiles(dir: string, projectRoot: string, isRoot = true): FileE
       if (stat.isDirectory()) {
         files.push(...findSourceFiles(fullPath, projectRoot, false));
       } else if (entry.endsWith('.ts') || entry.endsWith('.html')) {
-        files.push({ relPath: fullPath.replace(projectRoot + '/', ''), fullPath });
+        files.push({ relPath: relativeFromRoot(projectRoot, fullPath), fullPath });
       }
     }
   } catch (err) {

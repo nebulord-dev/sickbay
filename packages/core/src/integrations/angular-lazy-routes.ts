@@ -1,7 +1,7 @@
 import { readdirSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-import { timer } from '../utils/file-helpers.js';
+import { relativeFromRoot, timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue } from '../types.js';
@@ -136,7 +136,7 @@ function findRouteFiles(dir: string, projectRoot: string, topLevel = true): File
     if (stat.isDirectory()) {
       files.push(...findRouteFiles(fullPath, projectRoot, false));
     } else if (entry.endsWith('.routes.ts') || entry === 'app.config.ts') {
-      files.push({ relPath: fullPath.replace(projectRoot + '/', ''), fullPath });
+      files.push({ relPath: relativeFromRoot(projectRoot, fullPath), fullPath });
     }
   }
   return files;

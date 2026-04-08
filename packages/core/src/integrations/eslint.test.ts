@@ -14,6 +14,8 @@ vi.mock('../utils/file-helpers.js', () => ({
       return JSON.parse(fallback);
     }
   },
+  relativeFromRoot: (root: string, p: string) =>
+    p.startsWith(root + '/') ? p.slice(root.length + 1) : p,
 }));
 
 import { existsSync } from 'fs';

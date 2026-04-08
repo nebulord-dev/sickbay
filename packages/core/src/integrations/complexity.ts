@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 
 import { createExcludeFilter } from '../utils/exclude.js';
-import { timer } from '../utils/file-helpers.js';
+import { relativeFromRoot, timer } from '../utils/file-helpers.js';
 import { classifyFile, getFileTypeLabel, FILE_TYPE_THRESHOLDS } from '../utils/file-types.js';
 import { BaseRunner } from './base.js';
 
@@ -158,7 +158,7 @@ function scanDirectory(
       if (stat.isDirectory()) {
         files.push(...scanDirectory(fullPath, projectRoot, isExcluded));
       } else if (SOURCE_EXTENSIONS.has(extname(entry)) && !isTestFile(entry)) {
-        const relPath = fullPath.replace(projectRoot + '/', '');
+        const relPath = relativeFromRoot(projectRoot, fullPath);
         if (isExcluded(relPath)) continue;
         try {
           const lines = readFileSync(fullPath, 'utf-8')

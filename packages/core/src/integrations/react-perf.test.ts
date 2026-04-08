@@ -11,6 +11,8 @@ vi.mock('fs', () => ({
 
 vi.mock('../utils/file-helpers.js', () => ({
   timer: vi.fn(() => () => 100),
+  relativeFromRoot: (root: string, p: string) =>
+    p.startsWith(root + '/') ? p.slice(root.length + 1) : p,
 }));
 
 vi.mock('../utils/exclude.js', () => ({

@@ -1,7 +1,7 @@
 import { readdirSync, statSync, existsSync } from 'fs';
 import { join } from 'path';
 
-import { timer } from '../utils/file-helpers.js';
+import { relativeFromRoot, timer } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue } from '../types.js';
@@ -30,7 +30,7 @@ export class NextMissingBoundariesRunner extends BaseRunner {
 
       for (const pageDir of pageDirs) {
         segmentsChecked++;
-        const relDir = pageDir.replace(projectPath + '/', '');
+        const relDir = relativeFromRoot(projectPath, pageDir);
 
         // Check for missing loading.tsx/jsx
         if (
