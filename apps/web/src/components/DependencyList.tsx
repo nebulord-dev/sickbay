@@ -219,7 +219,7 @@ export function DependencyList({ report }: Props) {
               >
                 <td className="px-4 py-2.5">
                   <a
-                    href={`https://www.npmjs.com/package/${dep.name}`}
+                    href={`https://www.npmjs.com/package/${encodeURIComponent(dep.name)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-mono text-green-400 hover:text-green-300 hover:underline"
