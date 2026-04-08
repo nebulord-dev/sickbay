@@ -42,7 +42,7 @@
     "build/**",
     "fixtures/**",
     ".claude/**",
-    ".sickbay/**",
+    "**/.sickbay/**",
     "pnpm-lock.yaml",
     "**/*.md"
   ]
