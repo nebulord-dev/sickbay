@@ -12,6 +12,7 @@
     "lint:fix": "oxlint --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
+    "check:bundled-deps": "node scripts/check-bundled-deps.mjs",
     "test": "pnpm -r test",
     "test:coverage": "pnpm -r test:coverage",
     "test:web": "pnpm --filter @nebulord/sickbay-web test",
@@ -24,7 +25,7 @@
     "docs:dev": "pnpm --filter @nebulord/sickbay-docs docs:dev",
     "docs:build": "pnpm --filter @nebulord/sickbay-docs docs:build",
     "clean": "turbo run clean && rm -rf node_modules",
-    "all-checks": "pnpm build && pnpm test && pnpm test:snapshots && pnpm lint && pnpm format",
+    "all-checks": "pnpm build && pnpm test && pnpm test:snapshots && pnpm lint && pnpm format && pnpm check:bundled-deps",
     "prepare": "husky"
   },
   "devDependencies": {

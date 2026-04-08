@@ -70,7 +70,7 @@ export class KnipRunner extends BaseRunner {
         const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
         const allDeps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
         hasTestRunner = TEST_RUNNER_PACKAGES.some((p) => p in allDeps);
-        // Extract workspace scope (e.g. "@nebulord" from "@nebulord/sickbay") to filter
+        // Extract workspace scope (e.g. "@nebulord" from "@nebulord/sickbay-core") to filter
         // sibling packages that knip flags as unused due to dynamic imports
         const scopeMatch = (pkg.name as string | undefined)?.match(/^(@[^/]+)\//);
         if (scopeMatch) workspaceScope = scopeMatch[1];

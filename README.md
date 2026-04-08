@@ -296,8 +296,8 @@ pnpm --filter @nebulord/sickbay-core build
 pnpm --filter @nebulord/sickbay-core dev     # Watch mode
 
 # CLI
-pnpm --filter @nebulord/sickbay build
-pnpm --filter @nebulord/sickbay dev      # Watch mode
+pnpm --filter sickbay build
+pnpm --filter sickbay dev      # Watch mode
 
 # Web
 pnpm --filter @nebulord/sickbay-web build

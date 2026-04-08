@@ -33,7 +33,7 @@ This is a pnpm workspace monorepo with three packages that have a strict build o
 ```
 @nebulord/sickbay-core   — analysis engine (all check runners, scoring, types)
      ↓
-@nebulord/sickbay        — terminal UI (Ink + Commander), depends on core
+sickbay                  — terminal UI (Ink + Commander), depends on core; published as the unscoped `sickbay` npm package
      ↓
 @nebulord/sickbay-web    — web dashboard (Vite + React), served by cli
 ```
@@ -64,7 +64,7 @@ pnpm test
 
 # Per package
 pnpm --filter @nebulord/sickbay-core test
-pnpm --filter @nebulord/sickbay test
+pnpm --filter sickbay test
 pnpm --filter @nebulord/sickbay-web test
 
 # Watch mode
@@ -281,7 +281,7 @@ Do not start language work until framework detection from the monorepo phase is 
 pnpm --filter @nebulord/sickbay-core dev
 
 # Terminal 2 — rebuild cli on changes
-pnpm --filter @nebulord/sickbay dev
+pnpm --filter sickbay dev
 
 # Terminal 3 — test against a fixture
 node apps/cli/dist/index.js --path fixtures/packages/node-api
@@ -291,7 +291,7 @@ node apps/cli/dist/index.js --path fixtures/packages/react-app --web
 ### Iterating on the terminal UI
 
 ```bash
-pnpm --filter @nebulord/sickbay dev
+pnpm --filter sickbay dev
 node apps/cli/dist/index.js --path fixtures/packages/react-app
 ```
 

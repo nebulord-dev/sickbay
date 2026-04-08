@@ -148,6 +148,8 @@ The `fixtures/` directory is a **separate pnpm workspace** (not part of the Turb
 
 **Note**: Uses Ink (React for terminals), so components use JSX/hooks.
 
+**Bundling and the dependency mirror**: `apps/cli` bundles `@nebulord/sickbay-core`'s source inline at build time via tsup's `noExternal` (see `apps/cli/tsup.config.ts`). Core is private and never published, so this is the only way users get the analysis engine. The consequence: every runtime dependency of `core` MUST also appear in `apps/cli/package.json` `dependencies`, because the bundled code does `require('depcheck')`, `require('madge')`, etc. against cli's own `node_modules` at runtime. Auditors who grep `apps/cli/src/` for these imports will find none — that does NOT mean they're unused. The drift is enforced by `pnpm check:bundled-deps` (`scripts/check-bundled-deps.mjs`), which runs in CI and fails the build if cli's runtime deps don't mirror core's.
+
 ---
 
 ### 3. `apps/web/` - Web Dashboard

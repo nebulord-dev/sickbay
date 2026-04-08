@@ -1,6 +1,6 @@
-# @nebulord/sickbay
+# sickbay
 
-The terminal interface for Sickbay. Built with [Ink](https://github.com/vadimdemedes/ink) (React for terminals) and [Commander](https://github.com/tj/commander.js).
+The terminal interface for Sickbay. Published to npm as the unscoped `sickbay` package. Built with [Ink](https://github.com/vadimdemedes/ink) (React for terminals) and [Commander](https://github.com/tj/commander.js).
 
 ## Quickstart
 
