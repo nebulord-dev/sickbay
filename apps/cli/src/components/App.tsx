@@ -6,6 +6,7 @@ import Gradient from 'ink-gradient';
 import Spinner from 'ink-spinner';
 
 import { LOADING_MESSAGES } from '../lib/messages.js';
+import { BestPractices } from './BestPractices.js';
 import { CheckResultRow } from './CheckResult.js';
 import { Header } from './Header.js';
 import { ProgressList } from './ProgressList.js';
@@ -295,6 +296,7 @@ export function App({
             ))}
           <Summary report={report} scanDuration={scanDuration} />
           <QuickWins report={report} />
+          <BestPractices report={report} />
           <Box marginTop={1}>
             <Text dimColor>View detailed report: </Text>
             <Text color="cyan">sickbay --web</Text>

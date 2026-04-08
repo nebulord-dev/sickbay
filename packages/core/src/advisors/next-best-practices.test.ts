@@ -177,6 +177,23 @@ describe('NextBestPracticesAdvisor', () => {
       const recs = await advisor.run('/project', nextContext);
       expect(recs.find((r) => r.id === 'next-strict-mode')).toBeUndefined();
     });
+
+    it('still recommends when reactStrictMode is false but "true" appears elsewhere', async () => {
+      // Regression: the previous substring-based check
+      // (`content.includes('reactStrictMode') && content.includes('true')`)
+      // false-positively skipped this case because the word "true" appeared
+      // somewhere in the file (here in another flag value).
+      mockReadFileSync.mockImplementation(((path: string) => {
+        if (path.endsWith('package.json'))
+          return JSON.stringify({ dependencies: { next: '^14.0.0' } });
+        if (path.endsWith('next.config.js'))
+          return 'module.exports = { reactStrictMode: false, swcMinify: true }';
+        throw new Error('not found');
+      }) as typeof readFileSync);
+
+      const recs = await advisor.run('/project', nextContext);
+      expect(recs.find((r) => r.id === 'next-strict-mode')).toBeDefined();
+    });
   });
 
   describe('error resilience', () => {
