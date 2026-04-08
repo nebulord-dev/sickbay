@@ -1,3 +1,10 @@
+## [1.15.7](https://github.com/nebulord-dev/sickbay/compare/v1.15.6...v1.15.7) (2026-04-08)
+
+
+### Bug Fixes
+
+* **cli:** suppress knip false positives for bundled-deps ([142e9be](https://github.com/nebulord-dev/sickbay/commit/142e9be94709c128cf0b77d22739341243d5a62b))
+
 ## [1.15.6](https://github.com/nebulord-dev/sickbay/compare/v1.15.5...v1.15.6) (2026-04-08)
 
 
