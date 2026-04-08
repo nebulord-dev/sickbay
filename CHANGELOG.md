@@ -1,3 +1,10 @@
+## [1.15.6](https://github.com/nebulord-dev/sickbay/compare/v1.15.5...v1.15.6) (2026-04-08)
+
+
+### Bug Fixes
+
+* **core:** cross-platform isCommandAvailable (which → where on Windows) ([#33](https://github.com/nebulord-dev/sickbay/issues/33)) ([eb2a743](https://github.com/nebulord-dev/sickbay/commit/eb2a743daf45310435c91c34ec19f8051b21bde8)), closes [#1](https://github.com/nebulord-dev/sickbay/issues/1) [#32](https://github.com/nebulord-dev/sickbay/issues/32)
+
 ## [1.15.5](https://github.com/nebulord-dev/sickbay/compare/v1.15.4...v1.15.5) (2026-04-08)
 
 
