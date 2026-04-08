@@ -1,3 +1,11 @@
+## [1.15.4](https://github.com/nebulord-dev/sickbay/compare/v1.15.3...v1.15.4) (2026-04-08)
+
+
+### Bug Fixes
+
+* **core:** address PR feedback on bug-cluster review ([6d90d45](https://github.com/nebulord-dev/sickbay/commit/6d90d45b8690226928452847d3ef302d8888efbd))
+* **core:** cluster of bug fixes from audit follow-ups ([0898e98](https://github.com/nebulord-dev/sickbay/commit/0898e98bbd1555d48e5a35c1ff72977ff89dda86)), closes [post-PR-#27](https://github.com/post-PR-/issues/27) [#1](https://github.com/nebulord-dev/sickbay/issues/1) [#7](https://github.com/nebulord-dev/sickbay/issues/7) [#4](https://github.com/nebulord-dev/sickbay/issues/4) [#2](https://github.com/nebulord-dev/sickbay/issues/2) [#9](https://github.com/nebulord-dev/sickbay/issues/9)
+
 ## [1.15.3](https://github.com/nebulord-dev/sickbay/compare/v1.15.2...v1.15.3) (2026-04-08)
 
 
