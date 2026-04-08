@@ -200,9 +200,23 @@ export async function serveWeb(
 
     // AI chat endpoint
     if (parsedUrl.pathname === '/ai/chat' && req.method === 'POST' && aiService) {
+      // Cap request body to prevent unbounded memory growth from a malicious
+      // or misbehaving client on the loopback interface.
+      const MAX_BODY = 1024 * 1024; // 1 MB
       let body = '';
-      req.on('data', (chunk) => (body += chunk));
+      let aborted = false;
+      req.on('data', (chunk) => {
+        if (aborted) return;
+        body += chunk;
+        if (Buffer.byteLength(body) > MAX_BODY) {
+          aborted = true;
+          res.writeHead(413, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Payload too large' }));
+          req.destroy();
+        }
+      });
       req.on('end', async () => {
+        if (aborted) return;
         try {
           const { message, history } = JSON.parse(body);
           let chatReport: SickbayReport;
@@ -247,7 +261,10 @@ export async function serveWeb(
   });
 
   return new Promise((resolve) => {
-    server.listen(port, () => {
+    // SECURITY: bind explicitly to loopback so the dashboard (which contains
+    // file paths, dep lists, and secret-scan results) is not exposed to other
+    // hosts on the LAN, container networks, or VPN peers.
+    server.listen(port, '127.0.0.1', () => {
       resolve(`http://localhost:${port}`);
     });
   });
