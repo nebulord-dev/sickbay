@@ -119,7 +119,7 @@ describe('NextBestPracticesAdvisor', () => {
             typeof readdirSync
           >;
         return [] as unknown as ReturnType<typeof readdirSync>;
-      }) as typeof readdirSync);
+      }) as unknown as typeof readdirSync);
       mockReadFileSync.mockImplementation(((path: string) => {
         if (path.endsWith('package.json'))
           return JSON.stringify({ dependencies: { next: '^14.0.0' } });
@@ -140,7 +140,7 @@ describe('NextBestPracticesAdvisor', () => {
             typeof readdirSync
           >;
         return [] as unknown as ReturnType<typeof readdirSync>;
-      }) as typeof readdirSync);
+      }) as unknown as typeof readdirSync);
       mockReadFileSync.mockImplementation(((path: string) => {
         if (path.endsWith('package.json'))
           return JSON.stringify({ dependencies: { next: '^14.0.0' } });

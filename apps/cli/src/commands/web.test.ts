@@ -145,7 +145,7 @@ describe('serveWeb', () => {
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
 
-      const data = await res.json();
+      const data = (await res.json()) as { name: string; dependencies: Record<string, string> };
       expect(data.name).toBe('test-project');
       expect(data.dependencies.react).toBe('^18.0.0');
     });
@@ -232,7 +232,10 @@ describe('serveWeb', () => {
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
 
-      const data = await res.json();
+      const data = (await res.json()) as {
+        checks: Record<string, boolean>;
+        weights: Record<string, number>;
+      };
       expect(data.checks.knip).toBe(false);
       expect(data.weights.security).toBe(0.5);
     });
