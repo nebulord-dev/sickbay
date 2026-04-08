@@ -4,7 +4,7 @@ import { join, extname, resolve, relative, isAbsolute } from 'path';
 import { fileURLToPath } from 'url';
 
 import type { AIService } from '../services/ai.js';
-import type { SickbayReport, MonorepoReport, SickbayConfig } from 'sickbay-core';
+import type { SickbayReport, MonorepoReport } from 'sickbay-core';
 
 /**
  * This module implements a simple HTTP server to serve a web dashboard for visualizing Sickbay reports.

@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vitest/globals"],
+    "paths": {
+      "sickbay-core": ["../../packages/core/src/index.ts"]
+    }
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules"]
+}

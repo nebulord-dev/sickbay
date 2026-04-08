@@ -6,6 +6,23 @@ import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue } from '../types.js';
 
+interface AngularBuildConfiguration {
+  sourceMap?: boolean;
+  optimization?: boolean;
+  budgets?: unknown[];
+  aot?: boolean;
+}
+
+interface AngularProject {
+  architect?: {
+    build?: {
+      configurations?: {
+        production?: AngularBuildConfiguration;
+      };
+    };
+  };
+}
+
 export class AngularBuildConfigRunner extends BaseRunner {
   name = 'angular-build-config';
   category = 'performance' as const;
@@ -35,7 +52,7 @@ export class AngularBuildConfigRunner extends BaseRunner {
       const issues: Issue[] = [];
 
       // Find the default project or first project
-      const projects: Record<string, any> = angularJson.projects ?? {};
+      const projects: Record<string, AngularProject> = angularJson.projects ?? {};
       const projectName = angularJson.defaultProject ?? Object.keys(projects)[0];
 
       if (!projectName || !projects[projectName]) {

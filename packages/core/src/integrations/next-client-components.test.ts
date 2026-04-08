@@ -151,15 +151,6 @@ describe('NextClientComponentsRunner', () => {
         return <div>Static</div>;
       }
     `;
-    const passFile = `
-      "use client";
-      import { useState } from 'react';
-      export default function MyComponent() {
-        const [count, setCount] = useState(0);
-        return <div>{count}</div>;
-      }
-    `;
-
     for (const [count, expected] of [
       [1, 85],
       [3, 55],

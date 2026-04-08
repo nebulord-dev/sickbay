@@ -19,7 +19,14 @@ export interface MonorepoDependencyTree {
   packages: Record<string, DependencyTree>;
 }
 
-function normalizeDeps(raw: Record<string, any> | undefined): Record<string, DependencyTreeNode> {
+interface RawDepNode {
+  version?: string;
+  dependencies?: Record<string, RawDepNode>;
+}
+
+function normalizeDeps(
+  raw: Record<string, RawDepNode> | undefined,
+): Record<string, DependencyTreeNode> {
   if (!raw) return {};
   const result: Record<string, DependencyTreeNode> = {};
   for (const [name, info] of Object.entries(raw)) {

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url';
 
 import { runSickbay } from 'sickbay-core';
 
-import type { SickbayReport, CheckResult } from 'sickbay-core';
+import type { SickbayReport, CheckResult, ProjectInfo } from 'sickbay-core';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const FIXTURES_DIR = resolve(__dirname, '../../fixtures/packages');
@@ -37,9 +37,13 @@ function normalizeCheck(check: CheckResult): Record<string, unknown> {
   };
 }
 
-function normalizeProjectInfo(info: Record<string, unknown>): Record<string, unknown> {
-  const { dependencies, devDependencies, totalDependencies, ...stable } = info as any;
-  return stable;
+function normalizeProjectInfo({
+  dependencies: _deps,
+  devDependencies: _devDeps,
+  totalDependencies: _total,
+  ...stable
+}: ProjectInfo): Record<string, unknown> {
+  return stable as Record<string, unknown>;
 }
 
 function snapshotCheck(report: SickbayReport, id: string) {

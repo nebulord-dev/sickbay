@@ -19,7 +19,6 @@ interface TodoScannerThresholds {
  */
 
 const DEFAULT_PATTERNS = ['TODO', 'FIXME', 'HACK'];
-const TODO_PATTERN = /\b(TODO|FIXME|HACK)\b[:\s]*(.*)/i;
 
 function buildPattern(patterns: string[]): RegExp {
   return new RegExp('\\b(' + patterns.join('|') + ')\\b[:\\s]*(.*)', 'i');
