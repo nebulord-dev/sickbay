@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-04-08T16:49:28.152Z",
-  "projectPath": "/Users/tracericochet/Desktop/nebulord/sickbay/fixtures/packages/react-app",
+  "timestamp": "2026-03-31T03:16:15.192Z",
+  "projectPath": "fixtures/packages/react-app",
   "projectInfo": {
-    "name": "react-app-fixture",
+    "name": "sickbay-test-app",
     "version": "1.0.0",
     "hasTypeScript": true,
     "hasESLint": true,
@@ -58,7 +58,6 @@
         {
           "severity": "warning",
           "message": "Unused dependency: faker",
-          "suppressMatch": "faker",
           "fix": {
             "description": "Remove faker"
           },
@@ -69,7 +68,6 @@
         {
           "severity": "warning",
           "message": "Unused dependency: jquery",
-          "suppressMatch": "jquery",
           "fix": {
             "description": "Remove jquery"
           },
@@ -80,7 +78,6 @@
         {
           "severity": "warning",
           "message": "Unused dependency: underscore",
-          "suppressMatch": "underscore",
           "fix": {
             "description": "Remove underscore"
           },
@@ -91,7 +88,6 @@
         {
           "severity": "info",
           "message": "Unused devDependency: @types/jquery",
-          "suppressMatch": "@types/jquery",
           "fix": {
             "description": "Remove @types/jquery"
           },
@@ -102,7 +98,6 @@
         {
           "severity": "info",
           "message": "Unused devDependency: @vitest/coverage-v8",
-          "suppressMatch": "@vitest/coverage-v8",
           "fix": {
             "description": "Remove @vitest/coverage-v8"
           },
@@ -113,7 +108,6 @@
         {
           "severity": "info",
           "message": "Unused devDependency: prettier",
-          "suppressMatch": "prettier",
           "fix": {
             "description": "Remove prettier"
           },
@@ -125,7 +119,7 @@
       "toolsUsed": [
         "knip"
       ],
-      "duration": 1132,
+      "duration": 433,
       "metadata": {
         "unusedFiles": 0,
         "unusedDeps": 3,
@@ -143,7 +137,7 @@
       "toolsUsed": [
         "depcheck"
       ],
-      "duration": 700,
+      "duration": 333,
       "metadata": {
         "unused": 0,
         "missing": 0
@@ -153,13 +147,12 @@
       "id": "outdated",
       "category": "dependencies",
       "name": "Outdated Packages",
-      "score": 49,
+      "score": 52,
       "status": "fail",
       "issues": [
         {
           "severity": "info",
           "message": "@tailwindcss/vite: 4.2.1 → 4.2.2 (patch)",
-          "suppressMatch": "@tailwindcss/vite",
           "fix": {
             "description": "Update @tailwindcss/vite to 4.2.2",
             "command": "pnpm update @tailwindcss/vite",
@@ -172,7 +165,6 @@
         {
           "severity": "info",
           "message": "tailwindcss: 4.2.1 → 4.2.2 (patch)",
-          "suppressMatch": "tailwindcss",
           "fix": {
             "description": "Update tailwindcss to 4.2.2",
             "command": "pnpm update tailwindcss",
@@ -184,10 +176,9 @@
         },
         {
           "severity": "info",
-          "message": "@vitest/coverage-v8: 4.0.18 → 4.1.3 (minor)",
-          "suppressMatch": "@vitest/coverage-v8",
+          "message": "@vitest/coverage-v8: 4.0.18 → 4.1.2 (minor)",
           "fix": {
-            "description": "Update @vitest/coverage-v8 to 4.1.3",
+            "description": "Update @vitest/coverage-v8 to 4.1.2",
             "command": "pnpm update @vitest/coverage-v8",
             "nextSteps": "Run tests to verify nothing broke"
           },
@@ -197,10 +188,9 @@
         },
         {
           "severity": "info",
-          "message": "@vitest/ui: 4.0.18 → 4.1.3 (minor)",
-          "suppressMatch": "@vitest/ui",
+          "message": "@vitest/ui: 4.0.18 → 4.1.2 (minor)",
           "fix": {
-            "description": "Update @vitest/ui to 4.1.3",
+            "description": "Update @vitest/ui to 4.1.2",
             "command": "pnpm update @vitest/ui",
             "nextSteps": "Run tests to verify nothing broke"
           },
@@ -210,10 +200,9 @@
         },
         {
           "severity": "info",
-          "message": "axios: 1.13.5 → 1.15.0 (minor)",
-          "suppressMatch": "axios",
+          "message": "axios: 1.13.5 → 1.14.0 (minor)",
           "fix": {
-            "description": "Update axios to 1.15.0",
+            "description": "Update axios to 1.14.0",
             "command": "pnpm update axios",
             "nextSteps": "Run tests to verify nothing broke"
           },
@@ -223,23 +212,9 @@
         },
         {
           "severity": "info",
-          "message": "lodash: 4.17.23 → 4.18.1 (minor)",
-          "suppressMatch": "lodash",
+          "message": "typescript-eslint: 8.56.1 → 8.58.0 (minor)",
           "fix": {
-            "description": "Update lodash to 4.18.1",
-            "command": "pnpm update lodash",
-            "nextSteps": "Run tests to verify nothing broke"
-          },
-          "reportedBy": [
-            "outdated"
-          ]
-        },
-        {
-          "severity": "info",
-          "message": "typescript-eslint: 8.56.1 → 8.58.1 (minor)",
-          "suppressMatch": "typescript-eslint",
-          "fix": {
-            "description": "Update typescript-eslint to 8.58.1",
+            "description": "Update typescript-eslint to 8.58.0",
             "command": "pnpm update typescript-eslint",
             "nextSteps": "Run tests to verify nothing broke"
           },
@@ -249,10 +224,9 @@
         },
         {
           "severity": "info",
-          "message": "vitest: 4.0.18 → 4.1.3 (minor)",
-          "suppressMatch": "vitest",
+          "message": "vitest: 4.0.18 → 4.1.2 (minor)",
           "fix": {
-            "description": "Update vitest to 4.1.3",
+            "description": "Update vitest to 4.1.2",
             "command": "pnpm update vitest",
             "nextSteps": "Run tests to verify nothing broke"
           },
@@ -263,7 +237,6 @@
         {
           "severity": "warning",
           "message": "@eslint/js: 9.39.3 → 10.0.1 (major)",
-          "suppressMatch": "@eslint/js",
           "fix": {
             "description": "Update @eslint/js to 10.0.1 (major — review changelog before upgrading)"
           },
@@ -274,7 +247,6 @@
         {
           "severity": "warning",
           "message": "@types/jquery: 3.5.34 → 4.0.0 (major)",
-          "suppressMatch": "@types/jquery",
           "fix": {
             "description": "Update @types/jquery to 4.0.0 (major — review changelog before upgrading)"
           },
@@ -284,10 +256,9 @@
         },
         {
           "severity": "warning",
-          "message": "@types/node: 24.10.13 → 25.5.2 (major)",
-          "suppressMatch": "@types/node",
+          "message": "@types/node: 24.10.13 → 25.5.0 (major)",
           "fix": {
-            "description": "Update @types/node to 25.5.2 (major — review changelog before upgrading)"
+            "description": "Update @types/node to 25.5.0 (major — review changelog before upgrading)"
           },
           "reportedBy": [
             "outdated"
@@ -296,7 +267,6 @@
         {
           "severity": "warning",
           "message": "@vitejs/plugin-react: 5.1.4 → 6.0.1 (major)",
-          "suppressMatch": "@vitejs/plugin-react",
           "fix": {
             "description": "Update @vitejs/plugin-react to 6.0.1 (major — review changelog before upgrading)"
           },
@@ -306,10 +276,9 @@
         },
         {
           "severity": "warning",
-          "message": "eslint: 9.39.3 → 10.2.0 (major)",
-          "suppressMatch": "eslint",
+          "message": "eslint: 9.39.3 → 10.1.0 (major)",
           "fix": {
-            "description": "Update eslint to 10.2.0 (major — review changelog before upgrading)"
+            "description": "Update eslint to 10.1.0 (major — review changelog before upgrading)"
           },
           "reportedBy": [
             "outdated"
@@ -317,10 +286,9 @@
         },
         {
           "severity": "warning",
-          "message": "jsdom: 28.1.0 → 29.0.2 (major)",
-          "suppressMatch": "jsdom",
+          "message": "jsdom: 28.1.0 → 29.0.1 (major)",
           "fix": {
-            "description": "Update jsdom to 29.0.2 (major — review changelog before upgrading)"
+            "description": "Update jsdom to 29.0.1 (major — review changelog before upgrading)"
           },
           "reportedBy": [
             "outdated"
@@ -329,7 +297,6 @@
         {
           "severity": "warning",
           "message": "typescript: 5.9.3 → 6.0.2 (major)",
-          "suppressMatch": "typescript",
           "fix": {
             "description": "Update typescript to 6.0.2 (major — review changelog before upgrading)"
           },
@@ -339,10 +306,9 @@
         },
         {
           "severity": "warning",
-          "message": "vite: 7.3.1 → 8.0.7 (major)",
-          "suppressMatch": "vite",
+          "message": "vite: 7.3.1 → 8.0.3 (major)",
           "fix": {
-            "description": "Update vite to 8.0.7 (major — review changelog before upgrading)"
+            "description": "Update vite to 8.0.3 (major — review changelog before upgrading)"
           },
           "reportedBy": [
             "outdated"
@@ -351,7 +317,6 @@
         {
           "severity": "info",
           "message": "eslint-plugin-react-refresh: 0.4.26 → 0.5.2 (minor)",
-          "suppressMatch": "eslint-plugin-react-refresh",
           "fix": {
             "description": "Update eslint-plugin-react-refresh to 0.5.2",
             "command": "pnpm update eslint-plugin-react-refresh",
@@ -365,206 +330,24 @@
       "toolsUsed": [
         "pnpm"
       ],
-      "duration": 2193,
+      "duration": 757,
       "metadata": {
-        "outdatedCount": 17
+        "outdatedCount": 16
       }
     },
     {
       "id": "npm-audit",
       "category": "security",
       "name": "Security Vulnerabilities",
-      "score": 9,
-      "status": "fail",
-      "issues": [
-        {
-          "severity": "critical",
-          "message": "[flatted] flatted vulnerable to unbounded recursion DoS in parse() revive phase (GHSA-25h7-pfq9-p65f)",
-          "suppressMatch": "flatted",
-          "fix": {
-            "description": "Upgrade to version 3.4.0 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-25h7-pfq9-p65f"
-        },
-        {
-          "severity": "critical",
-          "message": "[undici] Undici: Malicious WebSocket 64-bit length overflows parser and crashes the client (GHSA-f269-vfmq-vjvj)",
-          "suppressMatch": "undici",
-          "fix": {
-            "description": "Upgrade to version 7.24.0 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-f269-vfmq-vjvj"
-        },
-        {
-          "severity": "warning",
-          "message": "[undici] Undici has an HTTP Request/Response Smuggling issue (GHSA-2mjp-6q6p-2qxm)",
-          "suppressMatch": "undici",
-          "fix": {
-            "description": "Upgrade to version 7.24.0 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-2mjp-6q6p-2qxm"
-        },
-        {
-          "severity": "critical",
-          "message": "[undici] Undici has Unbounded Memory Consumption in WebSocket permessage-deflate Decompression (GHSA-vrm6-8vpv-qv8q)",
-          "suppressMatch": "undici",
-          "fix": {
-            "description": "Upgrade to version 7.24.0 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-vrm6-8vpv-qv8q"
-        },
-        {
-          "severity": "critical",
-          "message": "[undici] Undici has Unhandled Exception in WebSocket Client Due to Invalid server_max_window_bits Validation (GHSA-v9p9-hfj2-hcw8)",
-          "suppressMatch": "undici",
-          "fix": {
-            "description": "Upgrade to version 7.24.0 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-v9p9-hfj2-hcw8"
-        },
-        {
-          "severity": "warning",
-          "message": "[undici] Undici has CRLF Injection in undici via `upgrade` option (GHSA-4992-7rv2-5pvq)",
-          "suppressMatch": "undici",
-          "fix": {
-            "description": "Upgrade to version 7.24.0 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-4992-7rv2-5pvq"
-        },
-        {
-          "severity": "warning",
-          "message": "[undici] Undici has Unbounded Memory Consumption in its DeduplicationHandler via Response Buffering that leads to DoS (GHSA-phc3-fgpg-7m6h)",
-          "suppressMatch": "undici",
-          "fix": {
-            "description": "Upgrade to version 7.24.0 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-phc3-fgpg-7m6h"
-        },
-        {
-          "severity": "critical",
-          "message": "[flatted] Prototype Pollution via parse() in NodeJS flatted (GHSA-rf6f-7fwh-wjgh)",
-          "suppressMatch": "flatted",
-          "fix": {
-            "description": "Upgrade to version 3.4.2 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-rf6f-7fwh-wjgh"
-        },
-        {
-          "severity": "warning",
-          "message": "[brace-expansion] brace-expansion: Zero-step sequence causes process hang and memory exhaustion (GHSA-f886-m6hf-6m8v)",
-          "suppressMatch": "brace-expansion",
-          "fix": {
-            "description": "Upgrade to version 5.0.5 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-f886-m6hf-6m8v"
-        },
-        {
-          "severity": "warning",
-          "message": "[picomatch] Picomatch: Method Injection in POSIX Character Classes causes incorrect Glob Matching (GHSA-3v7f-55p6-f55p)",
-          "suppressMatch": "picomatch",
-          "fix": {
-            "description": "Upgrade to version 4.0.4 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-3v7f-55p6-f55p"
-        },
-        {
-          "severity": "critical",
-          "message": "[picomatch] Picomatch has a ReDoS vulnerability via extglob quantifiers (GHSA-c2c7-rcm5-vvqj)",
-          "suppressMatch": "picomatch",
-          "fix": {
-            "description": "Upgrade to version 4.0.4 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-c2c7-rcm5-vvqj"
-        },
-        {
-          "severity": "warning",
-          "message": "[vite] Vite Vulnerable to Path Traversal in Optimized Deps `.map` Handling (GHSA-4w7w-66w2-5vf9)",
-          "suppressMatch": "vite",
-          "fix": {
-            "description": "Upgrade to version 7.3.2 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-4w7w-66w2-5vf9"
-        },
-        {
-          "severity": "critical",
-          "message": "[vite] Vite: `server.fs.deny` bypassed with queries (GHSA-v2wj-q39q-566r)",
-          "suppressMatch": "vite",
-          "fix": {
-            "description": "Upgrade to version 7.3.2 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-v2wj-q39q-566r"
-        },
-        {
-          "severity": "critical",
-          "message": "[vite] Vite Vulnerable to Arbitrary File Read via Vite Dev Server WebSocket (GHSA-p9ff-h696-f583)",
-          "suppressMatch": "vite",
-          "fix": {
-            "description": "Upgrade to version 7.3.2 or later"
-          },
-          "reportedBy": [
-            "npm-audit"
-          ],
-          "file": "https://github.com/advisories/GHSA-p9ff-h696-f583"
-        }
-      ],
+      "score": 100,
+      "status": "pass",
+      "issues": [],
       "toolsUsed": [
-        "pnpm-audit"
+        "npm-audit"
       ],
-      "duration": 1791,
+      "duration": 213,
       "metadata": {
-        "info": 0,
-        "low": 1,
-        "moderate": 20,
-        "high": 28,
-        "critical": 1,
-        "vulnerablePackages": {
-          "faker": 1,
-          "flatted": 2,
-          "undici": 6,
-          "brace-expansion": 1,
-          "picomatch": 2,
-          "vite": 3
-        },
-        "suppressedCount": 1
+        "vulnerablePackages": {}
       }
     },
     {
@@ -577,7 +360,6 @@
         {
           "severity": "warning",
           "message": "Circular dependency: utils/formatter.ts → utils/validator.ts",
-          "suppressMatch": "utils/formatter.ts",
           "fix": {
             "description": "Refactor to break the circular dependency cycle"
           },
@@ -589,7 +371,7 @@
       "toolsUsed": [
         "madge"
       ],
-      "duration": 609,
+      "duration": 381,
       "metadata": {
         "circularCount": 1,
         "graph": {
@@ -663,7 +445,7 @@
     {
       "id": "source-map-explorer",
       "category": "performance",
-      "name": "Bundle Size",
+      "name": "source-map-explorer",
       "score": 100,
       "status": "skipped",
       "issues": [],
@@ -696,7 +478,7 @@
       "toolsUsed": [
         "vitest"
       ],
-      "duration": 1424,
+      "duration": 1835,
       "metadata": {
         "testRunner": "vitest",
         "totalTests": 65,
@@ -715,7 +497,7 @@
       "toolsUsed": [
         "license-checker"
       ],
-      "duration": 645,
+      "duration": 143,
       "metadata": {
         "totalPackages": 11,
         "flagged": 0
@@ -731,7 +513,7 @@
       "toolsUsed": [
         "jscpd"
       ],
-      "duration": 999,
+      "duration": 305,
       "metadata": {
         "percentage": 0,
         "clones": 0
@@ -746,11 +528,10 @@
       "issues": [
         {
           "severity": "warning",
-          "message": "src/hooks/useData.ts: 1 error",
-          "suppressMatch": "src/hooks/useData.ts",
+          "message": "/Users/danteel/Desktop/nebulord/sickbay/src/hooks/useData.ts: 1 error",
           "fix": {
-            "description": "Fix ESLint issues in src/hooks/useData.ts",
-            "command": "eslint src/hooks/useData.ts --fix",
+            "description": "Fix ESLint issues in /Users/danteel/Desktop/nebulord/sickbay/src/hooks/useData.ts",
+            "command": "eslint /Users/danteel/Desktop/nebulord/sickbay/src/hooks/useData.ts --fix",
             "modifiesSource": true
           },
           "reportedBy": [
@@ -761,7 +542,7 @@
       "toolsUsed": [
         "eslint"
       ],
-      "duration": 1043,
+      "duration": 1890,
       "metadata": {
         "errors": 1,
         "warnings": 0,
@@ -778,7 +559,7 @@
       "toolsUsed": [
         "tsc"
       ],
-      "duration": 207,
+      "duration": 701,
       "metadata": {
         "errors": 0
       }
@@ -793,7 +574,6 @@
         {
           "severity": "info",
           "message": "src/utils/validator.ts:29 — TODO: Move to utils",
-          "suppressMatch": "src/utils/validator.ts",
           "reportedBy": [
             "todo-scanner"
           ]
@@ -802,7 +582,7 @@
       "toolsUsed": [
         "todo-scanner"
       ],
-      "duration": 2,
+      "duration": 4,
       "metadata": {
         "total": 1,
         "todo": 1,
@@ -829,73 +609,43 @@
         "topFiles": [
           {
             "path": "src/App.tsx",
-            "lines": 64,
-            "fileType": "react-component",
-            "warn": 300,
-            "critical": 500
+            "lines": 64
           },
           {
             "path": "src/services/api.ts",
-            "lines": 26,
-            "fileType": "ts-utility",
-            "warn": 600,
-            "critical": 1000
+            "lines": 26
           },
           {
             "path": "src/components/UserCard.tsx",
-            "lines": 25,
-            "fileType": "react-component",
-            "warn": 300,
-            "critical": 500
+            "lines": 25
           },
           {
             "path": "src/utils/validator.ts",
-            "lines": 25,
-            "fileType": "ts-utility",
-            "warn": 600,
-            "critical": 1000
+            "lines": 25
           },
           {
             "path": "src/utils/formatter.ts",
-            "lines": 24,
-            "fileType": "ts-utility",
-            "warn": 600,
-            "critical": 1000
+            "lines": 24
           },
           {
             "path": "src/utils/helpers.ts",
-            "lines": 23,
-            "fileType": "ts-utility",
-            "warn": 600,
-            "critical": 1000
+            "lines": 23
           },
           {
             "path": "src/components/PostList.tsx",
-            "lines": 18,
-            "fileType": "react-component",
-            "warn": 300,
-            "critical": 500
+            "lines": 18
           },
           {
             "path": "src/hooks/useData.ts",
-            "lines": 16,
-            "fileType": "custom-hook",
-            "warn": 150,
-            "critical": 250
+            "lines": 16
           },
           {
             "path": "src/components/Header.tsx",
-            "lines": 13,
-            "fileType": "react-component",
-            "warn": 300,
-            "critical": 500
+            "lines": 13
           },
           {
             "path": "src/main.tsx",
-            "lines": 9,
-            "fileType": "react-component",
-            "warn": 300,
-            "critical": 500
+            "lines": 9
           }
         ]
       }
@@ -910,7 +660,6 @@
         {
           "severity": "critical",
           "message": "src/utils/validator.ts:4 — Hardcoded API key detected",
-          "suppressMatch": "Hardcoded API key",
           "file": "src/utils/validator.ts",
           "fix": {
             "description": "Move secrets to environment variables",
@@ -942,7 +691,6 @@
         {
           "severity": "info",
           "message": "axios — fetch is built-in to Node 18+ and all modern browsers",
-          "suppressMatch": "axios",
           "fix": {
             "description": "Consider replacing with native fetch"
           },
@@ -953,7 +701,6 @@
         {
           "severity": "warning",
           "message": "jquery — Modern browsers cover virtually all jQuery use cases natively",
-          "suppressMatch": "jquery",
           "fix": {
             "description": "Consider replacing with native DOM APIs (querySelector, fetch, classList, etc.)"
           },
@@ -964,7 +711,6 @@
         {
           "severity": "warning",
           "message": "lodash — Full lodash bundle is 70KB+ — use tree-shakeable imports instead",
-          "suppressMatch": "lodash",
           "fix": {
             "description": "Consider replacing with lodash-es or individual lodash/* imports"
           },
@@ -975,7 +721,6 @@
         {
           "severity": "warning",
           "message": "moment — moment is 300KB+ and mutable — modern alternatives are ~2KB",
-          "suppressMatch": "moment",
           "fix": {
             "description": "Consider replacing with dayjs or date-fns"
           },
@@ -986,7 +731,6 @@
         {
           "severity": "warning",
           "message": "underscore — Most underscore utilities have native equivalents",
-          "suppressMatch": "underscore",
           "fix": {
             "description": "Consider replacing with native JS methods (map, filter, reduce, etc.)"
           },
@@ -1021,7 +765,7 @@
       "toolsUsed": [
         "react-perf"
       ],
-      "duration": 0,
+      "duration": 1,
       "metadata": {
         "filesScanned": 5,
         "reactCompiler": false,
@@ -1052,84 +796,15 @@
       }
     }
   ],
-  "overallScore": 83,
+  "overallScore": 90,
   "summary": {
-    "critical": 10,
-    "warnings": 23,
-    "info": 14
+    "critical": 2,
+    "warnings": 17,
+    "info": 13
   },
-  "config": {
-    "hasCustomConfig": true,
-    "overriddenChecks": [
-      "npm-audit"
-    ],
-    "disabledChecks": []
-  },
-  "recommendations": [
-    {
-      "id": "react-error-boundary",
-      "framework": "react",
-      "title": "Add Error Boundaries",
-      "message": "No error boundaries detected. Unhandled errors in components will crash the entire app. Consider adding react-error-boundary or a custom ErrorBoundary component.",
-      "severity": "recommend",
-      "learnMoreUrl": "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary",
-      "fix": {
-        "command": "npm install react-error-boundary",
-        "description": "Install the react-error-boundary package and wrap your app or key routes"
-      }
-    },
-    {
-      "id": "react-suspense",
-      "framework": "react",
-      "title": "Use Suspense for Loading States",
-      "message": "No <Suspense> boundaries found. Suspense provides declarative loading states for lazy-loaded components, data fetching, and code splitting.",
-      "severity": "suggest",
-      "learnMoreUrl": "https://react.dev/reference/react/Suspense"
-    },
-    {
-      "id": "react-compiler",
-      "framework": "react",
-      "title": "Adopt React Compiler",
-      "message": "React Compiler automatically memoizes components and hooks, eliminating the need for manual useMemo/useCallback. It can significantly reduce re-renders.",
-      "severity": "suggest",
-      "learnMoreUrl": "https://react.dev/learn/react-compiler"
-    },
-    {
-      "id": "universal-node-version",
-      "framework": "universal",
-      "title": "Pin Node.js Version",
-      "message": "No .nvmrc, .node-version, or engines.node found. Pinning the Node version prevents \"works on my machine\" issues and ensures consistent CI behavior.",
-      "severity": "recommend",
-      "fix": {
-        "description": "Create a .nvmrc file with your target Node version (e.g. 22)"
-      }
-    },
-    {
-      "id": "universal-editorconfig",
-      "framework": "universal",
-      "title": "Add .editorconfig",
-      "message": "No .editorconfig found. EditorConfig ensures consistent indentation, line endings, and charset across different editors and IDEs.",
-      "severity": "suggest",
-      "learnMoreUrl": "https://editorconfig.org/"
-    },
-    {
-      "id": "universal-engines",
-      "framework": "universal",
-      "title": "Add engines Field",
-      "message": "package.json has no engines field. Declaring Node and npm version constraints prevents installs on incompatible runtimes.",
-      "severity": "suggest"
-    },
-    {
-      "id": "universal-license",
-      "framework": "universal",
-      "title": "Add a LICENSE File",
-      "message": "No LICENSE file found. Without an explicit license, the project is \"all rights reserved\" by default, which may prevent others from using or contributing to it.",
-      "severity": "recommend"
-    }
-  ],
   "quote": {
-    "text": "The patient is stable, though I'd like to run a few more scans.",
-    "source": "Dr. Phlox",
-    "severity": "info"
+    "text": "I must say, I'm impressed. Don't let it happen again.",
+    "source": "The Doctor",
+    "severity": "allClear"
   }
 }
