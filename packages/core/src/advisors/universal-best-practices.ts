@@ -9,7 +9,9 @@ const LOCK_FILES = ['package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.loc
 
 export class UniversalBestPracticesAdvisor extends BaseAdvisor {
   name = 'universal-best-practices';
-  frameworks = [] as unknown as readonly Framework[];
+  // Empty array means "applies to all frameworks" (see BaseAdvisor.isApplicableToContext).
+  // Explicit type annotation avoids the `never[]` widening that previously required a double cast.
+  frameworks: readonly Framework[] = [];
 
   async run(projectPath: string, _context: ProjectContext): Promise<Recommendation[]> {
     const recommendations: Recommendation[] = [];

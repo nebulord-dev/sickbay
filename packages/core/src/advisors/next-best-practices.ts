@@ -155,7 +155,11 @@ export class NextBestPracticesAdvisor extends BaseAdvisor {
       const hasStrictMode = NEXT_CONFIG_FILES.some((f) => {
         try {
           const content = readFileSync(join(projectPath, f), 'utf-8');
-          return content.includes('reactStrictMode') && content.includes('true');
+          // Match `reactStrictMode: true` (with optional whitespace) rather than
+          // checking for the substrings independently — the latter false-positives
+          // on `reactStrictMode: false` whenever the word "true" appears anywhere
+          // else in the file (comments, other config keys, etc.).
+          return /reactStrictMode\s*:\s*true/.test(content);
         } catch {
           return false;
         }
