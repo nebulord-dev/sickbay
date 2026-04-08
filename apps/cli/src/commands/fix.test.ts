@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import type { SickbayReport, CheckResult, Issue } from '@nebulord/sickbay-core';
+import type { SickbayReport, CheckResult, Issue } from 'sickbay-core';
 
 // We mock 'util' so that promisify returns our controlled async function.
 // fix.ts calls `promisify(execFile)` at module-load time, so mockExecFileAsync

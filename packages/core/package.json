@@ -1,5 +1,5 @@
 {
-  "name": "@nebulord/sickbay-core",
+  "name": "sickbay-core",
   "version": "1.3.0",
   "private": true,
   "description": "Analysis engine for the Sickbay health check CLI",

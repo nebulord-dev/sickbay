@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 import { BestPracticesDrawer } from './BestPracticesDrawer.js';
 
-import type { Recommendation } from '@nebulord/sickbay-core';
+import type { Recommendation } from 'sickbay-core';
 
 const mockRecommendations: Recommendation[] = [
   {

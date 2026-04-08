@@ -8,7 +8,7 @@ import { execFileSync } from 'child_process';
 
 import { loadBaseReport, compareReports } from './diff.js';
 
-import type { SickbayReport, CheckResult } from '@nebulord/sickbay-core';
+import type { SickbayReport, CheckResult } from 'sickbay-core';
 
 const mockExecFileSync = vi.mocked(execFileSync);
 

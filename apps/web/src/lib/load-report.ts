@@ -1,4 +1,4 @@
-import type { SickbayReport, MonorepoReport } from '@nebulord/sickbay-core';
+import type { SickbayReport, MonorepoReport } from 'sickbay-core';
 
 /**
  * loadReport attempts to retrieve a SickbayReport or MonorepoReport from multiple potential

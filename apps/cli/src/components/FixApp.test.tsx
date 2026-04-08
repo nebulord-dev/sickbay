@@ -4,9 +4,9 @@ import { render } from 'ink-testing-library';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import type { FixableIssue } from '../commands/fix.js';
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
-vi.mock('@nebulord/sickbay-core', () => ({
+vi.mock('sickbay-core', () => ({
   runSickbay: vi.fn(),
 }));
 
@@ -31,8 +31,8 @@ vi.mock('ink', async () => {
   };
 });
 
-import { runSickbay } from '@nebulord/sickbay-core';
 import { useInput } from 'ink';
+import { runSickbay } from 'sickbay-core';
 
 import { collectFixableIssues, executeFix } from '../commands/fix.js';
 import { FixApp } from './FixApp.js';

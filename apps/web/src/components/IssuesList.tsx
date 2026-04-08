@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { buildSuppressSnippet } from '../lib/suppress-snippet.js';
 
-import type { CheckResult, Issue } from '@nebulord/sickbay-core';
+import type { CheckResult, Issue } from 'sickbay-core';
 
 interface IssuesListProps {
   checks: CheckResult[];

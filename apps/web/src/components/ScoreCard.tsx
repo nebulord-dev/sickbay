@@ -1,6 +1,6 @@
 import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
 
-import type { CheckResult } from '@nebulord/sickbay-core';
+import type { CheckResult } from 'sickbay-core';
 
 const CATEGORY_ICONS: Record<string, string> = {
   dependencies: '📦',

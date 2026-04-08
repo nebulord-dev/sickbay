@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('@nebulord/sickbay-core', () => ({
+vi.mock('sickbay-core', () => ({
   detectMonorepo: vi.fn(),
 }));
 
@@ -11,7 +11,7 @@ vi.mock('fs', async () => {
 
 import { readFileSync } from 'fs';
 
-import { detectMonorepo } from '@nebulord/sickbay-core';
+import { detectMonorepo } from 'sickbay-core';
 
 import { resolveProject, shortName } from './resolve-package.js';
 

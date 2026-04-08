@@ -10,7 +10,7 @@ export default defineConfig({
   format: ['esm'],
   dts: true,
   clean: true,
-  noExternal: ['@nebulord/sickbay-core'],
+  noExternal: ['sickbay-core'],
   external: ['jiti'],
   define: {
     __VERSION__: JSON.stringify(version),

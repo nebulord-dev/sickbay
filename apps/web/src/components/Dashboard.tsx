@@ -2,7 +2,7 @@ import { useState, lazy, Suspense, useEffect, useRef, useCallback } from 'react'
 
 import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
 
-import type { SickbayReport, MonorepoReport, PackageReport } from '@nebulord/sickbay-core';
+import type { SickbayReport, MonorepoReport, PackageReport } from 'sickbay-core';
 
 function getScoreColor(score: number) {
   if (score >= SCORE_GOOD) return 'green';

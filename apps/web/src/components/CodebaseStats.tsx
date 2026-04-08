@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useState } from 'react';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 // Lazy load heavy graph visualization
 const DependencyGraph = lazy(() =>

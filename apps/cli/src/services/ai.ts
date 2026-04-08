@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 /**
  * AIService provides methods to generate a natural language summary of the Sickbay report and to engage in a chat conversation about the report.

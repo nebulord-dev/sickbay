@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 
 import { BestPractices } from './BestPractices.js';
 
-import type { SickbayReport, Recommendation } from '@nebulord/sickbay-core';
+import type { SickbayReport, Recommendation } from 'sickbay-core';
 
 const createMockReport = (recommendations?: Recommendation[]): SickbayReport => ({
   timestamp: new Date().toISOString(),

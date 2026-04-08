@@ -1,6 +1,6 @@
 import { execFileSync } from 'child_process';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 export interface CheckDiff {
   id: string;

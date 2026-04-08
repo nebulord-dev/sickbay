@@ -1,4 +1,4 @@
-# @nebulord/sickbay-web
+# sickbay-web
 
 The web dashboard for Sickbay. Built with Vite + React + TailwindCSS.
 
@@ -58,5 +58,5 @@ The `dist/` output is what the CLI's HTTP server serves when running `sickbay --
 
 ## Notes
 
-- **No runtime imports from `@nebulord/sickbay-core`** — only `import type` to avoid bundling Node.js modules (execa, fs, etc.) into the browser build
+- **No runtime imports from `sickbay-core`** — only `import type` to avoid bundling Node.js modules (execa, fs, etc.) into the browser build
 - Color/score utilities that are shared are inlined directly to keep the browser bundle clean

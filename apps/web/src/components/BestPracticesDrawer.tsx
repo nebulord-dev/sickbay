@@ -1,4 +1,4 @@
-import type { Recommendation } from '@nebulord/sickbay-core';
+import type { Recommendation } from 'sickbay-core';
 
 interface BestPracticesDrawerProps {
   recommendations: Recommendation[];

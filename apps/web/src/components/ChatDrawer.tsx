@@ -4,7 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 interface ChatDrawerProps {
   report: SickbayReport;

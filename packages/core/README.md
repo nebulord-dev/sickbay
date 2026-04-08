@@ -1,10 +1,10 @@
-# @nebulord/sickbay-core
+# sickbay-core
 
 The analysis engine for Sickbay. Orchestrates all health checks in parallel and returns a structured `SickbayReport`.
 
 ## Overview
 
-`@nebulord/sickbay-core` exposes a single `runSickbay()` function that:
+`sickbay-core` exposes a single `runSickbay()` function that:
 
 1. Detects project metadata (framework, package manager, tooling)
 2. Runs all enabled checks concurrently via `Promise.allSettled`
@@ -16,7 +16,7 @@ The analysis engine for Sickbay. Orchestrates all health checks in parallel and 
 ### `runSickbay(options)`
 
 ```typescript
-import { runSickbay } from '@nebulord/sickbay-core';
+import { runSickbay } from 'sickbay-core';
 
 const report = await runSickbay({
   projectPath: '/path/to/project',

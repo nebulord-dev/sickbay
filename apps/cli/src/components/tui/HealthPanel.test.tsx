@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 
 import { HealthPanel } from './HealthPanel.js';
 
-import type { CheckResult } from '@nebulord/sickbay-core';
+import type { CheckResult } from 'sickbay-core';
 
 const createCheck = (
   overrides: Partial<CheckResult> & { id: string; name: string },

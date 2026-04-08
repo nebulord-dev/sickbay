@@ -7,7 +7,7 @@
  * Why this exists:
  *
  * `apps/cli` bundles `packages/core` inline at build time via tsup's
- * `noExternal: ['@nebulord/sickbay-core']` (see apps/cli/tsup.config.ts).
+ * `noExternal: ['sickbay-core']` (see apps/cli/tsup.config.ts).
  * That means cli's published dist contains core's source code with all of its
  * `require('depcheck')` / `require('madge')` / etc. calls preserved verbatim —
  * those are still resolved at *runtime* against cli's own node_modules.

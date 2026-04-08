@@ -3,10 +3,10 @@ import React from 'react';
 import { render } from 'ink-testing-library';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import type { SickbayReport, CheckResult } from '@nebulord/sickbay-core';
+import type { SickbayReport, CheckResult } from 'sickbay-core';
 
-// Mock @nebulord/sickbay-core before importing App — must include all exports used by sub-components
-vi.mock('@nebulord/sickbay-core', () => ({
+// Mock sickbay-core before importing App — must include all exports used by sub-components
+vi.mock('sickbay-core', () => ({
   runSickbay: vi.fn(),
   getScoreEmoji: (score: number) => {
     if (score >= 90) return 'Good';
@@ -43,7 +43,7 @@ vi.mock('ink', async () => {
   return { ...actual, useApp: () => ({ exit: vi.fn() }) };
 });
 
-import { runSickbay } from '@nebulord/sickbay-core';
+import { runSickbay } from 'sickbay-core';
 
 import { serveWeb } from '../commands/web.js';
 import { App } from './App.js';

@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 
 import { CheckResultRow } from './CheckResult.js';
 
-import type { CheckResult } from '@nebulord/sickbay-core';
+import type { CheckResult } from 'sickbay-core';
 
 function makeResult(overrides: Partial<CheckResult> = {}): CheckResult {
   return {

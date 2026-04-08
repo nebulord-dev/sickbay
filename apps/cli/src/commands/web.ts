@@ -4,12 +4,12 @@ import { join, extname } from 'path';
 import { fileURLToPath } from 'url';
 
 import type { AIService } from '../services/ai.js';
-import type { SickbayReport, MonorepoReport, SickbayConfig } from '@nebulord/sickbay-core';
+import type { SickbayReport, MonorepoReport, SickbayConfig } from 'sickbay-core';
 
 /**
  * This module implements a simple HTTP server to serve a web dashboard for visualizing Sickbay reports.
  * It dynamically serves the report data as JSON and provides endpoints for AI-generated summaries and chat interactions if an AI service is available.
- * The server also serves static files from the built dashboard located in the @nebulord/sickbay-web package. This allows users to interact with their health reports in a user-friendly web interface.
+ * The server also serves static files from the built dashboard located in the sickbay-web package. This allows users to interact with their health reports in a user-friendly web interface.
  */
 
 const MIME_TYPES: Record<string, string> = {
@@ -48,7 +48,7 @@ async function getFreePort(preferred: number): Promise<number> {
 }
 
 function packageReportToSickbayReport(
-  pkg: import('@nebulord/sickbay-core').PackageReport,
+  pkg: import('sickbay-core').PackageReport,
   parent: MonorepoReport,
 ): SickbayReport {
   return {
@@ -138,7 +138,7 @@ export async function serveWeb(
     if (url === '/sickbay-config.json') {
       const basePath = 'isMonorepo' in report ? report.rootPath : report.projectPath;
       try {
-        const { loadConfig } = await import('@nebulord/sickbay-core');
+        const { loadConfig } = await import('sickbay-core');
         const config = await loadConfig(basePath);
         if (config) {
           res.writeHead(200, { 'Content-Type': 'application/json' });

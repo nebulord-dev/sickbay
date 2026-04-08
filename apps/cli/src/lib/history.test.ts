@@ -26,7 +26,7 @@ import {
 } from './history.js';
 
 import type { TrendEntry } from './history.js';
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 const mockExistsSync = vi.mocked(existsSync);
 const mockReadFileSync = vi.mocked(readFileSync);

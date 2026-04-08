@@ -4,7 +4,7 @@ import { Box, Text } from 'ink';
 
 import { ScoreBar } from './ScoreBar.js';
 
-import type { CheckResult as CheckResultType } from '@nebulord/sickbay-core';
+import type { CheckResult as CheckResultType } from 'sickbay-core';
 
 const STATUS_ICONS = {
   pass: '✓',

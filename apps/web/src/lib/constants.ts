@@ -1,4 +1,4 @@
-// Duplicated from @nebulord/sickbay-core/constants to avoid pulling Node.js
+// Duplicated from sickbay-core/constants to avoid pulling Node.js
 // dependencies into the browser bundle. Keep in sync with core.
 
 // File complexity thresholds

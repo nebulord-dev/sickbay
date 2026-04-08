@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 // We need to mock 'fs' before the module loads so that findWebDist() can be
 // controlled. The module calls existsSync at call time (not import time), so a
@@ -11,7 +11,7 @@ vi.mock('fs', () => ({
 }));
 
 const mockLoadConfig = vi.fn();
-vi.mock('@nebulord/sickbay-core', () => ({
+vi.mock('sickbay-core', () => ({
   loadConfig: (...args: unknown[]) => mockLoadConfig(...args),
 }));
 

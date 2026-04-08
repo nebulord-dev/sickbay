@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { IssuesList } from './IssuesList.js';
 
-import type { CheckResult } from '@nebulord/sickbay-core';
+import type { CheckResult } from 'sickbay-core';
 
 function makeCheck(overrides: Partial<CheckResult> = {}): CheckResult {
   return {

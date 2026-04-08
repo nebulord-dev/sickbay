@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 import { loadReport } from './load-report.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 const mockReport: SickbayReport = {
   timestamp: '2024-01-01T00:00:00.000Z',

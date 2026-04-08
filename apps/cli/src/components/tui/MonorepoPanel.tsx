@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Box, Text } from 'ink';
 
-import type { MonorepoReport, PackageReport } from '@nebulord/sickbay-core';
+import type { MonorepoReport, PackageReport } from 'sickbay-core';
 
 interface MonorepoPanelProps {
   report: MonorepoReport | null;

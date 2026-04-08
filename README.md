@@ -292,16 +292,16 @@ pnpm clean        # Remove all dist/ directories and node_modules
 
 ```bash
 # Core
-pnpm --filter @nebulord/sickbay-core build
-pnpm --filter @nebulord/sickbay-core dev     # Watch mode
+pnpm --filter sickbay-core build
+pnpm --filter sickbay-core dev     # Watch mode
 
 # CLI
 pnpm --filter sickbay build
 pnpm --filter sickbay dev      # Watch mode
 
 # Web
-pnpm --filter @nebulord/sickbay-web build
-pnpm --filter @nebulord/sickbay-web dev      # Vite dev server on :3030
+pnpm --filter sickbay-web build
+pnpm --filter sickbay-web dev      # Vite dev server on :3030
 ```
 
 ### Test Fixtures

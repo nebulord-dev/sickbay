@@ -1,35 +1,45 @@
 {
-  "timestamp": "2026-03-31T00:57:18.134Z",
-  "projectPath": "/Users/danteel/Desktop/Nebulord/sickbay/apps/cli",
+  "timestamp": "2026-04-08T16:52:25.506Z",
+  "projectPath": "apps/cli",
   "projectInfo": {
-    "name": "@nebulord/sickbay",
-    "version": "1.2.1",
+    "name": "sickbay",
+    "version": "1.15.6",
     "hasTypeScript": true,
     "hasESLint": false,
     "hasPrettier": false,
     "framework": "react",
     "packageManager": "pnpm",
-    "totalDependencies": 17,
+    "totalDependencies": 27,
     "dependencies": {
-      "@anthropic-ai/sdk": "^0.80.0",
-      "@nebulord/sickbay-core": "workspace:*",
+      "@anthropic-ai/sdk": "^0.85.0",
       "chokidar": "^5.0.0",
       "commander": "^14.0.3",
-      "dotenv": "^17.3.1",
+      "depcheck": "^1.4.7",
+      "dotenv": "^17.4.1",
+      "execa": "^9.6.1",
+      "globby": "^16.2.0",
       "ink": "^6.8.0",
       "ink-gradient": "^4.0.0",
       "ink-spinner": "^5.0.0",
+      "jiti": "^2.6.1",
+      "jscpd": "^4.0.8",
+      "knip": "^6.3.0",
+      "license-checker": "^25.0.1",
+      "madge": "^8.0.0",
       "open": "^11.0.0",
-      "react": "^19.2.4"
+      "picomatch": "^4.0.4",
+      "react": "^19.2.4",
+      "source-map-explorer": "^2.5.3"
     },
     "devDependencies": {
       "@testing-library/jest-dom": "^6.9.1",
       "@testing-library/react": "^16.3.2",
       "@types/react": "^19.2.14",
       "ink-testing-library": "^4.0.0",
+      "sickbay-core": "workspace:*",
       "tsup": "^8.5.1",
       "typescript": "^5.9.3",
-      "vitest": "^4.1.2"
+      "vitest": "^4.1.3"
     }
   },
   "checks": [
@@ -37,18 +47,134 @@
       "id": "knip",
       "category": "dependencies",
       "name": "Unused Code",
-      "score": 100,
-      "status": "pass",
-      "issues": [],
+      "score": 45,
+      "status": "fail",
+      "issues": [
+        {
+          "severity": "warning",
+          "message": "Unused dependency: depcheck",
+          "suppressMatch": "depcheck",
+          "fix": {
+            "description": "Remove depcheck"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: execa",
+          "suppressMatch": "execa",
+          "fix": {
+            "description": "Remove execa"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: globby",
+          "suppressMatch": "globby",
+          "fix": {
+            "description": "Remove globby"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: jiti",
+          "suppressMatch": "jiti",
+          "fix": {
+            "description": "Remove jiti"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: jscpd",
+          "suppressMatch": "jscpd",
+          "fix": {
+            "description": "Remove jscpd"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: license-checker",
+          "suppressMatch": "license-checker",
+          "fix": {
+            "description": "Remove license-checker"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: madge",
+          "suppressMatch": "madge",
+          "fix": {
+            "description": "Remove madge"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: picomatch",
+          "suppressMatch": "picomatch",
+          "fix": {
+            "description": "Remove picomatch"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "Unused dependency: source-map-explorer",
+          "suppressMatch": "source-map-explorer",
+          "fix": {
+            "description": "Remove source-map-explorer"
+          },
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "Unused export: src/lib/update-check.ts: CACHE_TTL_MS",
+          "suppressMatch": "src/lib/update-check.ts: CACHE_TTL_MS",
+          "reportedBy": [
+            "knip"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "Unused export: src/lib/update-check.ts: REGISTRY_URL",
+          "suppressMatch": "src/lib/update-check.ts: REGISTRY_URL",
+          "reportedBy": [
+            "knip"
+          ]
+        }
+      ],
       "toolsUsed": [
         "knip"
       ],
-      "duration": 2008,
+      "duration": 707,
       "metadata": {
         "unusedFiles": 0,
-        "unusedDeps": 0,
+        "unusedDeps": 9,
         "unusedDevDeps": 0,
-        "unusedExports": 0
+        "unusedExports": 2
       }
     },
     {
@@ -61,7 +187,7 @@
       "toolsUsed": [
         "depcheck"
       ],
-      "duration": 1486,
+      "duration": 454,
       "metadata": {
         "unused": 0,
         "missing": 0
@@ -71,12 +197,50 @@
       "id": "outdated",
       "category": "dependencies",
       "name": "Outdated Packages",
-      "score": 97,
+      "score": 88,
       "status": "warning",
       "issues": [
         {
+          "severity": "info",
+          "message": "knip: 6.3.0 → 6.3.1 (patch)",
+          "suppressMatch": "knip",
+          "fix": {
+            "description": "Update knip to 6.3.1",
+            "command": "pnpm update knip",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "vitest: 4.1.2 → 4.1.3 (patch)",
+          "suppressMatch": "vitest",
+          "fix": {
+            "description": "Update vitest to 4.1.3",
+            "command": "pnpm update vitest",
+            "nextSteps": "Run tests to verify nothing broke"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "ink: 6.8.0 → 7.0.0 (major)",
+          "suppressMatch": "ink",
+          "fix": {
+            "description": "Update ink to 7.0.0 (major — review changelog before upgrading)"
+          },
+          "reportedBy": [
+            "outdated"
+          ]
+        },
+        {
           "severity": "warning",
           "message": "typescript: 5.9.3 → 6.0.2 (major)",
+          "suppressMatch": "typescript",
           "fix": {
             "description": "Update typescript to 6.0.2 (major — review changelog before upgrading)"
           },
@@ -88,9 +252,9 @@
       "toolsUsed": [
         "pnpm"
       ],
-      "duration": 676,
+      "duration": 1453,
       "metadata": {
-        "outdatedCount": 1
+        "outdatedCount": 4
       }
     },
     {
@@ -101,10 +265,15 @@
       "status": "pass",
       "issues": [],
       "toolsUsed": [
-        "npm-audit"
+        "pnpm-audit"
       ],
-      "duration": 326,
+      "duration": 999,
       "metadata": {
+        "info": 0,
+        "low": 0,
+        "moderate": 2,
+        "high": 0,
+        "critical": 0,
         "vulnerablePackages": {}
       }
     },
@@ -118,7 +287,7 @@
       "toolsUsed": [
         "madge"
       ],
-      "duration": 2157,
+      "duration": 1359,
       "metadata": {
         "circularCount": 0,
         "graph": {
@@ -127,6 +296,7 @@
             "commands/badge.ts"
           ],
           "commands/badge.ts": [],
+          "commands/claude.ts": [],
           "commands/diff.test.ts": [
             "../../../packages/core/dist/index.d.ts",
             "commands/diff.ts"
@@ -147,6 +317,9 @@
           ],
           "commands/fix.ts": [
             "../../../packages/core/dist/index.d.ts"
+          ],
+          "commands/init.test.ts": [
+            "commands/init.ts"
           ],
           "commands/init.ts": [
             "../../../packages/core/dist/index.d.ts",
@@ -179,14 +352,24 @@
           "components/App.tsx": [
             "../../../packages/core/dist/index.d.ts",
             "commands/web.ts",
+            "components/BestPractices.tsx",
             "components/CheckResult.tsx",
             "components/Header.tsx",
             "components/ProgressList.tsx",
             "components/QuickWins.tsx",
             "components/Summary.tsx",
+            "components/UpdateNotice.tsx",
             "lib/history.ts",
             "lib/messages.ts",
+            "lib/update-check.ts",
             "services/ai.ts"
+          ],
+          "components/BestPractices.test.tsx": [
+            "../../../packages/core/dist/index.d.ts",
+            "components/BestPractices.tsx"
+          ],
+          "components/BestPractices.tsx": [
+            "../../../packages/core/dist/index.d.ts"
           ],
           "components/CheckResult.test.tsx": [
             "../../../packages/core/dist/index.d.ts",
@@ -278,6 +461,10 @@
             "lib/history.ts",
             "lib/resolve-package.ts"
           ],
+          "components/UpdateNotice.test.tsx": [
+            "components/UpdateNotice.tsx"
+          ],
+          "components/UpdateNotice.tsx": [],
           "components/tui/ActivityPanel.test.tsx": [
             "components/tui/ActivityPanel.tsx"
           ],
@@ -340,6 +527,7 @@
           "components/tui/TuiApp.tsx": [
             "../../../packages/core/dist/index.d.ts",
             "commands/web.ts",
+            "components/UpdateNotice.tsx",
             "components/tui/ActivityPanel.tsx",
             "components/tui/GitPanel.tsx",
             "components/tui/HealthPanel.tsx",
@@ -354,6 +542,7 @@
             "components/tui/hooks/useSickbayRunner.ts",
             "components/tui/hooks/useTerminalSize.ts",
             "lib/history.ts",
+            "lib/update-check.ts",
             "services/ai.ts"
           ],
           "components/tui/hooks/useFileWatcher.test.ts": [
@@ -377,9 +566,13 @@
             "components/tui/hooks/useTerminalSize.ts"
           ],
           "components/tui/hooks/useTerminalSize.ts": [],
+          "config.ts": [
+            "../../../packages/core/dist/index.d.ts"
+          ],
           "index.ts": [
             "../../../packages/core/dist/index.d.ts",
             "commands/badge.ts",
+            "commands/claude.ts",
             "commands/init.ts",
             "components/App.tsx",
             "components/DiffApp.tsx",
@@ -389,7 +582,8 @@
             "components/TrendApp.tsx",
             "components/tui/TuiApp.tsx",
             "lib/history.ts",
-            "lib/resolve-package.ts"
+            "lib/resolve-package.ts",
+            "lib/update-check.ts"
           ],
           "lib/history.test.ts": [
             "../../../packages/core/dist/index.d.ts",
@@ -410,6 +604,10 @@
           "lib/resolve-package.ts": [
             "../../../packages/core/dist/index.d.ts"
           ],
+          "lib/update-check.test.ts": [
+            "lib/update-check.ts"
+          ],
+          "lib/update-check.ts": [],
           "services/ai.ts": [
             "../../../packages/core/dist/index.d.ts"
           ]
@@ -420,22 +618,33 @@
       "id": "source-map-explorer",
       "category": "performance",
       "name": "Bundle Size",
-      "score": 100,
-      "status": "pass",
-      "issues": [],
+      "score": 40,
+      "status": "fail",
+      "issues": [
+        {
+          "severity": "critical",
+          "message": "Initial bundle is 1613KB — exceeds 1MB threshold",
+          "fix": {
+            "description": "Use code splitting and lazy imports to reduce bundle size"
+          },
+          "reportedBy": [
+            "bundle-size-check"
+          ]
+        }
+      ],
       "toolsUsed": [
         "file-size-analysis"
       ],
-      "duration": 38,
+      "duration": 519,
       "metadata": {
-        "initialBytes": 164274,
-        "initialKB": 160,
-        "totalBytes": 164274,
-        "totalKB": 160,
-        "fileCount": 19,
+        "initialBytes": 1651491,
+        "initialKB": 1613,
+        "totalBytes": 1651491,
+        "totalKB": 1613,
+        "fileCount": 34,
         "entryChunks": 0,
         "method": "file-size-analysis",
-        "note": "No source maps — using total bundle size"
+        "note": "Source maps found but analysis failed"
       }
     },
     {
@@ -447,7 +656,7 @@
       "issues": [
         {
           "severity": "warning",
-          "message": "Line coverage: 70.6% (target: 80%)",
+          "message": "Line coverage: 71.2% (target: 80%)",
           "fix": {
             "description": "Add tests to improve coverage"
           },
@@ -457,7 +666,7 @@
         },
         {
           "severity": "warning",
-          "message": "Function coverage: 69.7% (target: 80%)",
+          "message": "Function coverage: 70.7% (target: 80%)",
           "fix": {
             "description": "Add tests for uncovered functions"
           },
@@ -469,17 +678,17 @@
       "toolsUsed": [
         "vitest"
       ],
-      "duration": 2375,
+      "duration": 3532,
       "metadata": {
         "testRunner": "vitest",
-        "totalTests": 440,
-        "passed": 440,
+        "totalTests": 478,
+        "passed": 478,
         "failed": 0,
         "skipped": 0,
-        "lines": 70.56,
-        "statements": 69.2,
-        "functions": 69.7,
-        "branches": 58.35
+        "lines": 71.18,
+        "statements": 69.94,
+        "functions": 70.7,
+        "branches": 60.21
       }
     },
     {
@@ -492,9 +701,9 @@
       "toolsUsed": [
         "license-checker"
       ],
-      "duration": 1367,
+      "duration": 282,
       "metadata": {
-        "totalPackages": 19,
+        "totalPackages": 20,
         "flagged": 0
       }
     },
@@ -508,7 +717,7 @@
       "toolsUsed": [
         "jscpd"
       ],
-      "duration": 2496,
+      "duration": 1465,
       "metadata": {
         "percentage": 0,
         "clones": 0
@@ -518,30 +727,15 @@
       "id": "typescript",
       "category": "code-quality",
       "name": "Type Safety",
-      "score": 90,
-      "status": "warning",
-      "issues": [
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        },
-        {
-          "severity": "warning",
-          "message": "src/commands/web.test.ts: TS18046: 'data' is of type 'unknown'.",
-          "reportedBy": [
-            "tsc"
-          ]
-        }
-      ],
+      "score": 100,
+      "status": "pass",
+      "issues": [],
       "toolsUsed": [
         "tsc"
       ],
-      "duration": 2046,
+      "duration": 1906,
       "metadata": {
-        "errors": 2
+        "errors": 0
       }
     },
     {
@@ -554,7 +748,7 @@
       "toolsUsed": [
         "todo-scanner"
       ],
-      "duration": 6,
+      "duration": 5,
       "metadata": {
         "total": 0,
         "todo": 0,
@@ -566,12 +760,24 @@
       "id": "complexity",
       "category": "code-quality",
       "name": "File Complexity",
-      "score": 80,
+      "score": 70,
       "status": "warning",
       "issues": [
         {
           "severity": "info",
-          "message": "src/components/FixApp.tsx: 505 lines — consider splitting into smaller modules",
+          "message": "src/components/App.tsx (React component): 367 lines — consider splitting (threshold: 300)",
+          "suppressMatch": "src/components/App.tsx",
+          "fix": {
+            "description": "Extract concerns into smaller, focused files"
+          },
+          "reportedBy": [
+            "complexity"
+          ]
+        },
+        {
+          "severity": "warning",
+          "message": "src/components/FixApp.tsx (React component): 505 lines — consider splitting (threshold: 300)",
+          "suppressMatch": "src/components/FixApp.tsx",
           "fix": {
             "description": "Extract concerns into smaller, focused files"
           },
@@ -581,7 +787,8 @@
         },
         {
           "severity": "info",
-          "message": "src/components/tui/TuiApp.tsx: 420 lines — consider splitting into smaller modules",
+          "message": "src/components/tui/TuiApp.tsx (React component): 436 lines — consider splitting (threshold: 300)",
+          "suppressMatch": "src/components/tui/TuiApp.tsx",
           "fix": {
             "description": "Extract concerns into smaller, focused files"
           },
@@ -595,50 +802,80 @@
       ],
       "duration": 2,
       "metadata": {
-        "totalFiles": 41,
-        "totalLines": 5145,
-        "avgLines": 125,
-        "oversizedCount": 2,
+        "totalFiles": 46,
+        "totalLines": 5705,
+        "avgLines": 124,
+        "oversizedCount": 3,
         "topFiles": [
           {
             "path": "src/components/FixApp.tsx",
-            "lines": 505
+            "lines": 505,
+            "fileType": "react-component",
+            "warn": 300,
+            "critical": 500
           },
           {
             "path": "src/components/tui/TuiApp.tsx",
-            "lines": 420
+            "lines": 436,
+            "fileType": "react-component",
+            "warn": 300,
+            "critical": 500
           },
           {
             "path": "src/index.ts",
-            "lines": 381
+            "lines": 416,
+            "fileType": "ts-utility",
+            "warn": 600,
+            "critical": 1000
           },
           {
             "path": "src/components/App.tsx",
-            "lines": 347
+            "lines": 367,
+            "fileType": "react-component",
+            "warn": 300,
+            "critical": 500
           },
           {
             "path": "src/commands/doctor.ts",
-            "lines": 343
+            "lines": 343,
+            "fileType": "ts-utility",
+            "warn": 600,
+            "critical": 1000
           },
           {
             "path": "src/components/StatsApp.tsx",
-            "lines": 290
-          },
-          {
-            "path": "src/components/TrendApp.tsx",
-            "lines": 217
+            "lines": 290,
+            "fileType": "react-component",
+            "warn": 300,
+            "critical": 500
           },
           {
             "path": "src/commands/web.ts",
-            "lines": 216
+            "lines": 252,
+            "fileType": "ts-utility",
+            "warn": 600,
+            "critical": 1000
+          },
+          {
+            "path": "src/commands/init.ts",
+            "lines": 236,
+            "fileType": "ts-utility",
+            "warn": 600,
+            "critical": 1000
+          },
+          {
+            "path": "src/components/TrendApp.tsx",
+            "lines": 217,
+            "fileType": "react-component",
+            "warn": 300,
+            "critical": 500
           },
           {
             "path": "src/commands/stats.ts",
-            "lines": 213
-          },
-          {
-            "path": "src/components/DoctorApp.tsx",
-            "lines": 196
+            "lines": 213,
+            "fileType": "ts-utility",
+            "warn": 600,
+            "critical": 1000
           }
         ]
       }
@@ -653,7 +890,7 @@
       "toolsUsed": [
         "secrets"
       ],
-      "duration": 6,
+      "duration": 5,
       "metadata": {
         "findings": 0
       }
@@ -670,7 +907,7 @@
       ],
       "duration": 0,
       "metadata": {
-        "totalDeps": 17,
+        "totalDeps": 27,
         "heavyDepsFound": 0,
         "heavyDeps": []
       }
@@ -679,13 +916,38 @@
       "id": "react-perf",
       "category": "performance",
       "name": "React Performance",
-      "score": 95,
+      "score": 93,
       "status": "warning",
       "issues": [
         {
           "severity": "info",
-          "message": "src/components/FixApp.tsx — Large component file (544 lines) — consider splitting",
+          "message": "src/components/App.tsx — Large component file (401 lines, threshold: 300) — consider splitting",
+          "file": "src/components/App.tsx",
+          "suppressMatch": "src/components/App.tsx",
+          "fix": {
+            "description": "Break into smaller, focused components to improve readability and render performance"
+          },
+          "reportedBy": [
+            "react-perf"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "src/components/FixApp.tsx — Large component file (544 lines, threshold: 300) — consider splitting",
           "file": "src/components/FixApp.tsx",
+          "suppressMatch": "src/components/FixApp.tsx",
+          "fix": {
+            "description": "Break into smaller, focused components to improve readability and render performance"
+          },
+          "reportedBy": [
+            "react-perf"
+          ]
+        },
+        {
+          "severity": "info",
+          "message": "src/components/StatsApp.tsx — Large component file (324 lines, threshold: 300) — consider splitting",
+          "file": "src/components/StatsApp.tsx",
+          "suppressMatch": "src/components/StatsApp.tsx",
           "fix": {
             "description": "Break into smaller, focused components to improve readability and render performance"
           },
@@ -697,6 +959,7 @@
           "severity": "warning",
           "message": "src/components/tui/QuickWinsPanel.tsx:97 — Using index as key in list — can cause rendering issues with dynamic lists",
           "file": "src/components/tui/QuickWinsPanel.tsx",
+          "suppressMatch": "src/components/tui/QuickWinsPanel.tsx",
           "fix": {
             "description": "Use a unique identifier (id, slug, etc.) as the key instead of the array index"
           },
@@ -706,8 +969,9 @@
         },
         {
           "severity": "info",
-          "message": "src/components/tui/TuiApp.tsx — Large component file (459 lines) — consider splitting",
+          "message": "src/components/tui/TuiApp.tsx — Large component file (477 lines, threshold: 300) — consider splitting",
           "file": "src/components/tui/TuiApp.tsx",
+          "suppressMatch": "src/components/tui/TuiApp.tsx",
           "fix": {
             "description": "Break into smaller, focused components to improve readability and render performance"
           },
@@ -719,14 +983,14 @@
       "toolsUsed": [
         "react-perf"
       ],
-      "duration": 4,
+      "duration": 2,
       "metadata": {
-        "filesScanned": 23,
+        "filesScanned": 25,
         "reactCompiler": false,
-        "totalFindings": 3,
+        "totalFindings": 5,
         "inlineObjects": 0,
         "indexAsKey": 1,
-        "largeComponents": 2
+        "largeComponents": 4
       }
     },
     {
@@ -750,12 +1014,90 @@
       }
     }
   ],
-  "overallScore": 97,
+  "overallScore": 90,
   "summary": {
-    "critical": 0,
-    "warnings": 6,
-    "info": 4
+    "critical": 1,
+    "warnings": 15,
+    "info": 10
   },
+  "recommendations": [
+    {
+      "id": "react-error-boundary",
+      "framework": "react",
+      "title": "Add Error Boundaries",
+      "message": "No error boundaries detected. Unhandled errors in components will crash the entire app. Consider adding react-error-boundary or a custom ErrorBoundary component.",
+      "severity": "recommend",
+      "learnMoreUrl": "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary",
+      "fix": {
+        "command": "npm install react-error-boundary",
+        "description": "Install the react-error-boundary package and wrap your app or key routes"
+      }
+    },
+    {
+      "id": "react-suspense",
+      "framework": "react",
+      "title": "Use Suspense for Loading States",
+      "message": "No <Suspense> boundaries found. Suspense provides declarative loading states for lazy-loaded components, data fetching, and code splitting.",
+      "severity": "suggest",
+      "learnMoreUrl": "https://react.dev/reference/react/Suspense"
+    },
+    {
+      "id": "react-compiler",
+      "framework": "react",
+      "title": "Adopt React Compiler",
+      "message": "React Compiler automatically memoizes components and hooks, eliminating the need for manual useMemo/useCallback. It can significantly reduce re-renders.",
+      "severity": "suggest",
+      "learnMoreUrl": "https://react.dev/learn/react-compiler"
+    },
+    {
+      "id": "react-strict-mode",
+      "framework": "react",
+      "title": "Enable StrictMode",
+      "message": "No <StrictMode> wrapper found in entry files. Strict Mode helps find bugs by double-invoking renders and effects in development.",
+      "severity": "recommend",
+      "learnMoreUrl": "https://react.dev/reference/react/StrictMode"
+    },
+    {
+      "id": "universal-node-version",
+      "framework": "universal",
+      "title": "Pin Node.js Version",
+      "message": "No .nvmrc, .node-version, or engines.node found. Pinning the Node version prevents \"works on my machine\" issues and ensures consistent CI behavior.",
+      "severity": "recommend",
+      "fix": {
+        "description": "Create a .nvmrc file with your target Node version (e.g. 22)"
+      }
+    },
+    {
+      "id": "universal-editorconfig",
+      "framework": "universal",
+      "title": "Add .editorconfig",
+      "message": "No .editorconfig found. EditorConfig ensures consistent indentation, line endings, and charset across different editors and IDEs.",
+      "severity": "suggest",
+      "learnMoreUrl": "https://editorconfig.org/"
+    },
+    {
+      "id": "universal-engines",
+      "framework": "universal",
+      "title": "Add engines Field",
+      "message": "package.json has no engines field. Declaring Node and npm version constraints prevents installs on incompatible runtimes.",
+      "severity": "suggest"
+    },
+    {
+      "id": "universal-package-manager",
+      "framework": "universal",
+      "title": "Add packageManager Field",
+      "message": "package.json has no packageManager field. This field enables Corepack to auto-install the correct package manager version, preventing lockfile churn from version mismatches.",
+      "severity": "suggest",
+      "learnMoreUrl": "https://nodejs.org/api/corepack.html"
+    },
+    {
+      "id": "universal-license",
+      "framework": "universal",
+      "title": "Add a LICENSE File",
+      "message": "No LICENSE file found. Without an explicit license, the project is \"all rights reserved\" by default, which may prevent others from using or contributing to it.",
+      "severity": "recommend"
+    }
+  ],
   "quote": {
     "text": "All systems nominal. I almost don't know what to do with myself.",
     "source": "The Doctor",
