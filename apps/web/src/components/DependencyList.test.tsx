@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { DependencyList } from './DependencyList.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {

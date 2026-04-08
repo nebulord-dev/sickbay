@@ -1,5 +1,5 @@
 {
-  "name": "sickbay-test-app",
+  "name": "react-app-fixture",
   "version": "1.0.0",
   "packageManager": "pnpm",
   "dependencies": {

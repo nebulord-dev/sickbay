@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { About } from './About.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 function makeReport(checks: SickbayReport['checks'] = []): SickbayReport {
   return {

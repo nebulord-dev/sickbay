@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Dashboard } from './components/Dashboard.js';
 import { loadReport } from './lib/load-report.js';
 
-import type { SickbayReport, MonorepoReport } from '@nebulord/sickbay-core';
+import type { SickbayReport, MonorepoReport } from 'sickbay-core';
 
 export function App() {
   const [report, setReport] = useState<SickbayReport | MonorepoReport | null>(null);

@@ -48,11 +48,11 @@ This document helps Claude Code understand the Sickbay codebase structure and wh
 This is a **pnpm workspace** monorepo managed with **Turbo**. The packages have strict dependency order:
 
 ```
-@nebulord/sickbay-core (foundation)
+sickbay-core (foundation)
     ↓
 sickbay (depends on core)
     ↓
-@nebulord/sickbay-web (independent, but served by CLI)
+sickbay-web (independent, but served by CLI)
 
 apps/docs — VitePress documentation site (nebulord-dev.github.io/sickbay)
 ```
@@ -165,7 +165,7 @@ vi.mock('path', async () => {
 
 **Note**: Uses Ink (React for terminals), so components use JSX/hooks.
 
-**Bundling and the dependency mirror**: `apps/cli` bundles `@nebulord/sickbay-core`'s source inline at build time via tsup's `noExternal` (see `apps/cli/tsup.config.ts`). Core is private and never published, so this is the only way users get the analysis engine. The consequence: every runtime dependency of `core` MUST also appear in `apps/cli/package.json` `dependencies`, because the bundled code does `require('depcheck')`, `require('madge')`, etc. against cli's own `node_modules` at runtime. Auditors who grep `apps/cli/src/` for these imports will find none — that does NOT mean they're unused. The drift is enforced by `pnpm check:bundled-deps` (`scripts/check-bundled-deps.mjs`), which runs in CI and fails the build if cli's runtime deps don't mirror core's.
+**Bundling and the dependency mirror**: `apps/cli` bundles `sickbay-core`'s source inline at build time via tsup's `noExternal` (see `apps/cli/tsup.config.ts`). Core is private and never published, so this is the only way users get the analysis engine. The consequence: every runtime dependency of `core` MUST also appear in `apps/cli/package.json` `dependencies`, because the bundled code does `require('depcheck')`, `require('madge')`, etc. against cli's own `node_modules` at runtime. Auditors who grep `apps/cli/src/` for these imports will find none — that does NOT mean they're unused. The drift is enforced by `pnpm check:bundled-deps` (`scripts/check-bundled-deps.mjs`), which runs in CI and fails the build if cli's runtime deps don't mirror core's.
 
 ---
 
@@ -196,7 +196,7 @@ vi.mock('path', async () => {
 - Modifying report loading → Edit `src/lib/load-report.ts`
 - Styling changes → Edit `src/index.css` or Tailwind config
 
-**Important**: Only use `import type` from `@nebulord/sickbay-core` to avoid bundling Node.js modules into browser build.
+**Important**: Only use `import type` from `sickbay-core` to avoid bundling Node.js modules into browser build.
 
 ---
 
@@ -248,7 +248,7 @@ vi.mock('path', async () => {
 
 3. **Register** in `packages/core/src/runner.ts` → `ALL_RUNNERS` array
 
-4. **Rebuild**: `pnpm build` (or `pnpm --filter @nebulord/sickbay-core build`)
+4. **Rebuild**: `pnpm build` (or `pnpm --filter sickbay-core build`)
 
 ### Modifying the Terminal UI
 
@@ -260,14 +260,14 @@ vi.mock('path', async () => {
 
 1. Edit components in `apps/web/src/components/`
 2. Use TailwindCSS for styling
-3. Test with: `pnpm --filter @nebulord/sickbay-web dev`
+3. Test with: `pnpm --filter sickbay-web dev`
 4. Generate test report: `node apps/cli/dist/index.js --path <project> --json > apps/web/public/sickbay-report.json`
 
 ### Changing Scoring Logic
 
 1. Edit `packages/core/src/scoring.ts`
 2. Adjust `CATEGORY_WEIGHTS` or scoring formulas
-3. Rebuild core: `pnpm --filter @nebulord/sickbay-core build`
+3. Rebuild core: `pnpm --filter sickbay-core build`
 
 ### Adding CLI Flags
 
@@ -403,14 +403,14 @@ pnpm dev          # Watch all packages
 pnpm clean        # Remove dist/ and node_modules
 
 # Per-package
-pnpm --filter @nebulord/sickbay-core build
+pnpm --filter sickbay-core build
 pnpm --filter sickbay build
-pnpm --filter @nebulord/sickbay-web build
+pnpm --filter sickbay-web build
 
 # Development
-pnpm --filter @nebulord/sickbay-core dev      # Watch mode
+pnpm --filter sickbay-core dev      # Watch mode
 pnpm --filter sickbay dev           # Watch mode
-pnpm --filter @nebulord/sickbay-web dev       # Vite dev server :3030
+pnpm --filter sickbay-web dev       # Vite dev server :3030
 ```
 
 ---

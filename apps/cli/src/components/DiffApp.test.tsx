@@ -3,9 +3,9 @@ import React from 'react';
 import { render } from 'ink-testing-library';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
-vi.mock('@nebulord/sickbay-core', () => ({
+vi.mock('sickbay-core', () => ({
   runSickbay: vi.fn(),
 }));
 
@@ -19,7 +19,7 @@ vi.mock('../lib/history.js', () => ({
   saveLastReport: vi.fn(),
 }));
 
-import { runSickbay } from '@nebulord/sickbay-core';
+import { runSickbay } from 'sickbay-core';
 
 import { loadBaseReport, compareReports } from '../commands/diff.js';
 import { DiffApp } from './DiffApp.js';

@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { Dashboard } from './Dashboard.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 // Mock side-effectful components
 vi.mock('./AISummary.js', () => ({ AISummary: () => null }));

@@ -4,7 +4,7 @@ import { Box, Text } from 'ink';
 
 import { LOADING_MESSAGES } from '../../lib/messages.js';
 
-import type { CheckResult } from '@nebulord/sickbay-core';
+import type { CheckResult } from 'sickbay-core';
 
 interface HealthPanelProps {
   checks: CheckResult[];

@@ -17,7 +17,7 @@ Review ${0:-all packages} for bugs, security issues, and code quality problems. 
    - Framework scoping bugs (`applicableRuntimes`/`applicableFrameworks` mismatches, `isApplicable()` false negatives)
    - Monorepo edge cases (mixed workspace managers, nested workspaces, packages without `package.json`)
    - Type safety between `SickbayReport` shape and web/CLI consumers
-   - `import type` discipline in `apps/web` (must not import values from `@nebulord/sickbay-core`)
+   - `import type` discipline in `apps/web` (must not import values from `sickbay-core`)
    - Performance concerns in check runners (spawning too many child processes, redundant file traversals)
    - AI integration issues in web dashboard (missing API key handling, prompt injection via report data)
 6. Suggest architectural improvements

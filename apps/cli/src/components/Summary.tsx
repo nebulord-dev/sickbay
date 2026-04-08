@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { getScoreEmoji } from '@nebulord/sickbay-core';
 import { Box, Text } from 'ink';
+import { getScoreEmoji } from 'sickbay-core';
 
 import { ScoreBar } from './ScoreBar.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 /**
  * Summary component displays the overall health score of the project along with a breakdown of critical issues, warnings, and info.

@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import { ConfigTab } from './ConfigTab.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 function makeReport(configOverrides?: Partial<SickbayReport['config']>): SickbayReport {
   return {

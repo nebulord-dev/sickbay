@@ -5,7 +5,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 
 import { ScorePanel } from './ScorePanel.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 const createMockReport = (
   overallScore: number,

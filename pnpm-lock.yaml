@@ -145,9 +145,6 @@ importers:
         specifier: ^2.5.3
         version: 2.5.3
     devDependencies:
-      '@nebulord/sickbay-core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@testing-library/jest-dom':
         specifier: 'catalog:'
         version: 6.9.1
@@ -160,6 +157,9 @@ importers:
       ink-testing-library:
         specifier: ^4.0.0
         version: 4.0.0(@types/react@19.2.14)
+      sickbay-core:
+        specifier: workspace:*
+        version: link:../../packages/core
       tsup:
         specifier: 'catalog:'
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(typescript@5.9.3)(yaml@2.8.3)
@@ -197,9 +197,6 @@ importers:
         specifier: ^16.1.1
         version: 16.1.1(react@19.2.4)
     devDependencies:
-      '@nebulord/sickbay-core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@rolldown/plugin-babel':
         specifier: ^0.2.2
         version: 0.2.2(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.13)(vite@8.0.7(@types/node@25.5.2)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.3))
@@ -239,6 +236,9 @@ importers:
       jsdom:
         specifier: ^29.0.2
         version: 29.0.2
+      sickbay-core:
+        specifier: workspace:*
+        version: link:../../packages/core
       tailwindcss:
         specifier: ^4.2.2
         version: 4.2.2

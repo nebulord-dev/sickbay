@@ -9,9 +9,9 @@
       "entry": ["src/index.ts", "src/index.tsx"],
       "project": ["src/**/*.ts", "src/**/*.tsx"],
       "ignoreDependencies": [
-        "@nebulord/sickbay-core",
+        "sickbay-core",
         "sickbay",
-        "@nebulord/sickbay-web",
+        "sickbay-web",
         "tsup",
         "eslint-config-prettier",
         "@testing-library/jest-dom",
@@ -21,9 +21,9 @@
   },
   "ignore": ["**/*.test.ts", "**/*.test.tsx", "**/dist/**"],
   "ignoreDependencies": [
-    "@nebulord/sickbay-core",
+    "sickbay-core",
     "sickbay",
-    "@nebulord/sickbay-web",
+    "sickbay-web",
     "tsup",
     "eslint-config-prettier",
     "@testing-library/jest-dom",

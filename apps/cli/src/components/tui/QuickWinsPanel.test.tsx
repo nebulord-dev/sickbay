@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 
 import { QuickWinsPanel } from './QuickWinsPanel.js';
 
-import type { SickbayReport, CheckResult, Issue } from '@nebulord/sickbay-core';
+import type { SickbayReport, CheckResult, Issue } from 'sickbay-core';
 
 const createMockReport = (checks: CheckResult[]): SickbayReport => ({
   timestamp: new Date().toISOString(),

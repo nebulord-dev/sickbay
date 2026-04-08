@@ -1,7 +1,7 @@
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-import type { Issue, SickbayReport } from '@nebulord/sickbay-core';
+import type { Issue, SickbayReport } from 'sickbay-core';
 
 /**
  * This module provides functions to collect fixable issues from a Sickbay report and execute the associated fix commands.

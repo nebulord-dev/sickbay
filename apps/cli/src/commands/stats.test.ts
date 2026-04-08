@@ -11,14 +11,14 @@ vi.mock('child_process', () => ({
   execSync: vi.fn(),
 }));
 
-vi.mock('@nebulord/sickbay-core', () => ({
+vi.mock('sickbay-core', () => ({
   detectProject: vi.fn(),
 }));
 
 import { execSync } from 'child_process';
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
 
-import { detectProject } from '@nebulord/sickbay-core';
+import { detectProject } from 'sickbay-core';
 
 import { gatherStats } from './stats.js';
 

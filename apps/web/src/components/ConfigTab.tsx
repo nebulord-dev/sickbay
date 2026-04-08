@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { DEFAULT_WEIGHTS } from '../lib/constants.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 interface CheckConfig {
   enabled?: boolean;

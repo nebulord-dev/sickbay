@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { ScoreCard } from './ScoreCard';
 
-import type { CheckResult } from '@nebulord/sickbay-core';
+import type { CheckResult } from 'sickbay-core';
 
 const createMockCheck = (overrides?: Partial<CheckResult>): CheckResult => ({
   id: 'test-check',

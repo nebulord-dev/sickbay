@@ -1,6 +1,6 @@
 import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
 
-import type { SickbayReport } from '@nebulord/sickbay-core';
+import type { SickbayReport } from 'sickbay-core';
 
 interface AboutProps {
   report: SickbayReport;

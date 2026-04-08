@@ -19,7 +19,7 @@ import { ScorePanel } from './ScorePanel.js';
 import { TrendPanel } from './TrendPanel.js';
 
 import type { UpdateInfo } from '../../lib/update-check.js';
-import type { SickbayReport, MonorepoReport } from '@nebulord/sickbay-core';
+import type { SickbayReport, MonorepoReport } from 'sickbay-core';
 
 declare const __VERSION__: string;
 
@@ -118,7 +118,7 @@ export function TuiApp({
 
       // Cache dependency tree for web dashboard
       try {
-        const { getDependencyTree } = await import('@nebulord/sickbay-core');
+        const { getDependencyTree } = await import('sickbay-core');
         const { saveDepTree } = await import('../../lib/history.js');
         const tree = await getDependencyTree(projectPath, result.projectInfo.packageManager);
         saveDepTree(projectPath, tree);

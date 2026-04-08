@@ -7,11 +7,11 @@ import {
   detectContext,
   detectMonorepo,
   getAvailableChecks,
-} from '@nebulord/sickbay-core';
+} from 'sickbay-core';
 
 import { saveEntry } from '../lib/history.js';
 
-import type { MonorepoInfo } from '@nebulord/sickbay-core';
+import type { MonorepoInfo } from 'sickbay-core';
 
 const CONFIG_FILES = ['sickbay.config.ts', 'sickbay.config.js', 'sickbay.config.mjs'];
 
