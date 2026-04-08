@@ -69,10 +69,14 @@ export async function executeFix(fix: FixableIssue, projectPath: string): Promis
     const parts = fix.command.split(/\s+/);
     const cmd = parts[0];
     const args = parts.slice(1);
+    // SECURITY: shell is intentionally NOT enabled. Running with `shell: true`
+    // would pass cmd+args through `/bin/sh -c`, making any shell metacharacter
+    // in `fix.command` (e.g. `;`, `|`, `$()`, backticks) injectable. Today these
+    // commands come from internal runner constants, but this is the trust
+    // boundary that protects future runners from accidental command injection.
     const { stdout, stderr } = await execFileAsync(cmd, args, {
       cwd: projectPath,
       timeout: 60_000,
-      shell: true,
     });
     return {
       fixable: fix,
