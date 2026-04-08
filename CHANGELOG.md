@@ -1,3 +1,10 @@
+## [1.15.2](https://github.com/nebulord-dev/sickbay/compare/v1.15.1...v1.15.2) (2026-04-08)
+
+
+### Bug Fixes
+
+* **ci:** make .sickbay oxfmt ignore pattern recursive ([f37f61d](https://github.com/nebulord-dev/sickbay/commit/f37f61d1daee51514e9937204cd7c6321e58b8aa))
+
 ## [1.15.1](https://github.com/nebulord-dev/sickbay/compare/v1.15.0...v1.15.1) (2026-04-08)
 
 
