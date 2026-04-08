@@ -2,7 +2,7 @@
 
 exports[`angular-app > projectInfo 1`] = `
 {
-  "framework": "node",
+  "framework": "angular",
   "hasESLint": false,
   "hasPrettier": false,
   "hasTypeScript": true,

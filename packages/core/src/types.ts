@@ -35,6 +35,7 @@ export interface ProjectInfo {
     | 'next'
     | 'vite'
     | 'cra'
+    | 'angular'
     | 'express'
     | 'fastify'
     | 'koa'

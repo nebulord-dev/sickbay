@@ -70,6 +70,7 @@ export async function detectProject(projectPath: string): Promise<ProjectInfo> {
 
 function detectFramework(deps: Record<string, string>): ProjectInfo['framework'] {
   if ('next' in deps) return 'next';
+  if ('@angular/core' in deps) return 'angular';
   if ('@vitejs/plugin-react' in deps || 'vite' in deps) return 'vite';
   if ('react-scripts' in deps) return 'cra';
   if ('react' in deps) return 'react';

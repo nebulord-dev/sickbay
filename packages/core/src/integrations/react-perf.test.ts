@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ReactPerfRunner } from './react-perf.js';
 
 vi.mock('fs', () => ({
+  existsSync: vi.fn(),
   readdirSync: vi.fn(),
   statSync: vi.fn(),
   readFileSync: vi.fn(),
@@ -20,10 +21,11 @@ vi.mock('../utils/file-types.js', () => ({
   getThresholds: vi.fn(() => ({ warn: 300, critical: 500, fileType: 'react-component' })),
 }));
 
-import { readdirSync, statSync, readFileSync } from 'fs';
+import { existsSync, readdirSync, statSync, readFileSync } from 'fs';
 
 import { createExcludeFilter } from '../utils/exclude.js';
 
+const mockExistsSync = vi.mocked(existsSync);
 const mockReaddirSync = vi.mocked(readdirSync);
 const mockStatSync = vi.mocked(statSync);
 const mockReadFileSync = vi.mocked(readFileSync);
@@ -35,6 +37,11 @@ describe('ReactPerfRunner', () => {
   beforeEach(() => {
     runner = new ReactPerfRunner();
     vi.clearAllMocks();
+    // The runner walks SOURCE_DIRS = ['src', 'app', 'lib']. The existing tests
+    // were written when only `src/` was scanned, so default existsSync to
+    // return true ONLY for the `src` path — that preserves the original
+    // single-directory walk semantics across the existing test bodies.
+    mockExistsSync.mockImplementation((p: unknown) => String(p).endsWith('/src'));
   });
 
   it('declares applicableFrameworks for react, next, and remix', () => {
@@ -42,6 +49,21 @@ describe('ReactPerfRunner', () => {
     expect(runner.applicableFrameworks).toContain('react');
     expect(runner.applicableFrameworks).toContain('next');
     expect(runner.applicableFrameworks).toContain('remix');
+  });
+
+  describe('isApplicable', () => {
+    it('returns true when any of src/, app/, or lib/ exists', async () => {
+      // Next.js App Router projects use app/ instead of src/.
+      // Regression: runner used to assume src/ exists and would fail with
+      // score: 0 for app/-only projects.
+      mockExistsSync.mockImplementation((p: unknown) => String(p).endsWith('/app'));
+      expect(await runner.isApplicable('/project')).toBe(true);
+    });
+
+    it('returns false when no recognised source dir exists', async () => {
+      mockExistsSync.mockReturnValue(false);
+      expect(await runner.isApplicable('/project')).toBe(false);
+    });
   });
 
   describe('run', () => {

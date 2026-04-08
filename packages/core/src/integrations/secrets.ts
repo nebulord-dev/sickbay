@@ -105,10 +105,22 @@ export class SecretsRunner extends BaseRunner {
         }
       }
 
-      // Scan source files
-      if (existsSync(join(projectPath, 'src'))) {
-        findings.push(...scanDirectory(join(projectPath, 'src'), projectPath, isExcluded));
+      // Scan known source/config locations. Hardcoded secrets commonly hide
+      // outside src/ — in deploy scripts, CI workflows, root config files,
+      // and Next.js-style `app/` directories. Only directories that exist
+      // are scanned, so missing dirs are silently skipped.
+      const SCAN_DIRS = ['src', 'app', 'lib', 'config', 'scripts', '.github/workflows'];
+      for (const dir of SCAN_DIRS) {
+        const fullDir = join(projectPath, dir);
+        if (existsSync(fullDir)) {
+          findings.push(...scanDirectory(fullDir, projectPath, isExcluded));
+        }
       }
+
+      // Also scan loose files at the project root (e.g. `next.config.js`,
+      // `webpack.config.js`, `vite.config.ts`) — these often hold inline
+      // configuration that can leak credentials.
+      findings.push(...scanRootFiles(projectPath, isExcluded));
 
       const issues: Issue[] = findings.map((f) => ({
         severity: 'critical' as const,
@@ -201,6 +213,37 @@ function scanDirectory(
 
 function isTestFile(filename: string): boolean {
   return /\.(test|spec)\.(ts|tsx|js|jsx|mts|cts)$/.test(filename);
+}
+
+/**
+ * Scan loose files at the project root only — no recursion. Catches things
+ * like next.config.js, vite.config.ts, webpack.config.js where developers
+ * sometimes inline credentials. Skips package.json and other lock files
+ * via the SKIP_FILES set.
+ */
+function scanRootFiles(projectRoot: string, isExcluded: (p: string) => boolean): Finding[] {
+  const findings: Finding[] = [];
+  try {
+    for (const entry of readdirSync(projectRoot)) {
+      const fullPath = join(projectRoot, entry);
+      let stat;
+      try {
+        stat = statSync(fullPath);
+      } catch {
+        continue;
+      }
+      if (!stat.isFile()) continue;
+      if (!SCAN_EXTENSIONS.has(extname(entry))) continue;
+      if (SKIP_FILES.has(basename(entry))) continue;
+      if (entry === 'package.json') continue;
+      if (isTestFile(entry)) continue;
+      if (isExcluded(entry)) continue;
+      findings.push(...scanFile(fullPath, projectRoot));
+    }
+  } catch {
+    // root unreadable — return empty
+  }
+  return findings;
 }
 
 function scanFile(filePath: string, projectRoot: string): Finding[] {

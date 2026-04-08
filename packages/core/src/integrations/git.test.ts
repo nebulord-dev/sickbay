@@ -96,6 +96,46 @@ describe('GitRunner', () => {
     expect(result.issues.some((i) => i.message.includes('stale'))).toBe(false);
   });
 
+  it('flags "a month ago" as stale when staleMonths is 0', async () => {
+    // Regression: the previous substring-based check did
+    // `parseInt('a month ago')` which returns NaN, and `NaN > 0` is false —
+    // so a repo last committed exactly one month ago was never flagged as
+    // stale even with the most aggressive threshold.
+    makeGitMock({ lastCommit: 'a month ago' });
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { staleMonths: 0 } },
+    });
+
+    expect(result.issues.some((i) => i.message.includes('stale'))).toBe(true);
+  });
+
+  it('does not flag "2 years ago" as stale when staleMonths is 999', async () => {
+    // Regression: the year branch used to short-circuit unconditionally
+    // (`lastCommit.includes('year')` was the entire condition), so a
+    // consumer trying to disable stale detection by setting a very large
+    // staleMonths would still get year-old repos flagged. The threshold
+    // now applies to both branches via month-unit comparison.
+    makeGitMock({ lastCommit: '2 years ago' });
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { staleMonths: 999 } },
+    });
+
+    expect(result.issues.some((i) => i.message.includes('stale'))).toBe(false);
+  });
+
+  it('still flags "2 years ago" as stale at default threshold', async () => {
+    // Sanity check that the year-branch threshold change didn't break
+    // the common case: with the default 6-month threshold, 2 years (24
+    // months) should still be flagged as stale.
+    makeGitMock({ lastCommit: '2 years ago' });
+
+    const result = await runner.run('/project');
+
+    expect(result.issues.some((i) => i.message.includes('stale'))).toBe(true);
+  });
+
   it('flags more than 20 remote branches as info issue', async () => {
     const branchLines = Array.from({ length: 21 }, (_, i) => `  origin/branch-${i}`).join('\n');
     makeGitMock({ remotes: 'origin', branches: branchLines });

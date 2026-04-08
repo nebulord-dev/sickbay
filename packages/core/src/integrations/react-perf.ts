@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from 'fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 
 import { createExcludeFilter } from '../utils/exclude.js';
@@ -7,6 +7,12 @@ import { getThresholds } from '../utils/file-types.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue, RunOptions } from '../types.js';
+
+// Source directories the runner knows how to walk. Mirrors ComplexityRunner —
+// covers classic `src/`, Next.js App Router `app/`, and `lib/` layouts.
+// React projects with no recognised source dir are skipped via isApplicable
+// rather than producing a false `score: 0` failure.
+const SOURCE_DIRS = ['src', 'app', 'lib'];
 
 /**
  * ReactPerfRunner analyzes React component files for common performance anti-patterns.
@@ -29,6 +35,10 @@ export class ReactPerfRunner extends BaseRunner {
   category = 'performance' as const;
   applicableFrameworks = ['react', 'next', 'remix'] as const;
 
+  async isApplicable(projectPath: string): Promise<boolean> {
+    return SOURCE_DIRS.some((dir) => existsSync(join(projectPath, dir)));
+  }
+
   async run(projectPath: string, options?: RunOptions): Promise<CheckResult> {
     const elapsed = timer();
     const isExcluded = createExcludeFilter(options?.checkConfig?.exclude ?? []);
@@ -36,7 +46,11 @@ export class ReactPerfRunner extends BaseRunner {
     try {
       const hasReactCompiler = detectReactCompiler(projectPath);
       const findings: Finding[] = [];
-      const files = scanDirectory(join(projectPath, 'src'), projectPath, isExcluded);
+      const files = SOURCE_DIRS.flatMap((dir) =>
+        existsSync(join(projectPath, dir))
+          ? scanDirectory(join(projectPath, dir), projectPath, isExcluded)
+          : [],
+      );
 
       for (const file of files) {
         findings.push(...analyzeFile(file.path, file.fullPath, file.lines));

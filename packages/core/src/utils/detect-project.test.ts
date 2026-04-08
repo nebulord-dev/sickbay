@@ -109,6 +109,18 @@ describe('detectProject', () => {
     expect(info.framework).toBe('hapi');
   });
 
+  it('detects angular framework', async () => {
+    // Regression: detectFramework had no Angular case and returned 'node'
+    // for Angular projects, even though detectContext correctly added
+    // 'angular' to the frameworks[] array. This caused the web dashboard's
+    // PackageReport.framework to label Angular packages as 'node'.
+    mockReadFileSync.mockReturnValue(
+      makePkg({ dependencies: { '@angular/core': '^17.0.0' } }) as never,
+    );
+    const info = await detectProject('/project');
+    expect(info.framework).toBe('angular');
+  });
+
   it('returns node when no recognized framework found', async () => {
     mockReadFileSync.mockReturnValue(makePkg({ dependencies: { lodash: '^4.0.0' } }) as never);
     const info = await detectProject('/project');
