@@ -74,6 +74,14 @@ export function useSickbayRunner({ projectPath, checks, quotes }: UseSickbayRunn
           projectPath,
           checks,
           quotes,
+          onPackageStart: (name) => {
+            setProgress((prev) => [...prev, { name, status: 'running' }]);
+          },
+          onPackageComplete: (pkg) => {
+            setProgress((prev) =>
+              prev.map((p) => (p.name === pkg.name ? { ...p, status: 'done' } : p)),
+            );
+          },
         });
 
         setMonorepoReport(result);

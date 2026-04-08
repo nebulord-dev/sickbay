@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { basename, join, relative } from 'path';
+import { basename, join } from 'path';
 
 import { AngularBestPracticesAdvisor } from './advisors/angular-best-practices.js';
 import { NextBestPracticesAdvisor } from './advisors/next-best-practices.js';
@@ -56,6 +56,7 @@ import {
 } from './scoring.js';
 import { detectMonorepo } from './utils/detect-monorepo.js';
 import { detectProject, detectContext } from './utils/detect-project.js';
+import { relativeFromRoot } from './utils/file-helpers.js';
 import { applySuppression, recalcScoreAfterSuppression } from './utils/suppress.js';
 
 import type { BaseAdvisor } from './advisors/base.js';
@@ -281,7 +282,7 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
   const rootConfig = await loadConfig(rootPath);
   const configMeta = resolveConfigMeta(rootConfig);
 
-  const packageReports = await Promise.all(
+  const packageResults = await Promise.allSettled(
     monorepoInfo.packagePaths.map(async (pkgPath): Promise<PackageReport> => {
       const pkgConfig = await loadConfig(pkgPath);
       const mergedConfig = mergeConfigs(rootConfig, pkgConfig);
@@ -301,7 +302,7 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
       const packageReport: PackageReport = {
         name: report.projectInfo.name,
         path: pkgPath,
-        relativePath: relative(rootPath, pkgPath),
+        relativePath: relativeFromRoot(rootPath, pkgPath),
         framework: report.projectInfo.framework,
         runtime: context.runtime,
         checks: report.checks,
@@ -316,6 +317,10 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
       return packageReport;
     }),
   );
+
+  const packageReports = packageResults
+    .filter((r): r is PromiseFulfilledResult<PackageReport> => r.status === 'fulfilled')
+    .map((r) => r.value);
 
   const overallScore =
     packageReports.length > 0

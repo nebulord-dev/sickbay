@@ -69,13 +69,20 @@ export function useGitStatus(projectPath: string, pollInterval = 10000) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   useEffect(() => {
-    fetchGitStatus(projectPath).then(setStatus);
+    let mounted = true;
+
+    fetchGitStatus(projectPath).then((s) => {
+      if (mounted) setStatus(s);
+    });
 
     intervalRef.current = setInterval(() => {
-      fetchGitStatus(projectPath).then(setStatus);
+      fetchGitStatus(projectPath).then((s) => {
+        if (mounted) setStatus(s);
+      });
     }, pollInterval);
 
     return () => {
+      mounted = false;
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [projectPath, pollInterval]);

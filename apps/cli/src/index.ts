@@ -46,6 +46,12 @@ program
   .option('--no-quotes', 'suppress personality quotes in output')
   .option('--verbose', 'show verbose output')
   .action(async (options) => {
+    // Validate --path exists before doing any I/O
+    if (!existsSync(options.path)) {
+      process.stderr.write(`Error: path does not exist: ${options.path}\n`);
+      process.exit(1);
+    }
+
     // Load .env from project path if it differs from cwd
     if (options.path && options.path !== process.cwd()) {
       const projectEnvPath = join(options.path, '.env');
@@ -68,7 +74,18 @@ program
       ? options.checks.split(',').map((s: string) => s.trim())
       : undefined;
 
-    const { detectMonorepo, runSickbay, runSickbayMonorepo } = await import('sickbay-core');
+    const { detectMonorepo, runSickbay, runSickbayMonorepo, getAvailableChecks } =
+      await import('sickbay-core');
+
+    // Warn early if any --checks IDs don't match known check names
+    if (checks && checks.length > 0) {
+      const knownNames = new Set(getAvailableChecks().map((c) => c.name));
+      const unknown = checks.filter((c) => !knownNames.has(c));
+      if (unknown.length > 0) {
+        process.stderr.write(`Warning: unknown check ID(s): ${unknown.join(', ')}\n`);
+      }
+    }
+
     const monorepoInfo = await detectMonorepo(options.path);
 
     // --package flag: scope to a single named package within a monorepo

@@ -19,6 +19,10 @@ export function useFileWatcher({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pendingRef = useRef<string[]>([]);
   const watcherRef = useRef<FSWatcher | null>(null);
+  // Keep a ref so the debounce callback always calls the latest version,
+  // even if the parent re-renders and passes a new function reference.
+  const onFilesChangedRef = useRef(onFilesChanged);
+  onFilesChangedRef.current = onFilesChanged;
 
   useEffect(() => {
     if (!enabled) return;
@@ -55,7 +59,7 @@ export function useFileWatcher({
           debounceRef.current = setTimeout(() => {
             const files = [...pendingRef.current];
             pendingRef.current = [];
-            onFilesChanged?.(files);
+            onFilesChangedRef.current?.(files);
           }, debounceMs);
         });
       } catch {

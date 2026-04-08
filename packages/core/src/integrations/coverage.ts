@@ -319,7 +319,7 @@ export class CoverageRunner extends BaseRunner {
         category: this.category,
         name: 'Tests & Coverage',
         score: Math.round(avg),
-        status: avg >= 80 ? 'pass' : avg >= 50 ? 'warning' : 'fail',
+        status: avg >= lineTarget ? 'pass' : avg >= 50 ? 'warning' : 'fail',
         issues,
         toolsUsed: ['coverage'],
         duration: elapsed(),

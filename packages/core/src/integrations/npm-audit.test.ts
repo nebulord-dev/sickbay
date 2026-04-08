@@ -20,6 +20,12 @@ vi.mock('../utils/file-helpers.js', () => ({
       return JSON.parse(fallback);
     }
   },
+  // path is mocked to posix above, so relative() returns forward-slash paths —
+  // relativeFromRoot's normalize step is a no-op in this context.
+  relativeFromRoot: (root: string, full: string) => {
+    const { relative } = require('path');
+    return relative(root, full);
+  },
 }));
 
 vi.mock('../utils/detect-project.js', () => ({

@@ -72,14 +72,25 @@ function findWebDist(): string | null {
   return null;
 }
 
-async function getFreePort(preferred: number): Promise<number> {
-  return new Promise((resolve) => {
+async function getFreePort(preferred: number, attempts = 0): Promise<number> {
+  if (attempts >= 10) {
+    throw new Error(
+      `No free port found after 10 attempts starting from port ${preferred - attempts}`,
+    );
+  }
+  return new Promise((resolve, reject) => {
     const server = http.createServer();
     server.listen(preferred, () => {
       const addr = server.address() as { port: number };
       server.close(() => resolve(addr.port));
     });
-    server.on('error', () => resolve(getFreePort(preferred + 1)));
+    server.on('error', (err: NodeJS.ErrnoException) => {
+      if (err.code === 'EADDRINUSE') {
+        resolve(getFreePort(preferred + 1, attempts + 1));
+      } else {
+        reject(err);
+      }
+    });
   });
 }
 
@@ -305,6 +316,13 @@ export async function serveWeb(
   });
 
   return new Promise((resolve) => {
+    // Close server on SIGINT/SIGTERM so the process can exit cleanly when
+    // the user presses Ctrl+C. Without this the HTTP handle keeps the event
+    // loop alive after Ink's render loop exits.
+    const shutdown = () => server.close();
+    process.once('SIGINT', shutdown);
+    process.once('SIGTERM', shutdown);
+
     // SECURITY: bind explicitly to loopback so the dashboard (which contains
     // file paths, dep lists, and secret-scan results) is not exposed to other
     // hosts on the LAN, container networks, or VPN peers.

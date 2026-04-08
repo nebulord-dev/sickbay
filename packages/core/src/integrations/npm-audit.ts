@@ -4,7 +4,7 @@ import { dirname, join, relative } from 'node:path';
 import { execa } from 'execa';
 
 import { detectPackageManager } from '../utils/detect-project.js';
-import { timer, parseJsonOutput } from '../utils/file-helpers.js';
+import { timer, parseJsonOutput, relativeFromRoot } from '../utils/file-helpers.js';
 import { BaseRunner } from './base.js';
 
 import type { CheckResult, Issue } from '../types.js';
@@ -225,7 +225,7 @@ function filterPnpmAdvisories(
     return advisories;
   }
 
-  const importerPrefix = relative(workspaceRoot, projectPath).replace(/\//g, '__');
+  const importerPrefix = relativeFromRoot(workspaceRoot, projectPath).replace(/\//g, '__');
 
   const filtered: Record<string, PnpmAdvisory> = {};
   for (const [id, advisory] of Object.entries(advisories)) {
