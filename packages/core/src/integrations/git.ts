@@ -68,10 +68,16 @@ export class GitRunner extends BaseRunner {
       // "2 years ago", "a year ago". `parseInt('a month ago')` returns NaN,
       // which would silently skip the "exactly one month" case under the
       // previous substring-based check. Parse the leading number explicitly
-      // and treat the word "a"/"an" as 1.
-      const isStale =
-        lastCommit.includes('year') ||
-        (lastCommit.includes('month') && parseGitRelativeCount(lastCommit) > staleMonths);
+      // and treat the word "a"/"an" as 1. Both branches must respect the
+      // staleMonths threshold — previously the year branch short-circuited
+      // unconditionally, so a consumer setting `staleMonths: 999` to disable
+      // stale detection would still get "2 years ago" repos flagged.
+      const lastCommitMonths = lastCommit.includes('year')
+        ? parseGitRelativeCount(lastCommit) * 12
+        : lastCommit.includes('month')
+          ? parseGitRelativeCount(lastCommit)
+          : 0;
+      const isStale = lastCommitMonths > staleMonths;
       if (isStale) {
         issues.push({
           severity: 'warning',

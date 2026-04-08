@@ -291,9 +291,9 @@ export async function runSickbayMonorepo(options: RunnerOptions = {}): Promise<M
       // after that package's scan was already done.
       // We resolve the package name from package.json directly so we can fire
       // the callback before runSickbay (which is what otherwise produces the
-      // ProjectInfo we'd read it from).
-      const packageName = readPackageName(pkgPath) ?? pkgPath;
-      options.onPackageStart?.(packageName);
+      // ProjectInfo we'd read it from). readPackageName is total — it falls
+      // back to basename(pkgPath) when package.json is missing or unreadable.
+      options.onPackageStart?.(readPackageName(pkgPath));
 
       const report = await runSickbay({ ...options, projectPath: pkgPath, _config: mergedConfig });
       const context = await detectContext(pkgPath);

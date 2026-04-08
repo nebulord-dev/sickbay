@@ -110,6 +110,32 @@ describe('GitRunner', () => {
     expect(result.issues.some((i) => i.message.includes('stale'))).toBe(true);
   });
 
+  it('does not flag "2 years ago" as stale when staleMonths is 999', async () => {
+    // Regression: the year branch used to short-circuit unconditionally
+    // (`lastCommit.includes('year')` was the entire condition), so a
+    // consumer trying to disable stale detection by setting a very large
+    // staleMonths would still get year-old repos flagged. The threshold
+    // now applies to both branches via month-unit comparison.
+    makeGitMock({ lastCommit: '2 years ago' });
+
+    const result = await runner.run('/project', {
+      checkConfig: { thresholds: { staleMonths: 999 } },
+    });
+
+    expect(result.issues.some((i) => i.message.includes('stale'))).toBe(false);
+  });
+
+  it('still flags "2 years ago" as stale at default threshold', async () => {
+    // Sanity check that the year-branch threshold change didn't break
+    // the common case: with the default 6-month threshold, 2 years (24
+    // months) should still be flagged as stale.
+    makeGitMock({ lastCommit: '2 years ago' });
+
+    const result = await runner.run('/project');
+
+    expect(result.issues.some((i) => i.message.includes('stale'))).toBe(true);
+  });
+
   it('flags more than 20 remote branches as info issue', async () => {
     const branchLines = Array.from({ length: 21 }, (_, i) => `  origin/branch-${i}`).join('\n');
     makeGitMock({ remotes: 'origin', branches: branchLines });
