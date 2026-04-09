@@ -80,7 +80,10 @@ async function getFreePort(preferred: number, attempts = 0): Promise<number> {
   }
   return new Promise((resolve, reject) => {
     const server = http.createServer();
-    server.listen(preferred, () => {
+    // Probe must bind to the same host as the real server (127.0.0.1), otherwise
+    // Node defaults to `::` and we can miss an IPv4-loopback-only conflict —
+    // the probe says "free", then the real listen crashes with EADDRINUSE.
+    server.listen(preferred, '127.0.0.1', () => {
       const addr = server.address() as { port: number };
       server.close(() => resolve(addr.port));
     });
@@ -315,13 +318,26 @@ export async function serveWeb(
     }
   });
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     // Close server on SIGINT/SIGTERM so the process can exit cleanly when
     // the user presses Ctrl+C. Without this the HTTP handle keeps the event
     // loop alive after Ink's render loop exits.
     const shutdown = () => server.close();
     process.once('SIGINT', shutdown);
     process.once('SIGTERM', shutdown);
+
+    // Reject the promise on any listen failure (EADDRINUSE, EACCES, etc.)
+    // instead of letting an unhandled 'error' event crash the process with a
+    // raw Node stack trace. The CLI renders rejection messages nicely.
+    server.once('error', (err: NodeJS.ErrnoException) => {
+      process.off('SIGINT', shutdown);
+      process.off('SIGTERM', shutdown);
+      if (err.code === 'EADDRINUSE') {
+        reject(new Error(`Port ${port} is already in use. Stop the other process or try again.`));
+      } else {
+        reject(err);
+      }
+    });
 
     // SECURITY: bind explicitly to loopback so the dashboard (which contains
     // file paths, dep lists, and secret-scan results) is not exposed to other

@@ -334,6 +334,33 @@ describe('serveWeb', () => {
       const url = await serveWeb(makeReport(), 0, mockAiService as any);
       expect(url).toMatch(/^http:\/\/localhost:\d+$/);
     });
+
+    it('falls back to the next port when the preferred port is held on 127.0.0.1', async () => {
+      // Regression test for the IPv4/IPv6 probe mismatch: the probe must bind
+      // to 127.0.0.1 (same as the real server), otherwise a process holding
+      // the IPv4 loopback is invisible to an IPv6 `::` probe and the real
+      // listen crashes with EADDRINUSE.
+      const http = await import('http');
+      const blocker = http.createServer();
+      const preferredPort: number = await new Promise((resolve) => {
+        // Let the OS pick a free port, then hold it on 127.0.0.1.
+        blocker.listen(0, '127.0.0.1', () => {
+          const addr = blocker.address() as { port: number };
+          resolve(addr.port);
+        });
+      });
+
+      try {
+        const url = await serveWeb(makeReport(), preferredPort);
+        const match = url.match(/^http:\/\/localhost:(\d+)$/);
+        expect(match).not.toBeNull();
+        const actualPort = Number(match![1]);
+        expect(actualPort).not.toBe(preferredPort);
+        expect(actualPort).toBeGreaterThan(preferredPort);
+      } finally {
+        await new Promise<void>((resolve) => blocker.close(() => resolve()));
+      }
+    });
   });
 });
 
