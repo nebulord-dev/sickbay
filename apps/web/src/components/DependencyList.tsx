@@ -5,11 +5,18 @@ import type { SickbayReport } from 'sickbay-core';
 interface DependencyStatus {
   name: string;
   version: string;
+  installedVersion?: string;
   dev: boolean;
   unused: boolean;
   missing: boolean;
   outdatedTo?: string;
   updateType?: 'major' | 'minor' | 'patch';
+}
+
+interface OutdatedInfo {
+  from: string;
+  to: string;
+  updateType: 'major' | 'minor' | 'patch';
 }
 
 function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
@@ -18,7 +25,7 @@ function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
   // Collect flags from check issues
   const unused = new Set<string>();
   const missing = new Set<string>();
-  const outdated = new Map<string, { to: string; updateType: 'major' | 'minor' | 'patch' }>();
+  const outdated = new Map<string, OutdatedInfo>();
 
   for (const check of report.checks) {
     for (const issue of check.issues) {
@@ -37,11 +44,11 @@ function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
         /^([^:]+):\s*([^\s]+)\s*→\s*([^\s]+?)(?:\s*\((major|minor|patch)\))?$/,
       );
       if (ncuMatch) {
-        const [, pkgName, , to, type] = ncuMatch;
+        const [, pkgName, from, to, type] = ncuMatch;
         const updateType =
           (type as 'major' | 'minor' | 'patch') ??
           (issue.severity === 'warning' ? 'major' : 'minor');
-        outdated.set(pkgName.trim(), { to: to.trim(), updateType });
+        outdated.set(pkgName.trim(), { from: from.trim(), to: to.trim(), updateType });
       }
     }
   }
@@ -52,6 +59,7 @@ function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
     statuses.push({
       name,
       version,
+      installedVersion: od?.from,
       dev: false,
       unused: unused.has(name),
       missing: missing.has(name),
@@ -64,6 +72,7 @@ function buildDependencyStatuses(report: SickbayReport): DependencyStatus[] {
     statuses.push({
       name,
       version,
+      installedVersion: od?.from,
       dev: true,
       unused: unused.has(name),
       missing: missing.has(name),
@@ -228,7 +237,7 @@ export function DependencyList({ report }: Props) {
                   </a>
                 </td>
                 <td className="px-4 py-2.5 font-mono text-gray-300">
-                  {dep.version}
+                  {dep.installedVersion ?? dep.version}
                   {dep.outdatedTo && <span className="ml-2 text-gray-500">→ {dep.outdatedTo}</span>}
                 </td>
                 <td className="px-4 py-2.5">

@@ -118,6 +118,36 @@ describe('DependencyList', () => {
     expect(screen.getByText('→ 4.17.21')).toBeInTheDocument();
   });
 
+  it('shows the installed version (not the declared range) when a dep is outdated', () => {
+    // Simulates pnpm catalog/stale-lockfile case: declared range ^4.1.3, installed 4.1.2
+    const report = makeReport({
+      projectInfo: {
+        ...makeReport().projectInfo,
+        dependencies: {},
+        devDependencies: { vitest: '^4.1.3' },
+      },
+      checks: [
+        {
+          id: 'outdated',
+          name: 'Outdated',
+          category: 'dependencies',
+          score: 90,
+          status: 'warning',
+          toolsUsed: ['pnpm'],
+          duration: 0,
+          issues: [
+            { severity: 'info', message: 'vitest: 4.1.2 → 4.1.3 (patch)', reportedBy: ['pnpm'] },
+          ],
+        },
+      ],
+    });
+    render(<DependencyList report={report} />);
+    // The table should show the installed 4.1.2, not the declared ^4.1.3
+    expect(screen.getByText('4.1.2')).toBeInTheDocument();
+    expect(screen.queryByText('^4.1.3')).not.toBeInTheDocument();
+    expect(screen.getByText('→ 4.1.3')).toBeInTheDocument();
+  });
+
   it('shows "patch update" badge for a patch bump', () => {
     const report = makeReport({
       checks: [

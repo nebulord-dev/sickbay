@@ -115,7 +115,7 @@ function parseOutdated(stdout: string): OutdatedEntry[] {
     > = JSON.parse(stdout);
 
     return Object.entries(raw)
-      .filter(([_, info]) => info.current && info.latest) // Skip entries with missing version data
+      .filter(([_, info]) => info.current && info.latest && info.current !== info.latest) // Skip missing or equal versions
       .map(([name, info]) => ({
         name,
         current: info.current,
@@ -139,9 +139,11 @@ function getVersionParts(version: string): [number, number, number] {
 }
 
 function getUpdateType(current: string, latest: string): 'major' | 'minor' | 'patch' {
-  const [curMaj, curMin] = getVersionParts(current);
-  const [latMaj, latMin] = getVersionParts(latest);
-  if (curMaj < latMaj) return 'major';
-  if (curMin < latMin) return 'minor';
+  const [curMaj, curMin, curPatch] = getVersionParts(current);
+  const [latMaj, latMin, latPatch] = getVersionParts(latest);
+  if (curMaj !== latMaj) return 'major';
+  if (curMin !== latMin) return 'minor';
+  if (curPatch !== latPatch) return 'patch';
+  // Versions are structurally equal (e.g. pre-release metadata differs) — treat as patch.
   return 'patch';
 }

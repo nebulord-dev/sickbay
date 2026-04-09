@@ -175,6 +175,20 @@ describe('OutdatedRunner', () => {
     expect(result.issues[0].severity).toBe('critical');
   });
 
+  it('skips entries where current equals latest (stale pnpm catalog data)', async () => {
+    mockExeca.mockResolvedValue({
+      stdout: makeOutdated({
+        vitest: { current: '4.1.3', latest: '4.1.3' },
+        lodash: { current: '4.0.0', latest: '4.1.0' },
+      }),
+    } as never);
+
+    const result = await runner.run('/project');
+
+    expect(result.issues).toHaveLength(1);
+    expect(result.issues[0].message).toContain('lodash');
+  });
+
   it('uses maxOutdated threshold from config', async () => {
     const packages = Object.fromEntries(
       Array.from({ length: 16 }, (_, i) => [`pkg-${i}`, { current: '1.0.0', latest: '2.0.0' }]),
