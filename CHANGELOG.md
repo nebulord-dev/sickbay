@@ -1,3 +1,10 @@
+## [1.15.10](https://github.com/nebulord-dev/sickbay/compare/v1.15.9...v1.15.10) (2026-04-09)
+
+
+### Bug Fixes
+
+* **cli:** resolve issue with port in use ([0725198](https://github.com/nebulord-dev/sickbay/commit/0725198480719c34439b2f16f5f4ba550a480c3d))
+
 ## [1.15.9](https://github.com/nebulord-dev/sickbay/compare/v1.15.8...v1.15.9) (2026-04-09)
 
 
