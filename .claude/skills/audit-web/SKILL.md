@@ -54,7 +54,15 @@ Review `src/lib/load-report.ts`:
 - Does it handle packages with identical names (shouldn't happen but worth checking)?
 - Are per-package scores computed correctly, or is there a risk of using the wrong package's data?
 
-### 6. Constants Drift
+### 6. Display Fidelity
+
+When components parse check issues into UI state (outdated, unused, missing, duplicated, etc.), the display must source each value from the **same place** the signal came from. Mixing scanner-reported data with `projectInfo` fields produces misleading UI without any type error.
+
+- **`DependencyList.tsx` canonical case:** when a dep is outdated, the "current version" shown in the row should be the **installed** version parsed from the issue message (`from` in `"lodash: 4.0.0 → 4.17.21 (patch)"`), NOT the **declared range** from `report.projectInfo.dependencies` (`^4.0.0`). These can diverge in pnpm catalog drift, version overrides, stale lockfile resolutions, and workspace hoisting scenarios — producing rows like `^4.1.3 → 4.1.3` that look like bugs but are actually the UI lying about what the scanner found.
+- **General rule:** for every derived UI state, ask "what is the source of truth?" — the check issue itself is usually the answer, not `projectInfo`.
+- **Test construction:** for each derived state (outdated / unused / missing / etc.), construct a test where the declared range and the scanner's reported version differ, and assert the rendered cell shows the scanner value.
+
+### 7. Constants Drift
 
 `apps/web/src/lib/constants.ts` duplicates scoring constants from core to avoid Node.js imports.
 

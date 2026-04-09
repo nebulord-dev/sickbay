@@ -62,6 +62,7 @@ Pick 5 integrations at random and verify:
 - What happens when the external tool (knip, madge, etc.) exits with a non-zero code for a legitimate reason (e.g., knip finding issues)?
 - What happens when tool output is malformed JSON?
 - Are child process errors (ENOENT, EPERM) caught and surfaced as issues, not crashes?
+- **Parser robustness for structured tool output:** do parsers filter degenerate entries before producing issues? Common examples: `current === latest` (pnpm can report unchanged entries when catalogs drift), missing version fields, pre-release-only diffs. Do version comparison helpers (`getUpdateType` and friends) check **every** semver segment, not just the first differing one? A fallthrough in a 2-segment compare produces silently-wrong classifications (e.g. `4.1.3 → 4.1.3` labeled as a "patch update") that surface as confusing UI.
 
 ### 7. Test Coverage
 

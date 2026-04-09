@@ -50,7 +50,9 @@ The `--web` flag starts an HTTP server. Review for:
 
 - **Path traversal** — does the static file server restrict to `dist/` only? Can `GET /../../../etc/passwd` reach the filesystem?
 - **Port handling** — if port 3030 is in use, does it find the next free port gracefully?
-- **Server shutdown** — is the server closed on SIGINT/SIGTERM, or does it leave orphaned processes?
+- **Probe/listen host parity** — does the free-port probe bind to the same host as the real `server.listen()`? Mismatches (e.g. default `::` probe vs. `127.0.0.1` real bind) can produce false "port free" results on macOS because IPv4 and IPv6 loopback sockets are independent. Don't trust the fallback logic exists — **verify it actually fires** end-to-end: hold a port on `127.0.0.1` with a real server, call `serveWeb(report, heldPort)`, assert the returned URL uses a different port.
+- **Listen error handler** — every `http.Server` / `net.Server` must have an `.on('error', ...)` / `.once('error', ...)` listener attached **before** `server.listen()` is called. An unhandled `'error'` event on a Server EventEmitter crashes the process with a raw Node stack trace (e.g. on EADDRINUSE, EACCES) instead of producing a graceful promise rejection that the Ink error phase can render. This is a different failure mode from unhandled promise rejections — grep for every `.listen(` call in the package and confirm each has a sibling error listener.
+- **Server shutdown** — is the server closed on SIGINT/SIGTERM, or does it leave orphaned processes? On listen failure, are the SIGINT/SIGTERM handlers unregistered so they don't leak across retries?
 - **Report endpoint** — `GET /sickbay-report.json` serves the in-memory report. Verify it sets `Content-Type: application/json` and doesn't expose any other data
 
 ### 6. Exit Codes and Error Handling
