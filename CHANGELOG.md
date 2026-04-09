@@ -1,3 +1,10 @@
+## [1.15.9](https://github.com/nebulord-dev/sickbay/compare/v1.15.8...v1.15.9) (2026-04-09)
+
+
+### Bug Fixes
+
+* **web:** show installed version for outdated deps instead of declared range ([208ff8b](https://github.com/nebulord-dev/sickbay/commit/208ff8bd58386d4999e96cbaffd32b3f3dbf046c))
+
 ## [1.15.8](https://github.com/nebulord-dev/sickbay/compare/v1.15.7...v1.15.8) (2026-04-08)
 
 
