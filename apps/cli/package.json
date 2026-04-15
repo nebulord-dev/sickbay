@@ -50,7 +50,7 @@
     "license-checker": "^25.0.1",
     "madge": "^8.0.0",
     "open": "^11.0.0",
-    "picomatch": ">=4.0.4",
+    "picomatch": "^4.0.4",
     "react": "^19.2.5",
     "source-map-explorer": "^2.5.3"
   },
