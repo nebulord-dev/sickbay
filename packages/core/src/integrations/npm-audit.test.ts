@@ -32,11 +32,11 @@ vi.mock('../utils/detect-project.js', () => ({
   detectPackageManager: vi.fn().mockReturnValue('npm'),
 }));
 
-vi.mock('node:fs', () => ({
+vi.mock('fs', () => ({
   existsSync: vi.fn().mockReturnValue(false),
 }));
 
-import { existsSync } from 'node:fs';
+import { existsSync } from 'fs';
 
 import { execa } from 'execa';
 
