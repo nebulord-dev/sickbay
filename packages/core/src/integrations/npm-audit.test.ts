@@ -20,11 +20,11 @@ vi.mock('../utils/file-helpers.js', () => ({
       return JSON.parse(fallback);
     }
   },
-  // path is mocked to posix above, so relative() returns forward-slash paths —
-  // relativeFromRoot's normalize step is a no-op in this context.
+  // The real relativeFromRoot always returns forward-slash paths regardless of
+  // OS. Replicate that here so advisory-path matching works on Windows too.
   relativeFromRoot: (root: string, full: string) => {
     const { relative } = require('path');
-    return relative(root, full);
+    return relative(root, full).replace(/\\/g, '/');
   },
 }));
 
@@ -32,11 +32,11 @@ vi.mock('../utils/detect-project.js', () => ({
   detectPackageManager: vi.fn().mockReturnValue('npm'),
 }));
 
-vi.mock('node:fs', () => ({
+vi.mock('fs', () => ({
   existsSync: vi.fn().mockReturnValue(false),
 }));
 
-import { existsSync } from 'node:fs';
+import { existsSync } from 'fs';
 
 import { execa } from 'execa';
 
@@ -474,8 +474,11 @@ describe('NpmAuditRunner', () => {
   describe('pnpm workspace filtering', () => {
     beforeEach(() => {
       mockDetectPM.mockReturnValue('pnpm');
-      // Simulate workspace root at /workspace with pnpm-workspace.yaml
-      mockExistsSync.mockImplementation((p) => String(p) === '/workspace/pnpm-workspace.yaml');
+      // Simulate workspace root at /workspace with pnpm-workspace.yaml.
+      // Normalize separators so the check works on Windows (where join uses \).
+      mockExistsSync.mockImplementation(
+        (p) => String(p).replace(/\\/g, '/') === '/workspace/pnpm-workspace.yaml',
+      );
     });
 
     it('only includes advisories affecting the target package', async () => {
