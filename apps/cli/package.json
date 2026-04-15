@@ -34,7 +34,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.85.0",
+    "@anthropic-ai/sdk": "^0.89.0",
     "chokidar": "^5.0.0",
     "commander": "^14.0.3",
     "depcheck": "^1.4.7",
@@ -46,7 +46,7 @@
     "ink-spinner": "^5.0.0",
     "jiti": "^2.6.1",
     "jscpd": "^4.0.8",
-    "knip": "^6.3.0",
+    "knip": "^6.4.1",
     "license-checker": "^25.0.1",
     "madge": "^8.0.0",
     "open": "^11.0.0",
