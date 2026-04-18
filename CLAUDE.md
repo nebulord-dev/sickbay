@@ -29,13 +29,6 @@ Four targeted audit skills cover the package boundaries. Run them when you ship 
 
 Each skill dispatches a `feature-dev:code-reviewer` agent with a package-specific checklist. Fix findings before committing.
 
-**Conventions:**
-
-- One task = one plan file = one session = one commit
-- Drafts live in `.claude/plans/`, approved plans in `.claude/plans/ready/`
-- The `ready/` subfolder is the approval gate — only plans there get picked up by the script
-- Never combine multiple tasks into a single plan
-
 This document helps Claude Code understand the Sickbay codebase structure and where to look when making updates.
 
 ## Project Overview

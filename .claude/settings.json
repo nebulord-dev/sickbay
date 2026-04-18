@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "CMD=$(jq -r '.tool_input.command'); echo \"$CMD\" | grep -qE '^git push' || exit 0; cat <<'HOOKEOF'\n{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"decision\":\"agent\",\"agentPrompt\":\"The user just pushed code. Check if the changes affect any documented features in apps/docs/. Run git diff main...HEAD --name-only to see changed files, then scan apps/docs/ for pages that reference the changed functionality (CLI flags, scoring, check runners, config options, commands). If docs need updating, list the specific files and what needs changing. If docs are already accurate or the changes don't affect documented features, say so briefly.\"}}\nHOOKEOF",
+            "command": "CMD=$(jq -r '.tool_input.command'); echo \"$CMD\" | grep -qE '^git push' || exit 0; cat <<'HOOKEOF'\n{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"decision\":\"agent\",\"agentPrompt\":\"The user just pushed code. Check if the changes affect any documented features in apps/docs/. Run git diff $(git merge-base HEAD origin/main)...HEAD --name-only to see changed files, then scan apps/docs/ for pages that reference the changed functionality (CLI flags, scoring, check runners, config options, commands). If docs need updating, list the specific files and what needs changing. If docs are already accurate or the changes don't affect documented features, say so briefly.\"}}\nHOOKEOF",
             "timeout": 10,
             "async": true,
             "statusMessage": "Docs sync check..."
