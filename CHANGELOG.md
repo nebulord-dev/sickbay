@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/nebulord-dev/sickbay/compare/v1.16.0...v1.16.1) (2026-04-18)
+
+
+### Bug Fixes
+
+* correct issue in VitePress build ([#48](https://github.com/nebulord-dev/sickbay/issues/48)) ([1ebbea3](https://github.com/nebulord-dev/sickbay/commit/1ebbea3b78e5a5f4f1219aa1872c7158706e4230))
+
 # [1.16.0](https://github.com/nebulord-dev/sickbay/compare/v1.15.10...v1.16.0) (2026-04-18)
 
 
