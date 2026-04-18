@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { Box, Text } from 'ink';
 
+import { countUniqueIssues } from '../../lib/issue-grouping.js';
+
 import type { SickbayReport } from 'sickbay-core';
 
 interface ScorePanelProps {
@@ -80,17 +82,24 @@ export function ScorePanel({ report, previousScore, animate = true }: ScorePanel
         </Text>
       )}
       <Box marginTop={1} flexDirection="column">
-        <Box>
-          <Text color="red">
-            {'\u2717'} {report.summary.critical} critical
-          </Text>
-          <Text>{'  '}</Text>
-          <Text color="yellow">
-            {'\u26A0'} {report.summary.warnings} warn
-          </Text>
-          <Text>{'  '}</Text>
-          <Text dimColor>i {report.summary.info} info</Text>
-        </Box>
+        {(() => {
+          const u = countUniqueIssues(report.checks);
+          return (
+            <Box>
+              <Text color="red">
+                {'\u2717'} {u.critical} critical
+                {u.totalCritical > u.critical ? ` (${u.totalCritical})` : ''}
+              </Text>
+              <Text>{'  '}</Text>
+              <Text color="yellow">
+                {'\u26A0'} {u.warnings} warn
+                {u.totalWarnings > u.warnings ? ` (${u.totalWarnings})` : ''}
+              </Text>
+              <Text>{'  '}</Text>
+              <Text dimColor>i {u.info} info</Text>
+            </Box>
+          );
+        })()}
       </Box>
       {report.quote && (
         <Box marginTop={1}>

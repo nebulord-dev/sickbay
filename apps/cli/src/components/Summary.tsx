@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import { getScoreEmoji } from 'sickbay-core';
 
+import { countUniqueIssues } from '../lib/issue-grouping.js';
 import { ScoreBar } from './ScoreBar.js';
 
 import type { SickbayReport } from 'sickbay-core';
@@ -37,9 +38,24 @@ export function Summary({ report, scanDuration }: SummaryProps) {
         {scanDuration != null && <Text dimColor> {formatDuration(scanDuration)}</Text>}
       </Box>
       <Box marginTop={1}>
-        <Text color="red"> ✗ {report.summary.critical} critical</Text>
-        <Text color="yellow"> ⚠ {report.summary.warnings} warnings</Text>
-        <Text color="gray"> i {report.summary.info} info</Text>
+        {(() => {
+          const u = countUniqueIssues(report.checks);
+          return (
+            <>
+              <Text color="red">
+                {' '}
+                ✗ {u.critical} critical
+                {u.totalCritical > u.critical ? ` (${u.totalCritical} total)` : ''}
+              </Text>
+              <Text color="yellow">
+                {' '}
+                ⚠ {u.warnings} warnings
+                {u.totalWarnings > u.warnings ? ` (${u.totalWarnings} total)` : ''}
+              </Text>
+              <Text color="gray"> i {u.info} info</Text>
+            </>
+          );
+        })()}
       </Box>
       {report.quote && (
         <Box marginTop={1}>
