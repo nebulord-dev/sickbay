@@ -5,32 +5,59 @@ import { describe, it, expect } from 'vitest';
 
 import { Summary } from './Summary.js';
 
-import type { SickbayReport } from 'sickbay-core';
+import type { SickbayReport, Issue } from 'sickbay-core';
 
-const createMockReport = (overrides?: Partial<SickbayReport>): SickbayReport => ({
-  timestamp: new Date().toISOString(),
-  projectPath: '/test/project',
-  projectInfo: {
-    name: 'test-project',
-    version: '1.0.0',
-    framework: 'react',
-    packageManager: 'npm',
-    totalDependencies: 50,
-    devDependencies: {},
-    dependencies: {},
-    hasESLint: false,
-    hasPrettier: false,
-    hasTypeScript: false,
-  },
-  checks: [],
-  overallScore: 85,
-  summary: {
-    critical: 2,
-    warnings: 5,
-    info: 10,
-  },
-  ...overrides,
-});
+const createMockReport = (overrides?: Partial<SickbayReport>): SickbayReport => {
+  const summary = overrides?.summary ?? { critical: 2, warnings: 5, info: 10 };
+  const autoIssues: Issue[] = [
+    ...Array.from({ length: summary.critical }, (_, i) => ({
+      severity: 'critical' as const,
+      message: `Critical ${i}`,
+      reportedBy: ['test'],
+    })),
+    ...Array.from({ length: summary.warnings }, (_, i) => ({
+      severity: 'warning' as const,
+      message: `Warning ${i}`,
+      reportedBy: ['test'],
+    })),
+    ...Array.from({ length: summary.info }, (_, i) => ({
+      severity: 'info' as const,
+      message: `Info ${i}`,
+      reportedBy: ['test'],
+    })),
+  ];
+  return {
+    timestamp: new Date().toISOString(),
+    projectPath: '/test/project',
+    projectInfo: {
+      name: 'test-project',
+      version: '1.0.0',
+      framework: 'react',
+      packageManager: 'npm',
+      totalDependencies: 50,
+      devDependencies: {},
+      dependencies: {},
+      hasESLint: false,
+      hasPrettier: false,
+      hasTypeScript: false,
+    },
+    checks: overrides?.checks ?? [
+      {
+        id: 'test',
+        name: 'Test',
+        category: 'security',
+        score: 80,
+        status: 'pass',
+        issues: autoIssues,
+        toolsUsed: ['test'],
+        duration: 100,
+      },
+    ],
+    overallScore: 85,
+    summary,
+    ...overrides,
+  };
+};
 
 describe('Summary', () => {
   it('renders overall score', () => {
@@ -134,5 +161,44 @@ describe('Summary', () => {
     const report = createMockReport();
     const { lastFrame } = render(<Summary report={report} />);
     expect(lastFrame()).not.toContain('Custom config active');
+  });
+
+  it('shows unique warning count with total in parens when duplicates exist', () => {
+    const report = createMockReport({
+      checks: [
+        {
+          id: 'react-perf',
+          name: 'React Performance',
+          category: 'performance',
+          score: 60,
+          status: 'warning',
+          toolsUsed: ['react-perf'],
+          duration: 100,
+          issues: [
+            {
+              severity: 'warning',
+              message: 'src/A.tsx:1 \u2014 Inline object \u2014 new ref',
+              reportedBy: ['react-perf'],
+            },
+            {
+              severity: 'warning',
+              message: 'src/B.tsx:5 \u2014 Inline object \u2014 new ref',
+              reportedBy: ['react-perf'],
+            },
+            {
+              severity: 'warning',
+              message: 'src/C.tsx:10 \u2014 Inline object \u2014 new ref',
+              reportedBy: ['react-perf'],
+            },
+          ],
+        },
+      ],
+      summary: { critical: 0, warnings: 3, info: 0 },
+    });
+    const { lastFrame } = render(<Summary report={report} />);
+    const output = lastFrame();
+    expect(output).toContain('1 warning');
+    expect(output).not.toContain('1 warnings');
+    expect(output).toContain('3 total');
   });
 });

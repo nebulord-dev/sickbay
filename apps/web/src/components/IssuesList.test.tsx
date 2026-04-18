@@ -276,4 +276,92 @@ describe('IssuesList', () => {
     fireEvent.click(icon);
     expect(screen.queryByText(/copy a suppression rule/)).not.toBeInTheDocument();
   });
+
+  it('groups duplicate issues under a collapsible header', () => {
+    const check = makeCheck({
+      id: 'react-perf',
+      name: 'React Performance',
+      issues: [
+        {
+          severity: 'warning',
+          message: 'src/A.tsx:1 \u2014 Inline object \u2014 new ref',
+          reportedBy: ['react-perf'],
+        },
+        {
+          severity: 'warning',
+          message: 'src/B.tsx:5 \u2014 Inline object \u2014 new ref',
+          reportedBy: ['react-perf'],
+        },
+        {
+          severity: 'warning',
+          message: 'src/C.tsx:10 \u2014 Inline object \u2014 new ref',
+          reportedBy: ['react-perf'],
+        },
+      ],
+    });
+    render(<IssuesList checks={[check]} />);
+    // Should show the group header with the pattern stem and count
+    expect(screen.getByText(/Inline object/)).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
+    // Individual messages should NOT be visible (collapsed by default)
+    expect(screen.queryByText(/src\/A\.tsx/)).not.toBeInTheDocument();
+  });
+
+  it('expands a group to show individual issues when clicked', () => {
+    const check = makeCheck({
+      id: 'react-perf',
+      name: 'React Performance',
+      issues: [
+        {
+          severity: 'warning',
+          message: 'src/A.tsx:1 \u2014 Inline object \u2014 new ref',
+          reportedBy: ['react-perf'],
+        },
+        {
+          severity: 'warning',
+          message: 'src/B.tsx:5 \u2014 Inline object \u2014 new ref',
+          reportedBy: ['react-perf'],
+        },
+      ],
+    });
+    render(<IssuesList checks={[check]} />);
+    fireEvent.click(screen.getByText(/Inline object/));
+    expect(screen.getByText(/src\/A\.tsx:1/)).toBeInTheDocument();
+    expect(screen.getByText(/src\/B\.tsx:5/)).toBeInTheDocument();
+  });
+
+  it('renders single-issue groups as plain rows without expand affordance', () => {
+    const check = makeCheck({
+      id: 'knip',
+      name: 'Unused Code',
+      issues: [{ severity: 'warning', message: 'Unused dep: lodash', reportedBy: ['knip'] }],
+    });
+    render(<IssuesList checks={[check]} />);
+    expect(screen.getByText('Unused dep: lodash')).toBeInTheDocument();
+    expect(screen.queryByText('1')).not.toBeInTheDocument();
+  });
+
+  it('shows unique group counts in filter buttons, not raw issue counts', () => {
+    const check = makeCheck({
+      id: 'react-perf',
+      name: 'React Performance',
+      issues: [
+        {
+          severity: 'warning',
+          message: 'src/A.tsx:1 \u2014 Inline object \u2014 new ref',
+          reportedBy: ['react-perf'],
+        },
+        {
+          severity: 'warning',
+          message: 'src/B.tsx:5 \u2014 Inline object \u2014 new ref',
+          reportedBy: ['react-perf'],
+        },
+        { severity: 'critical', message: 'Critical thing', reportedBy: ['react-perf'] },
+      ],
+    });
+    render(<IssuesList checks={[check]} />);
+    expect(screen.getByText('all (2)')).toBeInTheDocument();
+    expect(screen.getByText('warning (1)')).toBeInTheDocument();
+    expect(screen.getByText('critical (1)')).toBeInTheDocument();
+  });
 });
