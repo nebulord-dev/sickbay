@@ -291,7 +291,7 @@ describe('Dashboard', () => {
       summary: { critical: 0, warnings: 3, info: 0 },
     });
     render(<Dashboard report={report} />);
-    expect(screen.getByText(/1 warnings/)).toBeInTheDocument();
+    expect(screen.getByText(/1 warning(?!s)/)).toBeInTheDocument();
     expect(screen.getByText(/3 total/)).toBeInTheDocument();
   });
 

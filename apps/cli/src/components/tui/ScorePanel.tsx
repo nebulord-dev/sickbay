@@ -66,6 +66,7 @@ export function ScorePanel({ report, previousScore, animate = true }: ScorePanel
   }
 
   const delta = previousScore !== null ? report.overallScore - previousScore : null;
+  const u = countUniqueIssues(report.checks);
 
   return (
     <Box flexDirection="column">
@@ -82,24 +83,19 @@ export function ScorePanel({ report, previousScore, animate = true }: ScorePanel
         </Text>
       )}
       <Box marginTop={1} flexDirection="column">
-        {(() => {
-          const u = countUniqueIssues(report.checks);
-          return (
-            <Box>
-              <Text color="red">
-                {'\u2717'} {u.critical} critical
-                {u.totalCritical > u.critical ? ` (${u.totalCritical})` : ''}
-              </Text>
-              <Text>{'  '}</Text>
-              <Text color="yellow">
-                {'\u26A0'} {u.warnings} warn
-                {u.totalWarnings > u.warnings ? ` (${u.totalWarnings})` : ''}
-              </Text>
-              <Text>{'  '}</Text>
-              <Text dimColor>i {u.info} info</Text>
-            </Box>
-          );
-        })()}
+        <Box>
+          <Text color="red">
+            {'\u2717'} {u.critical} critical
+            {u.totalCritical > u.critical ? ` (${u.totalCritical})` : ''}
+          </Text>
+          <Text>{'  '}</Text>
+          <Text color="yellow">
+            {'\u26A0'} {u.warnings} warn
+            {u.totalWarnings > u.warnings ? ` (${u.totalWarnings})` : ''}
+          </Text>
+          <Text>{'  '}</Text>
+          <Text dimColor>i {u.info} info</Text>
+        </Box>
       </Box>
       {report.quote && (
         <Box marginTop={1}>

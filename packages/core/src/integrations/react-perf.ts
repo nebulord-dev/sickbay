@@ -89,6 +89,7 @@ export class ReactPerfRunner extends BaseRunner {
       }
       const score = Math.max(20, Math.round(100 - penalty));
 
+      // Used for status field (not scoring — scoring uses patternCounts above)
       const warningCount = activeFindings.filter((f) => f.severity === 'warning').length;
       const infoCount = activeFindings.filter((f) => f.severity === 'info').length;
 

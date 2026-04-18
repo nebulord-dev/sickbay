@@ -176,7 +176,7 @@ export function Dashboard({ report }: DashboardProps) {
                     </span>
                     {' · '}
                     <span className="text-yellow-400">
-                      {counts.warnings} warnings
+                      {counts.warnings} warning{counts.warnings !== 1 ? 's' : ''}
                       {counts.totalWarnings > counts.warnings && ` (${counts.totalWarnings} total)`}
                     </span>
                   </div>
@@ -306,7 +306,7 @@ export function Dashboard({ report }: DashboardProps) {
                     </span>
                     {' · '}
                     <span className="text-yellow-400">
-                      {counts.warnings} warnings
+                      {counts.warnings} warning{counts.warnings !== 1 ? 's' : ''}
                       {counts.totalWarnings > counts.warnings && ` (${counts.totalWarnings} total)`}
                     </span>
                     {' · '}

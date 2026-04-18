@@ -107,6 +107,7 @@ function IssueGroupRow({ group }: { group: IssueGroup }) {
     <div>
       <button
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
         className={`w-full flex items-center gap-3 px-3 py-2 border-l-2 rounded-r text-left transition-colors hover:bg-white/5 ${color}`}
       >
         <span className="text-xs text-gray-500 shrink-0">{group.checkName}</span>

@@ -197,7 +197,8 @@ describe('Summary', () => {
     });
     const { lastFrame } = render(<Summary report={report} />);
     const output = lastFrame();
-    expect(output).toContain('1 warnings');
+    expect(output).toContain('1 warning');
+    expect(output).not.toContain('1 warnings');
     expect(output).toContain('3 total');
   });
 });
