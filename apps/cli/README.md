@@ -242,6 +242,6 @@ node dist/index.js --path ~/Desktop/sickbay-test-app --json
 ## Build
 
 ```bash
-pnpm build   # tsup → dist/index.js + dist/web-*.js (code-split)
+pnpm build   # tsdown → dist/index.js + dist/web-*.js (code-split)
 pnpm clean   # rm -rf dist/
 ```

@@ -12,7 +12,7 @@
         "sickbay-core",
         "sickbay",
         "sickbay-web",
-        "tsup",
+        "tsdown",
         "eslint-config-prettier",
         "@testing-library/jest-dom",
         "@testing-library/react"
@@ -24,7 +24,7 @@
     "sickbay-core",
     "sickbay",
     "sickbay-web",
-    "tsup",
+    "tsdown",
     "eslint-config-prettier",
     "@testing-library/jest-dom",
     "@testing-library/react"

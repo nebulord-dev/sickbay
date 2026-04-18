@@ -6,7 +6,7 @@ description: Review the Sickbay application for issues
 Review ${0:-all packages} for bugs, security issues, and code quality problems. Focus on practical issues, not style nitpicks.
 
 1. Check the monorepo structure (`packages/core`, `apps/cli`, `apps/web`)
-2. Verify build configuration (Turbo, tsup, Vite, pnpm workspaces)
+2. Verify build configuration (Turbo, tsdown, Vite, pnpm workspaces)
 3. Review the three main packages:
    - **core**: Health check engine — 34 check runners in `src/integrations/` (extending `BaseRunner`), runner orchestration, weighted scoring, framework/runtime detection
    - **cli**: Terminal interface with Ink — Commander flags, `--web` server, `--json` output, persistent TUI dashboard

@@ -131,6 +131,6 @@ const CATEGORY_WEIGHTS = {
 ## Build
 
 ```bash
-pnpm build   # tsup → dist/
+pnpm build   # tsdown → dist/
 pnpm dev     # watch mode
 ```
