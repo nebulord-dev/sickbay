@@ -64,7 +64,54 @@ describe('Dashboard', () => {
   });
 
   it('renders summary issue counts in the sidebar', () => {
-    render(<Dashboard report={makeReport()} />);
+    const report = makeReport({
+      checks: [
+        {
+          id: 'npm-audit',
+          name: 'NPM Audit',
+          category: 'security',
+          score: 40,
+          status: 'fail',
+          toolsUsed: ['npm-audit'],
+          duration: 100,
+          issues: [
+            { severity: 'critical', message: 'Critical vuln in lodash', reportedBy: ['npm-audit'] },
+          ],
+        },
+        {
+          id: 'knip',
+          name: 'Unused Code',
+          category: 'dependencies',
+          score: 70,
+          status: 'warning',
+          toolsUsed: ['knip'],
+          duration: 100,
+          issues: [
+            { severity: 'warning', message: 'Unused dep: lodash', reportedBy: ['knip'] },
+            { severity: 'warning', message: 'Unused dep: moment', reportedBy: ['knip'] },
+            { severity: 'warning', message: 'Unused dep: dayjs', reportedBy: ['knip'] },
+          ],
+        },
+        {
+          id: 'eslint',
+          name: 'ESLint',
+          category: 'code-quality',
+          score: 85,
+          status: 'pass',
+          toolsUsed: ['eslint'],
+          duration: 100,
+          issues: [
+            { severity: 'info', message: 'Consider using const', reportedBy: ['eslint'] },
+            { severity: 'info', message: 'Prefer arrow functions', reportedBy: ['eslint'] },
+            { severity: 'info', message: 'Use optional chaining', reportedBy: ['eslint'] },
+            { severity: 'info', message: 'Avoid var keyword', reportedBy: ['eslint'] },
+            { severity: 'info', message: 'Use template literals', reportedBy: ['eslint'] },
+          ],
+        },
+      ],
+      summary: { critical: 1, warnings: 3, info: 5 },
+    });
+    render(<Dashboard report={report} />);
     expect(screen.getByText(/1 critical/)).toBeInTheDocument();
     expect(screen.getByText(/3 warnings/)).toBeInTheDocument();
     expect(screen.getByText(/5 info/)).toBeInTheDocument();
@@ -209,5 +256,66 @@ describe('Dashboard', () => {
     const report = makeReport();
     render(<Dashboard report={report} />);
     expect(screen.queryByText(/Dr\. McCoy/)).not.toBeInTheDocument();
+  });
+
+  it('shows unique warning count with raw total in parentheses when duplicates exist', () => {
+    const report = makeReport({
+      checks: [
+        {
+          id: 'react-perf',
+          name: 'React Performance',
+          category: 'performance',
+          score: 60,
+          status: 'warning',
+          toolsUsed: ['react-perf'],
+          duration: 100,
+          issues: [
+            {
+              severity: 'warning',
+              message: 'src/A.tsx:1 \u2014 Inline object \u2014 new ref',
+              reportedBy: ['react-perf'],
+            },
+            {
+              severity: 'warning',
+              message: 'src/B.tsx:5 \u2014 Inline object \u2014 new ref',
+              reportedBy: ['react-perf'],
+            },
+            {
+              severity: 'warning',
+              message: 'src/C.tsx:10 \u2014 Inline object \u2014 new ref',
+              reportedBy: ['react-perf'],
+            },
+          ],
+        },
+      ],
+      summary: { critical: 0, warnings: 3, info: 0 },
+    });
+    render(<Dashboard report={report} />);
+    expect(screen.getByText(/1 warnings/)).toBeInTheDocument();
+    expect(screen.getByText(/3 total/)).toBeInTheDocument();
+  });
+
+  it('shows plain warning count without parenthetical when no duplicates', () => {
+    const report = makeReport({
+      checks: [
+        {
+          id: 'knip',
+          name: 'Unused Code',
+          category: 'dependencies',
+          score: 70,
+          status: 'warning',
+          toolsUsed: ['knip'],
+          duration: 100,
+          issues: [
+            { severity: 'warning', message: 'Unused dep: lodash', reportedBy: ['knip'] },
+            { severity: 'warning', message: 'Unused dep: moment', reportedBy: ['knip'] },
+          ],
+        },
+      ],
+      summary: { critical: 0, warnings: 2, info: 0 },
+    });
+    render(<Dashboard report={report} />);
+    expect(screen.getByText(/2 warnings/)).toBeInTheDocument();
+    expect(screen.queryByText(/total/)).not.toBeInTheDocument();
   });
 });

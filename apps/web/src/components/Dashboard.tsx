@@ -1,6 +1,7 @@
 import { useState, lazy, Suspense, useEffect, useRef, useCallback } from 'react';
 
 import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
+import { countUniqueIssues } from '../lib/issue-grouping.js';
 
 import type { SickbayReport, MonorepoReport, PackageReport } from 'sickbay-core';
 
@@ -164,11 +165,23 @@ export function Dashboard({ report }: DashboardProps) {
               >
                 {monorepo.overallScore}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
-                <span className="text-red-400">{monorepo.summary.critical} critical</span>
-                {' · '}
-                <span className="text-yellow-400">{monorepo.summary.warnings} warnings</span>
-              </div>
+              {(() => {
+                const allChecks = monorepo.packages.flatMap((p) => p.checks);
+                const counts = countUniqueIssues(allChecks);
+                return (
+                  <div className="text-xs text-gray-500 mt-1">
+                    <span className="text-red-400">
+                      {counts.critical} critical
+                      {counts.totalCritical > counts.critical && ` (${counts.totalCritical} total)`}
+                    </span>
+                    {' · '}
+                    <span className="text-yellow-400">
+                      {counts.warnings} warnings
+                      {counts.totalWarnings > counts.warnings && ` (${counts.totalWarnings} total)`}
+                    </span>
+                  </div>
+                );
+              })()}
               {monorepo.quote && (
                 <p className="text-sm italic text-gray-400 mt-2">
                   "{monorepo.quote.text}"{' '}
@@ -283,13 +296,27 @@ export function Dashboard({ report }: DashboardProps) {
               >
                 {activeReport.overallScore}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
-                <span className="text-red-400">{activeReport.summary.critical} critical</span>
-                {' · '}
-                <span className="text-yellow-400">{activeReport.summary.warnings} warnings</span>
-                {' · '}
-                <span className="text-gray-400">{activeReport.summary.info} info</span>
-              </div>
+              {(() => {
+                const counts = countUniqueIssues(activeReport.checks);
+                return (
+                  <div className="text-xs text-gray-500 mt-1">
+                    <span className="text-red-400">
+                      {counts.critical} critical
+                      {counts.totalCritical > counts.critical && ` (${counts.totalCritical} total)`}
+                    </span>
+                    {' · '}
+                    <span className="text-yellow-400">
+                      {counts.warnings} warnings
+                      {counts.totalWarnings > counts.warnings && ` (${counts.totalWarnings} total)`}
+                    </span>
+                    {' · '}
+                    <span className="text-gray-400">
+                      {counts.info} info
+                      {counts.totalInfo > counts.info && ` (${counts.totalInfo} total)`}
+                    </span>
+                  </div>
+                );
+              })()}
               {activeReport.quote && (
                 <p className="text-sm italic text-gray-400 mt-2">
                   "{activeReport.quote.text}"{' '}

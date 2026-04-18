@@ -1,4 +1,5 @@
 import { SCORE_GOOD, SCORE_FAIR } from '../lib/constants.js';
+import { countUniqueIssues } from '../lib/issue-grouping.js';
 
 import type { MonorepoReport, PackageReport } from 'sickbay-core';
 
@@ -67,17 +68,28 @@ function PackageScoreCard({
         </div>
       </div>
 
-      <div className="flex gap-3 text-xs w-full justify-center">
-        {pkg.summary.critical > 0 && (
-          <span className="text-red-400">{pkg.summary.critical} critical</span>
-        )}
-        {pkg.summary.warnings > 0 && (
-          <span className="text-yellow-400">{pkg.summary.warnings} warnings</span>
-        )}
-        {pkg.summary.critical === 0 && pkg.summary.warnings === 0 && (
-          <span className="text-green-400">✓ clean</span>
-        )}
-      </div>
+      {(() => {
+        const counts = countUniqueIssues(pkg.checks);
+        return (
+          <div className="flex gap-3 text-xs w-full justify-center">
+            {counts.critical > 0 && (
+              <span className="text-red-400">
+                {counts.critical} critical
+                {counts.totalCritical > counts.critical && ` (${counts.totalCritical} total)`}
+              </span>
+            )}
+            {counts.warnings > 0 && (
+              <span className="text-yellow-400">
+                {counts.warnings} warnings
+                {counts.totalWarnings > counts.warnings && ` (${counts.totalWarnings} total)`}
+              </span>
+            )}
+            {counts.critical === 0 && counts.warnings === 0 && (
+              <span className="text-green-400">✓ clean</span>
+            )}
+          </div>
+        );
+      })()}
 
       <div className="text-xs text-gray-500">{index + 1 === 1 ? 'click to inspect →' : ''}</div>
     </button>
@@ -124,11 +136,26 @@ export function MonorepoOverview({ report, onSelectPackage }: MonorepoOverviewPr
             monorepo health · {report.monorepoType} workspaces · {report.packages.length} packages
           </div>
         </div>
-        <div className="flex gap-4 text-sm">
-          <span className="text-red-400">{report.summary.critical} critical</span>
-          <span className="text-yellow-400">{report.summary.warnings} warnings</span>
-          <span className="text-gray-500">{report.summary.info} info</span>
-        </div>
+        {(() => {
+          const allChecks = report.packages.flatMap((p) => p.checks);
+          const counts = countUniqueIssues(allChecks);
+          return (
+            <div className="flex gap-4 text-sm">
+              <span className="text-red-400">
+                {counts.critical} critical
+                {counts.totalCritical > counts.critical && ` (${counts.totalCritical} total)`}
+              </span>
+              <span className="text-yellow-400">
+                {counts.warnings} warnings
+                {counts.totalWarnings > counts.warnings && ` (${counts.totalWarnings} total)`}
+              </span>
+              <span className="text-gray-500">
+                {counts.info} info
+                {counts.totalInfo > counts.info && ` (${counts.totalInfo} total)`}
+              </span>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Package scoreboard */}
