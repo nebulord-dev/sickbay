@@ -29,13 +29,6 @@ Four targeted audit skills cover the package boundaries. Run them when you ship 
 
 Each skill dispatches a `feature-dev:code-reviewer` agent with a package-specific checklist. Fix findings before committing.
 
-## Headless Execution Workflow
-
-Tasks are executed via a two-phase workflow:
-
-1. **Planning** — collaborative session produces one plan file per task in `.claude/plans/`
-2. **Execution** — approved plans are moved to `.claude/plans/ready/` and executed headlessly via a shell script that spawns one `claude` session per plan
-
 **Conventions:**
 
 - One task = one plan file = one session = one commit
