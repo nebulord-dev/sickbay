@@ -70,9 +70,27 @@ export class ReactPerfRunner extends BaseRunner {
         reportedBy: ['react-perf'],
       }));
 
+      // Diminishing returns per unique pattern — pattern diversity is penalized
+      // harder than volume of a single repeated pattern.
+      const patternCounts = new Map<string, { warnings: number; infos: number }>();
+      for (const f of activeFindings) {
+        const idx = f.pattern.indexOf(' \u2014 ');
+        const key = idx >= 0 ? f.pattern.slice(idx + 3) : f.pattern;
+        const entry = patternCounts.get(key) ?? { warnings: 0, infos: 0 };
+        if (f.severity === 'warning') entry.warnings++;
+        else entry.infos++;
+        patternCounts.set(key, entry);
+      }
+
+      let penalty = 0;
+      for (const [, counts] of patternCounts) {
+        if (counts.warnings > 0) penalty += 10 + Math.log2(counts.warnings) * 3;
+        if (counts.infos > 0) penalty += 3 + Math.log2(counts.infos);
+      }
+      const score = Math.max(20, Math.round(100 - penalty));
+
       const warningCount = activeFindings.filter((f) => f.severity === 'warning').length;
       const infoCount = activeFindings.filter((f) => f.severity === 'info').length;
-      const score = Math.max(20, 100 - warningCount * 3 - infoCount * 1);
 
       return {
         id: 'react-perf',

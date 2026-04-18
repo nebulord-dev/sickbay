@@ -224,8 +224,8 @@ describe('ReactPerfRunner', () => {
       expect(inlineIssue).toBeUndefined();
     });
 
-    it('calculates score correctly: 100 - warnings*3 - info*1, floor at 20', async () => {
-      // 2 warnings: inline object on 2 lines, no info
+    it('calculates score with diminishing returns per unique pattern', async () => {
+      // 2 warnings of the same pattern (inline object)
       const content = [
         "import React from 'react';",
         '',
@@ -245,8 +245,85 @@ describe('ReactPerfRunner', () => {
 
       const result = await runner.run('/project');
 
-      // 2 warnings → 100 - 2*3 = 94
-      expect(result.score).toBe(94);
+      // 1 unique pattern, 2 instances → 100 - (10 + log2(2)*3) = 100 - 13 = 87
+      expect(result.score).toBe(87);
+    });
+
+    it('uses diminishing returns: many identical warnings score higher than linear formula floor', async () => {
+      // Create a file with 50 inline objects — old formula: 100 - 50*3 = floor 20
+      // New formula should produce a score well above 20
+      const lines = Array.from(
+        { length: 50 },
+        () => '      <span style={{ color: "red" }}>A</span>',
+      );
+      const content = [
+        "import React from 'react';",
+        '',
+        'export function Big() {',
+        '  return (',
+        '    <div>',
+        ...lines,
+        '    </div>',
+        '  );',
+        '}',
+      ].join('\n');
+
+      mockReaddirSync.mockReturnValue(['Big.tsx'] as never);
+      mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
+      mockReadFileSync.mockReturnValue(content as never);
+
+      const result = await runner.run('/project');
+
+      // 50 warnings of the same pattern → diminishing returns should give score > 40
+      expect(result.score).toBeGreaterThan(40);
+      // But still penalized — not a perfect score
+      expect(result.score).toBeLessThan(90);
+    });
+
+    it('scores diverse warning patterns lower than repeated single pattern at same count', async () => {
+      // Single pattern: 6 inline objects
+      const singlePatternContent = [
+        "import React from 'react';",
+        'export function A() { return (<div>',
+        '  <span style={{ a: 1 }}>1</span>',
+        '  <span style={{ b: 2 }}>2</span>',
+        '  <span style={{ c: 3 }}>3</span>',
+        '  <span style={{ d: 4 }}>4</span>',
+        '  <span style={{ e: 5 }}>5</span>',
+        '  <span style={{ f: 6 }}>6</span>',
+        '</div>); }',
+      ].join('\n');
+
+      mockReaddirSync.mockReturnValue(['A.tsx'] as never);
+      mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
+      mockReadFileSync.mockReturnValue(singlePatternContent as never);
+
+      const singleResult = await runner.run('/project');
+
+      // Diverse patterns: 3 inline objects + 3 index-as-key (2 unique patterns, 6 total)
+      vi.clearAllMocks();
+      mockExistsSync.mockImplementation((p: unknown) => String(p).endsWith('/src'));
+
+      const diverseContent = [
+        "import React from 'react';",
+        'export function B({ items }) { return (<div>',
+        '  <span style={{ a: 1 }}>1</span>',
+        '  <span style={{ b: 2 }}>2</span>',
+        '  <span style={{ c: 3 }}>3</span>',
+        '  {items.map((x, index) => <li key={index}>{x}</li>)}',
+        '  {items.map((x, i) => <p key={i}>{x}</p>)}',
+        '  {items.map((x, idx) => <span key={idx}>{x}</span>)}',
+        '</div>); }',
+      ].join('\n');
+
+      mockReaddirSync.mockReturnValue(['B.tsx'] as never);
+      mockStatSync.mockReturnValue({ isDirectory: () => false, size: 100 } as never);
+      mockReadFileSync.mockReturnValue(diverseContent as never);
+
+      const diverseResult = await runner.run('/project');
+
+      // Diverse patterns should score lower (more penalty) than single pattern
+      expect(diverseResult.score).toBeLessThan(singleResult.score);
     });
 
     it('does not scan .ts files (only .tsx and .jsx)', async () => {
