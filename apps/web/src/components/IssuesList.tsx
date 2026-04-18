@@ -1,7 +1,9 @@
 import { useState } from 'react';
 
+import { groupIssues } from '../lib/issue-grouping.js';
 import { buildSuppressSnippet } from '../lib/suppress-snippet.js';
 
+import type { IssueGroup, IssueWithCheck } from '../lib/issue-grouping.js';
 import type { CheckResult, Issue } from 'sickbay-core';
 
 interface IssuesListProps {
@@ -12,16 +14,18 @@ export function IssuesList({ checks }: IssuesListProps) {
   const [filter, setFilter] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
   const [showSuppressInfo, setShowSuppressInfo] = useState<boolean>(false);
 
-  const allIssues = checks.flatMap((c) =>
+  const allIssues: IssueWithCheck[] = checks.flatMap((c) =>
     c.issues.map((issue) => ({ ...issue, checkName: c.name, checkId: c.id })),
   );
 
   const filtered = filter === 'all' ? allIssues : allIssues.filter((i) => i.severity === filter);
+  const groups = groupIssues(filtered);
 
+  const allGroups = groupIssues(allIssues);
   const counts = {
-    critical: allIssues.filter((i) => i.severity === 'critical').length,
-    warning: allIssues.filter((i) => i.severity === 'warning').length,
-    info: allIssues.filter((i) => i.severity === 'info').length,
+    critical: allGroups.filter((g) => g.severity === 'critical').length,
+    warning: allGroups.filter((g) => g.severity === 'warning').length,
+    info: allGroups.filter((g) => g.severity === 'info').length,
   };
 
   return (
@@ -34,7 +38,7 @@ export function IssuesList({ checks }: IssuesListProps) {
             className={`px-3 py-1 rounded text-xs font-mono transition-colors
               ${filter === f ? 'bg-accent text-black' : 'bg-surface border border-border text-gray-400 hover:border-accent/50'}`}
           >
-            {f === 'all' ? `all (${allIssues.length})` : `${f} (${counts[f]})`}
+            {f === 'all' ? `all (${allGroups.length})` : `${f} (${counts[f]})`}
           </button>
         ))}
         <button
@@ -69,18 +73,62 @@ export function IssuesList({ checks }: IssuesListProps) {
       )}
 
       <div className="flex flex-col gap-1">
-        {filtered.length === 0 && (
+        {groups.length === 0 && (
           <div className="text-gray-500 text-sm py-4 text-center">No issues found ✓</div>
         )}
-        {filtered.map((issue) => (
-          <IssueRow
-            key={`${issue.checkName}-${issue.message}`}
-            issue={issue}
-            checkName={issue.checkName}
-            checkId={issue.checkId}
-          />
-        ))}
+        {groups.map((group) =>
+          group.issues.length === 1 ? (
+            <IssueRow
+              key={group.key}
+              issue={group.issues[0]}
+              checkName={group.issues[0].checkName}
+              checkId={group.issues[0].checkId}
+            />
+          ) : (
+            <IssueGroupRow key={group.key} group={group} />
+          ),
+        )}
       </div>
+    </div>
+  );
+}
+
+function IssueGroupRow({ group }: { group: IssueGroup }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const color =
+    group.severity === 'critical'
+      ? 'border-l-red-500 bg-red-500/5'
+      : group.severity === 'warning'
+        ? 'border-l-yellow-500 bg-yellow-500/5'
+        : 'border-l-gray-500 bg-gray-500/5';
+
+  return (
+    <div>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        className={`w-full flex items-center gap-3 px-3 py-2 border-l-2 rounded-r text-left transition-colors hover:bg-white/5 ${color}`}
+      >
+        <span className="text-xs text-gray-500 shrink-0">{group.checkName}</span>
+        <span className="flex-1 text-sm">{group.stem}</span>
+        <span className="text-xs bg-white/10 text-gray-400 px-1.5 py-0.5 rounded-sm font-mono">
+          {group.issues.length}
+        </span>
+        <span className="text-xs text-gray-500">{expanded ? '\u25BC' : '\u25B6'}</span>
+      </button>
+      {expanded && (
+        <div className="ml-4 flex flex-col gap-1 mt-1">
+          {group.issues.map((issue) => (
+            <IssueRow
+              key={`${issue.checkId}-${issue.message}`}
+              issue={issue}
+              checkName={issue.checkName}
+              checkId={issue.checkId}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

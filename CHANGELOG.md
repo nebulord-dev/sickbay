@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/nebulord-dev/sickbay/compare/v1.15.10...v1.16.0) (2026-04-18)
+
+
+### Features
+
+* deduplicate warning counts in dashboard and CLI ([#46](https://github.com/nebulord-dev/sickbay/issues/46)) ([d6434d1](https://github.com/nebulord-dev/sickbay/commit/d6434d1c9da4206a46c09fde4249ca6d60f4d6bb))
+
 ## [1.15.10](https://github.com/nebulord-dev/sickbay/compare/v1.15.9...v1.15.10) (2026-04-09)
 
 

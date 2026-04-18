@@ -5,6 +5,7 @@ import Gradient from 'ink-gradient';
 import Spinner from 'ink-spinner';
 import { runSickbay, runSickbayMonorepo } from 'sickbay-core';
 
+import { countUniqueIssues } from '../lib/issue-grouping.js';
 import { LOADING_MESSAGES } from '../lib/messages.js';
 import { BestPractices } from './BestPractices.js';
 import { CheckResultRow } from './CheckResult.js';
@@ -373,9 +374,22 @@ function MonorepoSummaryTable({
           {report.overallScore}
         </Text>
         <Text dimColor>· </Text>
-        <Text color="red">{report.summary.critical} critical</Text>
-        <Text dimColor>· </Text>
-        <Text color="yellow">{report.summary.warnings} warnings</Text>
+        {(() => {
+          const u = countUniqueIssues(report.packages.flatMap((p) => p.checks));
+          return (
+            <>
+              <Text color="red">
+                {u.critical} critical
+                {u.totalCritical > u.critical ? ` (${u.totalCritical} total)` : ''}
+              </Text>
+              <Text dimColor>· </Text>
+              <Text color="yellow">
+                {u.warnings} warnings
+                {u.totalWarnings > u.warnings ? ` (${u.totalWarnings} total)` : ''}
+              </Text>
+            </>
+          );
+        })()}
         {scanDuration !== null && (
           <>
             <Text dimColor>· </Text>

@@ -5,7 +5,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 
 import { ScorePanel } from './ScorePanel.js';
 
-import type { SickbayReport } from 'sickbay-core';
+import type { SickbayReport, Issue } from 'sickbay-core';
 
 const createMockReport = (
   overallScore: number,
@@ -14,25 +14,55 @@ const createMockReport = (
     warnings: 0,
     info: 0,
   },
-): SickbayReport => ({
-  timestamp: new Date().toISOString(),
-  projectPath: '/test/project',
-  projectInfo: {
-    name: 'test-project',
-    version: '1.0.0',
-    framework: 'react',
-    packageManager: 'npm',
-    totalDependencies: 50,
-    devDependencies: {},
-    dependencies: {},
-    hasESLint: false,
-    hasPrettier: false,
-    hasTypeScript: false,
-  },
-  checks: [],
-  overallScore,
-  summary,
-});
+): SickbayReport => {
+  const autoIssues: Issue[] = [
+    ...Array.from({ length: summary.critical }, (_, i) => ({
+      severity: 'critical' as const,
+      message: `Critical ${i}`,
+      reportedBy: ['test'],
+    })),
+    ...Array.from({ length: summary.warnings }, (_, i) => ({
+      severity: 'warning' as const,
+      message: `Warning ${i}`,
+      reportedBy: ['test'],
+    })),
+    ...Array.from({ length: summary.info }, (_, i) => ({
+      severity: 'info' as const,
+      message: `Info ${i}`,
+      reportedBy: ['test'],
+    })),
+  ];
+  return {
+    timestamp: new Date().toISOString(),
+    projectPath: '/test/project',
+    projectInfo: {
+      name: 'test-project',
+      version: '1.0.0',
+      framework: 'react',
+      packageManager: 'npm',
+      totalDependencies: 50,
+      devDependencies: {},
+      dependencies: {},
+      hasESLint: false,
+      hasPrettier: false,
+      hasTypeScript: false,
+    },
+    checks: [
+      {
+        id: 'test',
+        name: 'Test',
+        category: 'security',
+        score: 80,
+        status: 'pass',
+        issues: autoIssues,
+        toolsUsed: ['test'],
+        duration: 100,
+      },
+    ],
+    overallScore,
+    summary,
+  };
+};
 
 describe('ScorePanel', () => {
   afterEach(() => {
