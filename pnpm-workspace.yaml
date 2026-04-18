@@ -8,5 +8,5 @@ catalog:
   '@types/react': ^19.2.14
   '@vitest/coverage-v8': ^4.1.4
   tsdown: ^0.21.9
-  typescript: ^5.9.3
+  typescript: ^6.0.3
   vitest: ^4.1.4
