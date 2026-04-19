@@ -103,6 +103,19 @@ describe('serveWeb', () => {
       expect(data.projectPath).toBe('/test/project');
     });
 
+    it('/sickbay-report.json locks Access-Control-Allow-Origin to the dashboard origin', async () => {
+      // Without this header, a browser tab opened to a different origin could
+      // (under various relaxations or future policy shifts) read the report —
+      // which includes secret-scan findings and full dep trees. Same-origin
+      // requests from the dashboard itself are unaffected; cross-origin tabs
+      // are explicitly refused read access.
+      const url = await serveWeb(makeReport(), 0);
+      const res = await fetch(`${url}/sickbay-report.json`);
+
+      expect(res.headers.get('access-control-allow-origin')).toBe(url);
+      expect(res.headers.get('vary')).toBe('Origin');
+    });
+
     it('/sickbay-report.json returns all check data', async () => {
       const report = makeReport({
         checks: [
@@ -163,6 +176,18 @@ describe('serveWeb', () => {
 
       const res = await fetch(`${url}/ai/summary`);
       expect(res.status).toBe(404);
+    });
+
+    it('HEAD /ai/summary includes CORS headers for consistency with other JSON endpoints', async () => {
+      // The HEAD availability-check path doesn't leak sensitive data (opaque
+      // cross-origin responses hide the status from fetching scripts anyway),
+      // but emitting the same headers as every other JSON endpoint makes the
+      // server's contract uniform and auditable from response headers alone.
+      const url = await serveWeb(makeReport(), 0);
+
+      const res = await fetch(`${url}/ai/summary`, { method: 'HEAD' });
+      expect(res.headers.get('access-control-allow-origin')).toBe(url);
+      expect(res.headers.get('vary')).toBe('Origin');
     });
 
     it('/ai/summary returns AI summary when aiService provided', async () => {
