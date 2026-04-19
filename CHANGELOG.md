@@ -1,3 +1,10 @@
+## [1.16.3](https://github.com/nebulord-dev/sickbay/compare/v1.16.2...v1.16.3) (2026-04-19)
+
+
+### Bug Fixes
+
+* **cli:** harden badge HTML output and lock web-server CORS to dashboard origin ([#54](https://github.com/nebulord-dev/sickbay/issues/54)) ([0a663d9](https://github.com/nebulord-dev/sickbay/commit/0a663d9568599930f111f8c92285b9297e0b0854))
+
 ## [1.16.2](https://github.com/nebulord-dev/sickbay/compare/v1.16.1...v1.16.2) (2026-04-19)
 
 
