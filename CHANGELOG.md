@@ -1,3 +1,10 @@
+## [1.16.4](https://github.com/nebulord-dev/sickbay/compare/v1.16.3...v1.16.4) (2026-04-19)
+
+
+### Bug Fixes
+
+* **cli:** atomic history writes and git-cleanliness preflight for fix ([#55](https://github.com/nebulord-dev/sickbay/issues/55)) ([b6973ca](https://github.com/nebulord-dev/sickbay/commit/b6973ca9f11ca6dcf24240af413f0b3a17e7b7de))
+
 ## [1.16.3](https://github.com/nebulord-dev/sickbay/compare/v1.16.2...v1.16.3) (2026-04-19)
 
 
