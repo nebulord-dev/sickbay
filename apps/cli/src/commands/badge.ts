@@ -27,6 +27,22 @@ function escapeHtml(s: string): string {
     .replace(/>/g, '&gt;');
 }
 
+/**
+ * Escape characters that break the `![alt](url)` syntax when interpolated
+ * into the alt-text position. A label like `](javascript:alert(1)` would
+ * otherwise close the alt early and inject a link target — some renderers
+ * strip `javascript:` URIs, but not all, so treat it as unsafe by default.
+ * Backslash is escaped first so later escapes don't double up on it.
+ */
+function escapeMarkdownAlt(s: string): string {
+  return s
+    .replace(/\\/g, '\\\\')
+    .replace(/\[/g, '\\[')
+    .replace(/\]/g, '\\]')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)');
+}
+
 export function badgeUrl(score: number, label = 'sickbay'): string {
   const color = getScoreColor(score);
   const encoded = encodeLabel(label);
@@ -34,7 +50,7 @@ export function badgeUrl(score: number, label = 'sickbay'): string {
 }
 
 export function badgeMarkdown(score: number, label = 'sickbay'): string {
-  return `![${label}](${badgeUrl(score, label)})`;
+  return `![${escapeMarkdownAlt(label)}](${badgeUrl(score, label)})`;
 }
 
 export function badgeHtml(score: number, label = 'sickbay'): string {

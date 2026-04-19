@@ -136,16 +136,24 @@ export async function serveWeb(
   const reportJson = JSON.stringify(report);
   const port = await getFreePort(preferredPort);
 
+  // Single source of truth for the dashboard URL. The server binds to
+  // 127.0.0.1 but this string (used for both the returned URL and the
+  // Access-Control-Allow-Origin header) must stay consistent — browser
+  // origins are derived from the URL string the tab was opened at, not
+  // from the resolved IP, so mixing `localhost` in one place and
+  // `127.0.0.1` in another would produce a mismatch that only bites
+  // when the user navigates via a different loopback representation.
+  const serverUrl = `http://localhost:${port}`;
+
   // Lock API responses to the dashboard's own origin. Without this header,
   // browser default behavior is already to block cross-origin reads of the
   // response body (so an evil.com tab couldn't exfiltrate a report), but
   // declaring it explicitly is defense-in-depth: it makes the intent clear,
   // prevents future browser-policy relaxations from widening the surface,
   // and makes the server's contract auditable from response headers alone.
-  const allowOrigin = `http://localhost:${port}`;
   const jsonHeaders = {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Origin': serverUrl,
     Vary: 'Origin',
   };
 
@@ -223,12 +231,10 @@ export async function serveWeb(
 
     if (parsedUrl.pathname === '/ai/summary') {
       if (req.method === 'HEAD') {
-        // Availability check
-        if (aiService) {
-          res.writeHead(200);
-        } else {
-          res.writeHead(404);
-        }
+        // Availability check. Include CORS headers for consistency with the
+        // rest of the JSON endpoints even though opaque cross-origin responses
+        // already hide the status from attacker scripts.
+        res.writeHead(aiService ? 200 : 404, jsonHeaders);
         res.end();
         return;
       }
@@ -356,7 +362,7 @@ export async function serveWeb(
     // file paths, dep lists, and secret-scan results) is not exposed to other
     // hosts on the LAN, container networks, or VPN peers.
     server.listen(port, '127.0.0.1', () => {
-      resolve(`http://localhost:${port}`);
+      resolve(serverUrl);
     });
   });
 }

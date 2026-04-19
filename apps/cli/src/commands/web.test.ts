@@ -178,6 +178,18 @@ describe('serveWeb', () => {
       expect(res.status).toBe(404);
     });
 
+    it('HEAD /ai/summary includes CORS headers for consistency with other JSON endpoints', async () => {
+      // The HEAD availability-check path doesn't leak sensitive data (opaque
+      // cross-origin responses hide the status from fetching scripts anyway),
+      // but emitting the same headers as every other JSON endpoint makes the
+      // server's contract uniform and auditable from response headers alone.
+      const url = await serveWeb(makeReport(), 0);
+
+      const res = await fetch(`${url}/ai/summary`, { method: 'HEAD' });
+      expect(res.headers.get('access-control-allow-origin')).toBe(url);
+      expect(res.headers.get('vary')).toBe('Origin');
+    });
+
     it('/ai/summary returns AI summary when aiService provided', async () => {
       const mockAiService = {
         generateSummary: vi.fn().mockResolvedValue('Great project health!'),
