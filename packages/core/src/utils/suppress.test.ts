@@ -47,6 +47,22 @@ describe('applySuppression', () => {
     expect(result.suppressedCount).toBe(1);
   });
 
+  it('matches POSIX-style path rules against issues with Windows-style backslash paths', () => {
+    // Integrations that emit paths directly from tool output (e.g. knip on Windows)
+    // produce backslash separators. Users write suppress rules with forward slashes.
+    // Both must match.
+    const issues = [
+      issue('error in generated', 'src\\generated\\types.ts'),
+      issue('error in app', 'src\\app\\main.ts'),
+    ];
+    const result = applySuppression(issues, [
+      { path: 'src/generated/**', reason: 'auto-generated' },
+    ]);
+    expect(result.issues).toHaveLength(1);
+    expect(result.issues[0].file).toBe('src\\app\\main.ts');
+    expect(result.suppressedCount).toBe(1);
+  });
+
   it('suppresses issues matching a message substring (case-insensitive)', () => {
     const issues = [
       issue('NEXT_PUBLIC_API_KEY found in config'),
