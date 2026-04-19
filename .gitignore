@@ -14,6 +14,19 @@ coverage/
 
 
 .worktrees/
-.sickbay/history.json
-.sickbay/dep-tree.json
-.sickbay/cache/
+
+# Sickbay runtime cache — ignore at any depth so apps/* and packages/*
+# don't accidentally commit their self-scan output (last-report.json
+# leaks absolute paths, dep-tree.json and history.json are derived state).
+# The previous anchored `.sickbay/*.json` patterns only matched the root,
+# which is how apps/cli/.sickbay/{dep-tree,last-report}.json slipped in.
+**/.sickbay/history.json
+**/.sickbay/last-report.json
+**/.sickbay/dep-tree.json
+**/.sickbay/cache/
+
+# Fixtures' .sickbay/ is intentionally tracked so snapshot regression
+# tests stay deterministic. Negate the ignore for that path only.
+!fixtures/**/.sickbay/history.json
+!fixtures/**/.sickbay/last-report.json
+!fixtures/**/.sickbay/dep-tree.json
