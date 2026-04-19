@@ -220,6 +220,10 @@ program
   .option('--package <name>', 'scope to a single package (monorepo only)')
   .option('--all', 'apply all available fixes without prompting')
   .option('--dry-run', 'show what would be fixed without executing')
+  .option(
+    '--skip-git-check',
+    'skip the uncommitted-changes warning before applying source-modifying fixes',
+  )
   .option('--verbose', 'show verbose output')
   .action(async (options) => {
     // Load .env from project path if it differs from cwd
@@ -248,6 +252,7 @@ program
         checks,
         applyAll: options.all ?? false,
         dryRun: options.dryRun ?? false,
+        skipGitCheck: options.skipGitCheck ?? false,
         verbose: options.verbose ?? false,
         isMonorepo: resolution.isMonorepo && !resolution.targetPath,
         packagePaths: resolution.isMonorepo ? resolution.packagePaths : undefined,

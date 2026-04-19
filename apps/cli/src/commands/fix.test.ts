@@ -21,7 +21,12 @@ vi.mock('child_process', () => ({
   execFile: vi.fn(),
 }));
 
-import { collectFixableIssues, executeFix } from './fix.js';
+import {
+  checkGitCleanliness,
+  collectFixableIssues,
+  executeFix,
+  hasSourceModifyingFixes,
+} from './fix.js';
 
 import type { FixableIssue } from './fix.js';
 
@@ -269,5 +274,90 @@ describe('executeFix', () => {
     expect(result.success).toBe(true);
     expect(result.stdout).toBe('');
     expect(result.stderr).toBe('');
+  });
+});
+
+describe('checkGitCleanliness', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('reports clean tree when git status produces no output', async () => {
+    mockExecFileAsync.mockResolvedValue({ stdout: '', stderr: '' });
+
+    const status = await checkGitCleanliness('/project');
+
+    expect(status.clean).toBe(true);
+    expect(status.changedFiles).toBe(0);
+    expect(mockExecFileAsync).toHaveBeenCalledWith(
+      'git',
+      ['status', '--porcelain'],
+      expect.objectContaining({ cwd: '/project' }),
+    );
+  });
+
+  it('reports dirty tree with accurate changed-file count', async () => {
+    // Each non-empty line in --porcelain output is one changed path; blank
+    // lines are ignored so a trailing newline doesn't inflate the count.
+    mockExecFileAsync.mockResolvedValue({
+      stdout: ' M src/foo.ts\n?? src/bar.ts\n M README.md\n',
+      stderr: '',
+    });
+
+    const status = await checkGitCleanliness('/project');
+
+    expect(status.clean).toBe(false);
+    expect(status.changedFiles).toBe(3);
+  });
+
+  it('treats projects without git (no repo, git missing) as clean', async () => {
+    // checkGitCleanliness is a warning gate for fixes that modify source —
+    // a missing git shouldn't block a user who deliberately isn't using VCS.
+    mockExecFileAsync.mockRejectedValue(new Error('fatal: not a git repository'));
+
+    const status = await checkGitCleanliness('/project');
+
+    expect(status.clean).toBe(true);
+    expect(status.changedFiles).toBe(0);
+  });
+});
+
+describe('hasSourceModifyingFixes', () => {
+  it('returns true when any fix has modifiesSource=true', () => {
+    const fixes: FixableIssue[] = [
+      {
+        issue: makeIssue({ fix: { description: 'safe', modifiesSource: false } }),
+        checkId: 'a',
+        checkName: 'A',
+        command: 'a',
+      },
+      {
+        issue: makeIssue({ fix: { description: 'writes code', modifiesSource: true } }),
+        checkId: 'b',
+        checkName: 'B',
+        command: 'b',
+      },
+    ];
+    expect(hasSourceModifyingFixes(fixes)).toBe(true);
+  });
+
+  it('returns false when no fix modifies source', () => {
+    const fixes: FixableIssue[] = [
+      {
+        issue: makeIssue({ fix: { description: 'safe', modifiesSource: false } }),
+        checkId: 'a',
+        checkName: 'A',
+        command: 'a',
+      },
+      {
+        issue: makeIssue({ fix: { description: 'also safe' } }),
+        checkId: 'b',
+        checkName: 'B',
+        command: 'b',
+      },
+    ];
+    expect(hasSourceModifyingFixes(fixes)).toBe(false);
+  });
+
+  it('returns false for an empty list', () => {
+    expect(hasSourceModifyingFixes([])).toBe(false);
   });
 });

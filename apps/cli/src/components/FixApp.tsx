@@ -5,6 +5,7 @@ import Spinner from 'ink-spinner';
 import { runSickbay } from 'sickbay-core';
 
 import {
+  checkGitCleanliness,
   collectFixableIssues,
   executeFix,
   type FixableIssue,
@@ -19,13 +20,14 @@ interface FixAppProps {
   checks?: string[];
   applyAll: boolean;
   dryRun: boolean;
+  skipGitCheck: boolean;
   verbose: boolean;
   isMonorepo?: boolean;
   packagePaths?: string[];
   packageNames?: Map<string, string>;
 }
 
-type Phase = 'scanning' | 'selecting' | 'confirming' | 'fixing' | 'done' | 'error';
+type Phase = 'scanning' | 'git-warning' | 'selecting' | 'confirming' | 'fixing' | 'done' | 'error';
 
 interface ProgressItem {
   name: string;
@@ -48,6 +50,7 @@ export function FixApp({
   checks,
   applyAll,
   dryRun,
+  skipGitCheck,
   verbose,
   isMonorepo,
   packagePaths,
@@ -64,10 +67,54 @@ export function FixApp({
   const [progress, setProgress] = useState<ProgressItem[]>([]);
   const [projectName, setProjectName] = useState<string | undefined>();
 
+  // Git-cleanliness preflight state — populated before confirming tier-2 fixes
+  const [gitChangedFiles, setGitChangedFiles] = useState(0);
+
   // Confirmation state
   const [confirmQueue, setConfirmQueue] = useState<MonorepoFixableIssue[]>([]);
   const [confirmIndex, setConfirmIndex] = useState(0);
   const [confirmedFixes, setConfirmedFixes] = useState<MonorepoFixableIssue[]>([]);
+
+  // Route decision after scan. Extracted so the git-warning phase can
+  // resume the flow when the user accepts the warning.
+  const proceedAfterScan = useCallback(
+    (tagged: MonorepoFixableIssue[]) => {
+      const hasActionable = tagged.some((f) => f.command);
+      if (!hasActionable) {
+        setPhase('done');
+        return;
+      }
+      if (applyAll) {
+        setSelected(new Set(tagged.map((_, i) => i)));
+        startConfirmation(tagged, new Set(tagged.map((_, i) => i)), true);
+      } else {
+        setPhase('selecting');
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [applyAll],
+  );
+
+  // Post-scan routing. If any fix will modify source files and the tree
+  // is dirty, pause for an explicit go-ahead so the user isn't mixing
+  // their own uncommitted work with Sickbay's edits — that state is not
+  // cleanly revertable with `git checkout` or `git stash`.
+  const onScanComplete = useCallback(
+    async (tagged: MonorepoFixableIssue[]) => {
+      const hasTier2 = tagged.some((f) => f.issue.fix?.modifiesSource === true);
+      if (hasTier2 && !skipGitCheck) {
+        const status = await checkGitCleanliness(projectPath);
+        if (!status.clean) {
+          setGitChangedFiles(status.changedFiles);
+          setPhase('git-warning');
+          return;
+        }
+      }
+      proceedAfterScan(tagged);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [projectPath, skipGitCheck, proceedAfterScan],
+  );
 
   // Phase 1: Run scan
   useEffect(() => {
@@ -112,16 +159,7 @@ export function FixApp({
           }
 
           setFixableIssues(allFixable);
-
-          const hasActionable = allFixable.some((f) => f.command);
-          if (!hasActionable) {
-            setPhase('done');
-          } else if (applyAll) {
-            setSelected(new Set(allFixable.map((_, i) => i)));
-            startConfirmation(allFixable, new Set(allFixable.map((_, i) => i)), true);
-          } else {
-            setPhase('selecting');
-          }
+          await onScanComplete(allFixable);
         } catch (err) {
           setError(err instanceof Error ? err.message : String(err));
           setPhase('error');
@@ -178,16 +216,7 @@ export function FixApp({
             packagePath: projectPath,
           }));
           setFixableIssues(tagged);
-
-          const hasActionable = tagged.some((f) => f.command);
-          if (!hasActionable) {
-            setPhase('done');
-          } else if (applyAll) {
-            setSelected(new Set(fixable.map((_, i) => i)));
-            startConfirmation(tagged, new Set(fixable.map((_, i) => i)), true);
-          } else {
-            setPhase('selecting');
-          }
+          return onScanComplete(tagged);
         })
         .catch((err) => {
           setError(err instanceof Error ? err.message : String(err));
@@ -273,6 +302,17 @@ export function FixApp({
   // Handle keyboard input during selection and confirmation phases
   const handleInput = useCallback(
     (input: string, key: { upArrow: boolean; downArrow: boolean; return: boolean }) => {
+      if (phase === 'git-warning') {
+        const lower = input.toLowerCase();
+        if (lower === 'y' || key.return) {
+          // User acknowledges dirty tree — continue with selection/confirmation flow
+          proceedAfterScan(fixableIssues);
+        } else if (lower === 'n') {
+          setPhase('done');
+          setTimeout(() => exit(), 100);
+        }
+        return;
+      }
       if (phase === 'selecting') {
         const actionable = fixableIssues.filter((f) => f.command);
 
@@ -322,7 +362,7 @@ export function FixApp({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [phase, cursor, selected, confirmIndex, confirmQueue, fixableIssues],
+    [phase, cursor, selected, confirmIndex, confirmQueue, fixableIssues, proceedAfterScan],
   );
 
   useInput(handleInput);
@@ -351,6 +391,39 @@ export function FixApp({
       {phase === 'error' && (
         <Box>
           <Text color="red">✗ Error: {error}</Text>
+        </Box>
+      )}
+
+      {/* Git-cleanliness warning phase */}
+      {phase === 'git-warning' && (
+        <Box flexDirection="column">
+          <Box marginBottom={1}>
+            <Text color="yellow" bold>
+              ⚠ Uncommitted changes detected
+            </Text>
+          </Box>
+          <Box flexDirection="column" marginLeft={2}>
+            <Text>
+              Your working tree has {gitChangedFiles} changed file
+              {gitChangedFiles === 1 ? '' : 's'}. Some fixes will modify source code.
+            </Text>
+            <Box marginTop={1}>
+              <Text dimColor>
+                If a fix goes wrong, mixing Sickbay's edits with your own uncommitted work makes it
+                hard to revert cleanly with <Text color="cyan">git checkout</Text> or{' '}
+                <Text color="cyan">git stash</Text>.
+              </Text>
+            </Box>
+            <Box marginTop={1}>
+              <Text>Commit or stash first, then re-run. Proceed anyway? (y/N)</Text>
+            </Box>
+            <Box marginTop={1}>
+              <Text dimColor>
+                (Pass <Text color="cyan">--skip-git-check</Text> to suppress this prompt, e.g. in
+                CI.)
+              </Text>
+            </Box>
+          </Box>
         </Box>
       )}
 

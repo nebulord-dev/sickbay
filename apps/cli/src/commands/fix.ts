@@ -12,6 +12,37 @@ import type { Issue, SickbayReport } from 'sickbay-core';
 
 const execFileAsync = promisify(execFile);
 
+/**
+ * Check whether the project's git working tree is clean before applying
+ * source-modifying fixes. A dirty tree mixed with Sickbay's own edits means
+ * `git checkout` or `git stash` can no longer cleanly revert the bot's work
+ * if a fix goes wrong.
+ *
+ * Returns `clean: true` when there's genuinely nothing to report AND when
+ * git is unavailable (no repo, git not installed, permission denied) — the
+ * check is advisory, not a hard gate on non-git projects.
+ */
+export async function checkGitCleanliness(
+  projectPath: string,
+): Promise<{ clean: boolean; changedFiles: number }> {
+  try {
+    const { stdout } = await execFileAsync('git', ['status', '--porcelain'], {
+      cwd: projectPath,
+      timeout: 10_000,
+    });
+    const lines = stdout.split('\n').filter((l) => l.trim().length > 0);
+    return { clean: lines.length === 0, changedFiles: lines.length };
+  } catch {
+    // Not a git repo, git not installed, or command failed. Treat as clean
+    // so we never block a user who chose not to version-control their project.
+    return { clean: true, changedFiles: 0 };
+  }
+}
+
+export function hasSourceModifyingFixes(issues: FixableIssue[]): boolean {
+  return issues.some((f) => f.issue.fix?.modifiesSource === true);
+}
+
 export interface FixableIssue {
   issue: Issue;
   checkId: string;
