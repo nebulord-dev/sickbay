@@ -36,13 +36,25 @@ Read based on the task at hand:
 - `packages/core/src/types.ts` — core interfaces (`SickbayReport`, `CheckResult`, `Issue`)
 - `packages/core/src/runner.ts` — main orchestrator
 - `packages/core/src/scoring.ts` — weighted scoring logic
-- `packages/core/src/integrations/` — individual check runners
+- `packages/core/src/config.ts` — user config (`sickbay.config.ts`) loading and validation
+- `packages/core/src/integrations/` — individual check runners (pass/fail signals)
+- `packages/core/src/advisors/` — best-practice advisors (recommendations, parallel to runners)
+- `packages/core/src/utils/suppress.ts` — suppress rule evaluation (affects which issues reach the report)
 
 **If working on terminal UI:**
 
 - `apps/cli/src/index.ts` — CLI entry, Commander setup
 - `apps/cli/src/components/App.tsx` — root Ink component, UI phases
-- `apps/cli/src/components/tui/` — TUI dashboard components
+- `apps/cli/src/components/tui/` — TUI dashboard components + hooks
+
+**If working on a specific subcommand:**
+
+- `apps/cli/src/commands/fix.ts` — **modifies user files** (highest-risk)
+- `apps/cli/src/commands/init.ts` — writes `sickbay.config.ts`
+- `apps/cli/src/commands/web.ts` — HTTP server for the `--web` dashboard
+- `apps/cli/src/commands/claude.ts` + `apps/cli/src/services/ai.ts` — CLI AI integration
+- `apps/cli/src/commands/doctor.ts` — environment diagnostics (largest subcommand)
+- `apps/cli/src/commands/{diff,stats,trend,badge}.ts` — report comparison and output formats
 
 **If working on web dashboard:**
 
@@ -56,6 +68,7 @@ Read based on the task at hand:
 - `packages/core/src/integrations/knip.test.ts` — pattern for testing a runner
 - `packages/core/src/integrations/base.test.ts` — pattern for testing base class
 - `apps/cli/src/components/QuickWins.test.tsx` — pattern for testing Ink components
+- `tests/snapshots/fixture-regression.test.ts` — cross-package snapshot regression suite; run via `pnpm test:snapshots` after any runner / advisor / scoring change
 
 **If working on documentation site:**
 
@@ -76,6 +89,17 @@ Check recent activity:
 
 Check current branch and status:
 !`git status`
+
+### 5. Before Merging
+
+Match the work to an audit skill and run it before committing:
+
+- `/audit-core` — any change under `packages/core/` (runners, advisors, scoring, config, suppress, dep-tree)
+- `/audit-cli` — any change under `apps/cli/` (subcommands — especially `fix`, TUI hooks, Commander setup, web server)
+- `/audit-web` — any change under `apps/web/` (components rendering report data, AI integration, constants drift)
+- `/audit-architecture` — cross-package changes, new packages, workspace / build-pipeline / release-config changes
+
+See `CLAUDE.md` → "Code Quality Audits" for the full trigger matrix.
 
 <!-- ## Output Report
 
