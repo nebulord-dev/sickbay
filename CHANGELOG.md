@@ -1,3 +1,10 @@
+## [1.16.2](https://github.com/nebulord-dev/sickbay/compare/v1.16.1...v1.16.2) (2026-04-19)
+
+
+### Bug Fixes
+
+* **repo:** untrack .sickbay/ cache files and generalize gitignore patterns ([#53](https://github.com/nebulord-dev/sickbay/issues/53)) ([1de7b1d](https://github.com/nebulord-dev/sickbay/commit/1de7b1d69d21efdf61d45b5e92c635bf6375d111)), closes [#52](https://github.com/nebulord-dev/sickbay/issues/52)
+
 ## [1.16.1](https://github.com/nebulord-dev/sickbay/compare/v1.16.0...v1.16.1) (2026-04-18)
 
 
