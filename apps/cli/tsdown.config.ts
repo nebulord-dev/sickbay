@@ -1,17 +1,18 @@
 import { cpSync, existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsdown';
 
 const { version } = JSON.parse(readFileSync('./package.json', 'utf-8'));
 
 export default defineConfig({
   entry: ['src/index.ts', 'src/config.ts'],
-  format: ['esm'],
   dts: true,
-  clean: true,
-  noExternal: ['sickbay-core'],
-  external: ['jiti'],
+  outExtensions: () => ({ js: '.js', dts: '.d.ts' }),
+  deps: {
+    alwaysBundle: ['sickbay-core'],
+    neverBundle: ['jiti'],
+  },
   define: {
     __VERSION__: JSON.stringify(version),
   },

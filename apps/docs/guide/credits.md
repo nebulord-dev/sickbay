@@ -44,7 +44,7 @@ These are the engines behind Sickbay's health checks. Each one is a standalone p
 | Tool                                            | Author / Maintainers             | What Sickbay uses it for             |
 | ----------------------------------------------- | -------------------------------- | ------------------------------------ |
 | [Vitest](https://github.com/vitest-dev/vitest)  | Anthony Fu, Vitest team          | Test runner across all packages      |
-| [tsup](https://github.com/egoist/tsup)          | EGOIST                           | TypeScript bundling for core and CLI |
+| [tsdown](https://tsdown.dev/)                    | EGOIST                           | TypeScript bundling for core and CLI |
 | [VitePress](https://github.com/vuejs/vitepress) | Evan You, Vue team               | This documentation site              |
 | [Turbo](https://github.com/vercel/turborepo)    | Vercel, Turborepo team           | Monorepo build orchestration         |
 | [pnpm](https://github.com/pnpm/pnpm)            | Zoltan Kochan, pnpm contributors | Package management and workspaces    |

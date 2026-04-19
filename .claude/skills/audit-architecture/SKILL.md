@@ -28,7 +28,7 @@ The enforced build order is: `packages/core` → `apps/cli` → `apps/web`
 
 ### 3. Bundled-Deps Mirror Invariant
 
-`apps/cli` bundles `sickbay-core` inline via tsup `noExternal`. Every runtime dep of core must also appear in `apps/cli/package.json` dependencies with matching version ranges.
+`apps/cli` bundles `sickbay-core` inline via tsdown `deps.alwaysBundle`. Every runtime dep of core must also appear in `apps/cli/package.json` dependencies with matching version ranges.
 
 - Run `pnpm check:bundled-deps` — must pass with zero drift
 - Compare `packages/core/package.json` dependencies vs `apps/cli/package.json` dependencies manually

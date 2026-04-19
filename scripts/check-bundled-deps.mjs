@@ -6,8 +6,8 @@
  *
  * Why this exists:
  *
- * `apps/cli` bundles `packages/core` inline at build time via tsup's
- * `noExternal: ['sickbay-core']` (see apps/cli/tsup.config.ts).
+ * `apps/cli` bundles `packages/core` inline at build time via tsdown's
+ * `deps.alwaysBundle: ['sickbay-core']` (see apps/cli/tsdown.config.ts).
  * That means cli's published dist contains core's source code with all of its
  * `require('depcheck')` / `require('madge')` / etc. calls preserved verbatim —
  * those are still resolved at *runtime* against cli's own node_modules.
@@ -76,7 +76,7 @@ if (missing.length === 0 && mismatched.length === 0) {
 
 console.error('✗ apps/cli runtime deps have drifted from packages/core');
 console.error('');
-console.error("  Why this matters: tsup bundles core inline into cli, so core's");
+console.error("  Why this matters: tsdown bundles core inline into cli, so core's");
 console.error("  runtime require() calls are resolved against cli's node_modules.");
 console.error('  Any dep listed here MUST exist in apps/cli/package.json or the');
 console.error('  published sickbay tarball will crash at user runtime.');
