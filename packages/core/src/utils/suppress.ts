@@ -66,8 +66,15 @@ export function applySuppression(issues: Issue[], rules: SuppressionRule[]): Sup
 
   let suppressedCount = 0;
   const kept = issues.filter((issue) => {
+    // Normalize backslashes so rules written with POSIX globs match paths
+    // that Windows integrations emit with `\` separators.
+    const normalizedFile = issue.file?.replace(/\\/g, '/');
     const suppressed = compiled.some((rule) => {
-      const pathOk = rule.pathMatch ? (issue.file ? rule.pathMatch(issue.file) : false) : true;
+      const pathOk = rule.pathMatch
+        ? normalizedFile
+          ? rule.pathMatch(normalizedFile)
+          : false
+        : true;
       const matchOk = rule.match ? issue.message.toLowerCase().includes(rule.match) : true;
       return pathOk && matchOk;
     });

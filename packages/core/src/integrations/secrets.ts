@@ -68,7 +68,6 @@ interface Finding {
   file: string;
   line: number;
   pattern: string;
-  codeSnippet?: string;
 }
 
 export class SecretsRunner extends BaseRunner {
@@ -130,12 +129,6 @@ export class SecretsRunner extends BaseRunner {
         file: f.file,
         fix: {
           description: 'Move secrets to environment variables',
-          codeChange: f.codeSnippet
-            ? {
-                before: f.codeSnippet,
-                after: 'Use process.env.YOUR_SECRET_NAME instead',
-              }
-            : undefined,
         },
         reportedBy: ['secrets'],
       }));
@@ -271,7 +264,6 @@ function scanFile(filePath: string, projectRoot: string): Finding[] {
             file: relPath,
             line: i + 1,
             pattern: pattern.name,
-            codeSnippet: line.trim(),
           });
           break; // one finding per line
         }

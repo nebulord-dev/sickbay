@@ -22,12 +22,12 @@ Four targeted audit skills cover the package boundaries. Run them when you ship 
 
 | Skill | When to run |
 | ----- | ----------- |
-| `/audit-core` | After adding/modifying a runner in `integrations/`, changing `runner.ts`, `scoring.ts`, or `types.ts`, or after a dependency update in core |
-| `/audit-cli` | After touching CLI flags, TUI hooks, or `commands/web.ts` |
-| `/audit-web` | After adding components that render report data, or modifying `load-report.ts` |
-| `/audit-architecture` | After merging a large cross-package branch, adding a new package, or before a major release |
+| `/audit-core` | After touching any runner in `integrations/`, any advisor in `advisors/`, `runner.ts`, `scoring.ts`, `types.ts`, `config.ts`, `utils/suppress.ts`, `utils/dep-tree.ts`, or bumping a core runtime dep |
+| `/audit-cli` | After touching any subcommand in `commands/` (especially `fix.ts` — it writes user files), `services/ai.ts`, TUI hooks, Commander setup, `lib/history.ts`, or `commands/web.ts` |
+| `/audit-web` | After adding/modifying any component that renders report data, changing `load-report.ts`, `lib/constants.ts`, the AI integration, or `DependencyGraph.tsx` |
+| `/audit-architecture` | After merging a large cross-package branch, adding a package, touching `turbo.json`, `pnpm-workspace.yaml`, `tsconfig.base.json`, `.releaserc.json`, or before a major release |
 
-Each skill dispatches a `feature-dev:code-reviewer` agent with a package-specific checklist. Fix findings before committing.
+Each skill dispatches a specialized reviewer agent (`feature-dev:code-reviewer` or `monorepo-architect`) with a package-specific checklist. Fix findings before committing.
 
 This document helps Claude Code understand the Sickbay codebase structure and where to look when making updates.
 
@@ -121,14 +121,17 @@ vi.mock('path', async () => {
   - Each extends `BaseRunner` and implements `run()` method
   - Universal: `knip.ts`, `npm-audit.ts`, `eslint.ts` (detects ESLint in the analyzed user project — distinct from sickbay's own oxlint tooling), `git.ts`, etc.
   - Framework-specific: `react-perf.ts`, `next-*.ts`, `angular-*.ts`, `node-*.ts`
-- `src/utils/` - Shared utilities (file detection, command execution, monorepo detection)
+- `src/advisors/` - Best-practice advisors (parallel to integrations — recommendations, not pass/fail). Four advisors: `react-best-practices.ts`, `next-best-practices.ts`, `angular-best-practices.ts`, `universal-best-practices.ts`; all extend `BaseAdvisor`
+- `src/utils/` - Shared utilities: `file-helpers.ts` (cross-platform paths — use `relativeFromRoot`), `detect-project.ts` (framework detection), `detect-monorepo.ts`, `suppress.ts` (rule suppression evaluation), `dep-tree.ts` (cached dep graph written to `.sickbay/dep-tree.json`)
 
 **When to modify**:
 
 - Adding new health checks → Create new runner in `src/integrations/`, register in `runner.ts`
+- Adding best-practice recommendations → Create advisor in `src/advisors/`, wire it up in the advisor registration flow
 - Changing scoring weights → Edit `src/scoring.ts`
 - Modifying report structure → Update `src/types.ts` (affects CLI and web)
 - Fixing check logic → Edit specific integration file
+- Changing config schema → Edit `src/config.ts` (user-authored `sickbay.config.ts` is the trust boundary)
 
 **Dependencies**: All external tools (knip, depcheck, madge, etc.) are bundled here.
 
@@ -146,7 +149,9 @@ vi.mock('path', async () => {
 - `src/components/CheckResult.tsx` - Individual check display (score bars, issues)
 - `src/components/Summary.tsx` - Overall score + issue counts
 - `src/components/QuickWins.tsx` - Top actionable fixes
-- `src/commands/web.ts` - HTTP server for `--web` flag (serves web dashboard)
+- `src/commands/` - Subcommand entries. Notable: `web.ts` (HTTP dashboard server), `fix.ts` (**modifies user files — highest-risk**), `init.ts` (writes `sickbay.config.ts`), `claude.ts` (CLI AI), `doctor.ts` (environment diagnostics, largest subcommand), plus `diff.ts`, `stats.ts`, `trend.ts`, `badge.ts`
+- `src/services/ai.ts` - AI client used by the `claude` subcommand
+- `src/lib/history.ts` - Trend history read/write for `.sickbay/history.json`
 
 **UI Phases**:
 
@@ -178,9 +183,14 @@ vi.mock('path', async () => {
 - `src/components/Dashboard.tsx` - Main layout (sidebar + tabbed content)
 - `src/components/ScoreCard.tsx` - Circular score displays per category
 - `src/components/IssuesList.tsx` - Filterable/sortable issues table
+- `src/components/CriticalIssues.tsx` - Collapsible critical-issues panel
+- `src/components/BestPracticesDrawer.tsx` - Advisor recommendations surfaced in the dashboard
 - `src/components/AISummary.tsx` - Claude-powered analysis drawer (if API key present)
 - `src/components/ChatDrawer.tsx` - Interactive AI chat interface
+- `src/components/ConfigTab.tsx` - Read-only display of user's `sickbay.config.ts`
+- `src/components/DependencyGraph.tsx` - Dependency visualization (review for bundle-size and UX tradeoffs)
 - `src/lib/load-report.ts` - Report loading logic (HTTP, query params, localStorage)
+- `src/lib/constants.ts` - Browser-safe duplicates of core's scoring constants
 
 **Report Loading Priority**:
 
@@ -297,10 +307,16 @@ packages/core/src/
 │   ├── angular-*.ts      # Angular-specific (7 runners)
 │   ├── node-*.ts         # Node.js-specific (3 runners)
 │   └── ...
+├── advisors/             # Best-practice recommendations (parallel to integrations)
+│   ├── base.ts           # BaseAdvisor abstract class
+│   ├── react-best-practices.ts, next-best-practices.ts
+│   ├── angular-best-practices.ts, universal-best-practices.ts
 └── utils/                # Shared helpers
     ├── detect-project.ts # Framework/runtime detection
     ├── detect-monorepo.ts # Monorepo detection
-    ├── file-helpers.ts   # File utilities
+    ├── file-helpers.ts   # Cross-platform path utilities (relativeFromRoot)
+    ├── suppress.ts       # Suppress rule evaluation
+    ├── dep-tree.ts       # Cached dep graph
     └── ...
 ```
 
@@ -317,10 +333,20 @@ apps/cli/src/
 │       ├── HealthPanel.tsx, ScorePanel.tsx, TrendPanel.tsx, ...
 │       └── hooks/        # useFileWatcher, useGitStatus, useSickbayRunner, ...
 ├── commands/             # Subcommand implementations
-│   ├── web.ts, fix.ts, diff.ts, badge.ts, trend.ts, stats.ts, doctor.ts, init.ts
+│   ├── web.ts            # HTTP dashboard server
+│   ├── fix.ts            # Writes user files — highest-risk subcommand
+│   ├── init.ts           # Writes sickbay.config.ts
+│   ├── claude.ts         # CLI AI (uses services/ai.ts)
+│   ├── doctor.ts         # Environment diagnostics (largest)
+│   └── diff.ts, badge.ts, trend.ts, stats.ts
+├── services/
+│   └── ai.ts             # AI client for the claude subcommand
 └── lib/                  # Shared utilities
     ├── history.ts        # Trend history read/write
-    └── update-check.ts   # npm update notifications
+    ├── update-check.ts   # npm update notifications
+    ├── issue-grouping.ts # Stable issue grouping
+    ├── resolve-package.ts
+    └── project-hash.ts
 ```
 
 ### Web Package Structure
@@ -333,15 +359,20 @@ apps/web/src/
 ├── components/           # React components
 │   ├── Dashboard.tsx     # Main layout (sidebar + tabbed content)
 │   ├── ScoreCard.tsx, IssuesList.tsx, DependencyList.tsx, CodebaseStats.tsx
+│   ├── CriticalIssues.tsx      # Collapsible critical-issues panel
+│   ├── BestPracticesDrawer.tsx # Advisor recommendations
 │   ├── AISummary.tsx     # AI insights drawer
 │   ├── ChatDrawer.tsx    # Interactive AI chat
 │   ├── HistoryChart.tsx  # Score trend visualization
-│   ├── MonorepoOverview.tsx  # Monorepo scoreboard + cross-package view
+│   ├── MonorepoOverview.tsx    # Monorepo scoreboard + cross-package view
 │   ├── ConfigTab.tsx     # Read-only config display
+│   ├── DependencyGraph.tsx     # Dependency visualization
 │   └── ...
 └── lib/
     ├── load-report.ts    # Report fetching
-    └── constants.ts      # Duplicated core constants (browser-safe)
+    ├── constants.ts      # Duplicated core constants (browser-safe)
+    ├── issue-grouping.ts # Display-side grouping stability
+    └── suppress-snippet.ts # Generated suppress config snippets
 ```
 
 ---
@@ -466,5 +497,9 @@ node apps/cli/dist/index.js --path ~/Desktop/test-app
 ### If adding CLI options:
 
 → Edit `apps/cli/src/index.ts`
+
+### Before merging:
+
+→ Run the matching audit skill (`/audit-core`, `/audit-cli`, `/audit-web`, or `/audit-architecture` for cross-cutting changes). See the Code Quality Audits table above for specific triggers.
 
 Run `/prime` for full project context (stack, architecture, file locations, domain model, gotchas).
