@@ -103,6 +103,21 @@ describe('badgeHtml', () => {
     const html = badgeHtml(75, 'project health');
     expect(html).toContain('alt="project health"');
   });
+
+  it('escapes HTML-dangerous characters in the label', () => {
+    // --label is user-controlled. An unescaped interpolation like
+    // alt="${label}" turns `" onload="alert(1)` into an executable handler
+    // when the resulting snippet is pasted into a README rendered as HTML.
+    const html = badgeHtml(80, '" onload="alert(1)');
+    expect(html).not.toContain('onload="alert(1)');
+    expect(html).toContain('&quot; onload=&quot;alert(1)');
+  });
+
+  it('escapes angle brackets and ampersands in the label', () => {
+    const html = badgeHtml(80, '<script>&"\'');
+    expect(html).toContain('&lt;script&gt;&amp;&quot;&#39;');
+    expect(html).not.toContain('<script>');
+  });
 });
 
 describe('loadScoreFromLastReport', () => {
