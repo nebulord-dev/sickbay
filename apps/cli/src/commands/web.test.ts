@@ -103,6 +103,19 @@ describe('serveWeb', () => {
       expect(data.projectPath).toBe('/test/project');
     });
 
+    it('/sickbay-report.json locks Access-Control-Allow-Origin to the dashboard origin', async () => {
+      // Without this header, a browser tab opened to a different origin could
+      // (under various relaxations or future policy shifts) read the report —
+      // which includes secret-scan findings and full dep trees. Same-origin
+      // requests from the dashboard itself are unaffected; cross-origin tabs
+      // are explicitly refused read access.
+      const url = await serveWeb(makeReport(), 0);
+      const res = await fetch(`${url}/sickbay-report.json`);
+
+      expect(res.headers.get('access-control-allow-origin')).toBe(url);
+      expect(res.headers.get('vary')).toBe('Origin');
+    });
+
     it('/sickbay-report.json returns all check data', async () => {
       const report = makeReport({
         checks: [

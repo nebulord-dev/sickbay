@@ -136,6 +136,19 @@ export async function serveWeb(
   const reportJson = JSON.stringify(report);
   const port = await getFreePort(preferredPort);
 
+  // Lock API responses to the dashboard's own origin. Without this header,
+  // browser default behavior is already to block cross-origin reads of the
+  // response body (so an evil.com tab couldn't exfiltrate a report), but
+  // declaring it explicitly is defense-in-depth: it makes the intent clear,
+  // prevents future browser-policy relaxations from widening the surface,
+  // and makes the server's contract auditable from response headers alone.
+  const allowOrigin = `http://localhost:${port}`;
+  const jsonHeaders = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': allowOrigin,
+    Vary: 'Origin',
+  };
+
   // Generate AI summary on startup if service is available (single-project only)
   let aiSummary: string | null = null;
   if (aiService && !('isMonorepo' in report)) {
@@ -151,7 +164,7 @@ export async function serveWeb(
 
     // Serve the report JSON directly from memory
     if (url === '/sickbay-report.json') {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.writeHead(200, jsonHeaders);
       res.end(reportJson);
       return;
     }
@@ -161,10 +174,10 @@ export async function serveWeb(
       const basePath = 'isMonorepo' in report ? report.rootPath : report.projectPath;
       const historyPath = join(basePath, '.sickbay', 'history.json');
       if (existsSync(historyPath)) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, jsonHeaders);
         res.end(readFileSync(historyPath, 'utf-8'));
       } else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.writeHead(404, jsonHeaders);
         res.end('{}');
       }
       return;
@@ -175,10 +188,10 @@ export async function serveWeb(
       const basePath = 'isMonorepo' in report ? report.rootPath : report.projectPath;
       const treePath = join(basePath, '.sickbay', 'dep-tree.json');
       if (existsSync(treePath)) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, jsonHeaders);
         res.end(readFileSync(treePath, 'utf-8'));
       } else {
-        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.writeHead(404, jsonHeaders);
         res.end('{}');
       }
       return;
@@ -191,14 +204,14 @@ export async function serveWeb(
         const { loadConfig } = await import('sickbay-core');
         const config = await loadConfig(basePath);
         if (config) {
-          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.writeHead(200, jsonHeaders);
           res.end(JSON.stringify(config));
         } else {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.writeHead(404, jsonHeaders);
           res.end('{}');
         }
       } catch {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.writeHead(500, jsonHeaders);
         res.end('{}');
       }
       return;
@@ -223,30 +236,30 @@ export async function serveWeb(
         // Per-package summary: generate on demand
         const pkg = report.packages.find((p) => p.name === packageName);
         if (!pkg) {
-          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.writeHead(404, jsonHeaders);
           res.end(JSON.stringify({ error: 'Package not found' }));
           return;
         }
         try {
           const pkgReport = packageReportToSickbayReport(pkg, report);
           const summary = await aiService.generateSummary(pkgReport);
-          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.writeHead(200, jsonHeaders);
           res.end(JSON.stringify({ summary }));
         } catch (err) {
           // Don't leak internal error details (stack, constructor name, dep internals)
           // over the wire, even on loopback — other processes on the machine can reach it.
           const message = err instanceof Error ? err.message : 'Internal error';
-          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.writeHead(500, jsonHeaders);
           res.end(JSON.stringify({ error: message }));
         }
         return;
       }
       if (aiSummary) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, jsonHeaders);
         res.end(JSON.stringify({ summary: aiSummary }));
         return;
       }
-      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.writeHead(404, jsonHeaders);
       res.end('{}');
       return;
     }
@@ -263,7 +276,7 @@ export async function serveWeb(
         body += chunk;
         if (Buffer.byteLength(body) > MAX_BODY) {
           aborted = true;
-          res.writeHead(413, { 'Content-Type': 'application/json' });
+          res.writeHead(413, jsonHeaders);
           res.end(JSON.stringify({ error: 'Payload too large' }));
           req.destroy();
         }
@@ -276,7 +289,7 @@ export async function serveWeb(
           if (packageName && 'isMonorepo' in report) {
             const pkg = report.packages.find((p) => p.name === packageName);
             if (!pkg) {
-              res.writeHead(404, { 'Content-Type': 'application/json' });
+              res.writeHead(404, jsonHeaders);
               res.end(JSON.stringify({ error: 'Package not found' }));
               return;
             }
@@ -284,17 +297,17 @@ export async function serveWeb(
           } else if (!('isMonorepo' in report)) {
             chatReport = report;
           } else {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.writeHead(400, jsonHeaders);
             res.end(JSON.stringify({ error: 'Package name required for monorepo' }));
             return;
           }
           const response = await aiService.chat(message, chatReport, history ?? []);
-          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.writeHead(200, jsonHeaders);
           res.end(JSON.stringify({ response }));
         } catch (err) {
           // See above — no internal error leakage.
           const errMessage = err instanceof Error ? err.message : 'Internal error';
-          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.writeHead(500, jsonHeaders);
           res.end(JSON.stringify({ error: errMessage }));
         }
       });

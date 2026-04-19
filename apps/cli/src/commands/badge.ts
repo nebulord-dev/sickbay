@@ -12,6 +12,21 @@ function encodeLabel(label: string): string {
   return label.replace(/-/g, '--').replace(/_/g, '__').replace(/ /g, '%20');
 }
 
+/**
+ * Escape characters that break out of HTML attributes when interpolated.
+ * `--label` is user-controlled CLI input, so embedding it in `<img alt="...">`
+ * without escaping turns `" onload="alert(1)` into an executable handler if
+ * the generated snippet is pasted into a README rendered as HTML.
+ */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 export function badgeUrl(score: number, label = 'sickbay'): string {
   const color = getScoreColor(score);
   const encoded = encodeLabel(label);
@@ -23,7 +38,7 @@ export function badgeMarkdown(score: number, label = 'sickbay'): string {
 }
 
 export function badgeHtml(score: number, label = 'sickbay'): string {
-  return `<img src="${badgeUrl(score, label)}" alt="${label}" />`;
+  return `<img src="${escapeHtml(badgeUrl(score, label))}" alt="${escapeHtml(label)}" />`;
 }
 
 export function loadScoreFromLastReport(projectPath: string): number | null {
