@@ -1,7 +1,25 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync } from 'fs';
 import { join } from 'path';
 
 import type { SickbayReport } from 'sickbay-core';
+
+/**
+ * Crash-safe JSON write: write to a sibling `.tmp` path, then rename into
+ * place. If the process is killed mid-write (SIGINT, power loss, OOM, disk
+ * full), the target file is either fully written or unchanged — never
+ * truncated. Downstream readers (`diff`, `stats`, `trend`, `badge`, and the
+ * web server) previously had no recovery path for a partial `last-report.json`
+ * or `dep-tree.json` since `loadHistory` is the only reader with a `try/catch`.
+ *
+ * `renameSync` is atomic on POSIX and atomic within a single volume on
+ * Windows. `.tmp` and the destination are always siblings, so that's
+ * guaranteed to be true here.
+ */
+function writeJsonAtomic(filePath: string, data: unknown): void {
+  const tmpPath = `${filePath}.tmp`;
+  writeFileSync(tmpPath, JSON.stringify(data, null, 2));
+  renameSync(tmpPath, filePath);
+}
 
 export interface TrendEntry {
   timestamp: string;
@@ -64,20 +82,17 @@ export function saveEntry(report: SickbayReport): void {
     existing.entries = existing.entries.slice(-100);
   }
 
-  writeFileSync(filePath, JSON.stringify(existing, null, 2));
+  writeJsonAtomic(filePath, existing);
 }
 
 export function saveLastReport(report: SickbayReport): void {
   mkdirSync(join(report.projectPath, '.sickbay'), { recursive: true });
-  writeFileSync(
-    join(report.projectPath, '.sickbay', 'last-report.json'),
-    JSON.stringify(report, null, 2),
-  );
+  writeJsonAtomic(join(report.projectPath, '.sickbay', 'last-report.json'), report);
 }
 
 export function saveDepTree(projectPath: string, tree: unknown): void {
   mkdirSync(join(projectPath, '.sickbay'), { recursive: true });
-  writeFileSync(join(projectPath, '.sickbay', 'dep-tree.json'), JSON.stringify(tree, null, 2));
+  writeJsonAtomic(join(projectPath, '.sickbay', 'dep-tree.json'), tree);
 }
 
 export function detectRegressions(

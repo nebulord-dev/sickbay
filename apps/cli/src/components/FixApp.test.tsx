@@ -13,6 +13,9 @@ vi.mock('sickbay-core', () => ({
 vi.mock('../commands/fix.js', () => ({
   collectFixableIssues: vi.fn(),
   executeFix: vi.fn(),
+  // Default to a clean tree so existing tests that don't care about git state
+  // don't route through the git-warning phase. Per-test overrides still work.
+  checkGitCleanliness: vi.fn().mockResolvedValue({ clean: true, changedFiles: 0 }),
 }));
 
 vi.mock('../lib/resolve-package.js', async () => {
@@ -109,7 +112,13 @@ describe('FixApp', () => {
     mockRunSickbay.mockReturnValue(new Promise(() => {}));
 
     const { lastFrame } = render(
-      <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={false}
+        dryRun={false}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(lastFrame()).toContain('Scanning for fixable issues...');
@@ -120,7 +129,13 @@ describe('FixApp', () => {
     mockCollectFixableIssues.mockReturnValue([]);
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={false}
+        dryRun={false}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('No auto-fixable issues found');
@@ -131,7 +146,13 @@ describe('FixApp', () => {
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue()]);
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={false}
+        dryRun={false}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('Select fixes to apply');
@@ -151,7 +172,13 @@ describe('FixApp', () => {
     ]);
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={false}
+        dryRun={false}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('Remove unused exports');
@@ -162,7 +189,13 @@ describe('FixApp', () => {
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue(), makeFixableIssue()]);
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={false}
+        dryRun={false}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('2 available');
@@ -173,7 +206,13 @@ describe('FixApp', () => {
     mockCollectFixableIssues.mockReturnValue([makeFixableIssue()]);
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={false} dryRun={true} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={false}
+        dryRun={true}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('Dry run mode');
@@ -183,7 +222,13 @@ describe('FixApp', () => {
     mockRunSickbay.mockRejectedValue(new Error('Scan failed'));
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={false}
+        dryRun={false}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('Scan failed');
@@ -199,6 +244,7 @@ describe('FixApp', () => {
         checks={['eslint', 'knip']}
         applyAll={false}
         dryRun={false}
+        skipGitCheck={true}
         verbose={false}
       />,
     );
@@ -214,7 +260,13 @@ describe('FixApp', () => {
     mockCollectFixableIssues.mockReturnValue([fix]);
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={true}
+        dryRun={false}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('Fix Results');
@@ -226,7 +278,13 @@ describe('FixApp', () => {
     mockCollectFixableIssues.mockReturnValue([fix]);
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={true} dryRun={true} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={true}
+        dryRun={true}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('Dry Run Results');
@@ -247,7 +305,13 @@ describe('FixApp', () => {
       mockCollectFixableIssues.mockReturnValue([makeFixableIssue(), makeFixableIssue()]);
 
       const result = await renderAndFlush(
-        <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+        <FixApp
+          projectPath="/test"
+          applyAll={false}
+          dryRun={false}
+          skipGitCheck={true}
+          verbose={false}
+        />,
       );
 
       // Wrap so callers always invoke the latest handler (re-captured after each re-render)
@@ -379,7 +443,13 @@ describe('FixApp', () => {
     mockCollectFixableIssues.mockReturnValue([fix]);
 
     const result = await renderAndFlush(
-      <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
+      <FixApp
+        projectPath="/test"
+        applyAll={true}
+        dryRun={false}
+        skipGitCheck={true}
+        verbose={false}
+      />,
     );
 
     expect(result.lastFrame()).toContain('1/1');
@@ -403,7 +473,13 @@ describe('FixApp', () => {
       ]);
 
       const result = await renderAndFlush(
-        <FixApp projectPath="/test" applyAll={false} dryRun={false} verbose={false} />,
+        <FixApp
+          projectPath="/test"
+          applyAll={false}
+          dryRun={false}
+          skipGitCheck={true}
+          verbose={false}
+        />,
       );
 
       const output = result.lastFrame()!;
@@ -434,7 +510,13 @@ describe('FixApp', () => {
       ]);
 
       const result = await renderAndFlush(
-        <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
+        <FixApp
+          projectPath="/test"
+          applyAll={true}
+          dryRun={false}
+          skipGitCheck={true}
+          verbose={false}
+        />,
       );
 
       // --apply-all skips tier-1 but still shows tier-2
@@ -468,7 +550,13 @@ describe('FixApp', () => {
       });
 
       const result = await renderAndFlush(
-        <FixApp projectPath="/test" applyAll={true} dryRun={false} verbose={false} />,
+        <FixApp
+          projectPath="/test"
+          applyAll={true}
+          dryRun={false}
+          skipGitCheck={true}
+          verbose={false}
+        />,
       );
 
       expect(result.lastFrame()).toContain('Add app.use(helmet())');
@@ -490,6 +578,7 @@ describe('FixApp', () => {
           projectPath="/root"
           applyAll={false}
           dryRun={false}
+          skipGitCheck={true}
           verbose={false}
           isMonorepo={true}
           packagePaths={packagePaths}
@@ -509,6 +598,7 @@ describe('FixApp', () => {
           projectPath="/root"
           applyAll={false}
           dryRun={false}
+          skipGitCheck={true}
           verbose={false}
           isMonorepo={true}
           packagePaths={packagePaths}
@@ -529,6 +619,7 @@ describe('FixApp', () => {
           projectPath="/root"
           applyAll={false}
           dryRun={false}
+          skipGitCheck={true}
           verbose={false}
           isMonorepo={true}
           packagePaths={packagePaths}

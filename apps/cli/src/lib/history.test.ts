@@ -13,9 +13,10 @@ vi.mock('fs', () => ({
   readFileSync: vi.fn(),
   writeFileSync: vi.fn(),
   mkdirSync: vi.fn(),
+  renameSync: vi.fn(),
 }));
 
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync } from 'fs';
 
 import {
   loadHistory,
@@ -32,6 +33,7 @@ const mockExistsSync = vi.mocked(existsSync);
 const mockReadFileSync = vi.mocked(readFileSync);
 const mockWriteFileSync = vi.mocked(writeFileSync);
 const mockMkdirSync = vi.mocked(mkdirSync);
+const mockRenameSync = vi.mocked(renameSync);
 
 function makeReport(overrides: Partial<SickbayReport> = {}): SickbayReport {
   return {
@@ -319,19 +321,29 @@ describe('saveLastReport', () => {
     saveLastReport(makeReport({ overallScore: 70 }));
     saveLastReport(makeReport({ overallScore: 85 }));
 
-    const paths = mockWriteFileSync.mock.calls.map((c) => c[0] as string);
-    expect(paths.every((p) => p.endsWith('last-report.json'))).toBe(true);
+    // Two write+rename pairs — atomic writes go to .tmp, rename lands the
+    // final last-report.json. Second call overwrites the first's result.
+    const writePaths = mockWriteFileSync.mock.calls.map((c) => c[0] as string);
+    expect(writePaths.every((p) => p.endsWith('last-report.json.tmp'))).toBe(true);
     expect(mockWriteFileSync).toHaveBeenCalledTimes(2);
+    expect(mockRenameSync).toHaveBeenCalledTimes(2);
   });
 
-  it('writes to projectPath/.sickbay/last-report.json', () => {
+  it('writes to projectPath/.sickbay/last-report.json via an atomic rename', () => {
     const report = makeReport({ projectPath: '/my/project' });
 
     saveLastReport(report);
 
+    // Atomic pattern: write to .tmp, then rename to final. A crash between
+    // these steps leaves either the old file intact or the new file written
+    // — never a truncated half-write that downstream readers would choke on.
     expect(mockWriteFileSync).toHaveBeenCalledWith(
-      '/my/project/.sickbay/last-report.json',
+      '/my/project/.sickbay/last-report.json.tmp',
       expect.any(String),
+    );
+    expect(mockRenameSync).toHaveBeenCalledWith(
+      '/my/project/.sickbay/last-report.json.tmp',
+      '/my/project/.sickbay/last-report.json',
     );
   });
 });
@@ -347,12 +359,16 @@ describe('saveDepTree', () => {
     });
   });
 
-  it('writes dep tree JSON to dep-tree.json', () => {
+  it('writes dep tree JSON atomically (.tmp + rename) to dep-tree.json', () => {
     saveDepTree('/my/project', { name: 'test', dependencies: {} });
 
     expect(mockWriteFileSync).toHaveBeenCalledWith(
-      '/my/project/.sickbay/dep-tree.json',
+      '/my/project/.sickbay/dep-tree.json.tmp',
       expect.any(String),
+    );
+    expect(mockRenameSync).toHaveBeenCalledWith(
+      '/my/project/.sickbay/dep-tree.json.tmp',
+      '/my/project/.sickbay/dep-tree.json',
     );
   });
 
