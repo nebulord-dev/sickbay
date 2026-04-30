@@ -26,7 +26,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   // TODO: validate input schema
-  const { name, price, description } = req.body;
+  const { name, price } = req.body;
   console.log('Creating product:', name, price);
   const token = jwt.sign({ name, price }, JWT_SECRET);
   res.json({ success: true, token });
