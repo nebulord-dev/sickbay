@@ -211,7 +211,7 @@ function scanAssets(
         const ext = extname(entry).toLowerCase();
         if (SKIP_EXTENSIONS.has(ext)) continue;
 
-        let type: AssetFile['type'] = 'other';
+        let type: 'image' | 'svg' | 'font' | 'other';
         if (IMAGE_EXTENSIONS.has(ext)) type = 'image';
         else if (ext === SVG_EXTENSION) type = 'svg';
         else if (FONT_EXTENSIONS.has(ext)) type = 'font';
