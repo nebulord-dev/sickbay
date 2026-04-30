@@ -37,6 +37,7 @@ overrides:
   brace-expansion: '>=5.0.5'
   lodash: '>=4.18.0'
   lodash-es: '>=4.18.0'
+  postcss: '>=8.5.10'
 
 importers:
 
@@ -88,8 +89,8 @@ importers:
   apps/cli:
     dependencies:
       '@anthropic-ai/sdk':
-        specifier: ^0.90.0
-        version: 0.90.0(zod@4.3.6)
+        specifier: ^0.91.1
+        version: 0.91.1(zod@4.3.6)
       chokidar:
         specifier: ^5.0.0
         version: 5.0.0
@@ -174,7 +175,7 @@ importers:
     devDependencies:
       vitepress:
         specifier: ^1.6.4
-        version: 1.6.4(@algolia/client-search@5.50.2)(@types/node@25.6.0)(lightningcss@1.32.0)(postcss@8.5.9)(search-insights@2.17.3)(typescript@6.0.3)
+        version: 1.6.4(@algolia/client-search@5.50.2)(@types/node@25.6.0)(lightningcss@1.32.0)(postcss@8.5.12)(search-insights@2.17.3)(typescript@6.0.3)
 
   apps/web:
     dependencies:
@@ -395,8 +396,8 @@ packages:
     resolution: {integrity: sha512-Mu9BFtgzGqDUy5Bcs2nMyoILIFSN13GKQaklKAFIsd0K3/9CpNyfeBc+/+Qs6mFZLlxG9qzullO7h+bjcTBuGQ==}
     engines: {node: '>= 14.0.0'}
 
-  '@anthropic-ai/sdk@0.90.0':
-    resolution: {integrity: sha512-MzZtPabJF1b0FTDl6Z6H5ljphPwACLGP13lu8MTiB8jXaW/YXlpOp+Po2cVou3MPM5+f5toyLnul9whKCy7fBg==}
+  '@anthropic-ai/sdk@0.91.1':
+    resolution: {integrity: sha512-LAmu761tSN9r66ixvmciswUj/ZC+1Q4iAfpedTfSVLeswRwnY3n2Nb6Tsk+cLPP28aLOPWeMgIuTuCcMC6W/iw==}
     hasBin: true
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
@@ -2994,7 +2995,7 @@ packages:
     resolution: {integrity: sha512-bEOVpHU9picRZux5XnwGsmCN4+8oZo7vSW0O0/Enq/TO5R2pIAP2279NsszpJR7ocnQt4WXU0+nnh/0JuK4KHQ==}
     engines: {node: ^14.0.0 || >=16.0.0}
     peerDependencies:
-      postcss: ^8.4.47
+      postcss: '>=8.5.10'
 
   detective-sass@6.0.1:
     resolution: {integrity: sha512-jSGPO8QDy7K7pztUmGC6aiHkexBQT4GIH+mBAL9ZyBmnUIOFbkfZnO8wPRRJFP/QP83irObgsZHCoDHZ173tRw==}
@@ -4586,10 +4587,10 @@ packages:
     resolution: {integrity: sha512-YLJpK0N1brcNJrs9WatuJFtHaV9q5aAOj+S4DI5S7jgHlRfm0PIbDCAFRYMQD5SHq7Fy6xsDhyutgS0QOAs0qw==}
     engines: {node: '>=10'}
     peerDependencies:
-      postcss: ^8.2.9
+      postcss: '>=8.5.10'
 
-  postcss@8.5.9:
-    resolution: {integrity: sha512-7a70Nsot+EMX9fFU3064K/kdHWZqGVY+BADLyXc8Dfv+mTLLVl6JzJpPaCZ2kQL9gIJvKXSLMHhqdRRjwQeFtw==}
+  postcss@8.5.12:
+    resolution: {integrity: sha512-W62t/Se6rA0Az3DfCL0AqJwXuKwBeYg6nOaIgzP+xZ7N5BFCI7DYi1qs6ygUYT6rvfi6t9k65UMLJC+PHZpDAA==}
     engines: {node: ^10 || ^12 || >=14}
 
   powershell-utils@0.1.0:
@@ -5559,7 +5560,7 @@ packages:
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
-      postcss: ^8
+      postcss: '>=8.5.10'
     peerDependenciesMeta:
       markdown-it-mathjax3:
         optional: true
@@ -5909,7 +5910,7 @@ snapshots:
     dependencies:
       '@algolia/client-common': 5.50.2
 
-  '@anthropic-ai/sdk@0.90.0(zod@4.3.6)':
+  '@anthropic-ai/sdk@0.91.1(zod@4.3.6)':
     dependencies:
       json-schema-to-ts: 3.1.1
     optionalDependencies:
@@ -7408,7 +7409,7 @@ snapshots:
       '@vue/shared': 3.5.32
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.9
+      postcss: 8.5.12
       source-map-js: 1.2.1
 
   '@vue/compiler-ssr@3.5.32':
@@ -8056,11 +8057,11 @@ snapshots:
     dependencies:
       node-source-walk: 7.0.1
 
-  detective-postcss@7.0.1(postcss@8.5.9):
+  detective-postcss@7.0.1(postcss@8.5.12):
     dependencies:
       is-url: 1.2.4
-      postcss: 8.5.9
-      postcss-values-parser: 6.0.2(postcss@8.5.9)
+      postcss: 8.5.12
+      postcss-values-parser: 6.0.2(postcss@8.5.12)
 
   detective-sass@6.0.1:
     dependencies:
@@ -9865,14 +9866,14 @@ snapshots:
 
   pluralize@8.0.0: {}
 
-  postcss-values-parser@6.0.2(postcss@8.5.9):
+  postcss-values-parser@6.0.2(postcss@8.5.12):
     dependencies:
       color-name: 1.1.4
       is-url-superb: 4.0.0
-      postcss: 8.5.9
+      postcss: 8.5.12
       quote-unquote: 1.0.0
 
-  postcss@8.5.9:
+  postcss@8.5.12:
     dependencies:
       nanoid: 3.3.11
       picocolors: 1.1.1
@@ -9889,7 +9890,7 @@ snapshots:
       detective-amd: 6.0.1
       detective-cjs: 6.1.0
       detective-es6: 5.0.1
-      detective-postcss: 7.0.1(postcss@8.5.9)
+      detective-postcss: 7.0.1(postcss@8.5.12)
       detective-sass: 6.0.1
       detective-scss: 5.0.1
       detective-stylus: 5.0.1
@@ -9897,7 +9898,7 @@ snapshots:
       detective-vue2: 2.2.0(typescript@5.9.3)
       module-definition: 6.0.1
       node-source-walk: 7.0.1
-      postcss: 8.5.9
+      postcss: 8.5.12
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -10899,7 +10900,7 @@ snapshots:
   vite@5.4.21(@types/node@25.6.0)(lightningcss@1.32.0):
     dependencies:
       esbuild: 0.21.5
-      postcss: 8.5.9
+      postcss: 8.5.12
       rollup: 4.60.1
     optionalDependencies:
       '@types/node': 25.6.0
@@ -10910,7 +10911,7 @@ snapshots:
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
-      postcss: 8.5.9
+      postcss: 8.5.12
       rolldown: 1.0.0-rc.15
       tinyglobby: 0.2.16
     optionalDependencies:
@@ -10920,7 +10921,7 @@ snapshots:
       jiti: 2.6.1
       yaml: 2.8.3
 
-  vitepress@1.6.4(@algolia/client-search@5.50.2)(@types/node@25.6.0)(lightningcss@1.32.0)(postcss@8.5.9)(search-insights@2.17.3)(typescript@6.0.3):
+  vitepress@1.6.4(@algolia/client-search@5.50.2)(@types/node@25.6.0)(lightningcss@1.32.0)(postcss@8.5.12)(search-insights@2.17.3)(typescript@6.0.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.50.2)(search-insights@2.17.3)
@@ -10941,7 +10942,7 @@ snapshots:
       vite: 5.4.21(@types/node@25.6.0)(lightningcss@1.32.0)
       vue: 3.5.32(typescript@6.0.3)
     optionalDependencies:
-      postcss: 8.5.9
+      postcss: 8.5.12
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@types/node'

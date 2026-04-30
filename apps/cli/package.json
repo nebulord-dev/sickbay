@@ -35,7 +35,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.90.0",
+    "@anthropic-ai/sdk": "^0.91.1",
     "chokidar": "^5.0.0",
     "commander": "^14.0.3",
     "depcheck": "^1.4.7",
