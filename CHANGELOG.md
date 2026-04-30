@@ -1,3 +1,10 @@
+## [1.16.5](https://github.com/nebulord-dev/sickbay/compare/v1.16.4...v1.16.5) (2026-04-30)
+
+
+### Bug Fixes
+
+* Fix code quality findings ([#61](https://github.com/nebulord-dev/sickbay/issues/61)) ([a8e1890](https://github.com/nebulord-dev/sickbay/commit/a8e18902774a8537b70def6c70a82d1621341fd3))
+
 ## [1.16.4](https://github.com/nebulord-dev/sickbay/compare/v1.16.3...v1.16.4) (2026-04-19)
 
 
